@@ -606,7 +606,7 @@ std::optional<construction_id> construction_menu( const bool blueprint )
                                          ? origin_from_tile( ( *furniture_it )->post_furniture.obj() )
                                          : std::nullopt );
             const auto origin_to_display = origin_line.value_or( string_format( "'%s'",
-                                           _( "Bright Nights" ) ) );
+                                           _( "Slop Edition" ) ) );
             add_header_line( colorize( _( "Origin: " ) + origin_to_display, c_light_blue ) );
             construct_separator_line = std::string( available_window_width,
                                                     static_cast<char>( LINE_OXOX ) );

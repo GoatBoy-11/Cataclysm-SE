@@ -47,7 +47,7 @@ void PATH_INFO::init_base_path( std::string path )
 
 #if defined(__ANDROID__)
 // Okay so this fine function right here
-// Gets Documents/cataclysm-bn
+// Gets Documents/cataclysm-cse
 // And points the user directory to it for android
 void PATH_INFO::init_user_dir( std::string dir )
 {
@@ -73,7 +73,7 @@ void PATH_INFO::init_user_dir( std::string dir )
     // Convert jstring → std::string
     const char *chars = env->GetStringUTFChars( jpath, nullptr );
     std::string path( chars );
-    dir = path + "/cataclysm-bn/";
+    dir = path + "/cataclysm-cse/";
     user_dir_value = as_norm_dir( dir );
 
     env->ReleaseStringUTFChars( jpath, chars );
@@ -92,21 +92,21 @@ void PATH_INFO::init_user_dir( std::string dir )
 #if defined(_WIN32)
         user_dir = getenv( "LOCALAPPDATA" );
         // On Windows userdir without dot
-        dir = std::string( user_dir ) + "/cataclysm-bn/";
+        dir = std::string( user_dir ) + "/cataclysm-cse/";
 #elif defined(MACOSX)
         user_dir = getenv( "HOME" );
-        dir = std::string( user_dir ) + "/Library/Application Support/Cataclysm-BN/";
+        dir = std::string( user_dir ) + "/Library/Application Support/Cataclysm-CSE/";
 #elif defined(USE_XDG_DIR)
         user_dir = getenv( "XDG_DATA_HOME" );
         if( user_dir ) {
-            dir = std::string( user_dir ) + "/cataclysm-bn/";
+            dir = std::string( user_dir ) + "/cataclysm-cse/";
         } else {
             user_dir = getenv( "HOME" );
-            dir = std::string( user_dir ) + "/.local/share/cataclysm-bn/";
+            dir = std::string( user_dir ) + "/.local/share/cataclysm-cse/";
         }
 #else
         user_dir = getenv( "HOME" );
-        dir = std::string( user_dir ) + "/.cataclysm-bn/";
+        dir = std::string( user_dir ) + "/.cataclysm-cse/";
 #endif
     }
 
@@ -118,7 +118,7 @@ void PATH_INFO::set_standard_filenames()
     // Special: data_dir and gfx_dir
     if( !base_path_value.empty() ) {
 #if defined(DATA_DIR_PREFIX)
-        datadir_value = base_path_value + "share/cataclysm-bn/";
+        datadir_value = base_path_value + "share/cataclysm-cse/";
         gfxdir_value = datadir_value + "gfx/";
 #else
         datadir_value = base_path_value + "data/";
@@ -141,10 +141,10 @@ void PATH_INFO::set_standard_filenames()
     const char *user_dir;
     std::string dir;
     if( ( user_dir = getenv( "XDG_CONFIG_HOME" ) ) ) {
-        dir = std::string( user_dir ) + "/cataclysm-bn/";
+        dir = std::string( user_dir ) + "/cataclysm-cse/";
     } else {
         user_dir = getenv( "HOME" );
-        dir = std::string( user_dir ) + "/.config/cataclysm-bn/";
+        dir = std::string( user_dir ) + "/.config/cataclysm-cse/";
     }
     config_dir_value = dir;
 #else

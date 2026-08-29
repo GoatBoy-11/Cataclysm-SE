@@ -207,7 +207,7 @@ static bool SetupRenderTarget()
 //Registers, creates, and shows the Window!!
 static void WinCreate()
 {
-    std::string version = string_format( "Cataclysm: Bright Nights - %s", getVersionString() );
+    std::string version = string_format( "Cataclysm: Slop Edition - %s", getVersionString() );
 
     // Common flags used for fulscreen and for windowed
     int window_flags = 0;

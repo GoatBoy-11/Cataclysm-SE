@@ -86,7 +86,7 @@ static bool WinCreate()
 {
     // Get current process handle
     WindowINST = GetModuleHandle( nullptr );
-    std::string title = string_format( "Cataclysm: Bright Nights - %s", getVersionString() );
+    std::string title = string_format( "Cataclysm: Slop Edition - %s", getVersionString() );
 
     // Register window class
     WNDCLASSEXW WindowClassType   = WNDCLASSEXW();

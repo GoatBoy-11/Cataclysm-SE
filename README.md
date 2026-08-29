@@ -1,4 +1,4 @@
-# Cataclysm: Bright Nights
+# Cataclysm: Slop Edition
 
 <header align="center">
   <a><img src="docs/en/contribute/img/readme-title.png" title="screenshots of (clockwise from upper-right: Chaosvolt (x2), ExecutorBill, scarf005"></a>
@@ -14,7 +14,14 @@
 [ja]: ./README.ja.md
 [icon-ja]: https://img.shields.io/badge/lang-ja-green?style=flat-square
 
-Cataclysm: Bright Nights is a roguelike with sci-fi elements set in a post-apocalyptic world.
+> [!WARNING]
+> **This is an AI-generated fork.** Cataclysm: Slop Edition (CSE) is a personal fork of
+> [Cataclysm: Bright Nights][bn], with the overwhelming majority of its changes written by a large
+> language model. It is not maintained by, endorsed by, or affiliated with the Bright Nights or
+> Dark Days Ahead teams. Expect bugs, expect nonsense, expect things the upstream projects
+> deliberately chose not to do. Do not report CSE problems to upstream.
+
+Cataclysm: Slop Edition is a roguelike with sci-fi elements set in a post-apocalyptic world.
 
 While some have described it as a "zombie game", there is far more to Cataclysm than that. Struggle
 to survive in a harsh, persistent, procedurally generated world. Scavenge the remnants of a dead
@@ -27,24 +34,31 @@ who want what you have.
 
 Find a way to stop the Cataclysm ... or become one of its strongest monsters.
 
-> Cataclysm: Bright Nights is a fork of Cataclysm: Dark Days Ahead.
-> [see the differences from its ancestor.](https://docs.cataclysmbn.org/game/changelog/).
+> Cataclysm: Slop Edition is a fork of [Cataclysm: Bright Nights][bn], which is itself a fork of
+> [Cataclysm: Dark Days Ahead][dda]. Nearly everything good here came from them; the rest is mine.
+> [See how Bright Nights differs from its own ancestor.](https://docs.cataclysmbn.org/game/changelog/)
+
+[bn]: https://github.com/cataclysmbn/Cataclysm-BN
+[dda]: https://github.com/CleverRaven/Cataclysm-DDA
 
 ## Downloads
 
 ### Executables
 
-[![Stable][stable-releases-badge]][stable-releases] [![Flatpak][flathub-badge]][flathub-releases]
-
-[![Recent][all-releases-badge]][all-releases] [![Experiemental][experimental-badge]][experimental-releases]
+There are no prebuilt releases. Build from source (see below).
 
 ### Launchers
 
-We do not support any launchers, none of them are maintained by any members of the development team and the vast majority of them do not keep up with our stable release cadence.
+Unsupported. No launcher knows this fork exists.
 
 ### Third Party Mods
 
-Bright Nights uses a [mod registry](https://mods.cataclysmbn.org/) for easier discovery of mods not shipped with the main game.
+CSE keeps Bright Nights' data format, so most BN mods should load — including those in the BN
+[mod registry](https://mods.cataclysmbn.org/). Compatibility is best-effort and not guaranteed;
+breakage is a CSE problem, not a BN one.
+
+CSE stores its saves and settings in a `cataclysm-cse` user directory, separate from Bright Nights,
+so both games can be installed side by side without clobbering each other.
 
 ### Source Code
 
@@ -73,7 +87,8 @@ Please read the official docs for details:
 
 ## Contributing
 
-> Cataclysm: Bright Nights developed under Creative Commons Attribution ShareAlike 3.0 license. The
+> Cataclysm: Slop Edition, like Cataclysm: Bright Nights and Cataclysm: Dark Days Ahead before it,
+> is developed under the Creative Commons Attribution ShareAlike 3.0 license. The
 > code and content of the game is free to use, modify, and redistribute for any purpose whatsoever.
 > See http://creativecommons.org/licenses/by-sa/3.0/ for details. Some code distributed with the
 > project is not part of the project and is released under different software licenses, the files
