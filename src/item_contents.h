@@ -129,6 +129,7 @@ class item_contents
         pocket_data default_pocket_data;
         std::vector<item_pocket> pockets;
         mutable bool processing_cache_dirty = true;
+        mutable bool all_items_cache_dirty = true;
         mutable std::vector<item *> cached_processing_items;
         mutable std::vector<item *> cached_all_items_top;
 };

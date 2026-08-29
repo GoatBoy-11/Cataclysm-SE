@@ -201,6 +201,9 @@ void item_contents::deserialize( JsonIn &jsin )
     JsonObject data = jsin.get_object();
     data.allow_omitted_members();
 
+    // Inserts below bypass the usual mutation paths, so retire the caches by hand.
+    invalidate_processing_cache();
+
     if( data.has_array( "pockets" ) ) {
         size_t index = 0;
         for( JsonObject jo : data.get_array( "pockets" ) ) {

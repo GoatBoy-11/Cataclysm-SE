@@ -195,6 +195,51 @@ auto defmode_name( itype &obj )
 
 } //namespace
 
+static bool has_pocket_of_type( const itype &def, const pocket_type type )
+{
+    for( const pocket_data &pocket : def.pockets ) {
+        if( pocket.type == type ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Pockets for what an item held before pockets existed but which is not general
+ * storage: ammo inside a magazine, a magazine inside a gun, mods on a gun, and a
+ * corpse's contents. Volume is not what limits any of these, so each is left
+ * effectively unbounded; deciding what may actually go in is best_pocket()'s job.
+ */
+static void synthesize_special_pockets_from_legacy( itype &def )
+{
+    const auto add_pocket = [&def]( const pocket_type type ) {
+        if( has_pocket_of_type( def, type ) ) {
+            return;
+        }
+        pocket_data pocket;
+        pocket.type = type;
+        pocket.max_contains_volume = units::from_liter( 100000 );
+        // Contents of these are already accounted for by item::volume(), which
+        // adds a magazine's volume separately.
+        pocket.rigid = true;
+        def.pockets.push_back( pocket );
+    };
+
+    if( def.magazine ) {
+        add_pocket( pocket_type::MAGAZINE );
+    }
+    if( !def.magazines.empty() ) {
+        add_pocket( pocket_type::MAGAZINE_WELL );
+    }
+    if( def.gun && !def.gun->valid_mod_locations.empty() ) {
+        add_pocket( pocket_type::MOD );
+    }
+    if( def.has_flag( flag_CORPSE ) ) {
+        add_pocket( pocket_type::CORPSE );
+    }
+}
+
 /** CDDA's predicate: true when nothing here is a general-purpose container pocket. */
 static bool has_only_special_pockets( const itype &def )
 {
@@ -216,6 +261,10 @@ static bool has_only_special_pockets( const itype &def )
  */
 static void synthesize_pockets_from_legacy( itype &def )
 {
+    // Special pockets first, then the container pocket. has_only_special_pockets()
+    // ignores them by design, so an item can gain both.
+    synthesize_special_pockets_from_legacy( def );
+
     if( !has_only_special_pockets( def ) ) {
         if( def.container || ( def.armor && def.armor->storage > 0_ml ) ) {
             debugmsg( "%s defines both legacy storage and pocket_data; pocket_data wins.",

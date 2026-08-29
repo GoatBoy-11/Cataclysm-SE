@@ -70,6 +70,10 @@ auto item_contents::processing_items() const -> const std::vector<item *> & // *
 auto item_contents::invalidate_processing_cache() const -> void
 {
     processing_cache_dirty = true;
+    // Every content mutation reaches here, directly or through
+    // item::invalidate_processing_cache_upwards(), so this is also the right
+    // place to retire the concatenated all_items_top() cache.
+    all_items_cache_dirty = true;
 }
 
 auto item_contents::update_processing_cache() const -> void
@@ -306,10 +310,16 @@ const std::vector<item *> &item_contents::all_items_top() const
     if( pockets.size() == 1 ) {
         return pockets.front().all_items_top();
     }
-    cached_all_items_top.clear();
-    for( const item_pocket &pocket : pockets ) {
-        const std::vector<item *> &top = pocket.all_items_top();
-        cached_all_items_top.insert( cached_all_items_top.end(), top.begin(), top.end() );
+    // Only rebuild when the contents actually changed. Rebuilding on every call
+    // would invalidate a reference a caller is still iterating, which is easy to
+    // hit once ordinary items such as guns have more than one pocket.
+    if( all_items_cache_dirty ) {
+        cached_all_items_top.clear();
+        for( const item_pocket &pocket : pockets ) {
+            const std::vector<item *> &top = pocket.all_items_top();
+            cached_all_items_top.insert( cached_all_items_top.end(), top.begin(), top.end() );
+        }
+        all_items_cache_dirty = false;
     }
     return cached_all_items_top;
 }

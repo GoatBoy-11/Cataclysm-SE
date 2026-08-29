@@ -203,6 +203,84 @@ TEST_CASE( "an_item_saved_before_pockets_keeps_its_contents", "[item][pocket][sa
 // save-and-reload check stays manual.
 
 // ---------------------------------------------------------------------------
+// Special pocket synthesis: MAGAZINE, MAGAZINE_WELL, MOD, CORPSE
+// ---------------------------------------------------------------------------
+
+static bool has_pocket( const item &it, const pocket_type type )
+{
+    for( const item_pocket &pocket : it.contents.get_pockets() ) {
+        if( pocket.definition().type == type ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+TEST_CASE( "a_magazine_gains_a_magazine_pocket", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    REQUIRE( mag->type->magazine );
+    CHECK( has_pocket( *mag, pocket_type::MAGAZINE ) );
+}
+
+TEST_CASE( "a_gun_taking_magazines_gains_a_magazine_well", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> gun = item::spawn( "glock_19" );
+    REQUIRE_FALSE( gun->type->magazines.empty() );
+    CHECK( has_pocket( *gun, pocket_type::MAGAZINE_WELL ) );
+}
+
+TEST_CASE( "a_gun_with_mod_locations_gains_a_mod_pocket", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> gun = item::spawn( "glock_19" );
+    REQUIRE( gun->type->gun );
+    REQUIRE_FALSE( gun->type->gun->valid_mod_locations.empty() );
+    CHECK( has_pocket( *gun, pocket_type::MOD ) );
+}
+
+TEST_CASE( "an_item_with_no_storage_gains_no_special_pockets", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    CHECK_FALSE( has_pocket( *rock, pocket_type::MAGAZINE ) );
+    CHECK_FALSE( has_pocket( *rock, pocket_type::MAGAZINE_WELL ) );
+    CHECK_FALSE( has_pocket( *rock, pocket_type::MOD ) );
+    CHECK_FALSE( has_pocket( *rock, pocket_type::CORPSE ) );
+}
+
+TEST_CASE( "a_gun_can_still_hold_its_mods_and_magazine", "[item][pocket][synthesis]" )
+{
+    // The load-bearing check for special pockets: adding pockets must not stop a
+    // gun holding what it held before.
+    detached_ptr<item> gun = item::spawn( "glock_19" );
+    REQUIRE( gun->contents.get_pockets().size() > 1 );
+
+    ret_val<bool> put_mag = gun->contents.insert_item( item::spawn( "glockmag" ) );
+    CHECK( put_mag.success() );
+    CHECK( gun->contents.all_items_top().size() == 1 );
+}
+
+TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
+           "[item][pocket][contents]" )
+{
+    // With several pockets the returned reference comes from a cache. Rebuilding
+    // it on every call would invalidate a reference the caller still holds.
+    detached_ptr<item> gun = item::spawn( "glock_19" );
+    REQUIRE( gun->contents.get_pockets().size() > 1 );
+    gun->contents.insert_item( item::spawn( "glockmag" ) );
+
+    const std::vector<item *> &first = gun->contents.all_items_top();
+    REQUIRE( first.size() == 1 );
+    item *before = first.front();
+
+    // A second call must not clear the vector the first reference points at.
+    const std::vector<item *> &second = gun->contents.all_items_top();
+    REQUIRE( second.size() == 1 );
+
+    CHECK( first.size() == 1 );
+    CHECK( first.front() == before );
+}
+
+// ---------------------------------------------------------------------------
 // Phase 2: pocket_data loaded from JSON
 // ---------------------------------------------------------------------------
 
