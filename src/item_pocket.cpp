@@ -2,9 +2,60 @@
 
 #include <utility>
 
+#include "debug.h"
+#include "enum_conversions.h"
+#include "generic_factory.h"
 #include "item.h"
+#include "json.h"
 #include "locations.h"
 #include "translations.h"
+
+namespace io
+{
+template<>
+std::string enum_to_string<pocket_type>( pocket_type data )
+{
+    switch( data ) {
+        case pocket_type::CONTAINER:
+            return "CONTAINER";
+        case pocket_type::MAGAZINE:
+            return "MAGAZINE";
+        case pocket_type::MAGAZINE_WELL:
+            return "MAGAZINE_WELL";
+        case pocket_type::MOD:
+            return "MOD";
+        case pocket_type::CORPSE:
+            return "CORPSE";
+        case pocket_type::MIGRATION:
+            return "MIGRATION";
+        case pocket_type::LAST:
+            break;
+    }
+    debugmsg( "Invalid pocket_type" );
+    abort();
+}
+} // namespace io
+
+void pocket_data::load( const JsonObject &jo )
+{
+    optional( jo, false, "pocket_type", type, pocket_type::CONTAINER );
+    optional( jo, false, "max_contains_volume", max_contains_volume, volume_reader(),
+              max_contains_volume );
+    optional( jo, false, "max_contains_weight", max_contains_weight, mass_reader(),
+              max_contains_weight );
+    optional( jo, false, "max_item_length", max_item_length, length_reader(), max_item_length );
+    optional( jo, false, "rigid", rigid, rigid );
+    optional( jo, false, "watertight", watertight, watertight );
+    optional( jo, false, "sealed", sealed, sealed );
+    optional( jo, false, "spoil_multiplier", spoil_multiplier, spoil_multiplier );
+    optional( jo, false, "moves", moves, moves );
+}
+
+void pocket_data::deserialize( JsonIn &jsin )
+{
+    const JsonObject jo = jsin.get_object();
+    load( jo );
+}
 
 item_pocket::item_pocket( item *owner, const pocket_data *data )
     : owner( owner ), data( data ), contents( new contents_item_location( owner ) ) {}

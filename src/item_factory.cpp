@@ -2798,6 +2798,18 @@ void Item_factory::load_basic_info( const JsonObject &jo, itype &def, const std:
         jo.read( "repairs_like", def.repairs_like );
     }
 
+    // Authored pockets, CDDA's schema. An item that declares these keeps them and is
+    // skipped by synthesize_pockets_from_legacy(). copy-from propagates them because
+    // def already holds the resolved parent's fields by the time we get here.
+    if( jo.has_array( "pocket_data" ) ) {
+        def.pockets.clear();
+        for( const JsonObject pocket_jo : jo.get_array( "pocket_data" ) ) {
+            pocket_data pocket;
+            pocket.load( pocket_jo );
+            def.pockets.push_back( pocket );
+        }
+    }
+
     assign( jo, "weapon_category", def.weapon_category );
 
     if( jo.has_member( "damage_states" ) ) {

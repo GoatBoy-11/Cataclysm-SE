@@ -201,3 +201,112 @@ TEST_CASE( "an_item_saved_before_pockets_keeps_its_contents", "[item][pocket][sa
 // successful load mid-suite replaces the world and avatar, and the surrounding
 // tests do not survive it (146 failures and a Lua panic). The plan's manual
 // save-and-reload check stays manual.
+
+// ---------------------------------------------------------------------------
+// Phase 2: pocket_data loaded from JSON
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "pocket_data_reads_every_field_from_json", "[item][pocket][json]" )
+{
+    const std::string text =
+        R"({ "pocket_type": "MAGAZINE_WELL", "max_contains_volume": "2 L",
+             "max_contains_weight": "3 kg", "max_item_length": "30 cm",
+             "rigid": true, "watertight": true, "sealed": true,
+             "spoil_multiplier": 0.5, "moves": 250 })";
+    std::istringstream is( text );
+    JsonIn jsin( is );
+
+    pocket_data data;
+    data.deserialize( jsin );
+
+    CHECK( data.type == pocket_type::MAGAZINE_WELL );
+    CHECK( data.max_contains_volume == 2_liter );
+    CHECK( data.max_contains_weight == units::from_kilogram( 3 ) );
+    CHECK( data.max_item_length == 30_cm );
+    CHECK( data.rigid );
+    CHECK( data.watertight );
+    CHECK( data.sealed );
+    CHECK( data.spoil_multiplier == Approx( 0.5f ) );
+    CHECK( data.moves == 250 );
+}
+
+TEST_CASE( "omitted_pocket_data_fields_keep_their_defaults", "[item][pocket][json]" )
+{
+    const std::string text = R"({ "max_contains_volume": "1 L" })";
+    std::istringstream is( text );
+    JsonIn jsin( is );
+
+    pocket_data data;
+    data.deserialize( jsin );
+
+    CHECK( data.type == pocket_type::CONTAINER );
+    CHECK( data.max_contains_volume == 1_liter );
+    CHECK( data.max_contains_weight == 0_gram );
+    CHECK_FALSE( data.rigid );
+    CHECK_FALSE( data.watertight );
+    CHECK( data.moves == 100 );
+}
+
+TEST_CASE( "an_item_declaring_pocket_data_gets_those_pockets", "[item][pocket][json]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    const std::vector<item_pocket> &pockets = bag->contents.get_pockets();
+
+    REQUIRE( pockets.size() == 2 );
+    CHECK( pockets[0].definition().max_contains_volume == 100_ml );
+    CHECK( pockets[0].definition().max_item_length == 5_cm );
+    CHECK( pockets[1].definition().max_contains_volume == 4_liter );
+    CHECK( pockets[1].definition().watertight );
+    CHECK( pockets[1].definition().moves == 200 );
+}
+
+TEST_CASE( "authored_pocket_data_suppresses_legacy_synthesis", "[item][pocket][json]" )
+{
+    // A synthesized item still gets exactly one pocket, so base-game behaviour
+    // is untouched by pocket_data loading existing.
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    CHECK( backpack->contents.get_pockets().size() == 1 );
+
+    // The authored item keeps its two, rather than gaining a synthesized third.
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    CHECK( bag->contents.get_pockets().size() == 2 );
+}
+
+TEST_CASE( "an_item_too_big_for_the_small_pocket_lands_in_the_large_one",
+           "[item][pocket][json]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+
+    // 250 ml, so it cannot fit the 100 ml pocket but fits the 4 L one.
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    const units::volume rock_volume = rock->volume();
+    REQUIRE( rock_volume > 100_ml );
+
+    bag->contents.insert_item( std::move( rock ) );
+
+    CHECK( bag->contents.get_pockets()[0].empty() );
+    CHECK( bag->contents.get_pockets()[1].all_items_top().size() == 1 );
+}
+
+TEST_CASE( "multi_pocket_contents_survive_a_serialization_round_trip",
+           "[item][pocket][json][save]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.insert_item( item::spawn( "test_rock" ) );
+    REQUIRE( bag->contents.all_items_top().size() == 1 );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    bag->contents.serialize( jo );
+
+    detached_ptr<item> restored = item::spawn( "test_two_pocket_bag" );
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    restored->contents.deserialize( ji );
+
+    REQUIRE( restored->contents.get_pockets().size() == 2 );
+    CHECK( restored->contents.all_items_top().size() == 1 );
+    // Still in the second pocket, not collapsed into the first.
+    CHECK( restored->contents.get_pockets()[0].empty() );
+    CHECK( restored->contents.get_pockets()[1].all_items_top().size() == 1 );
+}

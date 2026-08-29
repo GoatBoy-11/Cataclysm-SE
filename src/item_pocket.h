@@ -2,12 +2,14 @@
 
 #include <vector>
 
+#include "enum_traits.h"
 #include "location_vector.h"
 #include "ret_val.h"
 #include "units.h"
 
 class item;
 class JsonIn;
+class JsonObject;
 class JsonOut;
 
 enum class pocket_type {
@@ -18,6 +20,11 @@ enum class pocket_type {
     CORPSE,
     MIGRATION,
     LAST
+};
+
+template<>
+struct enum_traits<pocket_type> {
+    static constexpr pocket_type last = pocket_type::LAST;
 };
 
 /**
@@ -36,6 +43,9 @@ struct pocket_data {
     bool sealed = false;
     float spoil_multiplier = 1.0f;
     int moves = 100;
+
+    void load( const JsonObject &jo );
+    void deserialize( JsonIn &jsin );
 };
 
 /**

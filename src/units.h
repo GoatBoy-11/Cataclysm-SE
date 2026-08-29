@@ -104,6 +104,12 @@ static const std::vector<std::pair<std::string, volume>> volume_units = { {
         { "L", 1_liter }
     }
 };
+static const std::vector<std::pair<std::string, length>> length_units = { {
+        { "mm", 1_mm },
+        { "cm", 1_cm },
+        { "m", units::from_meter( 1 ) },
+    }
+};
 static const std::vector<std::pair<std::string, angle>> angle_units = { {
         { "arcmin", 1_arcmin },
         { "°", 1_degrees },

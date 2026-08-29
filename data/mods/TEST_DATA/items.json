@@ -919,5 +919,21 @@
     "symbol": "]",
     "color": "light_gray",
     "container_data": { "contains": "3000000 L" }
+  },
+  {
+    "id": "test_two_pocket_bag",
+    "type": "GENERIC",
+    "name": "TEST two pocket bag",
+    "description": "A bag with one small pocket and one large one, for testing authored pocket_data.",
+    "weight": "1 kg",
+    "volume": "1 L",
+    "price": "0 cent",
+    "material": "cotton",
+    "symbol": "]",
+    "color": "light_gray",
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "100 ml", "max_item_length": "5 cm" },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "4 L", "watertight": true, "moves": 200 }
+    ]
   }
 ]

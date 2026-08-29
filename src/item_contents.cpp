@@ -108,14 +108,23 @@ ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
     }
 
     if( !stacked ) {
-        // Phase 1 deliberately does not enforce can_contain() here. Synthesis
-        // only produces CONTAINER pockets, so gunmods, magazines and corpse
-        // contents have nowhere that would accept them, and capacity limits are
-        // still enforced by the callers that enforced them before pockets
-        // existed. Enforcement belongs with best_pocket() and the MOD /
-        // MAGAZINE / CORPSE pockets in a later phase.
+        // Prefer the first pocket that actually accepts the item, so an item with
+        // several authored pockets fills them meaningfully. Insertion still never
+        // fails: synthesis only produces CONTAINER pockets, so gunmods, magazines
+        // and corpse contents have nowhere that would accept them, and capacity
+        // limits are still enforced by the callers that enforced them before
+        // pockets existed. Ranking by priority and rejecting what fits nowhere
+        // belongs with best_pocket() in a later phase.
+        item_pocket *target = &pockets.front();
+        for( item_pocket &pocket : pockets ) {
+            // NOLINTNEXTLINE(bugprone-use-after-move)
+            if( pocket.can_contain( *it ).success() ) {
+                target = &pocket;
+                break;
+            }
+        }
         // NOLINTNEXTLINE(bugprone-use-after-move)
-        pockets.front().insert( std::move( it ) );
+        target->insert( std::move( it ) );
     }
 
     if( owner != nullptr ) {

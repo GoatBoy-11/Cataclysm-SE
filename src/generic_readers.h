@@ -358,6 +358,14 @@ class mass_reader : public unit_reader<units::mass>
         {}
 };
 
+class length_reader : public unit_reader<units::length>
+{
+    public:
+        length_reader()
+            : unit_reader( units::length_units )
+        {}
+};
+
 class temperature_reader : public unit_reader<units::temperature>
 {
     public:
