@@ -32,6 +32,13 @@ template <typename T> class value_ptr;
 
 bool item_is_blacklisted( const itype_id &id );
 
+/**
+ * Human-readable listing of which pockets every loaded item type ended up with,
+ * and whether each was authored in JSON or invented by legacy synthesis. Summary
+ * counts first, then one block per item. Used by the pocket coverage debug command.
+ */
+std::string pocket_coverage_report();
+
 using Item_list = std::vector<item *>;
 
 class Item_factory;

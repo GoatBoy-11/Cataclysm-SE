@@ -55,6 +55,7 @@
 #include "input.h"
 #include "inventory.h"
 #include "item.h"
+#include "item_factory.h"
 #include "item_group.h"
 #include "json.h"
 #include "json_export.h"
@@ -181,6 +182,7 @@ enum debug_menu_index {
     DEBUG_MAP_EXTRA,
     DEBUG_DISPLAY_NPC_PATH,
     DEBUG_PRINT_FACTION_INFO,
+    DEBUG_POCKET_COVERAGE,
     DEBUG_PRINT_NPC_MAGIC,
     DEBUG_QUIT_NOSAVE,
     DEBUG_LUA_CONSOLE,
@@ -275,6 +277,7 @@ static int info_uilist( bool display_all_entries = true )
             { uilist_entry( DEBUG_RELOAD_TRANSLATIONS, true, 'L', _( "Reload translations" ) ) },
             { uilist_entry( DEBUG_DISPLAY_NPC_PATH, true, 'n', _( "Toggle NPC pathfinding on map" ) ) },
             { uilist_entry( DEBUG_PRINT_FACTION_INFO, true, 'f', _( "Print faction info to console" ) ) },
+            { uilist_entry( DEBUG_POCKET_COVERAGE, true, 'p', _( "Write pocket coverage report" ) ) },
             { uilist_entry( DEBUG_PRINT_NPC_MAGIC, true, 'M', _( "Print NPC magic info to console" ) ) },
             { uilist_entry( DEBUG_TEST_WEATHER, true, 'W', _( "Test weather" ) ) },
             { uilist_entry( DEBUG_TEST_MAP_EXTRA_DISTRIBUTION, true, 'e', _( "Test map extra list" ) ) },
@@ -2171,6 +2174,19 @@ void debug()
         case DEBUG_DISPLAY_NPC_PATH:
             g->debug_pathfinding = !g->debug_pathfinding;
             break;
+        case DEBUG_POCKET_COVERAGE: {
+            const std::string path = PATH_INFO::config_dir() + "pocket_coverage.txt";
+            std::ofstream out( path );
+            if( out ) {
+                out << pocket_coverage_report();
+                out.close();
+                popup( _( "Pocket coverage report written to %s" ), path );
+            } else {
+                popup( _( "Could not write %s" ), path );
+            }
+            break;
+        }
+
         case DEBUG_PRINT_FACTION_INFO: {
             int count = 0;
             for( const auto &elem : g->faction_manager_ptr->all() ) {

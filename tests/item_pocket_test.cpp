@@ -6,6 +6,7 @@
 #include "detached_ptr.h"
 #include "item.h"
 #include "item_pocket.h"
+#include "item_factory.h"
 #include "itype.h"
 #include "json.h"
 #include "ret_val.h"
@@ -278,6 +279,32 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
 
     CHECK( first.size() == 1 );
     CHECK( first.front() == before );
+}
+
+TEST_CASE( "the_pocket_coverage_report_describes_loaded_items", "[item][pocket][coverage]" )
+{
+    const std::string report = pocket_coverage_report();
+
+    REQUIRE_FALSE( report.empty() );
+    CHECK( report.find( "Pocket coverage" ) != std::string::npos );
+    // A synthesized container and an authored multi-pocket item both appear.
+    CHECK( report.find( "backpack" ) != std::string::npos );
+    CHECK( report.find( "test_two_pocket_bag" ) != std::string::npos );
+    // Both provenances are represented.
+    CHECK( report.find( "synthesized" ) != std::string::npos );
+    CHECK( report.find( "authored" ) != std::string::npos );
+}
+
+TEST_CASE( "synthesized_and_authored_pockets_are_labelled_correctly",
+           "[item][pocket][coverage]" )
+{
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    REQUIRE( backpack->contents.get_pockets().size() == 1 );
+    CHECK( backpack->contents.get_pockets().front().definition().synthesized );
+
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    REQUIRE( bag->contents.get_pockets().size() == 2 );
+    CHECK_FALSE( bag->contents.get_pockets().front().definition().synthesized );
 }
 
 // ---------------------------------------------------------------------------

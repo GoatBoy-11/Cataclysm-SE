@@ -223,6 +223,7 @@ static void synthesize_special_pockets_from_legacy( itype &def )
         // Contents of these are already accounted for by item::volume(), which
         // adds a magazine's volume separately.
         pocket.rigid = true;
+        pocket.synthesized = true;
         def.pockets.push_back( pocket );
     };
 
@@ -291,7 +292,61 @@ static void synthesize_pockets_from_legacy( itype &def )
         return;
     }
 
+    pocket.synthesized = true;
     def.pockets.push_back( pocket );
+}
+
+std::string pocket_coverage_report()
+{
+    std::map<pocket_type, int> pockets_by_type;
+    int items_total = 0;
+    int items_with_pockets = 0;
+    int items_authored = 0;
+    int items_synthesized = 0;
+    std::string lines;
+
+    for( const itype *def : item_controller->all() ) {
+        items_total++;
+        if( def->pockets.empty() ) {
+            continue;
+        }
+        items_with_pockets++;
+
+        bool any_authored = false;
+        std::string detail;
+        for( const pocket_data &pocket : def->pockets ) {
+            pockets_by_type[pocket.type]++;
+            if( !pocket.synthesized ) {
+                any_authored = true;
+            }
+            detail += string_format( "    %-14s %-11s %d ml\n",
+                                     io::enum_to_string<pocket_type>( pocket.type ),
+                                     pocket.synthesized ? "synthesized" : "authored",
+                                     units::to_milliliter( pocket.max_contains_volume ) );
+        }
+        if( any_authored ) {
+            items_authored++;
+        } else {
+            items_synthesized++;
+        }
+        lines += string_format( "%s (%d)\n%s", def->get_id().str(),
+                                static_cast<int>( def->pockets.size() ), detail );
+    }
+
+    std::string report = string_format(
+                             "Pocket coverage\n"
+                             "  item types loaded:      %d\n"
+                             "  with at least a pocket: %d\n"
+                             "  all pockets synthesized: %d\n"
+                             "  some pockets authored:   %d\n",
+                             items_total, items_with_pockets, items_synthesized, items_authored );
+    for( const auto &entry : pockets_by_type ) {
+        report += string_format( "  %-14s %d\n", io::enum_to_string<pocket_type>( entry.first ),
+                                 entry.second );
+    }
+    report += "\n";
+    report += lines;
+    return report;
 }
 
 void Item_factory::finalize_pre( itype &obj )

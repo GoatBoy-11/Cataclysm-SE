@@ -44,6 +44,12 @@ struct pocket_data {
     float spoil_multiplier = 1.0f;
     int moves = 100;
 
+    /**
+     * True when this pocket was invented by legacy synthesis rather than authored
+     * in JSON. Reported by the pocket coverage listing; never serialized.
+     */
+    bool synthesized = false;
+
     void load( const JsonObject &jo );
     void deserialize( JsonIn &jsin );
 };
