@@ -68,9 +68,11 @@ bool item::item_has_uses_recursive() const
 
 bool item_contents::item_has_uses_recursive() const
 {
-    for( const item * const &it : items ) {
-        if( it->item_has_uses_recursive() ) {
-            return true;
+    for( const item_pocket &pocket : pockets ) {
+        for( const item * const &it : pocket.all_items_top() ) {
+            if( it->item_has_uses_recursive() ) {
+                return true;
+            }
         }
     }
     return false;

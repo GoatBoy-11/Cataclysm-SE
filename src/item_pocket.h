@@ -54,9 +54,26 @@ class item_pocket
         };
 
         item_pocket( item *owner, const pocket_data *data );
+        /**
+         * Needed so pockets can live in a std::vector. location_vector has no
+         * move constructor, and its move assignment dereferences the target's
+         * location, so a fresh contents_item_location must exist beforehand.
+         */
+        item_pocket( item_pocket &&other ) noexcept;
+        item_pocket( const item_pocket & ) = delete;
+        item_pocket &operator=( const item_pocket & ) = delete;
+        item_pocket &operator=( item_pocket && ) = delete;
 
         bool empty() const;
         const std::vector<item *> &all_items_top() const;
+
+        /** direct access for the visitable machinery, which needs the vector itself */
+        location_vector<item> &get_contents() {
+            return contents;
+        }
+        const location_vector<item> &get_contents() const {
+            return contents;
+        }
 
         units::volume contents_volume() const;
         units::volume remaining_volume() const;
@@ -74,6 +91,7 @@ class item_pocket
         }
 
     private:
+        item *owner;
         const pocket_data *data;
         location_vector<item> contents;
 };

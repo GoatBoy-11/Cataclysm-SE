@@ -75,3 +75,33 @@ TEST_CASE( "removing_an_item_empties_the_pocket", "[item][pocket]" )
     CHECK( pocket.empty() );
     CHECK( pocket.contents_volume() == 0_ml );
 }
+
+TEST_CASE( "item_contents_round_trips_through_a_single_pocket", "[item][pocket][contents]" )
+{
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    item *raw = sugar.get();
+
+    REQUIRE( backpack->contents.empty() );
+
+    ret_val<bool> inserted = backpack->contents.insert_item( std::move( sugar ) );
+    REQUIRE( inserted.success() );
+
+    CHECK_FALSE( backpack->contents.empty() );
+    CHECK( backpack->contents.all_items_top().size() == 1 );
+    CHECK( backpack->contents.all_items_top().front() == raw );
+    CHECK( backpack->contents.num_item_stacks() == 1 );
+
+    detached_ptr<item> taken = backpack->contents.remove_top( raw );
+
+    CHECK( taken );
+    CHECK( backpack->contents.empty() );
+}
+
+TEST_CASE( "item_contents_exposes_exactly_one_pocket_in_phase_one", "[item][pocket][contents]" )
+{
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+
+    CHECK( backpack->contents.get_pockets().size() == 1 );
+    CHECK( backpack->contents.get_pockets().front().definition().type == pocket_type::CONTAINER );
+}

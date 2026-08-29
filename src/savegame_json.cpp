@@ -177,12 +177,15 @@ static void deserialize( weak_ptr_fast<monster> &obj, JsonIn &jsin )
     //    }
 }
 
+// TODO: phase 1 keeps the pre-pocket save format exactly, reading and writing
+// only the single pocket every item has. The pocket-aware format lands with the
+// savegame version bump.
 void item_contents::serialize( JsonOut &json ) const
 {
-    if( !items.empty() ) {
+    if( !empty() ) {
         json.start_object();
 
-        json.member( "items", items );
+        json.member( "items", pockets.front().get_contents() );
 
         json.end_object();
     }
@@ -192,7 +195,7 @@ void item_contents::deserialize( JsonIn &jsin )
 {
     JsonObject data = jsin.get_object();
     data.allow_omitted_members();
-    data.read( "items", items );
+    data.read( "items", pockets.front().get_contents() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -7,7 +7,16 @@
 #include "translations.h"
 
 item_pocket::item_pocket( item *owner, const pocket_data *data )
-    : data( data ), contents( new contents_item_location( owner ) ) {}
+    : owner( owner ), data( data ), contents( new contents_item_location( owner ) ) {}
+
+item_pocket::item_pocket( item_pocket &&other ) noexcept
+    : owner( other.owner ), data( other.data ),
+      contents( new contents_item_location( other.owner ) )
+{
+    // Must happen after contents has a location: location_vector's move
+    // assignment repoints every item at the *target's* location.
+    contents = std::move( other.contents );
+}
 
 bool item_pocket::empty() const
 {

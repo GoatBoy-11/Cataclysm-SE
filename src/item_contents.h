@@ -12,6 +12,7 @@
 #include "units.h"
 #include "visitable.h"
 #include "location_vector.h"
+#include "item_pocket.h"
 
 class Character;
 class JsonIn;
@@ -113,13 +114,23 @@ class item_contents
         void deserialize( JsonIn &jsin );
 
         void on_destroy();
+
+        /** later phases operate on pockets directly; phase 1 has exactly one */
+        std::vector<item_pocket> &get_pockets() {
+            return pockets;
+        }
+        const std::vector<item_pocket> &get_pockets() const {
+            return pockets;
+        }
     private:
         auto update_processing_cache() const -> void;
 
         item *owner;
-        location_vector<item> items;
+        pocket_data default_pocket_data;
+        std::vector<item_pocket> pockets;
         mutable bool processing_cache_dirty = true;
         mutable std::vector<item *> cached_processing_items;
+        mutable std::vector<item *> cached_all_items_top;
 };
 
 

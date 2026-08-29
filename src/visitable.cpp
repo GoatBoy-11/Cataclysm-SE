@@ -468,12 +468,14 @@ static VisitResponse visit_internal( const std::function<VisitResponse( item *, 
 VisitResponse item_contents::visit_contents( const std::function<VisitResponse( item *, item * )>
         &func, item *parent )
 {
-    for( item *&e : items ) {
-        switch( visit_internal( func, e, parent ) ) {
-            case VisitResponse::ABORT:
-                return VisitResponse::ABORT;
-            default:
-                break;
+    for( item_pocket &pocket : pockets ) {
+        for( item *&e : pocket.get_contents() ) {
+            switch( visit_internal( func, e, parent ) ) {
+                case VisitResponse::ABORT:
+                    return VisitResponse::ABORT;
+                default:
+                    break;
+            }
         }
     }
     return VisitResponse::NEXT;
@@ -668,9 +670,19 @@ detached_ptr<item> location_visitable<T>::remove_item( item &it )
 void item_contents::remove_items_with( const std::function < VisitResponse(
         detached_ptr<item> && ) > &filter )
 {
-    const auto old_size = items.size();
-    const auto processing_changed = visit_internal( filter, items );
-    if( items.size() == old_size && !processing_changed ) {
+    size_t old_size = 0;
+    for( const item_pocket &pocket : pockets ) {
+        old_size += pocket.all_items_top().size();
+    }
+    bool processing_changed = false;
+    for( item_pocket &pocket : pockets ) {
+        processing_changed |= visit_internal( filter, pocket.get_contents() );
+    }
+    size_t new_size = 0;
+    for( const item_pocket &pocket : pockets ) {
+        new_size += pocket.all_items_top().size();
+    }
+    if( new_size == old_size && !processing_changed ) {
         return;
     }
     if( owner != nullptr ) {
