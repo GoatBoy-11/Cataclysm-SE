@@ -30,6 +30,7 @@ CSE wants CDDA's pocket system, with three constraints:
 | Optionality | Degenerate runtime mode, not a second container model |
 | Save compatibility | Migrate on load |
 | Port strategy | Reimplement behind CBN's existing `item_contents` seam |
+| Mod item richness | Curated base items first; JSON pocket templates only if coverage falls short |
 
 ### Why a faithful port
 
@@ -155,6 +156,60 @@ part of CDDA's design — a backpack's separate water-bottle holster and
 tucked-behind-back sheath exist only because someone authored them. Synthesis
 guarantees correctness and compatibility, not richness. Richness comes from the
 curated set and from CDDA content.
+
+## Pocket templates
+
+Synthesis gives a legacy item one generic pocket. Templates are the mechanism
+for giving recognisable *kinds* of item a richer, plausible pocket set without
+their author writing `pocket_data`.
+
+### Do the curated items first
+
+251 files under `data/mods/` use `copy-from`. Mod authors overwhelmingly define
+a custom backpack as `"copy-from": "backpack"` plus a few overrides, and
+`copy-from` propagates `pocket_data` like any other field.
+
+**Authoring pockets on base-game items therefore covers descended mod items for
+free, with no template machinery at all.** Curate first, then measure how many
+mod items remain uncovered. That number decides how much of the rest of this
+section is worth building.
+
+### Match precedence
+
+Templates resolve in strict order; the first match wins and stops.
+
+| Priority | Key | Rationale |
+|---|---|---|
+| 1 | Authored `pocket_data` | Explicit always wins |
+| 2 | `copy-from` ancestry | Free, precise, matches how mods are written |
+| 3 | Opt-in `"pocket_template": "backpack"` | Zero guessing; costs the author one line |
+| 4 | Flags and `itype_id` patterns | Machine-stable; ids beat display names |
+| 5 | Volume thresholds | Crude, but never wrong about what the item *is* |
+| 6 | Name substring | Last resort, only as a deliberately written rule |
+
+### Why name matching ranks last
+
+It was the original proposal and is retained only as a fallback. Substring
+matching cuts both ways: `backpack` catches `backpack frame` and `empty
+backpack`, which should not gain pockets, while `rucksack`, `knapsack` and
+`daypack` all miss. Display names are also the field mod authors vary most and
+change most often, where `itype_id` is near-stable.
+
+### Rules live in JSON, not C++
+
+Templates are declared in `data/json/pocket_templates.json`, which mods may
+extend or override. A wrong template is then fixable without a recompile, and
+mod authors can correct their own items.
+
+### Two non-negotiables
+
+**Conservative by default.** A template granting generous pockets to a guessed
+item is a balance bug wearing the costume of a feature. Under-grant and let
+authors opt in.
+
+**Every match must be inspectable.** A debug command listing *item X received
+pockets from rule Y* for every loaded item. Without it a mis-fired template is
+unfindable, and the only symptom is a backpack that feels subtly wrong.
 
 ## Classic mode
 
