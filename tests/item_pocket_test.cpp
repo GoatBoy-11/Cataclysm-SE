@@ -178,3 +178,26 @@ TEST_CASE( "a_legacy_flat_contents_array_loads_into_the_first_pocket", "[item][p
     CHECK( backpack->contents.all_items_top().size() == 1 );
     CHECK( backpack->contents.get_pockets().front().all_items_top().size() == 1 );
 }
+
+// A whole item as a pre-pocket save wrote it: "contents" is an object holding a
+// flat "items" array. Exercises item::deserialize's branch into the legacy path.
+TEST_CASE( "an_item_saved_before_pockets_keeps_its_contents", "[item][pocket][save]" )
+{
+    const std::string legacy =
+        R"([ { "typeid": "backpack", "contents": { "items": [ { "typeid": "sugar" } ] } } ])";
+    std::istringstream is( legacy );
+    JsonIn ji( is );
+
+    std::vector<detached_ptr<item>> loaded;
+    REQUIRE( ji.read( loaded ) );
+
+    REQUIRE( loaded.size() == 1 );
+    REQUIRE( loaded.front()->typeId() == itype_id( "backpack" ) );
+    CHECK( loaded.front()->contents.all_items_top().size() == 1 );
+    CHECK( loaded.front()->contents.all_items_top().front()->typeId() == itype_id( "sugar" ) );
+}
+
+// NOTE: an end-to-end g->save()/g->load() test was tried here and removed. A
+// successful load mid-suite replaces the world and avatar, and the surrounding
+// tests do not survive it (146 failures and a Lua panic). The plan's manual
+// save-and-reload check stays manual.
