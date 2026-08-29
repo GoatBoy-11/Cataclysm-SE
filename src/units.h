@@ -10,6 +10,7 @@
 
 #include "units_angle.h"
 #include "units_volume.h"
+#include "units_length.h"
 #include "units_mass.h"
 #include "units_energy.h"
 #include "units_money.h"
@@ -31,6 +32,11 @@ inline std::ostream &operator<<( std::ostream &o, mass_in_milligram_tag )
 inline std::ostream &operator<<( std::ostream &o, volume_in_milliliter_tag )
 {
     return o << "ml";
+}
+
+inline std::ostream &operator<<( std::ostream &o, length_in_millimeter_tag )
+{
+    return o << "mm";
 }
 
 inline std::ostream &operator<<( std::ostream &o, energy_in_joule_tag )
