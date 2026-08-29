@@ -1,11 +1,14 @@
 #include "catch/catch.hpp"
 
+#include <sstream>
 #include <utility>
 
 #include "detached_ptr.h"
 #include "item.h"
 #include "item_pocket.h"
+#include "json.h"
 #include "ret_val.h"
+#include "type_id.h"
 #include "units.h"
 
 TEST_CASE( "empty_pocket_reports_empty_and_full_remaining_volume", "[item][pocket]" )
@@ -104,4 +107,51 @@ TEST_CASE( "item_contents_exposes_exactly_one_pocket_in_phase_one", "[item][pock
 
     CHECK( backpack->contents.get_pockets().size() == 1 );
     CHECK( backpack->contents.get_pockets().front().definition().type == pocket_type::CONTAINER );
+}
+
+TEST_CASE( "pocket_contents_survive_a_serialization_round_trip", "[item][pocket][save]" )
+{
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    backpack->contents.insert_item( item::spawn( "sugar" ) );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    backpack->contents.serialize( jo );
+
+    detached_ptr<item> restored = item::spawn( "backpack" );
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    restored->contents.deserialize( ji );
+
+    CHECK( restored->contents.all_items_top().size() == 1 );
+    CHECK( restored->contents.all_items_top().front()->typeId() == itype_id( "sugar" ) );
+}
+
+TEST_CASE( "serialized_contents_use_the_pocket_format", "[item][pocket][save]" )
+{
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    backpack->contents.insert_item( item::spawn( "sugar" ) );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    backpack->contents.serialize( jo );
+
+    CHECK( os.str().find( "\"pockets\"" ) != std::string::npos );
+    CHECK( os.str().find( "\"pocket_type\"" ) != std::string::npos );
+}
+
+TEST_CASE( "a_legacy_flat_contents_array_loads_into_the_first_pocket", "[item][pocket][save]" )
+{
+    // The pre-pocket item_contents format: a bare "items" array. The plan named
+    // this key "contents", but that is the *item*-level ancient array, which
+    // item::deserialize already handles before item_contents ever sees it.
+    const std::string legacy = R"({ "items": [ { "typeid": "sugar" } ] })";
+
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    std::istringstream is( legacy );
+    JsonIn ji( is );
+    backpack->contents.deserialize( ji );
+
+    CHECK( backpack->contents.all_items_top().size() == 1 );
+    CHECK( backpack->contents.get_pockets().front().all_items_top().size() == 1 );
 }

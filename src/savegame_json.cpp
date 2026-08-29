@@ -177,15 +177,20 @@ static void deserialize( weak_ptr_fast<monster> &obj, JsonIn &jsin )
     //    }
 }
 
-// TODO: phase 1 keeps the pre-pocket save format exactly, reading and writing
-// only the single pocket every item has. The pocket-aware format lands with the
-// savegame version bump.
 void item_contents::serialize( JsonOut &json ) const
 {
     if( !empty() ) {
         json.start_object();
 
-        json.member( "items", pockets.front().get_contents() );
+        json.member( "pockets" );
+        json.start_array();
+        for( const item_pocket &pocket : pockets ) {
+            json.start_object();
+            json.member( "pocket_type", static_cast<int>( pocket.definition().type ) );
+            json.member( "contents", pocket.get_contents() );
+            json.end_object();
+        }
+        json.end_array();
 
         json.end_object();
     }
@@ -195,7 +200,34 @@ void item_contents::deserialize( JsonIn &jsin )
 {
     JsonObject data = jsin.get_object();
     data.allow_omitted_members();
-    data.read( "items", pockets.front().get_contents() );
+
+    if( data.has_array( "pockets" ) ) {
+        size_t index = 0;
+        for( JsonObject jo : data.get_array( "pockets" ) ) {
+            jo.allow_omitted_members();
+            // Read into a temporary: JsonIn::read( location_vector & ) clears the
+            // target first, which would discard anything already placed.
+            std::vector<detached_ptr<item>> read_items;
+            jo.read( "contents", read_items );
+            // A save can carry more pockets than the itype now defines, e.g. after
+            // an item is edited or a mod is dropped. Fold the overflow into pocket
+            // 0 rather than letting those items vanish.
+            item_pocket &target = index < pockets.size() ? pockets[index] : pockets.front();
+            for( detached_ptr<item> &it : read_items ) {
+                target.insert( std::move( it ) );
+            }
+            index++;
+        }
+        return;
+    }
+
+    // Pre-pocket saves store a bare item array under "items". Everything lands
+    // in pocket 0. Phase 3 redistributes via best_pocket().
+    std::vector<detached_ptr<item>> legacy_items;
+    data.read( "items", legacy_items );
+    for( detached_ptr<item> &it : legacy_items ) {
+        pockets.front().insert( std::move( it ) );
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
