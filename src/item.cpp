@@ -284,11 +284,11 @@ struct scoped_goes_bad_cache {
 
 const int item::INFINITE_CHARGES = INT_MAX;
 
-item::item() : contents( this ),
+// type must precede contents: item_contents builds its pockets from type.
+item::item() : type( nullitem() ), contents( this ),
     components( new component_item_location( this ) ),
     bday( calendar::start_of_cataclysm )
 {
-    type = nullitem();
     charges = 0;
 }
 
@@ -452,12 +452,13 @@ item::item( const recipe *rec, int qty, std::vector<detached_ptr<item>> &&items,
     }
 }
 
-item::item( const item &source ) : game_object<item>( source ), contents( this ),
+// type must precede contents: item_contents builds its pockets from type.
+item::item( const item &source ) : game_object<item>( source ), type( source.type ),
+    contents( this ),
     components( new component_item_location( this ) )
 {
     //TODO!: back to defaults
     //Awful copy block, this can be avoided with equally awful inheritance shenanigans but...
-    type = source.type;
     faults = source.faults;
     item_tags = source.item_tags;
     curammo = source.curammo;

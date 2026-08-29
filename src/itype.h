@@ -21,6 +21,7 @@
 #include "explosion.h"
 #include "game_constants.h"
 #include "hsv_color.h"
+#include "item_pocket.h"
 #include "iuse.h" // use_function
 #include "mapdata.h"
 #include "pldata.h" // add_type
@@ -917,6 +918,13 @@ struct itype {
         using FlagsSetType = std::set<flag_id>;
 
         std::vector<std::pair<itype_id, mod_id>> src;
+
+        /**
+         * Pockets this item type provides. Synthesized from the legacy container
+         * and armor storage fields during finalization; authored pocket_data will
+         * populate this directly once JSON loading lands.
+         */
+        std::vector<pocket_data> pockets;
 
         LUA_TYPE_OPS( itype, id );
 

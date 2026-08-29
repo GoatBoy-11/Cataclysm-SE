@@ -6,6 +6,7 @@
 #include "detached_ptr.h"
 #include "item.h"
 #include "item_pocket.h"
+#include "itype.h"
 #include "json.h"
 #include "ret_val.h"
 #include "type_id.h"
@@ -107,6 +108,28 @@ TEST_CASE( "item_contents_exposes_exactly_one_pocket_in_phase_one", "[item][pock
 
     CHECK( backpack->contents.get_pockets().size() == 1 );
     CHECK( backpack->contents.get_pockets().front().definition().type == pocket_type::CONTAINER );
+}
+
+TEST_CASE( "a_container_gains_one_pocket_sized_from_its_legacy_storage",
+           "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> bottle = item::spawn( "bottle_plastic" );
+    const std::vector<item_pocket> &pockets = bottle->contents.get_pockets();
+
+    REQUIRE( pockets.size() == 1 );
+    CHECK( pockets.front().definition().type == pocket_type::CONTAINER );
+    CHECK( pockets.front().definition().watertight );
+    CHECK( pockets.front().remaining_volume() == bottle->type->container->contains );
+}
+
+TEST_CASE( "worn_storage_synthesizes_a_non_rigid_pocket", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    const std::vector<item_pocket> &pockets = backpack->contents.get_pockets();
+
+    REQUIRE( pockets.size() == 1 );
+    CHECK_FALSE( pockets.front().definition().rigid );
+    CHECK( pockets.front().remaining_volume() == backpack->type->armor->storage );
 }
 
 TEST_CASE( "pocket_contents_survive_a_serialization_round_trip", "[item][pocket][save]" )

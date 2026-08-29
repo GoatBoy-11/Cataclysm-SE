@@ -17,11 +17,19 @@ struct tripoint;
 
 item_contents::item_contents( item *container ) : owner( container )
 {
-    // Phase 1 gives every item exactly one effectively unbounded pocket, so
-    // behaviour matches the flat item list this replaced. Task 4 swaps this
-    // for the itype's real capacity.
+    // The pocket_data pointers stay valid because itype::pockets is filled
+    // during finalization and never mutated afterwards.
+    if( container != nullptr && container->type != nullptr &&
+        !container->type->pockets.empty() ) {
+        for( const pocket_data &data : container->type->pockets ) {
+            pockets.emplace_back( container, &data );
+        }
+        return;
+    }
+    // Items with no storage at all still get one pocket, so every fan-out
+    // method has something to iterate.
     default_pocket_data.type = pocket_type::CONTAINER;
-    default_pocket_data.max_contains_volume = units::from_liter( 100000 );
+    default_pocket_data.max_contains_volume = 0_ml;
     pockets.emplace_back( container, &default_pocket_data );
 }
 
@@ -100,11 +108,12 @@ ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
     }
 
     if( !stacked ) {
-        // NOLINTNEXTLINE(bugprone-use-after-move)
-        ret_val<item_pocket::contain_code> ok = pockets.front().can_contain( *it );
-        if( !ok.success() ) {
-            return ret_val<bool>::make_failure( false, ok.str() );
-        }
+        // Phase 1 deliberately does not enforce can_contain() here. Synthesis
+        // only produces CONTAINER pockets, so gunmods, magazines and corpse
+        // contents have nowhere that would accept them, and capacity limits are
+        // still enforced by the callers that enforced them before pockets
+        // existed. Enforcement belongs with best_pocket() and the MOD /
+        // MAGAZINE / CORPSE pockets in a later phase.
         // NOLINTNEXTLINE(bugprone-use-after-move)
         pockets.front().insert( std::move( it ) );
     }

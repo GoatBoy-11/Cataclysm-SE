@@ -195,8 +195,60 @@ auto defmode_name( itype &obj )
 
 } //namespace
 
+/** CDDA's predicate: true when nothing here is a general-purpose container pocket. */
+static bool has_only_special_pockets( const itype &def )
+{
+    if( def.pockets.empty() ) {
+        return true;
+    }
+    for( const pocket_data &pocket : def.pockets ) {
+        if( pocket.type == pocket_type::CONTAINER ) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Give items that predate pocket_data a pocket built from their legacy storage
+ * fields, so CBN base content and every CBN mod gain working pockets with no
+ * JSON changes.
+ */
+static void synthesize_pockets_from_legacy( itype &def )
+{
+    if( !has_only_special_pockets( def ) ) {
+        if( def.container || ( def.armor && def.armor->storage > 0_ml ) ) {
+            debugmsg( "%s defines both legacy storage and pocket_data; pocket_data wins.",
+                      def.get_id().str() );
+        }
+        return;
+    }
+
+    pocket_data pocket;
+    pocket.type = pocket_type::CONTAINER;
+
+    if( def.container ) {
+        pocket.max_contains_volume = def.container->contains;
+        pocket.watertight = def.container->watertight;
+        pocket.sealed = def.container->seals;
+        pocket.rigid = true;
+        if( def.container->preserves ) {
+            pocket.spoil_multiplier = 0.0f;
+        }
+    } else if( def.armor && def.armor->storage > 0_ml ) {
+        pocket.max_contains_volume = def.armor->storage;
+        pocket.rigid = false;
+    } else {
+        return;
+    }
+
+    def.pockets.push_back( pocket );
+}
+
 void Item_factory::finalize_pre( itype &obj )
 {
+    synthesize_pockets_from_legacy( obj );
+
     // TODO: separate repairing from reinforcing/enhancement
     if( obj.damage_max() == obj.damage_min() ) {
         obj.item_tags.insert( flag_NO_REPAIR );
