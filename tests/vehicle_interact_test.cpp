@@ -76,7 +76,7 @@ TEST_CASE("repair_vehicle_part") {
     SECTION("UPS_modded_welder") {
         std::vector<detached_ptr<item>> tools;
         detached_ptr<item> welder = item::spawn("welder", bday, 0);
-        welder->put_in_unchecked(item::spawn("battery_ups"));
+        welder->put_in_expected(item::spawn("battery_ups"));
         tools.push_back(std::move(welder));
         tools.push_back(item::spawn("UPS_off", bday, 500));
         tools.push_back(item::spawn("goggles_welding"));
@@ -99,7 +99,7 @@ TEST_CASE("repair_vehicle_part") {
     SECTION("UPS_modded_welder_missing_charges") {
         std::vector<detached_ptr<item>> tools;
         detached_ptr<item> welder = item::spawn("welder", bday, 0);
-        welder->put_in_unchecked(item::spawn("battery_ups"));
+        welder->put_in_expected(item::spawn("battery_ups"));
         tools.push_back(std::move(welder));
         tools.push_back(item::spawn("UPS_off", bday, 5));
         tools.push_back(item::spawn("goggles_welding"));

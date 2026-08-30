@@ -251,7 +251,7 @@ TEST_CASE("visitable_remove", "[visitable]") {
 
         WHEN("a hip flask containing water is worn") {
             detached_ptr<item> flask = item::spawn(worn_id);
-            flask->put_in_unchecked(item::spawn(
+            flask->put_in_expected(item::spawn(
                 liquid_id, calendar::turn,
                 temp_liquid.charges_per_volume(obj.get_container_capacity())));
             p.wear_item(std::move(flask));

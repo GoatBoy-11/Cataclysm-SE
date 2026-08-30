@@ -589,15 +589,18 @@ TEST_CASE( "put_in_hands_back_a_refused_item", "[item][pocket][enforce]" )
     CHECK( mag->contents.empty() );
 }
 
-TEST_CASE( "put_in_unchecked_still_never_loses_an_item", "[item][pocket][enforce]" )
+// The machinery that must never drop an item - save migration, copy
+// construction - forces its way in rather than accepting a refusal.
+TEST_CASE( "a_forced_insertion_never_loses_an_item", "[item][pocket][enforce]" )
 {
     detached_ptr<item> mag = item::spawn( "glockmag" );
     detached_ptr<item> sugar = item::spawn( "sugar" );
     sugar->charges = 1;
+    REQUIRE_FALSE( mag->contents.get_pockets().front().can_contain( *sugar ).success() );
 
-    mag->put_in_unchecked( std::move( sugar ) );
+    mag->contents.insert_item_forced( std::move( sugar ) );
 
-    // Forced into pocket 0 rather than rejected or destroyed.
+    // Into pocket 0 rather than rejected or destroyed.
     CHECK( mag->contents.all_items_top().size() == 1 );
 }
 
@@ -1348,4 +1351,43 @@ TEST_CASE( "the_built_in_mod_pocket_takes_nothing_else", "[item][pocket][synthes
                  mod->type->gunmod->location ) == 0 );
 
     CHECK_FALSE( gun->contents.insert_item( std::move( mod ) ).success() );
+}
+
+// A caliber conversion rewrites which magazines a gun takes. The magazine well
+// was built from the gun's own list, before any mod existed, so it has to ask
+// the gun as it is now rather than as it was defined.
+TEST_CASE( "a_converted_gun_accepts_its_conversion_magazines", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> gun = item::spawn( "smg_luty" );
+    detached_ptr<item> mag = item::spawn( "smg_40_mag" );
+    mag->contents.clear_items();
+    REQUIRE_FALSE( gun->contents.insert_item( std::move( mag ) ).success() );
+
+    detached_ptr<item> converted = item::spawn( "smg_luty" );
+    converted->put_in_expected( item::spawn( "retool_luty_40" ) );
+    REQUIRE( converted->magazine_compatible().count( itype_id( "smg_40_mag" ) ) == 1 );
+
+    detached_ptr<item> mag2 = item::spawn( "smg_40_mag" );
+    mag2->contents.clear_items();
+    CHECK( converted->contents.insert_item( std::move( mag2 ) ).success() );
+}
+
+// The handmade carbine is defined with an internal clip and so has no magazine
+// well at all; its BAR magazine adapter still has to leave the magazine
+// somewhere in the gun.
+TEST_CASE( "an_adapter_gives_an_internal_clip_gun_somewhere_for_its_magazine",
+           "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> gun = item::spawn( "handmade_carbine" );
+    detached_ptr<item> mag = item::spawn( "m1918mag" );
+    mag->contents.clear_items();
+    REQUIRE_FALSE( gun->contents.insert_item( std::move( mag ) ).success() );
+
+    detached_ptr<item> adapted = item::spawn( "handmade_carbine" );
+    adapted->put_in_expected( item::spawn( "hc_bar_mag_adapter" ) );
+    REQUIRE( adapted->magazine_compatible().count( itype_id( "m1918mag" ) ) == 1 );
+
+    detached_ptr<item> mag2 = item::spawn( "m1918mag" );
+    mag2->contents.clear_items();
+    CHECK( adapted->contents.insert_item( std::move( mag2 ) ).success() );
 }

@@ -101,7 +101,7 @@
     "charges_per_use": 1,
     "flags": [ "WEATHER_FORECAST" ],
     "use_action": [ "RADIO_OFF", "WEATHER_TOOL" ],
-    "magazines": [ [ "battery", [ "light_disposable_cell", "light_battery_cell" ] ] ],
+    "magazines": [ [ "battery", [ "light_disposable_cell", "light_battery_cell", "light_plus_battery_cell" ] ] ],
     "magazine_well": "250 ml"
   },
   {

@@ -198,6 +198,6 @@ void arm_character(
         magazine.reload(shooter, ammo, magazine.ammo_capacity());
         gun.reload(shooter, magazine, magazine.ammo_capacity());
     }
-    for (const auto& mod : mods) { gun.put_in_unchecked(item::spawn(itype_id(mod))); }
+    for (const auto& mod : mods) { gun.put_in_expected(item::spawn(itype_id(mod))); }
     shooter.wield(gun);
 }

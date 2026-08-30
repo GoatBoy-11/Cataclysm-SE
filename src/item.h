@@ -905,17 +905,6 @@ class item : public location_visitable<item>, public game_object<item>
         [[nodiscard]] detached_ptr<item> put_in( detached_ptr<item> &&payload );
 
         /**
-         * put_in for call sites that have no way to handle refusal yet.
-         *
-         * Behaves exactly as put_in did before it could report refusal. Only the
-         * pre-existing null-payload and self-insertion errors can reach the
-         * discard today, and both already report themselves; no new item loss is
-         * introduced. Enabling pocket enforcement means giving each of these
-         * call sites a real answer - grep TODO(pocket-enforcement) for the list.
-         */
-        void put_in_unchecked( detached_ptr<item> &&payload );
-
-        /**
          * put_in for contents the item defines for itself - built-in gunmods, a
          * magazine's default ammo, an item placed in its own container. These
          * must fit by construction, so a refusal means the item's own data is

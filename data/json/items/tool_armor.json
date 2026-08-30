@@ -168,7 +168,7 @@
     "encumbrance": 15,
     "coverage": 80,
     "material_thickness": 4,
-    "magazines": [ [ "battery", [ "light_battery_cell" ] ] ],
+    "magazines": [ [ "battery", [ "light_battery_cell", "light_minus_disposable_cell" ] ] ],
     "magazine_well": "250 ml"
   },
   {
@@ -716,7 +716,7 @@
     "covers": [ "head" ],
     "coverage": 15,
     "material_thickness": 1,
-    "magazines": [ [ "battery", [ "light_battery_cell" ] ] ],
+    "magazines": [ [ "battery", [ "light_battery_cell", "light_disposable_cell" ] ] ],
     "magazine_well": "250 ml"
   },
   {
@@ -2771,7 +2771,7 @@
     "coverage": 10,
     "material_thickness": 2,
     "hearing_protection": 40,
-    "magazines": [ [ "battery", [ "light_plus_battery_cell", "light_battery_cell" ] ] ],
+    "magazines": [ [ "battery", [ "light_plus_battery_cell", "light_battery_cell", "light_disposable_cell" ] ] ],
     "magazine_well": "250 ml"
   },
   {
@@ -3124,7 +3124,7 @@
       "need_charges": 1,
       "need_charges_msg": "The mask's batteries are dead."
     },
-    "magazines": [ [ "battery", [ "medium_battery_cell" ] ] ],
+    "magazines": [ [ "battery", [ "medium_battery_cell", "medium_disposable_cell" ] ] ],
     "magazine_well": "500 ml",
     "valid_mods": [ "resized_large", "resized_small" ],
     "flags": [ "OUTER", "SUN_GLASSES" ]

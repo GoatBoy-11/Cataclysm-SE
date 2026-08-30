@@ -574,7 +574,9 @@
     "weight": "18 g",
     "volume": "5 ml",
     "to_hit": -3,
-    "category": "valuables"
+    "category": "valuables",
+    "//": "Software declares this as its container, so the drive needs a pocket to be one.  CDDA models this as an E_FILE_STORAGE pocket, which BN has no equivalent for yet.",
+    "pocket_data": [ { "pocket_type": "CONTAINER", "max_contains_volume": "10 ml", "max_contains_weight": "20 g", "rigid": true, "moves": 10 } ]
   },
   {
     "type": "GENERIC",

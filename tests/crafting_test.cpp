@@ -418,11 +418,11 @@ TEST_CASE("tools use charge to craft", "[crafting][charge]") {
 
         WHEN("UPS-modded tools have enough charges") {
             detached_ptr<item> hotplate = item::spawn("hotplate", calendar::start_of_cataclysm, 0);
-            hotplate->put_in_unchecked(item::spawn("battery_ups"));
+            hotplate->put_in_expected(item::spawn("battery_ups"));
             tools.push_back(std::move(hotplate));
             detached_ptr<item> soldering_iron =
                 item::spawn("soldering_iron", calendar::start_of_cataclysm, 0);
-            soldering_iron->put_in_unchecked(item::spawn("battery_ups"));
+            soldering_iron->put_in_expected(item::spawn("battery_ups"));
             tools.push_back(std::move(soldering_iron));
             tools.push_back(item::spawn("UPS_off", calendar::start_of_cataclysm, 500));
 
@@ -436,11 +436,11 @@ TEST_CASE("tools use charge to craft", "[crafting][charge]") {
 
         WHEN("UPS-modded tools do not have enough charges") {
             detached_ptr<item> hotplate = item::spawn("hotplate", calendar::start_of_cataclysm, 0);
-            hotplate->put_in_unchecked(item::spawn("battery_ups"));
+            hotplate->put_in_expected(item::spawn("battery_ups"));
             tools.push_back(std::move(hotplate));
             detached_ptr<item> soldering_iron =
                 item::spawn("soldering_iron", calendar::start_of_cataclysm, 0);
-            soldering_iron->put_in_unchecked(item::spawn("battery_ups"));
+            soldering_iron->put_in_expected(item::spawn("battery_ups"));
             tools.push_back(std::move(soldering_iron));
             tools.push_back(item::spawn("UPS_off", calendar::start_of_cataclysm, 10));
 
@@ -458,7 +458,7 @@ TEST_CASE("tool_use", "[crafting][tool]") {
         std::vector<detached_ptr<item>> tools;
         tools.push_back(item::spawn("hotplate", calendar::start_of_cataclysm, 20));
         detached_ptr<item> plastic_bottle = item::spawn("bottle_plastic");
-        plastic_bottle->put_in_unchecked(item::spawn("water", calendar::start_of_cataclysm, 2));
+        plastic_bottle->put_in_expected(item::spawn("water", calendar::start_of_cataclysm, 2));
         tools.push_back(std::move(plastic_bottle));
         tools.push_back(item::spawn("pot"));
 
@@ -469,12 +469,12 @@ TEST_CASE("tool_use", "[crafting][tool]") {
         std::vector<detached_ptr<item>> tools;
         tools.push_back(item::spawn("hotplate", calendar::start_of_cataclysm, 20));
         detached_ptr<item> plastic_bottle = item::spawn("bottle_plastic");
-        plastic_bottle->put_in_unchecked(item::spawn("water", calendar::start_of_cataclysm, 2));
+        plastic_bottle->put_in_expected(item::spawn("water", calendar::start_of_cataclysm, 2));
         tools.push_back(std::move(plastic_bottle));
         detached_ptr<item> jar = item::spawn("jar_glass");
         // If it's not watertight the water will spill.
         REQUIRE(jar->is_watertight_container());
-        jar->put_in_unchecked(item::spawn("water", calendar::start_of_cataclysm, 2));
+        jar->put_in_expected(item::spawn("water", calendar::start_of_cataclysm, 2));
         tools.push_back(std::move(jar));
 
         prep_craft(recipe_id("water_clean"), tools, false);

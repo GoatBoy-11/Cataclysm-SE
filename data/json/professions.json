@@ -3616,13 +3616,8 @@
           { "item": "bandolier_shotgun", "contents-group": "bandolier_swat_cqc1" },
           { "item": "bandolier_shotgun", "contents-group": "bandolier_swat_cqc2" },
           { "item": "legpouch_large", "contents-group": "army_mags_usp9" },
-          {
-            "item": "usp_9mm",
-            "ammo-item": "9mmfmj",
-            "charges": 15,
-            "container-item": "holster",
-            "contents-item": "pistol_lanyard"
-          },
+          { "item": "usp_9mm", "ammo-item": "9mmfmj", "charges": 15, "container-item": "holster" },
+          { "item": "pistol_lanyard" },
           { "item": "baton-extended", "container-item": "police_belt" },
           { "item": "ksg", "ammo-item": "shot_00", "charges": 7, "contents-item": "shoulder_strap" }
         ]
@@ -3665,13 +3660,8 @@
         ],
         "entries": [
           { "group": "charged_two_way_radio" },
-          {
-            "item": "usp_45",
-            "ammo-item": "45_acp",
-            "charges": 12,
-            "container-item": "holster",
-            "contents-item": "pistol_lanyard"
-          },
+          { "item": "usp_45", "ammo-item": "45_acp", "charges": 12, "container-item": "holster" },
+          { "item": "pistol_lanyard" },
           { "item": "legpouch_large", "contents-group": "army_mags_usp45" },
           { "item": "762_51", "charges": 20 },
           { "item": "M24", "ammo-item": "762_51", "charges": 20, "container-item": "back_holster" }
@@ -3718,13 +3708,8 @@
         ],
         "entries": [
           { "group": "charged_two_way_radio" },
-          {
-            "item": "usp_45",
-            "ammo-item": "45_acp",
-            "charges": 12,
-            "container-item": "holster",
-            "contents-item": "pistol_lanyard"
-          },
+          { "item": "usp_45", "ammo-item": "45_acp", "charges": 12, "container-item": "holster" },
+          { "item": "pistol_lanyard" },
           { "item": "legpouch_large", "contents-group": "army_mags_usp45" },
           { "item": "tonfa", "container-item": "police_belt" },
           { "group": "charged_tazer" }
@@ -6945,7 +6930,10 @@
     "items": {
       "both": {
         "items": [ "pants", "dress_shirt", "smart_phone", "blazer", "socks", "dress_shoes", "wristwatch", "pen", "mbag" ],
-        "entries": [ { "item": "light_disposable_cell", "ammo-item": "battery", "charges": 300, "container-item": "camera_pro" } ]
+        "entries": [
+          { "item": "camera_pro" },
+          { "item": "light_disposable_cell", "ammo-item": "battery", "charges": 300 }
+        ]
       },
       "male": [ "boxer_shorts" ],
       "female": [ "boy_shorts", "bra" ]
@@ -8310,7 +8298,8 @@
         ],
         "entries": [
           { "item": "smart_phone" },
-          { "item": "light_disposable_cell", "ammo-item": "battery", "charges": 300, "container-item": "camera_pro" },
+          { "item": "camera_pro" },
+          { "item": "light_disposable_cell", "ammo-item": "battery", "charges": 300 },
           {
             "item": "light_disposable_cell",
             "ammo-item": "battery",

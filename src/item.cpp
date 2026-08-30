@@ -1078,7 +1078,15 @@ detached_ptr<item> item::in_container( const itype_id &cont, detached_ptr<item> 
         detached_ptr<item> ret = item::spawn( cont, self->birthday() );
         ret->invlet = self->invlet;
         item &obj = *self;
-        ret->put_in_expected( std::move( self ) );
+        // A default container describes what one portion comes in, while a
+        // spawned stack can be many portions, so an overfull box here is a
+        // stack-size question rather than a fault in either definition. Keep
+        // the lot - clamping would quietly eat the surplus - and let the pocket
+        // audit hold the record, which insert_item_forced writes for us.
+        detached_ptr<item> refused = ret->put_in( std::move( self ) );
+        if( refused ) {
+            ret->contents.insert_item_forced( std::move( refused ) );
+        }
 
         if( obj.made_of( LIQUID ) && ret->is_container() ) {
             // Note: we can't use any of the normal container functions as they check the
@@ -1318,30 +1326,35 @@ void item::put_in_expected( detached_ptr<item> &&payload )
         return;
     }
     const std::string what = payload->typeId().str();
+    // Measure the payload before handing it over: once inserted it belongs to
+    // the pocket, and a refusal report is only useful with the numbers in it.
+    const units::volume needed_volume = payload->volume();
+    const units::mass needed_weight = payload->weight();
+    const units::length needed_length = payload->length();
     detached_ptr<item> refused = put_in( std::move( payload ) );
     if( refused ) {
-        debugmsg( "%s cannot hold %s, which its own definition gives it; "
-                  "check that item's pockets", debug_name(), what );
+        // Say which rule turned it away and by how much. Without this a report
+        // names a pair and leaves the reader to guess between volume, weight,
+        // length and the type restrictions.
+        std::string why = "no pocket accepted it";
+        for( const item_pocket &pocket : contents.get_pockets() ) {
+            if( pocket.definition().type != pocket_type::CONTAINER ) {
+                continue;
+            }
+            const ret_val<item_pocket::contain_code> res = pocket.can_contain( *refused );
+            if( !res.success() ) {
+                why = res.str();
+                break;
+            }
+        }
+        debugmsg( "%s cannot hold %s: %s (needs %d ml, %d g, %d mm; "
+                  "check that item's pockets)", debug_name(), what, why,
+                  units::to_milliliter( needed_volume ),
+                  units::to_gram<int>( needed_weight ),
+                  units::to_millimeter( needed_length ) );
         // Keep it anyway: bad data must not cost the player an item.
         contents.insert_item_forced( std::move( refused ) );
     }
-}
-
-void item::put_in_unchecked( detached_ptr<item> &&payload )
-{
-    // TODO(pocket-enforcement): each caller of this needs a real answer for
-    // refusal. Until it has one, a refused item is forced into pocket 0 rather
-    // than rejected, preserving pre-enforcement behaviour; the audit report
-    // records every such forcing.
-    if( !payload || payload->typeId() == itype_id::NULL_ID() ) {
-        debugmsg( "Tried to insert non-item into %s", debug_name() );
-        return;
-    }
-    if( &*payload == this ) {
-        debugmsg( "Tried to put %s inside itself", debug_name().c_str() );
-        return;
-    }
-    contents.insert_item_forced( std::move( payload ) );
 }
 
 void item::add_item_with_id( const itype_id &itype, int count )

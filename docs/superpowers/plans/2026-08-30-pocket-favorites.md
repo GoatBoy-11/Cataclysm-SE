@@ -126,11 +126,54 @@ errors per suite run, and two of them were live bugs rather than noise:
       on locations could never accept it. Built-in and default mods now get a
       pocket naming exactly them, leaving what the player may install untouched.
 
+## The data errors, run to ground
+
+The `put_in_expected` reports were ~3,800 a suite run and the test binary had
+been exiting non-zero the whole time because of them - "treating result as
+failure due to error logged during initialization" - which also masked any real
+init error. They are now zero, and the binary exits clean.
+
+Making the report say *why* and *by how much* was what turned this from guesswork
+into a list. None of the causes were pockets being too small; every one was
+structural:
+
+- [x] Sheaths, holsters, bandoliers: capacity lived in a use_action nothing read.
+- [x] Guns refusing their own built-in mods.
+- [x] Seven tools whose `magazines` list omitted a cell their own professions
+      hand them. CDDA allows any light battery via `flag_restriction`; BN's
+      explicit lists had simply drifted from its own content.
+- [x] `camera_pro` charges internally and has no magazine well at all, yet two
+      professions told it to *contain* a cell. Split into camera + spare cell.
+- [x] A pistol lanyard offered to a one-item holster, because `contents-item`
+      attaches to the outermost item - the holster - when `container-item` is
+      also given. CDDA orders it the same way, so the code was left alone and
+      the three profession entries give the lanyard on its own.
+- [x] `usb_drive` had no pocket, though `software` names it as its container.
+      Given a 10 ml one; CDDA models this as an E_FILE_STORAGE pocket, which BN
+      has no equivalent for.
+- [x] Item-group contents that do not fit are kept without a report, and the
+      pocket audit records the miss instead. A group cannot know what its own
+      other rolls put in the same item, so this is not a fault in either
+      definition. CDDA *drops* the item here, which suits CDDA's data - but BN's
+      professions run through the same code, and silently deleting a loadout's
+      chem tank is worse than an overfull pouch. Same reasoning, same treatment,
+      for a stack spawned into its default container: a `box_small` holds one
+      portion of fried fish by definition and a spawn can be ten.
+- [x] A caliber conversion or magazine adapter rewrites which magazines its gun
+      takes, but the pocket was synthesized from the gun's definition, which
+      predates any mod - so a converted Luty refused the magazine its conversion
+      gave it. Both magazine pocket kinds now ask `magazine_compatible()`, the
+      same question asked of the gun as it *is*. Internal-clip guns matter here
+      too: the handmade carbine never had a well at all, so its BAR adapter's
+      magazine had nowhere in the gun to go.
+- [x] `put_in_unchecked` and every `TODO(pocket-enforcement)` are gone. Its last
+      caller was rain collection, where capacity is measured first, so a refusal
+      there means the container is not one water belongs in and the rain runs
+      off. The 59 test call sites became `put_in_expected`.
+
 ## Still open
 
 - Presets, which CDDA shares between pockets. Convenience, not function.
 - CDDA's `better_pocket()` also ranks by spoil multiplier, watertightness,
   extra encumbrance and ripoff chance. BN has the first two; the rest have no
   BN equivalent yet. Worth a pass once `volume_encumber_modifier` lands.
-- The remaining data errors: earmuffs and tazers whose battery pockets refuse
-  their own cells.

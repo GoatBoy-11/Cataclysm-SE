@@ -343,6 +343,30 @@ bool pockets_are_classic()
            get_option<std::string>( "POCKET_SYSTEM" ) == "classic";
 }
 
+/**
+ * Whether a magazine only fits because of a conversion mod fitted to the gun.
+ *
+ * A pocket is built from the gun's definition, which predates any mod, so it
+ * cannot know that a caliber conversion or a magazine adapter has rewritten
+ * what the gun takes. magazine_compatible() asks that of the gun as it is now.
+ *
+ * Both magazine pocket kinds qualify. A gun defined with an internal clip never
+ * got a well at all, so an adapter's magazine would otherwise have nowhere in
+ * the gun to go - which is exactly what happened to a converted handmade
+ * carbine offered its BAR magazine.
+ */
+static bool accepts_converted_magazine( const item *owner, const pocket_data &data,
+                                        const item &it )
+{
+    if( owner == nullptr || !it.is_magazine() ) {
+        return false;
+    }
+    if( data.type != pocket_type::MAGAZINE_WELL && data.type != pocket_type::MAGAZINE ) {
+        return false;
+    }
+    return owner->magazine_compatible().count( it.typeId() ) > 0;
+}
+
 ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) const
 {
     // Classic mode: volume and weight only. The pockets still exist and still
@@ -393,8 +417,16 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
     // magazine well from accepting anything that happens to fit.
     if( !data->item_restriction.empty() &&
         !data->item_restriction.contains( it.typeId() ) ) {
-        return ret_val<contain_code>::make_failure( contain_code::ERR_ITEM,
-                _( "does not belong in this pocket" ) );
+        if( !accepts_converted_magazine( owner, *data, it ) ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_ITEM,
+                    _( "does not belong in this pocket" ) );
+        }
+    }
+
+    // An internal clip is ammo-restricted, which would turn away the very
+    // magazine an adapter just made valid, so that case is settled here.
+    if( accepts_converted_magazine( owner, *data, it ) ) {
+        return ret_val<contain_code>::make_success( contain_code::SUCCESS );
     }
 
     // A mod-restricted pocket takes only gunmods for a location this gun has, and

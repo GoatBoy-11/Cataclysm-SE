@@ -203,7 +203,7 @@
       "need_charges": 1,
       "need_charges_msg": "The flashlight's batteries are dead."
     },
-    "magazines": [ [ "battery", [ "light_disposable_cell", "light_battery_cell" ] ] ],
+    "magazines": [ [ "battery", [ "light_disposable_cell", "light_battery_cell", "light_plus_battery_cell" ] ] ],
     "magazine_well": "100 ml"
   },
   {

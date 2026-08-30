@@ -603,14 +603,36 @@ detached_ptr<item> Item_modifier::modify( detached_ptr<item> &&new_item ) const
     }
 
     if( cont != nullptr && !cont->is_null() ) {
-        cont->put_in_expected( std::move( new_item ) );
+        detached_ptr<item> refused = cont->put_in( std::move( new_item ) );
+        if( refused ) {
+            // The container will not take it - a holster already holding a gun,
+            // say. An entry spawns one item, so there is nowhere to put the
+            // odd one out: keep it in the container regardless, because losing
+            // a profession's weapon would be worse than an overfull holster.
+            // CDDA loses the item here instead.
+            cont->contents.insert_item_forced( std::move( refused ) );
+        }
         new_item = std::move( cont );
     }
 
+    // "contents" attaches to whatever the entry ends up being, the container
+    // included when one is given. CDDA orders it the same way; matching that
+    // keeps item groups written for either game meaning the same thing here.
     if( contents != nullptr ) {
         std::vector<detached_ptr<item>> contentitems = contents->create( new_item->birthday() );
         for( detached_ptr<item> &it : contentitems ) {
-            new_item->put_in_expected( std::move( it ) );
+            // A group cannot know what else its own rolls will put in the same
+            // item, so contents that do not fit are not a data error worth
+            // reporting: a rifle whose sight slot is already filled just gets
+            // the second scope anyway. CDDA drops the item here instead, which
+            // suits its data; BN's professions run through this same path, and
+            // silently deleting a loadout's gear is worse than an overfull
+            // pocket. insert_item_forced records the miss in the pocket audit,
+            // so the mismatch stays visible to anyone running that report.
+            detached_ptr<item> refused = new_item->put_in( std::move( it ) );
+            if( refused ) {
+                new_item->contents.insert_item_forced( std::move( refused ) );
+            }
         }
     }
 

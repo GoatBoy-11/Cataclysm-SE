@@ -96,7 +96,7 @@ auto make_active_bionic_scanner_benchmark_fixture(
     scanner->ammo_set(itype_id("battery"), opts.scanner_charges);
     scanner->activate();
     auto* const scanner_ptr = scanner.get();
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     REQUIRE(backpack->needs_processing());
     REQUIRE_FALSE(you.wear_item(std::move(backpack), false));
     REQUIRE(scanner_ptr->is_active());
@@ -178,14 +178,14 @@ TEST_CASE(
     auto* const corpse_ptr = *corpse_stack.begin();
 
     auto backpack = item::spawn("backpack", calendar::turn);
-    backpack->put_in_unchecked(item::spawn("rock", calendar::turn));
-    backpack->put_in_unchecked(item::spawn("sashimi", calendar::turn));
+    backpack->put_in_expected(item::spawn("rock", calendar::turn));
+    backpack->put_in_expected(item::spawn("sashimi", calendar::turn));
     auto scanner = item::spawn("bionic_scanner_on", calendar::turn);
     scanner->ammo_set(itype_id("battery"), 10);
     scanner->activate();
     const auto* const scanner_ptr = scanner.get();
     const auto charges_before = scanner_ptr->ammo_remaining();
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     REQUIRE(backpack->needs_processing());
     REQUIRE(backpack->processing_speed() == 1);
     REQUIRE_FALSE(here.add_item_or_charges(you.bub_pos(), std::move(backpack), false));
@@ -221,14 +221,14 @@ TEST_CASE("bionic_scanner_inside_container_marks_corpses_with_cbms", "[iuse][bio
     REQUIRE((*corpse_ptr->get_components().begin())->is_bionic());
 
     auto backpack = item::spawn("backpack", calendar::turn);
-    backpack->put_in_unchecked(item::spawn("rock", calendar::turn));
+    backpack->put_in_expected(item::spawn("rock", calendar::turn));
     auto scanner = item::spawn("bionic_scanner_on", calendar::turn);
     scanner->ammo_set(itype_id("battery"), 10);
     scanner->activate();
     const auto* const scanner_ptr = scanner.get();
     const auto charges_before = scanner_ptr->ammo_remaining();
     REQUIRE(charges_before > 0);
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     you.i_add(std::move(backpack));
 
     you.process_items();
@@ -266,7 +266,7 @@ TEST_CASE("bionic_scanner_consumes_charge_for_each_scanned_corpse", "[iuse][bion
     scanner->activate();
     const auto* const scanner_ptr = scanner.get();
     const auto charges_before = scanner_ptr->ammo_remaining();
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     you.i_add(std::move(backpack));
 
     you.process_items();
@@ -296,7 +296,7 @@ TEST_CASE("bionic_scanner_marks_new_corpse_after_activation", "[iuse][bionic_sca
     scanner->activate();
     const auto* const scanner_ptr = scanner.get();
     const auto charges_before = scanner_ptr->ammo_remaining();
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     you.i_add(std::move(backpack));
 
     you.process_items();
@@ -394,7 +394,7 @@ TEST_CASE("bionic_scanner_updates_same_monster_corpse_pile_display", "[iuse][bio
     auto scanner = item::spawn("bionic_scanner_on", calendar::turn);
     scanner->ammo_set(itype_id("battery"), 10);
     scanner->activate();
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     you.i_add(std::move(backpack));
 
     you.process_items();
@@ -446,7 +446,7 @@ TEST_CASE(
     auto scanner = item::spawn("bionic_scanner_on", calendar::turn);
     scanner->ammo_set(itype_id("battery"), 10);
     scanner->activate();
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     you.i_add(std::move(backpack));
 
     you.process_items();
@@ -508,7 +508,7 @@ TEST_CASE(
     auto scanner = item::spawn("bionic_scanner_on", calendar::turn);
     scanner->ammo_set(itype_id("battery"), 10);
     scanner->activate();
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     you.i_add(std::move(backpack));
 
     you.process_items();
@@ -604,7 +604,7 @@ TEST_CASE("bionic_scanner_inside_worn_container_marks_corpse_stack", "[iuse][bio
     auto scanner = item::spawn("bionic_scanner", calendar::turn);
     scanner->ammo_set(itype_id("battery"), 100);
     auto* const scanner_ptr = scanner.get();
-    backpack->put_in_unchecked(std::move(scanner));
+    backpack->put_in_expected(std::move(scanner));
     REQUIRE_FALSE(you.wear_item(std::move(backpack), false));
 
     REQUIRE(scanner_ptr->type->invoke(you, *scanner_ptr, you.bub_pos()) == 0);
