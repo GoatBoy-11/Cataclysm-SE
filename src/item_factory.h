@@ -39,15 +39,6 @@ bool item_is_blacklisted( const itype_id &id );
  */
 std::string pocket_coverage_report();
 
-/**
- * Classic mode: pool an item type's CONTAINER pockets into one compartment
- * sized from its legacy storage fields. Special pockets (magazine, mod, corpse)
- * are left alone; they are function, not storage balance.
- *
- * Takes the mode as a parameter rather than reading the world option, so it can
- * be exercised without re-finalizing every item type.
- */
-void collapse_pockets_for_classic_mode( itype &def, bool classic );
 
 using Item_list = std::vector<item *>;
 

@@ -95,6 +95,18 @@ auto item_contents::update_processing_cache() const -> void
 
 item_pocket *item_contents::best_pocket( const item &it )
 {
+    // Classic mode: first pocket that will take it, no ranking. Combined with
+    // can_contain()'s relaxed checks this reproduces pre-pocket inventory
+    // behaviour without changing what is stored on disk.
+    if( pockets_are_classic() ) {
+        for( item_pocket &pocket : pockets ) {
+            if( pocket.can_contain( it ).success() ) {
+                return &pocket;
+            }
+        }
+        return nullptr;
+    }
+
     item_pocket *best = nullptr;
     int best_rank = -1;
 

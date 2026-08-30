@@ -11,6 +11,7 @@
 #include "itype.h"
 #include "json.h"
 #include "locations.h"
+#include "options.h"
 #include "translations.h"
 
 namespace io
@@ -190,8 +191,30 @@ units::mass item_pocket::contents_weight() const
     return total;
 }
 
+bool pockets_are_classic()
+{
+    return get_options().has_option( "POCKET_SYSTEM" ) &&
+           get_option<std::string>( "POCKET_SYSTEM" ) == "classic";
+}
+
 ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) const
 {
+    // Classic mode: volume and weight only. The pockets still exist and still
+    // hold their contents, but none of the type, length or rigidity rules apply,
+    // so inventory behaves as it did before pockets landed.
+    if( pockets_are_classic() ) {
+        if( it.volume() > remaining_volume() ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_TOO_BIG,
+                    _( "does not fit" ) );
+        }
+        if( data->max_contains_weight > 0_gram &&
+            contents_weight() + it.weight() > data->max_contains_weight ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_TOO_HEAVY,
+                    _( "is too heavy" ) );
+        }
+        return ret_val<contain_code>::make_success( contain_code::SUCCESS );
+    }
+
     // A pocket that names specific items takes only those. This is what keeps a
     // magazine well from accepting anything that happens to fit.
     if( !data->item_restriction.empty() &&

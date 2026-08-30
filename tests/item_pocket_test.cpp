@@ -9,6 +9,7 @@
 #include "item_factory.h"
 #include "itype.h"
 #include "json.h"
+#include "options_helpers.h"
 #include "relic.h"
 #include "ret_val.h"
 #include "type_id.h"
@@ -336,84 +337,61 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
 // Classic mode: pooling storage back into one compartment
 // ---------------------------------------------------------------------------
 
-// A stand-in for a curated garment: worn storage plus several authored pockets.
-// Built by hand rather than copied from a loaded itype, because copying one
-// needs complete definitions for every slot it carries.
-static itype curated_garment_stub()
+TEST_CASE( "classic_mode_keeps_the_same_pockets", "[item][pocket][classic]" )
 {
-    itype def;
-    def.armor = cata::make_value<islot_armor>();
-    def.armor->storage = 2500_ml;
-    for( int i = 0; i < 4; i++ ) {
-        pocket_data pocket;
-        pocket.type = pocket_type::CONTAINER;
-        pocket.max_contains_volume = 1250_ml;
-        def.pockets.push_back( pocket );
-    }
-    return def;
+    // Synthesis is identical in both modes: what changes is behaviour, not the
+    // pocket set. Keeping the pockets is what makes save data byte-identical
+    // between modes.
+    const size_t full_count = item::spawn( "pants_cargo" )->contents.get_pockets().size();
+    REQUIRE( full_count > 1 );
+
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    CHECK( item::spawn( "pants_cargo" )->contents.get_pockets().size() == full_count );
 }
 
-TEST_CASE( "classic_mode_pools_curated_pockets_into_legacy_storage",
-           "[item][pocket][classic]" )
+TEST_CASE( "classic_mode_ignores_type_restrictions", "[item][pocket][classic]" )
 {
-    itype def = curated_garment_stub();
-    REQUIRE( def.pockets.size() == 4 );
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    sugar->charges = 1;
+    const item_pocket &pocket = mag->contents.get_pockets().front();
 
-    collapse_pockets_for_classic_mode( def, true );
+    // Full mode refuses it: a magazine takes ammo and nothing else.
+    REQUIRE_FALSE( pocket.can_contain( *sugar ).success() );
 
-    // One compartment, sized from the legacy field rather than the sum of the
-    // authored pockets: classic mode restores BN's balance, not CDDA's.
-    REQUIRE( def.pockets.size() == 1 );
-    CHECK( def.pockets.front().type == pocket_type::CONTAINER );
-    CHECK( def.pockets.front().max_contains_volume == 2500_ml );
-    CHECK_FALSE( def.pockets.front().rigid );
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    CHECK( pocket.can_contain( *sugar ).success() );
 }
 
-TEST_CASE( "classic_mode_leaves_magazine_and_mod_pockets_alone",
-           "[item][pocket][classic]" )
+TEST_CASE( "classic_mode_still_respects_volume", "[item][pocket][classic]" )
 {
-    itype def;
-    for( const pocket_type type : {
-             pocket_type::MAGAZINE_WELL, pocket_type::MOD
-         } ) {
-        pocket_data pocket;
-        pocket.type = type;
-        def.pockets.push_back( pocket );
-    }
+    // Relaxed does not mean unlimited; volume and weight still apply.
+    detached_ptr<item> holder = item::spawn( "hoodie" );
+    pocket_data data;
+    data.type = pocket_type::CONTAINER;
+    data.max_contains_volume = 1_ml;
+    item_pocket tiny( holder.get(), &data );
 
-    collapse_pockets_for_classic_mode( def, true );
-
-    // A gun has no CONTAINER pocket to pool, so nothing should change: it still
-    // needs its well and mod slots to function.
-    REQUIRE( def.pockets.size() == 2 );
-    CHECK( def.pockets[0].type == pocket_type::MAGAZINE_WELL );
-    CHECK( def.pockets[1].type == pocket_type::MOD );
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    const ret_val<item_pocket::contain_code> res = tiny.can_contain( *sugar );
+    CHECK_FALSE( res.success() );
+    CHECK( res.value() == item_pocket::contain_code::ERR_TOO_BIG );
 }
 
-TEST_CASE( "classic_mode_keeps_special_pockets_beside_the_pooled_one",
-           "[item][pocket][classic]" )
+TEST_CASE( "classic_mode_best_pocket_is_first_fit", "[item][pocket][classic]" )
 {
-    // The sparkledogsuit shape: worn storage and a battery well on one item.
-    itype def = curated_garment_stub();
-    pocket_data well;
-    well.type = pocket_type::MAGAZINE_WELL;
-    def.pockets.insert( def.pockets.begin(), well );
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    REQUIRE( bag->contents.get_pockets().size() == 2 );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    sugar->charges = 1;
 
-    collapse_pockets_for_classic_mode( def, true );
+    // Full mode prefers the tighter 100 ml pocket over the 4 L one.
+    REQUIRE( bag->contents.best_pocket( *sugar )->definition().max_contains_volume == 100_ml );
 
-    REQUIRE( def.pockets.size() == 2 );
-    CHECK( def.pockets[0].type == pocket_type::MAGAZINE_WELL );
-    CHECK( def.pockets[1].type == pocket_type::CONTAINER );
-    CHECK( def.pockets[1].max_contains_volume == 2500_ml );
-}
-
-TEST_CASE( "full_mode_changes_nothing", "[item][pocket][classic]" )
-{
-    itype def = curated_garment_stub();
-
-    collapse_pockets_for_classic_mode( def, false );
-
-    CHECK( def.pockets.size() == 4 );
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    // First-fit takes whichever comes first, ranking ignored.
+    CHECK( bag->contents.best_pocket( *sugar ) == &bag->contents.get_pockets().front() );
 }
 
 TEST_CASE( "a_full_mode_save_loads_without_losing_items_in_classic_mode",

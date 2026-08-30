@@ -95,6 +95,17 @@ struct pocket_data {
  * rejected is recorded here while still being allowed through. An empty report
  * after exercising the game is the evidence that enforcement can be enabled.
  */
+/**
+ * True when the world is running the classic pocket system.
+ *
+ * Classic keeps every item's full pocket set - synthesis is identical in both
+ * modes - and relaxes behaviour instead: can_contain() checks only volume and
+ * weight, and best_pocket() degenerates to first-fit. Keeping the pockets means
+ * save data stays byte-identical between modes, so a character made in one
+ * opens in the other gaining or losing restrictions rather than corrupting.
+ */
+bool pockets_are_classic();
+
 void record_pocket_audit_miss( const item *container, const item &inserted );
 std::string pocket_audit_report();
 void clear_pocket_audit();
