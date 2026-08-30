@@ -916,6 +916,14 @@ class item : public location_visitable<item>, public game_object<item>
         void put_in_unchecked( detached_ptr<item> &&payload );
 
         /**
+         * put_in for contents the item defines for itself - built-in gunmods, a
+         * magazine's default ammo, an item placed in its own container. These
+         * must fit by construction, so a refusal means the item's own data is
+         * self-contradictory: report it and keep the item rather than losing it.
+         */
+        void put_in_expected( detached_ptr<item> &&payload );
+
+        /**
          * Returns this item into its default container. If it does not have a default container,
          * returns this. It's intended to be used like \code newitem = newitem.in_its_container();\endcode
          * You must pass the detached_ptr representing the current object, so that it can be placed inside its container.

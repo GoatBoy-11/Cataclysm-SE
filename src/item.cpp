@@ -347,15 +347,15 @@ item::item( const itype *type, time_point turn, int qty ) : type( type ),
         for( const itype_id &mod : type->gun->built_in_mods ) {
             detached_ptr<item> it = item::spawn( mod, turn, qty );
             it->set_flag( flag_IRREMOVABLE );
-            put_in_unchecked( std::move( it ) );
+            put_in_expected( std::move( it ) );
         }
         for( const itype_id &mod : type->gun->default_mods ) {
-            put_in_unchecked( item::spawn( mod, turn, qty ) );
+            put_in_expected( item::spawn( mod, turn, qty ) );
         }
 
     } else if( type->magazine ) {
         if( type->magazine->count > 0 ) {
-            put_in_unchecked( item::spawn( type->magazine->default_ammo, calendar::turn, type->magazine->count ) );
+            put_in_expected( item::spawn( type->magazine->default_ammo, calendar::turn, type->magazine->count ) );
         }
 
     } else if( goes_bad() ) {
@@ -718,7 +718,7 @@ void item::ammo_set( const itype_id &ammo, int qty )
             set_ammo->set_flag( flag_NO_DROP );
             set_ammo->set_flag( flag_IRREMOVABLE );
         }
-        put_in_unchecked( std::move( set_ammo ) );
+        put_in_expected( std::move( set_ammo ) );
 
     } else if( magazine_integral() ) {
         curammo = atype;
@@ -754,7 +754,7 @@ void item::ammo_set( const itype_id &ammo, int qty )
                     }
                 }
             }
-            put_in_unchecked( item::spawn( mag ) );
+            put_in_expected( item::spawn( mag ) );
         }
         magazine_current()->ammo_set( ammo, qty );
     }
@@ -1078,7 +1078,7 @@ detached_ptr<item> item::in_container( const itype_id &cont, detached_ptr<item> 
         detached_ptr<item> ret = item::spawn( cont, self->birthday() );
         ret->invlet = self->invlet;
         item &obj = *self;
-        ret->put_in_unchecked( std::move( self ) );
+        ret->put_in_expected( std::move( self ) );
 
         if( obj.made_of( LIQUID ) && ret->is_container() ) {
             // Note: we can't use any of the normal container functions as they check the
@@ -1310,6 +1310,21 @@ detached_ptr<item> item::put_in( detached_ptr<item> &&payload )
         return std::move( payload );
     }
     return detached_ptr<item>();
+}
+
+void item::put_in_expected( detached_ptr<item> &&payload )
+{
+    if( !payload ) {
+        return;
+    }
+    const std::string what = payload->typeId().str();
+    detached_ptr<item> refused = put_in( std::move( payload ) );
+    if( refused ) {
+        debugmsg( "%s cannot hold %s, which its own definition gives it; "
+                  "check that item's pockets", debug_name(), what );
+        // Keep it anyway: bad data must not cost the player an item.
+        contents.insert_item_forced( std::move( refused ) );
+    }
 }
 
 void item::put_in_unchecked( detached_ptr<item> &&payload )

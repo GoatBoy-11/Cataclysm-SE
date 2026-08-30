@@ -369,17 +369,17 @@ int iuse_transform::use( player &p, item &it, bool t, const tripoint_bub_ms &pos
                 for( const itype_id &mod : it.type->gun->built_in_mods ) {
                     detached_ptr<item> content = item::spawn( mod, calendar::turn, qty );
                     content->set_flag( flag_IRREMOVABLE );
-                    it.put_in_unchecked( std::move( content ) );
+                    it.put_in_expected( std::move( content ) );
                 }
                 for( const itype_id &mod : it.type->gun->default_mods ) {
-                    it.put_in_unchecked( item::spawn( mod, calendar::turn, qty ) );
+                    it.put_in_expected( item::spawn( mod, calendar::turn, qty ) );
                 }
 
             }
         }
     } else {
         it.convert( container );
-        it.put_in_unchecked( item::spawn( target, calendar::turn, std::max( ammo_qty, 1 ) ) );
+        it.put_in_expected( item::spawn( target, calendar::turn, std::max( ammo_qty, 1 ) ) );
     }
     if( p.is_worn( it ) ) {
         p.reset_encumbrance();
@@ -3133,7 +3133,15 @@ bool bandolier_actor::reload( player &p, item &obj ) const
 
     // add or stack the ammo dependent upon existing contents
     if( obj.contents.empty() ) {
-        obj.put_in_unchecked( sel.ammo->split( sel.qty() ) );
+        detached_ptr<item> refused = obj.put_in( sel.ammo->split( sel.qty() ) );
+        if( refused ) {
+            // The container will not take it: hand the ammo back to the player
+            // rather than consuming their turn and losing it.
+            p.add_msg_if_player( m_bad, _( "Your %1$s will not hold the %2$s." ),
+                                 obj.type_name(), refused->tname() );
+            sel.ammo->merge_charges( std::move( refused ) );
+            return false;
+        }
     } else {
         obj.contents.front().charges += sel.qty();
         if( sel.ammo->charges > sel.qty() ) {
@@ -4497,7 +4505,7 @@ int saw_barrel_actor::use( player &p, item &it, bool t, const tripoint_bub_ms & 
 
     loc->obtain( p );
     p.add_msg_if_player( _( "You saw down the barrel of your %s." ), loc->tname() );
-    loc->put_in_unchecked( item::spawn( "barrel_small", calendar::turn ) );
+    loc->put_in_expected( item::spawn( "barrel_small", calendar::turn ) );
 
     return 0;
 }
@@ -4554,7 +4562,7 @@ int saw_stock_actor::use( player &p, item &it, bool t, const tripoint_bub_ms & )
 
     loc->obtain( p );
     p.add_msg_if_player( _( "You saw down the stock of your %s." ), loc->tname() );
-    loc->put_in_unchecked( item::spawn( "stock_small", calendar::turn ) );
+    loc->put_in_expected( item::spawn( "stock_small", calendar::turn ) );
 
     return 0;
 }
@@ -5911,7 +5919,7 @@ int multicooker_iuse::use( player &p, item &it, bool t, const tripoint_bub_ms &p
         if( cooktime <= 0 ) {
             it.deactivate();
             it.erase_var( "COOKTIME" );
-            it.put_in_unchecked( item::spawn( it.get_var( "RESULT" ), calendar::turn, it.get_var( "BATCHCOUNT", 1 ) ) );
+            it.put_in_expected( item::spawn( it.get_var( "RESULT" ), calendar::turn, it.get_var( "BATCHCOUNT", 1 ) ) );
             it.erase_var( "BATCHCOUNT" );
             it.erase_var( "RESULT" );
 
