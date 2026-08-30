@@ -9,8 +9,7 @@ import subprocess
 
 CSE = "D:/Projects/CSE"
 FORMATTER = CSE + "/out/build/cse-vcpkg/tools/format/RelWithDebInfo/json_formatter.exe"
-OVERLAY = (r"C:\Users\Oliver\AppData\Local\Temp\claude\d--Projects-CBN"
-           r"\9f5a2a9e-e00a-4d28-8127-907cc9642349\scratchpad\cdda_pocket_overlay.json")
+OVERLAY = "cdda_pocket_overlay.json"
 
 # Only genuine item definitions may gain pocket_data. Matching on id alone once
 # injected pockets into an item_group that shared an item's id.

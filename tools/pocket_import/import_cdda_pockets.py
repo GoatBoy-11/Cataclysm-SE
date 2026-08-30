@@ -12,7 +12,7 @@ from collections import Counter
 
 CDDA = "D:/Projects/CDDA"
 CSE = "D:/Projects/CSE"
-OUT = r"C:\Users\Oliver\AppData\Local\Temp\claude\d--Projects-CBN\9f5a2a9e-e00a-4d28-8127-907cc9642349\scratchpad"
+OUT = "."
 
 SUPPORTED = {
     "pocket_type", "max_contains_volume", "max_contains_weight",
