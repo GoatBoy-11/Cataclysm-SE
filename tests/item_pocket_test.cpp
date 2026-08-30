@@ -334,6 +334,101 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
 }
 
 // ---------------------------------------------------------------------------
+// Pocket favorites: per-pocket player preferences
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "untouched_favorite_settings_are_null", "[item][pocket][favorites]" )
+{
+    // Null settings serialize to nothing, which keeps saves from growing by an
+    // empty object per pocket per item.
+    pocket_favorite_settings settings;
+    CHECK( settings.is_null() );
+
+    settings.set_priority( 1 );
+    CHECK_FALSE( settings.is_null() );
+
+    settings.clear();
+    CHECK( settings.is_null() );
+}
+
+TEST_CASE( "an_item_whitelist_admits_only_what_it_names", "[item][pocket][favorites]" )
+{
+    pocket_favorite_settings settings;
+    settings.whitelist_item( itype_id( "sugar" ) );
+
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    CHECK( settings.accepts_item( *sugar ) );
+    CHECK_FALSE( settings.accepts_item( *rock ) );
+}
+
+TEST_CASE( "an_item_blacklist_excludes_only_what_it_names", "[item][pocket][favorites]" )
+{
+    pocket_favorite_settings settings;
+    settings.blacklist_item( itype_id( "sugar" ) );
+
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    CHECK_FALSE( settings.accepts_item( *sugar ) );
+    CHECK( settings.accepts_item( *rock ) );
+}
+
+TEST_CASE( "whitelisting_an_item_clears_it_from_the_blacklist",
+           "[item][pocket][favorites]" )
+{
+    pocket_favorite_settings settings;
+    settings.blacklist_item( itype_id( "sugar" ) );
+    settings.whitelist_item( itype_id( "sugar" ) );
+
+    CHECK( settings.get_item_blacklist().empty() );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    CHECK( settings.accepts_item( *sugar ) );
+}
+
+TEST_CASE( "an_item_whitelist_beside_a_category_blacklist_is_an_exception_to_it",
+           "[item][pocket][favorites]" )
+{
+    // CDDA's subtlest rule: a lone item whitelist means "only these", but paired
+    // with a category blacklist it means "these despite the blacklist", and
+    // everything untouched by either still gets in.
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+
+    pocket_favorite_settings alone;
+    alone.whitelist_item( sugar->typeId() );
+    CHECK_FALSE( alone.accepts_item( *rock ) );
+
+    pocket_favorite_settings paired;
+    paired.whitelist_item( sugar->typeId() );
+    paired.blacklist_category( item_category_id( "clothing" ) );
+    CHECK( paired.accepts_item( *rock ) );
+    CHECK( paired.accepts_item( *sugar ) );
+}
+
+TEST_CASE( "a_disabled_pocket_accepts_nothing", "[item][pocket][favorites]" )
+{
+    pocket_favorite_settings settings;
+    settings.set_disabled( true );
+
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    CHECK_FALSE( settings.accepts_item( *sugar ) );
+}
+
+TEST_CASE( "a_container_is_judged_by_its_contents", "[item][pocket][favorites]" )
+{
+    // Putting a bag of blacklisted things into a pocket should be refused just
+    // as the loose things would be.
+    pocket_favorite_settings settings;
+    settings.blacklist_item( itype_id( "sugar" ) );
+
+    detached_ptr<item> bag = item::spawn( "bag_plastic" );
+    bag->contents.insert_item( item::spawn( "sugar" ) );
+    REQUIRE_FALSE( bag->contents.empty() );
+
+    CHECK_FALSE( settings.accepts_item( *bag ) );
+}
+
+// ---------------------------------------------------------------------------
 // Item length
 // ---------------------------------------------------------------------------
 
@@ -1035,4 +1130,222 @@ TEST_CASE( "multi_pocket_contents_survive_a_serialization_round_trip",
     // Still in the second pocket, not collapsed into the first.
     CHECK( restored->contents.get_pockets()[0].empty() );
     CHECK( restored->contents.get_pockets()[1].all_items_top().size() == 1 );
+}
+
+// Task 2: settings reach the save file and come back.
+
+TEST_CASE( "pocket_settings_survive_a_serialization_round_trip",
+           "[item][pocket][save][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    pocket_favorite_settings &settings = bag->contents.get_pockets()[1].get_settings();
+    settings.set_priority( 7 );
+    settings.whitelist_item( itype_id( "test_rock" ) );
+    settings.blacklist_category( item_category_id( "food" ) );
+    settings.set_disabled( true );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    bag->contents.serialize( jo );
+
+    detached_ptr<item> restored = item::spawn( "test_two_pocket_bag" );
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    restored->contents.deserialize( ji );
+
+    REQUIRE( restored->contents.get_pockets().size() == 2 );
+    const pocket_favorite_settings &back = restored->contents.get_pockets()[1].get_settings();
+    CHECK( back.priority() == 7 );
+    CHECK( back.get_item_whitelist().count( itype_id( "test_rock" ) ) == 1 );
+    CHECK( back.get_category_blacklist().count( item_category_id( "food" ) ) == 1 );
+    CHECK( back.is_disabled() );
+    // The untouched pocket stays untouched.
+    CHECK( restored->contents.get_pockets()[0].get_settings().is_null() );
+}
+
+// An empty pocket that has been organised must still reach the save, even though
+// empty contents are normally left out of it entirely.
+TEST_CASE( "settings_on_an_empty_pocket_still_save", "[item][pocket][save][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    REQUIRE( bag->contents.empty() );
+    bag->contents.get_pockets()[0].get_settings().set_priority( 3 );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    bag->contents.serialize( jo );
+    REQUIRE_FALSE( os.str().empty() );
+
+    detached_ptr<item> restored = item::spawn( "test_two_pocket_bag" );
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    restored->contents.deserialize( ji );
+
+    CHECK( restored->contents.get_pockets()[0].get_settings().priority() == 3 );
+}
+
+TEST_CASE( "an_unorganised_item_writes_no_settings", "[item][pocket][save][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.insert_item( item::spawn( "test_rock" ) );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    bag->contents.serialize( jo );
+
+    CHECK( os.str().find( "settings" ) == std::string::npos );
+}
+
+// A save written before this phase has pocket objects with no settings member.
+TEST_CASE( "a_save_without_settings_loads_untouched", "[item][pocket][save][favorites]" )
+{
+    const std::string old_format =
+        R"({ "pockets": [ { "pocket_type": 0, "contents": [] },
+                          { "pocket_type": 0, "contents": [ { "typeid": "test_rock" } ] } ] })";
+
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    std::istringstream is( old_format );
+    JsonIn ji( is );
+    bag->contents.deserialize( ji );
+
+    CHECK( bag->contents.all_items_top().size() == 1 );
+    CHECK( bag->contents.get_pockets()[0].get_settings().is_null() );
+    CHECK( bag->contents.get_pockets()[1].get_settings().is_null() );
+}
+
+// ---------------------------------------------------------------------------
+// best_pocket() and player organisation
+// ---------------------------------------------------------------------------
+
+// Both pockets fit the ear plugs, so without settings the tighter one wins and
+// every test below is a departure from that baseline.
+TEST_CASE( "without_settings_best_pocket_still_prefers_the_tightest_fit",
+           "[item][pocket][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    REQUIRE( bag->contents.insert_item( item::spawn( "test_ear_plugs" ) ).success() );
+
+    CHECK( bag->contents.get_pockets()[0].all_items_top().size() == 1 );
+}
+
+TEST_CASE( "priority_beats_the_tightest_fit", "[item][pocket][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.get_pockets()[1].get_settings().set_priority( 1 );
+
+    REQUIRE( bag->contents.insert_item( item::spawn( "test_ear_plugs" ) ).success() );
+
+    CHECK( bag->contents.get_pockets()[0].empty() );
+    CHECK( bag->contents.get_pockets()[1].all_items_top().size() == 1 );
+}
+
+TEST_CASE( "a_blacklisted_pocket_is_skipped", "[item][pocket][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.get_pockets()[0].get_settings().blacklist_item( itype_id( "test_ear_plugs" ) );
+
+    REQUIRE( bag->contents.insert_item( item::spawn( "test_ear_plugs" ) ).success() );
+
+    CHECK( bag->contents.get_pockets()[0].empty() );
+    CHECK( bag->contents.get_pockets()[1].all_items_top().size() == 1 );
+}
+
+TEST_CASE( "a_whitelisted_pocket_wins_over_a_tighter_one", "[item][pocket][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.get_pockets()[1].get_settings().whitelist_item( itype_id( "test_ear_plugs" ) );
+
+    REQUIRE( bag->contents.insert_item( item::spawn( "test_ear_plugs" ) ).success() );
+
+    CHECK( bag->contents.get_pockets()[1].all_items_top().size() == 1 );
+}
+
+TEST_CASE( "a_disabled_pocket_takes_nothing_automatically", "[item][pocket][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.get_pockets()[0].get_settings().set_disabled( true );
+
+    REQUIRE( bag->contents.insert_item( item::spawn( "test_ear_plugs" ) ).success() );
+
+    CHECK( bag->contents.get_pockets()[0].empty() );
+    CHECK( bag->contents.get_pockets()[1].all_items_top().size() == 1 );
+}
+
+// Deliberate placement is the player's own decision, so their standing filters
+// must not overrule it.
+TEST_CASE( "ignoring_settings_reaches_a_disabled_pocket", "[item][pocket][favorites]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.get_pockets()[0].get_settings().set_disabled( true );
+
+    detached_ptr<item> plugs = item::spawn( "test_ear_plugs" );
+    CHECK( bag->contents.best_pocket( *plugs, true ) == &bag->contents.get_pockets()[0] );
+}
+
+TEST_CASE( "classic_mode_ignores_pocket_settings", "[item][pocket][favorites][classic]" )
+{
+    override_option classic( "POCKET_SYSTEM", "classic" );
+
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.get_pockets()[0].get_settings().set_disabled( true );
+    bag->contents.get_pockets()[1].get_settings().set_priority( 10 );
+
+    REQUIRE( bag->contents.insert_item( item::spawn( "test_ear_plugs" ) ).success() );
+
+    // First fit, exactly as if nothing had been organised.
+    CHECK( bag->contents.get_pockets()[0].all_items_top().size() == 1 );
+}
+
+// ---------------------------------------------------------------------------
+// Pockets derived from use_actions
+// ---------------------------------------------------------------------------
+
+// A sheath's capacity lives in its holster use_action, not in a storage field.
+// Before this was synthesized it had no pocket at all, and sheathing a knife
+// failed outright once insertion was enforced.
+TEST_CASE( "a_sheath_can_hold_its_knife", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> sheath = item::spawn( "sheath" );
+    REQUIRE_FALSE( sheath->contents.get_pockets().empty() );
+
+    CHECK( sheath->contents.insert_item( item::spawn( "knife_combat" ) ).success() );
+}
+
+TEST_CASE( "a_holster_pocket_takes_only_what_the_action_allows", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> sheath = item::spawn( "sheath" );
+    // Not a knife, and carrying none of the action's flags.
+    CHECK_FALSE( sheath->contents.insert_item( item::spawn( "rock" ) ).success() );
+}
+
+TEST_CASE( "a_holster_holds_one_thing_at_a_time", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> sheath = item::spawn( "sheath" );
+    REQUIRE( sheath->contents.insert_item( item::spawn( "knife_combat" ) ).success() );
+
+    CHECK_FALSE( sheath->contents.insert_item( item::spawn( "knife_combat" ) ).success() );
+}
+
+// The M240's bipod is fitted at the factory and the gun lists no underbarrel
+// slot, so a pocket keyed on mod locations alone cannot hold it.
+TEST_CASE( "a_gun_can_hold_its_built_in_mods", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> gun = item::spawn( "m240" );
+    detached_ptr<item> bipod = item::spawn( "bipod" );
+
+    CHECK( gun->contents.insert_item( std::move( bipod ) ).success() );
+}
+
+TEST_CASE( "the_built_in_mod_pocket_takes_nothing_else", "[item][pocket][synthesis]" )
+{
+    detached_ptr<item> gun = item::spawn( "m240" );
+    // Another underbarrel mod, the location the M240 lacks. The general mod
+    // pocket refuses it on location and the built-in pocket does not name it,
+    // so the gun that accepts its own bipod still accepts nothing beside it.
+    detached_ptr<item> mod = item::spawn( "laser_sight" );
+    REQUIRE( mod->is_gunmod() );
+    REQUIRE( gun->type->gun->valid_mod_locations.count(
+                 mod->type->gunmod->location ) == 0 );
+
+    CHECK_FALSE( gun->contents.insert_item( std::move( mod ) ).success() );
 }

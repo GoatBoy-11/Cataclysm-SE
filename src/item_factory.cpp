@@ -213,6 +213,10 @@ static bool has_pocket_of_type( const itype &def, const pocket_type type )
  */
 static void synthesize_special_pockets_from_legacy( itype &def )
 {
+    // Authored pockets are the item's own answer; note them before anything is
+    // synthesized, since add_pocket() below makes the same question ambiguous.
+    const bool authored_mod_pocket = has_pocket_of_type( def, pocket_type::MOD );
+
     const auto add_pocket = [&def]( const pocket_type type,
                                     const std::map<ammotype, int> &ammo = {},
                                     const std::set<itype_id> &items = {},
@@ -266,6 +270,23 @@ static void synthesize_special_pockets_from_legacy( itype &def )
         }
         add_pocket( pocket_type::MOD, {}, {}, mods );
     }
+    // Built-in and default mods do not need a matching location - the M240's
+    // bipod is fitted at the factory, and the gun lists no underbarrel slot.
+    // They get a pocket naming exactly them, so the gun still accepts nothing
+    // else it has no room for, and the general mod pocket above is untouched.
+    if( !authored_mod_pocket && def.gun &&
+        !( def.gun->built_in_mods.empty() && def.gun->default_mods.empty() ) ) {
+        pocket_data pocket;
+        pocket.type = pocket_type::MOD;
+        pocket.max_contains_volume = units::from_liter( 100000 );
+        pocket.rigid = true;
+        pocket.synthesized = true;
+        pocket.item_restriction.insert( def.gun->built_in_mods.begin(),
+                                        def.gun->built_in_mods.end() );
+        pocket.item_restriction.insert( def.gun->default_mods.begin(),
+                                        def.gun->default_mods.end() );
+        def.pockets.push_back( pocket );
+    }
     if( def.has_flag( flag_CORPSE ) ) {
         add_pocket( pocket_type::CORPSE );
     }
@@ -290,6 +311,53 @@ static bool has_only_special_pockets( const itype &def )
  * fields, so CBN base content and every CBN mod gain working pockets with no
  * JSON changes.
  */
+/**
+ * Sheaths, holsters and bandoliers hold things through a use_action rather than
+ * a storage field, so nothing above sees their capacity and they would end up
+ * with no pocket at all - and, once insertion is enforced, refuse the very item
+ * they exist to carry. CDDA converted these actions to pocket_data outright;
+ * this derives the same pocket from the action BN still uses to describe it.
+ */
+static void synthesize_use_action_pockets_from_legacy( itype &def )
+{
+    if( const use_function *func = def.get_use( "holster" ) ) {
+        if( const holster_actor *actor =
+                dynamic_cast<const holster_actor *>( func->get_actor_ptr() ) ) {
+            pocket_data pocket;
+            pocket.type = pocket_type::CONTAINER;
+            // The actor caps each item; the pocket caps the lot of them.
+            pocket.max_contains_volume = actor->max_volume * std::max( actor->multi, 1 );
+            if( actor->max_weight > 0_gram ) {
+                pocket.max_contains_weight = actor->max_weight * std::max( actor->multi, 1 );
+            }
+            pocket.holster = actor->multi <= 1;
+            pocket.moves = actor->draw_cost;
+            // A holster that names skills accepts guns using them, which no flag
+            // describes. Restricting by flag there would refuse those guns, so
+            // the pocket stays open and the actor keeps doing the judging.
+            if( actor->skills.empty() ) {
+                pocket.flag_restriction.insert( actor->flags.begin(), actor->flags.end() );
+            }
+            pocket.synthesized = true;
+            def.pockets.push_back( pocket );
+        }
+    }
+
+    if( const use_function *func = def.get_use( "bandolier" ) ) {
+        if( const bandolier_actor *actor =
+                dynamic_cast<const bandolier_actor *>( func->get_actor_ptr() ) ) {
+            pocket_data pocket;
+            pocket.type = pocket_type::CONTAINER;
+            for( const ammotype &at : actor->ammo ) {
+                pocket.ammo_restriction.emplace( at, actor->capacity );
+            }
+            pocket.moves = actor->draw_cost;
+            pocket.synthesized = true;
+            def.pockets.push_back( pocket );
+        }
+    }
+}
+
 static void synthesize_pockets_from_legacy( itype &def )
 {
     // Special pockets first, then the container pocket. has_only_special_pockets()
@@ -318,11 +386,16 @@ static void synthesize_pockets_from_legacy( itype &def )
         pocket.max_contains_volume = def.armor->storage;
         pocket.rigid = false;
     } else {
+        // No storage of its own, but it may still holster something.
+        synthesize_use_action_pockets_from_legacy( def );
         return;
     }
 
     pocket.synthesized = true;
     def.pockets.push_back( pocket );
+
+    // A coat with cargo pockets can also carry a holster; both are real.
+    synthesize_use_action_pockets_from_legacy( def );
 }
 
 std::string pocket_coverage_report()

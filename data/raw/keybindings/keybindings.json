@@ -3713,6 +3713,13 @@
     "bindings": [ { "input_method": "keyboard", "key": "=" } ]
   },
   {
+    "id": "ORGANIZE_POCKETS",
+    "type": "keybinding",
+    "category": "INVENTORY_ITEM",
+    "name": "Organize pockets",
+    "bindings": [ { "input_method": "keyboard", "key": "P" } ]
+  },
+  {
     "id": "AUTOPICKUP_ADD",
     "type": "keybinding",
     "category": "INVENTORY_ITEM",

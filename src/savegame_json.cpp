@@ -179,7 +179,9 @@ static void deserialize( weak_ptr_fast<monster> &obj, JsonIn &jsin )
 
 void item_contents::serialize( JsonOut &json ) const
 {
-    if( !empty() ) {
+    // Organising an empty pocket is a real edit, so settings alone are reason
+    // enough to write the block.
+    if( !empty() || settings_edited() ) {
         json.start_object();
 
         json.member( "pockets" );
@@ -188,6 +190,11 @@ void item_contents::serialize( JsonOut &json ) const
             json.start_object();
             json.member( "pocket_type", static_cast<int>( pocket.definition().type ) );
             json.member( "contents", pocket.get_contents() );
+            // Most pockets on most items are never organised; writing an empty
+            // settings object for each would cost every save real bytes.
+            if( !pocket.get_settings().is_null() ) {
+                json.member( "settings", pocket.get_settings() );
+            }
             json.end_object();
         }
         json.end_array();
@@ -218,6 +225,13 @@ void item_contents::deserialize( JsonIn &jsin )
             item_pocket &target = index < pockets.size() ? pockets[index] : pockets.front();
             for( detached_ptr<item> &it : read_items ) {
                 target.insert( std::move( it ) );
+            }
+            // Settings belong to the pocket they were written for. An overflow
+            // pocket's contents can be folded into pocket 0, but its settings
+            // cannot: they would silently reorganise a pocket the player never
+            // touched, so they are dropped with the pocket that owned them.
+            if( index < pockets.size() && jo.has_member( "settings" ) ) {
+                jo.read( "settings", target.get_settings() );
             }
             index++;
         }
@@ -3002,7 +3016,7 @@ void item::serialize( JsonOut &json ) const
                      damage_instance_serialization::serialize_damage_instance( ranged_damage_bonus ) );
     }
 
-    if( !contents.empty() ) {
+    if( !contents.empty() || contents.settings_edited() ) {
         json.member( "contents", contents );
     }
     if( kills ) {

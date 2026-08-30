@@ -8,6 +8,7 @@
 #include "enum_conversions.h"
 #include "generic_factory.h"
 #include "item.h"
+#include "item_category.h"
 #include "itype.h"
 #include "json.h"
 #include "locations.h"
@@ -114,6 +115,108 @@ std::string pocket_audit_report()
     return report;
 }
 
+void pocket_favorite_settings::clear()
+{
+    *this = pocket_favorite_settings();
+}
+
+bool pocket_favorite_settings::is_null() const
+{
+    return !player_edited;
+}
+
+void pocket_favorite_settings::whitelist_item( const itype_id &id )
+{
+    item_blacklist.erase( id );
+    item_whitelist.insert( id );
+    player_edited = true;
+}
+
+void pocket_favorite_settings::blacklist_item( const itype_id &id )
+{
+    item_whitelist.erase( id );
+    item_blacklist.insert( id );
+    player_edited = true;
+}
+
+void pocket_favorite_settings::clear_item( const itype_id &id )
+{
+    item_whitelist.erase( id );
+    item_blacklist.erase( id );
+    player_edited = true;
+}
+
+void pocket_favorite_settings::whitelist_category( const item_category_id &id )
+{
+    category_blacklist.erase( id );
+    category_whitelist.insert( id );
+    player_edited = true;
+}
+
+void pocket_favorite_settings::blacklist_category( const item_category_id &id )
+{
+    category_whitelist.erase( id );
+    category_blacklist.insert( id );
+    player_edited = true;
+}
+
+void pocket_favorite_settings::clear_category( const item_category_id &id )
+{
+    category_whitelist.erase( id );
+    category_blacklist.erase( id );
+    player_edited = true;
+}
+
+bool pocket_favorite_settings::accepts_item( const item &it ) const
+{
+    // Precedence ported from CDDA's favorite_settings::accepts_item; the order
+    // matters and the last two rules are not obvious.
+    if( disabled ) {
+        return false;
+    }
+
+    const itype_id &id = it.typeId();
+    if( item_blacklist.count( id ) ) {
+        return false;
+    }
+    if( item_whitelist.count( id ) ) {
+        return true;
+    }
+
+    if( !category_blacklist.empty() || !category_whitelist.empty() ) {
+        const item_category_id cat = it.get_category().get_id();
+        if( category_blacklist.count( cat ) ) {
+            return false;
+        }
+        if( category_whitelist.count( cat ) ) {
+            return true;
+        }
+    }
+
+    // A container is judged by what is inside it, not by itself, unless the
+    // container's own type was explicitly listed above.
+    if( it.is_container() && !it.contents.empty() ) {
+        for( const item * const inner : it.contents.all_items_top() ) {
+            if( !accepts_item( *inner ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Nothing matched. A category whitelist means "only these categories".
+    if( !category_whitelist.empty() ) {
+        return false;
+    }
+    // An item whitelist means "only these items" - but only when it stands
+    // alone. Alongside a category blacklist it reads as an exception to that
+    // blacklist rather than an exclusive list.
+    if( !item_whitelist.empty() && category_blacklist.empty() ) {
+        return false;
+    }
+    return true;
+}
+
 void pocket_data::load( const JsonObject &jo )
 {
     optional( jo, false, "pocket_type", type, pocket_type::CONTAINER );
@@ -151,12 +254,50 @@ void pocket_data::deserialize( JsonIn &jsin )
     load( jo );
 }
 
+void pocket_favorite_settings::serialize( JsonOut &json ) const
+{
+    // Keys match CDDA's so their saves and ours describe settings the same way.
+    // "name" is theirs alone for now: presets are not ported, and writing an
+    // empty one would claim a preset the player never made.
+    json.start_object();
+    json.member( "priority", priority_rating );
+    json.member( "item_whitelist", item_whitelist );
+    json.member( "item_blacklist", item_blacklist );
+    json.member( "category_whitelist", category_whitelist );
+    json.member( "category_blacklist", category_blacklist );
+    json.member( "collapsed", collapsed );
+    json.member( "disabled", disabled );
+    json.member( "unload", unload );
+    json.member( "player_edited", player_edited );
+    json.end_object();
+}
+
+void pocket_favorite_settings::deserialize( JsonIn &jsin )
+{
+    JsonObject data = jsin.get_object();
+    data.allow_omitted_members();
+    data.read( "priority", priority_rating );
+    data.read( "item_whitelist", item_whitelist );
+    data.read( "item_blacklist", item_blacklist );
+    data.read( "category_whitelist", category_whitelist );
+    data.read( "category_blacklist", category_blacklist );
+    data.read( "collapsed", collapsed );
+    data.read( "disabled", disabled );
+    data.read( "unload", unload );
+    if( !data.read( "player_edited", player_edited ) ) {
+        // Settings only reach the save because someone edited them, so a block
+        // from before the flag existed - CDDA's included - was player made.
+        player_edited = true;
+    }
+}
+
 item_pocket::item_pocket( item *owner, const pocket_data *data )
     : owner( owner ), data( data ), contents( new contents_item_location( owner ) ) {}
 
 item_pocket::item_pocket( item_pocket &&other ) noexcept
     : owner( other.owner ), data( other.data ),
-      contents( new contents_item_location( other.owner ) )
+      contents( new contents_item_location( other.owner ) ),
+      settings( std::move( other.settings ) )
 {
     // Must happen after contents has a location: location_vector's move
     // assignment repoints every item at the *target's* location.

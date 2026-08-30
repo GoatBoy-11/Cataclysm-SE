@@ -29,6 +29,14 @@ class item_contents
         ~item_contents();
 
         bool empty() const;
+
+        /**
+         * True when the player has organised any pocket here. Empty contents are
+         * normally left out of the save entirely; settings must survive that, so
+         * both save gates ask this as well.
+         */
+        bool settings_edited() const;
+
         auto has_processing_items() const -> bool;
         auto processing_items() const -> const std::vector<item *> &; // *NOPAD*
         auto invalidate_processing_cache() const -> void;
@@ -127,11 +135,23 @@ class item_contents
 
         /**
          * The pocket this item should go in, or nullptr if none will take it.
-         * Prefers a pocket that specifically names what belongs in it over a
+         * Honours player organisation first - a higher priority wins outright,
+         * and a pocket whose filters reject the item is skipped - then prefers a
+         * pocket that specifically names what belongs in it over a
          * general-purpose one that merely has room, then prefers the tightest
          * fit so roomy pockets stay free.
+         *
+         * @param ignore_settings for deliberate placement, where the player has
+         * chosen this item's destination themselves and their standing filters
+         * should not overrule that.
          */
-        item_pocket *best_pocket( const item &it );
+        item_pocket *best_pocket( const item &it, bool ignore_settings = false );
+
+        /**
+         * The pocket organization menu: pick a pocket, then set its priority and
+         * filters. Absent in classic mode, where settings are ignored anyway.
+         */
+        void favorite_settings_menu();
 
         /** later phases operate on pockets directly; phase 1 has exactly one */
         std::vector<item_pocket> &get_pockets() {

@@ -4,6 +4,8 @@
 #include <set>
 #include <vector>
 
+#include "flat_set.h"
+
 #include "enum_traits.h"
 #include "location_vector.h"
 #include "ret_val.h"
@@ -106,6 +108,7 @@ struct pocket_data {
  * rejected is recorded here while still being allowed through. An empty report
  * after exercising the game is the evidence that enforcement can be enabled.
  */
+
 /**
  * True when the world is running the classic pocket system.
  *
@@ -120,6 +123,94 @@ bool pockets_are_classic();
 void record_pocket_audit_miss( const item *container, const item &inserted );
 std::string pocket_audit_report();
 void clear_pocket_audit();
+
+/**
+ * Per-pocket player preferences: which pocket things should go into, and what
+ * each pocket will accept. Stored per item instance, not per item type, so two
+ * backpacks can be organised differently.
+ *
+ * Ported from CDDA's item_pocket::favorite_settings.
+ */
+class pocket_favorite_settings
+{
+    public:
+        void clear();
+
+        /** Higher wins when best_pocket() chooses. */
+        void set_priority( int p ) {
+            priority_rating = p;
+            player_edited = true;
+        }
+        int priority() const {
+            return priority_rating;
+        }
+
+        void whitelist_item( const itype_id &id );
+        void blacklist_item( const itype_id &id );
+        void clear_item( const itype_id &id );
+        void whitelist_category( const item_category_id &id );
+        void blacklist_category( const item_category_id &id );
+        void clear_category( const item_category_id &id );
+
+        const cata::flat_set<itype_id> &get_item_whitelist() const {
+            return item_whitelist;
+        }
+        const cata::flat_set<itype_id> &get_item_blacklist() const {
+            return item_blacklist;
+        }
+        const cata::flat_set<item_category_id> &get_category_whitelist() const {
+            return category_whitelist;
+        }
+        const cata::flat_set<item_category_id> &get_category_blacklist() const {
+            return category_blacklist;
+        }
+
+        /** Whether an item passes these filters. Precedence follows CDDA's. */
+        bool accepts_item( const item &it ) const;
+
+        bool is_collapsed() const {
+            return collapsed;
+        }
+        void set_collapse( bool flag ) {
+            collapsed = flag;
+            player_edited = true;
+        }
+        bool is_disabled() const {
+            return disabled;
+        }
+        void set_disabled( bool flag ) {
+            disabled = flag;
+            player_edited = true;
+        }
+        bool is_unloadable() const {
+            return unload;
+        }
+        void set_unloadable( bool flag ) {
+            unload = flag;
+            player_edited = true;
+        }
+
+        /**
+         * True while the player has never touched these settings. Serialization
+         * skips null settings entirely: most pockets on most items are never
+         * edited, and writing an empty object for each would bloat every save.
+         */
+        bool is_null() const;
+
+        void serialize( JsonOut &json ) const;
+        void deserialize( JsonIn &jsin );
+
+    private:
+        int priority_rating = 0;
+        cata::flat_set<itype_id> item_whitelist;
+        cata::flat_set<itype_id> item_blacklist;
+        cata::flat_set<item_category_id> category_whitelist;
+        cata::flat_set<item_category_id> category_blacklist;
+        bool collapsed = false;
+        bool disabled = false;
+        bool unload = true;
+        bool player_edited = false;
+};
 
 /**
  * One compartment of an item. Owns its contents through the same
@@ -179,8 +270,20 @@ class item_pocket
             return *data;
         }
 
+        /**
+         * Player preferences for this pocket. Per item instance, so the same
+         * itype's pockets can be organised differently on two copies of an item.
+         */
+        pocket_favorite_settings &get_settings() {
+            return settings;
+        }
+        const pocket_favorite_settings &get_settings() const {
+            return settings;
+        }
+
     private:
         item *owner;
         const pocket_data *data;
         location_vector<item> contents;
+        pocket_favorite_settings settings;
 };

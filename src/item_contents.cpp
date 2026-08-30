@@ -2,16 +2,26 @@
 
 #include <algorithm>
 #include <limits>
-#include <algorithm>
 #include <memory>
+#include <utility>
+
+#include <set>
+#include <string>
+#include <vector>
 
 #include "character.h"
 #include "enums.h"
 #include "handle_liquid.h"
 #include "item.h"
+#include "item_category.h"
 #include "itype.h"
 #include "locations.h"
 #include "map.h"
+#include "output.h"
+#include "translations.h"
+#include "type_id.h"
+#include "ui.h"
+#include "units_utility.h"
 
 struct tripoint;
 
@@ -55,6 +65,16 @@ bool item_contents::empty() const
     return true;
 }
 
+bool item_contents::settings_edited() const
+{
+    for( const item_pocket &pocket : pockets ) {
+        if( !pocket.get_settings().is_null() ) {
+            return true;
+        }
+    }
+    return false;
+}
+
 auto item_contents::has_processing_items() const -> bool
 {
     update_processing_cache();
@@ -93,10 +113,11 @@ auto item_contents::update_processing_cache() const -> void
     processing_cache_dirty = false;
 }
 
-item_pocket *item_contents::best_pocket( const item &it )
+item_pocket *item_contents::best_pocket( const item &it, const bool ignore_settings )
 {
-    // Classic mode: first pocket that will take it, no ranking. Combined with
-    // can_contain()'s relaxed checks this reproduces pre-pocket inventory
+    // Classic mode: first pocket that will take it, no ranking, and player
+    // organisation is ignored along with the rest of the pocket rules. Combined
+    // with can_contain()'s relaxed checks this reproduces pre-pocket inventory
     // behaviour without changing what is stored on disk.
     if( pockets_are_classic() ) {
         for( item_pocket &pocket : pockets ) {
@@ -107,13 +128,16 @@ item_pocket *item_contents::best_pocket( const item &it )
         return nullptr;
     }
 
-    item_pocket *best = nullptr;
-    int best_rank = -1;
+    const bool consider_settings = !ignore_settings;
 
-    for( item_pocket &pocket : pockets ) {
-        if( !pocket.can_contain( it ).success() ) {
-            continue;
-        }
+    // Ranks a pocket for this item, higher being better. Follows the order of
+    // CDDA's better_pocket(): player priority beats everything, then a pocket
+    // the player named this item for, then a pocket the *data* named it for.
+    const auto rank_of = [&it, consider_settings]( const item_pocket & pocket ) {
+        const pocket_favorite_settings &settings = pocket.get_settings();
+        const bool whitelisted = consider_settings &&
+                                 ( !settings.get_item_whitelist().empty() ||
+                                   !settings.get_category_whitelist().empty() );
         // A pocket that names what may go in it is the item's proper home; a
         // general-purpose pocket only happens to have room. Rank the former
         // higher so a magazine reaches the magazine well rather than the
@@ -122,12 +146,32 @@ item_pocket *item_contents::best_pocket( const item &it )
         const bool restricted = !def.ammo_restriction.empty() ||
                                 !def.item_restriction.empty() ||
                                 !def.mod_restriction.empty();
-        const int rank = restricted ? 1 : 0;
+        return std::make_pair( whitelisted, restricted );
+    };
 
-        if( best == nullptr || rank > best_rank ||
-            ( rank == best_rank &&
-              pocket.remaining_volume() < best->remaining_volume() ) ) {
+    item_pocket *best = nullptr;
+    int best_priority = 0;
+    std::pair<bool, bool> best_rank{ false, false };
+
+    for( item_pocket &pocket : pockets ) {
+        // A disabled pocket rejects everything, so accepts_item() covers it.
+        if( consider_settings && !pocket.get_settings().accepts_item( it ) ) {
+            continue;
+        }
+        if( !pocket.can_contain( it ).success() ) {
+            continue;
+        }
+
+        const int priority = consider_settings ? pocket.get_settings().priority() : 0;
+        const std::pair<bool, bool> rank = rank_of( pocket );
+
+        if( best == nullptr || priority > best_priority ||
+            ( priority == best_priority &&
+              ( rank > best_rank ||
+                ( rank == best_rank &&
+                  pocket.remaining_volume() < best->remaining_volume() ) ) ) ) {
             best = &pocket;
+            best_priority = priority;
             best_rank = rank;
         }
     }
@@ -542,4 +586,255 @@ void item_contents::remove_top_items_with( const std::function < detached_ptr<it
         e = filter( std::move( e ) );
         return VisitResponse::SKIP;
     } );
+}
+
+// ---------------------------------------------------------------------------
+// The pocket organization menu
+// ---------------------------------------------------------------------------
+
+namespace
+{
+
+std::string describe_pocket( const item_pocket &pocket, const int number )
+{
+    const pocket_favorite_settings &settings = pocket.get_settings();
+    std::string line = string_format( _( "Pocket %d: %s / %s" ), number,
+                                      format_volume( pocket.contents_volume() ),
+                                      format_volume( pocket.definition().max_contains_volume ) );
+    line += string_format( vgettext( ", %d item", ", %d items",
+                                     pocket.all_items_top().size() ),
+                           pocket.all_items_top().size() );
+    if( settings.priority() != 0 ) {
+        line += string_format( _( ", priority %d" ), settings.priority() );
+    }
+    const size_t listed = settings.get_item_whitelist().size() +
+                          settings.get_category_whitelist().size();
+    const size_t barred = settings.get_item_blacklist().size() +
+                          settings.get_category_blacklist().size();
+    if( listed > 0 ) {
+        line += string_format( _( ", %d allowed" ), static_cast<int>( listed ) );
+    }
+    if( barred > 0 ) {
+        line += string_format( _( ", %d barred" ), static_cast<int>( barred ) );
+    }
+    if( settings.is_disabled() ) {
+        line += _( ", disabled" );
+    }
+    return line;
+}
+
+/** none -> whitelisted -> blacklisted -> none, so one key drives the whole cycle. */
+void cycle_item_filter( pocket_favorite_settings &settings, const itype_id &id )
+{
+    if( settings.get_item_whitelist().count( id ) ) {
+        settings.blacklist_item( id );
+    } else if( settings.get_item_blacklist().count( id ) ) {
+        settings.clear_item( id );
+    } else {
+        settings.whitelist_item( id );
+    }
+}
+
+void cycle_category_filter( pocket_favorite_settings &settings, const item_category_id &id )
+{
+    if( settings.get_category_whitelist().count( id ) ) {
+        settings.blacklist_category( id );
+    } else if( settings.get_category_blacklist().count( id ) ) {
+        settings.clear_category( id );
+    } else {
+        settings.whitelist_category( id );
+    }
+}
+
+std::string item_filter_state( const pocket_favorite_settings &settings, const itype_id &id )
+{
+    if( settings.get_item_whitelist().count( id ) ) {
+        return _( "allowed" );
+    }
+    if( settings.get_item_blacklist().count( id ) ) {
+        return _( "barred" );
+    }
+    return _( "no rule" );
+}
+
+std::string category_filter_state( const pocket_favorite_settings &settings,
+                                   const item_category_id &id )
+{
+    if( settings.get_category_whitelist().count( id ) ) {
+        return _( "allowed" );
+    }
+    if( settings.get_category_blacklist().count( id ) ) {
+        return _( "barred" );
+    }
+    return _( "no rule" );
+}
+
+/**
+ * Every item type the player could plausibly mean: what the container holds now,
+ * plus whatever the pocket already names. Typing an item id would be exact but
+ * unusable, and offering every itype in the game is worse.
+ */
+std::vector<itype_id> candidate_items( const item_contents &contents,
+                                       const pocket_favorite_settings &settings )
+{
+    std::set<itype_id> ids;
+    for( const item_pocket &pocket : contents.get_pockets() ) {
+        for( const item * const it : pocket.all_items_top() ) {
+            ids.insert( it->typeId() );
+        }
+    }
+    ids.insert( settings.get_item_whitelist().begin(), settings.get_item_whitelist().end() );
+    ids.insert( settings.get_item_blacklist().begin(), settings.get_item_blacklist().end() );
+    return std::vector<itype_id>( ids.begin(), ids.end() );
+}
+
+std::vector<item_category_id> candidate_categories( const item_contents &contents,
+        const pocket_favorite_settings &settings )
+{
+    std::set<item_category_id> ids;
+    for( const item_pocket &pocket : contents.get_pockets() ) {
+        for( const item * const it : pocket.all_items_top() ) {
+            ids.insert( it->get_category().get_id() );
+        }
+    }
+    ids.insert( settings.get_category_whitelist().begin(), settings.get_category_whitelist().end() );
+    ids.insert( settings.get_category_blacklist().begin(), settings.get_category_blacklist().end() );
+    return std::vector<item_category_id>( ids.begin(), ids.end() );
+}
+
+void item_filter_menu( const item_contents &contents, pocket_favorite_settings &settings )
+{
+    while( true ) {
+        const std::vector<itype_id> ids = candidate_items( contents, settings );
+        if( ids.empty() ) {
+            popup( _( "Nothing to filter yet: put something in this container first." ) );
+            return;
+        }
+        uilist menu;
+        menu.title = _( "Item rules - select to cycle allowed / barred / no rule" );
+        for( size_t i = 0; i < ids.size(); i++ ) {
+            menu.addentry( static_cast<int>( i ), true, MENU_AUTOASSIGN, "%s [%s]",
+                           item::nname( ids[i] ), item_filter_state( settings, ids[i] ) );
+        }
+        menu.query();
+        if( menu.ret < 0 || static_cast<size_t>( menu.ret ) >= ids.size() ) {
+            return;
+        }
+        cycle_item_filter( settings, ids[menu.ret] );
+    }
+}
+
+void category_filter_menu( const item_contents &contents, pocket_favorite_settings &settings )
+{
+    while( true ) {
+        const std::vector<item_category_id> ids = candidate_categories( contents, settings );
+        if( ids.empty() ) {
+            popup( _( "Nothing to filter yet: put something in this container first." ) );
+            return;
+        }
+        uilist menu;
+        menu.title = _( "Category rules - select to cycle allowed / barred / no rule" );
+        for( size_t i = 0; i < ids.size(); i++ ) {
+            menu.addentry( static_cast<int>( i ), true, MENU_AUTOASSIGN, "%s [%s]",
+                           ids[i].is_valid() ? ids[i]->name() : ids[i].str(),
+                           category_filter_state( settings, ids[i] ) );
+        }
+        menu.query();
+        if( menu.ret < 0 || static_cast<size_t>( menu.ret ) >= ids.size() ) {
+            return;
+        }
+        cycle_category_filter( settings, ids[menu.ret] );
+    }
+}
+
+void one_pocket_menu( const item_contents &contents, item_pocket &pocket, const int number )
+{
+    pocket_favorite_settings &settings = pocket.get_settings();
+    while( true ) {
+        uilist menu;
+        menu.title = describe_pocket( pocket, number );
+        menu.addentry( 0, true, 'p', string_format( _( "Set priority (now %d)" ),
+                       settings.priority() ) );
+        menu.addentry( 1, true, 'i', _( "Item rules" ) );
+        menu.addentry( 2, true, 'c', _( "Category rules" ) );
+        menu.addentry( 3, true, 'd', string_format( _( "Auto-insert: %s" ),
+                       settings.is_disabled() ? _( "off" ) : _( "on" ) ) );
+        menu.addentry( 4, true, 'l', string_format( _( "Show contents: %s" ),
+                       settings.is_collapsed() ? _( "collapsed" ) : _( "expanded" ) ) );
+        menu.addentry( 5, true, 'u', string_format( _( "Unload with the rest: %s" ),
+                       settings.is_unloadable() ? _( "yes" ) : _( "no" ) ) );
+        menu.addentry( 6, true, 'x', _( "Clear this pocket's rules" ) );
+        menu.query();
+
+        switch( menu.ret ) {
+            case 0: {
+                int priority = settings.priority();
+                if( query_int( priority, priority,
+                               _( "Priority?  Higher wins when something is stored automatically." ) ) ) {
+                    settings.set_priority( priority );
+                }
+                break;
+            }
+            case 1:
+                item_filter_menu( contents, settings );
+                break;
+            case 2:
+                category_filter_menu( contents, settings );
+                break;
+            case 3:
+                settings.set_disabled( !settings.is_disabled() );
+                break;
+            case 4:
+                settings.set_collapse( !settings.is_collapsed() );
+                break;
+            case 5:
+                settings.set_unloadable( !settings.is_unloadable() );
+                break;
+            case 6:
+                settings.clear();
+                break;
+            default:
+                return;
+        }
+    }
+}
+
+} // namespace
+
+void item_contents::favorite_settings_menu()
+{
+    // Classic mode ignores settings, so offering the menu would promise the
+    // player something the mode does not honour.
+    if( pockets_are_classic() ) {
+        popup( _( "The classic pocket system has no pockets to organize." ) );
+        return;
+    }
+
+    // General-purpose pockets only: a magazine well or a mod slot already knows
+    // exactly what belongs in it, and nothing the player sets could improve on
+    // that.
+    std::vector<size_t> organizable;
+    for( size_t i = 0; i < pockets.size(); i++ ) {
+        if( pockets[i].definition().type == pocket_type::CONTAINER ) {
+            organizable.push_back( i );
+        }
+    }
+    if( organizable.empty() ) {
+        popup( _( "This item has no pockets to organize." ) );
+        return;
+    }
+
+    while( true ) {
+        uilist menu;
+        menu.title = string_format( _( "Organize %s" ), owner->tname() );
+        for( size_t i = 0; i < organizable.size(); i++ ) {
+            menu.addentry( static_cast<int>( i ), true, MENU_AUTOASSIGN, "%s",
+                           describe_pocket( pockets[organizable[i]], static_cast<int>( i ) + 1 ) );
+        }
+        menu.query();
+        if( menu.ret < 0 || static_cast<size_t>( menu.ret ) >= organizable.size() ) {
+            return;
+        }
+        one_pocket_menu( *this, pockets[organizable[menu.ret]], menu.ret + 1 );
+    }
 }

@@ -12,7 +12,9 @@
 #include "map.h"
 #include "input.h"
 #include "item.h"
+#include "item_contents.h"
 #include "item_functions.h"
+#include "item_pocket.h"
 #include "itype.h"
 #include "messages.h"
 #include "output.h"
@@ -243,6 +245,23 @@ bool run(
                       std::string( "?t=UNDEAD_PEOPLE" ) );
             return false;
         } );
+    }
+
+    // Organising pockets means nothing where there is only one pocket to put
+    // things in, and classic mode ignores the settings outright.
+    if( !pockets_are_classic() ) {
+        int container_pockets = 0;
+        for( const item_pocket &pocket : itm.contents.get_pockets() ) {
+            if( pocket.definition().type == pocket_type::CONTAINER ) {
+                container_pockets++;
+            }
+        }
+        if( container_pockets > 0 ) {
+            add_entry( "ORGANIZE_POCKETS", hint_rating::good, [&]() {
+                itm.contents.favorite_settings_menu();
+                return false;
+            } );
+        }
     }
 
     add_entry( "REASSIGN", hint_rating::good, [&]() {
