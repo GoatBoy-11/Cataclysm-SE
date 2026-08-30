@@ -73,7 +73,7 @@ TEST_CASE("gun_layer", "[item]") {
     item& gun = *item::spawn_temporary("win70");
     detached_ptr<item> mod = item::spawn("shoulder_strap");
     CHECK(gun.is_gunmod_compatible(*mod).success());
-    gun.put_in(std::move(mod));
+    gun.put_in_unchecked(std::move(mod));
     CHECK(gun.get_layer() == BELTED_LAYER);
 }
 
@@ -350,7 +350,7 @@ TEST_CASE("gunmod_weight_volume_test", "[item][gunmod]") {
 
         detached_ptr<item> mod = item::spawn("test_mod_neg_int");
         REQUIRE(gun->is_gunmod_compatible(*mod).success());
-        gun->put_in(std::move(mod));
+        gun->put_in_unchecked(std::move(mod));
 
         CHECK(gun->weight() == w0 - 100_gram);
         CHECK(gun->volume() == v0 - 100_ml);
@@ -365,7 +365,7 @@ TEST_CASE("gunmod_weight_volume_test", "[item][gunmod]") {
 
         detached_ptr<item> mod = item::spawn("test_mod_mult");
         REQUIRE(gun->is_gunmod_compatible(*mod).success());
-        gun->put_in(std::move(mod));
+        gun->put_in_unchecked(std::move(mod));
 
         CHECK(gun->weight() == w0 * 9 / 10);
         CHECK(gun->volume() == v0 * 9 / 10);
@@ -380,11 +380,11 @@ TEST_CASE("gunmod_weight_volume_test", "[item][gunmod]") {
 
         detached_ptr<item> mod_mult = item::spawn("test_mod_mult");
         REQUIRE(gun->is_gunmod_compatible(*mod_mult).success());
-        gun->put_in(std::move(mod_mult));
+        gun->put_in_unchecked(std::move(mod_mult));
 
         detached_ptr<item> mod_neg = item::spawn("test_mod_neg_int");
         REQUIRE(gun->is_gunmod_compatible(*mod_neg).success());
-        gun->put_in(std::move(mod_neg));
+        gun->put_in_unchecked(std::move(mod_neg));
 
         CHECK(gun->weight() == w0 * 9 / 10 - 100_gram);
         CHECK(gun->volume() == v0 * 9 / 10 - 100_ml);
@@ -399,7 +399,7 @@ TEST_CASE("gunmod_weight_volume_test", "[item][gunmod]") {
 
         detached_ptr<item> mod = item::spawn("test_mod_clamp");
         REQUIRE(gun->is_gunmod_compatible(*mod).success());
-        gun->put_in(std::move(mod));
+        gun->put_in_unchecked(std::move(mod));
 
         CHECK(gun->weight() == std::max(w0 - 999_gram, w0 / 100));
         CHECK(gun->volume() == std::max(v0 - 999_ml, v0 / 100));

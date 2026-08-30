@@ -354,7 +354,7 @@ TEST_CASE("Vehicle charging station", "[vehicle][power]") {
             detached_ptr<item> tool_det = item::spawn("smart_phone_music");
             item& tool = *tool_det;
             REQUIRE(tool.has_flag(flag_RECHARGE));
-            tool.put_in(std::move(battery_det));
+            tool.put_in_unchecked(std::move(battery_det));
             REQUIRE(tool.ammo_remaining() == 0);
             REQUIRE(!veh_ptr->add_item(cargo_part, std::move(tool_det)));
 

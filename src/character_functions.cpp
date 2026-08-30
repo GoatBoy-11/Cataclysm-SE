@@ -650,7 +650,7 @@ void store_in_container( Character &who, item &container, detached_ptr<item> &&p
                          int base_cost )
 {
     who.moves -= who.item_store_cost( *put, container, penalties, base_cost );
-    container.put_in( std::move( put ) );
+    container.put_in_unchecked( std::move( put ) );
     who.reset_encumbrance();
 }
 

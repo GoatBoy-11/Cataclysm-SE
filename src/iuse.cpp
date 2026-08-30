@@ -4408,7 +4408,7 @@ int iuse::blood_draw( player *p, item *it, bool, const tripoint_bub_ms & )
 
                             if( !liquid_handler::handle_liquid( std::move( blood ), 1 ) ) {
                                 // NOLINTNEXTLINE(bugprone-use-after-move)
-                                it->put_in( std::move( blood ) );
+                                it->put_in_unchecked( std::move( blood ) );
                             }
                             return it->type->charges_to_use();
                         }
@@ -4431,7 +4431,7 @@ int iuse::blood_draw( player *p, item *it, bool, const tripoint_bub_ms & )
         p->mod_pain( 3 );
         if( !liquid_handler::handle_liquid( std::move( blood ), 1 ) ) {
             // NOLINTNEXTLINE(bugprone-use-after-move)
-            it->put_in( std::move( blood ) );
+            it->put_in_unchecked( std::move( blood ) );
         }
         return it->type->charges_to_use();
     }
@@ -4449,7 +4449,7 @@ int iuse::blood_draw( player *p, item *it, bool, const tripoint_bub_ms & )
         }
         if( !liquid_handler::handle_liquid( std::move( acid ), 1 ) ) {
             // NOLINTNEXTLINE(bugprone-use-after-move)
-            it->put_in( std::move( acid ) );
+            it->put_in_unchecked( std::move( acid ) );
         }
         return it->type->charges_to_use();
     }
@@ -7829,7 +7829,7 @@ int iuse::radiocar( player *p, item *it, bool, const tripoint_bub_ms & )
                 p->moves -= to_moves<int>( 3_seconds );
                 p->add_msg_if_player( _( "You armed your RC car with %s." ),
                                       put.tname() );
-                it->put_in( put.detach( ) );
+                it->put_in_unchecked( put.detach( ) );
             } else if( !put.has_flag( flag_RADIOCARITEM ) ) {
                 p->add_msg_if_player( _( "RC car with %s?  How?" ),
                                       put.tname() );

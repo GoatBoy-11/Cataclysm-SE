@@ -891,7 +891,26 @@ class item : public location_visitable<item>, public game_object<item>
         /**
          * Puts the given item into this one, no checks are performed.
          */
-        void put_in( detached_ptr<item> &&payload );
+        /**
+         * Put an item inside this one.
+         *
+         * Returns an empty pointer when the item was taken, or the payload back
+         * when it was refused. Refusal cannot happen yet - insertion always
+         * succeeds - but the caller must handle the returned pointer so that
+         * enabling pocket enforcement later cannot silently destroy items.
+         */
+        [[nodiscard]] detached_ptr<item> put_in( detached_ptr<item> &&payload );
+
+        /**
+         * put_in for call sites that have no way to handle refusal yet.
+         *
+         * Behaves exactly as put_in did before it could report refusal. Only the
+         * pre-existing null-payload and self-insertion errors can reach the
+         * discard today, and both already report themselves; no new item loss is
+         * introduced. Enabling pocket enforcement means giving each of these
+         * call sites a real answer - grep TODO(pocket-enforcement) for the list.
+         */
+        void put_in_unchecked( detached_ptr<item> &&payload );
 
         /**
          * Returns this item into its default container. If it does not have a default container,

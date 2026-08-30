@@ -642,7 +642,7 @@ void starting_inv( npc &who, const npc_class_id &type )
                                       who.primary_weapon().ammo_default() ) );
         if( ammo->made_of( LIQUID ) ) {
             detached_ptr<item> container = item::spawn( "bottle_plastic" );
-            container->put_in( std::move( ammo ) );
+            container->put_in_unchecked( std::move( ammo ) );
             ammo = std::move( container );
         }
 

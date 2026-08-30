@@ -587,7 +587,7 @@ detached_ptr<item> Item_modifier::modify( detached_ptr<item> &&new_item ) const
                           && new_item->magazine_default() != itype_id::NULL_ID();
 
         if( spawn_mag ) {
-            new_item->put_in( item::spawn( new_item->magazine_default(), new_item->birthday() ) );
+            new_item->put_in_unchecked( item::spawn( new_item->magazine_default(), new_item->birthday() ) );
         }
 
         if( spawn_ammo ) {
@@ -603,14 +603,14 @@ detached_ptr<item> Item_modifier::modify( detached_ptr<item> &&new_item ) const
     }
 
     if( cont != nullptr && !cont->is_null() ) {
-        cont->put_in( std::move( new_item ) );
+        cont->put_in_unchecked( std::move( new_item ) );
         new_item = std::move( cont );
     }
 
     if( contents != nullptr ) {
         std::vector<detached_ptr<item>> contentitems = contents->create( new_item->birthday() );
         for( detached_ptr<item> &it : contentitems ) {
-            new_item->put_in( std::move( it ) );
+            new_item->put_in_unchecked( std::move( it ) );
         }
     }
 

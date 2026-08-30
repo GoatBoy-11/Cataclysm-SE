@@ -245,7 +245,7 @@ void item::add_rain_to_container( bool acid, int charges )
             ret->poison = one_in( 10 ) ? 1 : 0;
         }
         ret->charges = std::min( charges, capa );
-        put_in( std::move( ret ) );
+        put_in_unchecked( std::move( ret ) );
     } else {
         // The container already has a liquid.
         item &liq = contents.front();

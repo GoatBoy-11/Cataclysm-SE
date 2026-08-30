@@ -3105,7 +3105,7 @@ void activity_handlers::gunmod_add_finish( player_activity *act, player *p )
     if( rng( 0, 100 ) <= roll ) {
         add_msg( m_good, _( "You successfully attached the %1$s to your %2$s." ), mod.tname(),
                  gun.tname() );
-        gun.put_in( mod.detach() );
+        gun.put_in_unchecked( mod.detach() );
 
     } else if( rng( 0, 100 ) <= risk ) {
         if( gun.inc_damage() ) {
@@ -3141,7 +3141,7 @@ void activity_handlers::toolmod_add_finish( player_activity *act, player *p )
                           mod.tname(), tool.tname() );
 
     mod.set_flag( flag_IRREMOVABLE );
-    tool.put_in( mod.detach() );
+    tool.put_in_unchecked( mod.detach() );
 }
 
 void activity_handlers::clear_rubble_finish( player_activity *act, player *p )
@@ -4971,5 +4971,5 @@ void activity_handlers::mind_splicer_finish( player_activity *act, player *p )
     p->add_msg_if_player( m_info, _( "…you finally find the memory banks." ) );
     p->add_msg_if_player( m_info, _( "The kit makes a copy of the data inside the bionic." ) );
     data_card.contents.clear_items();
-    data_card.put_in( item::spawn( itype_mind_scan_robofac ) );
+    data_card.put_in_unchecked( item::spawn( itype_mind_scan_robofac ) );
 }

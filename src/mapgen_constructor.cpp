@@ -929,7 +929,7 @@ auto mapgen_constructor::place_items( const item_group_id &loc, const int chance
         }
         if( rng( 0, 99 ) < magazine && !e->magazine_current() &&
             e->magazine_default() != itype_id::NULL_ID() ) {
-            e->put_in( item::spawn( e->magazine_default(), e->birthday() ) );
+            e->put_in_unchecked( item::spawn( e->magazine_default(), e->birthday() ) );
         }
         if( rng( 0, 99 ) < ammo && e->ammo_remaining() == 0 ) {
             e->ammo_set( e->ammo_default(), e->ammo_capacity() );

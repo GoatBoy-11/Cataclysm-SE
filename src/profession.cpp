@@ -858,7 +858,7 @@ std::vector<detached_ptr<item>> json_item_substitution::get_bonus_items( const s
             auto bonus_item = item::spawn( pair.first, advanced_spawn_time(), item::default_charges_tag {} );
             if( !bonus_item->magazine_current() &&
                 bonus_item->magazine_default() != itype_id::NULL_ID() ) {
-                bonus_item->put_in( item::spawn( bonus_item->magazine_default(), bonus_item->birthday() ) );
+                bonus_item->put_in_unchecked( item::spawn( bonus_item->magazine_default(), bonus_item->birthday() ) );
             }
             ret.push_back( std::move( bonus_item ) );
         }

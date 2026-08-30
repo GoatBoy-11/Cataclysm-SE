@@ -347,15 +347,15 @@ item::item( const itype *type, time_point turn, int qty ) : type( type ),
         for( const itype_id &mod : type->gun->built_in_mods ) {
             detached_ptr<item> it = item::spawn( mod, turn, qty );
             it->set_flag( flag_IRREMOVABLE );
-            put_in( std::move( it ) );
+            put_in_unchecked( std::move( it ) );
         }
         for( const itype_id &mod : type->gun->default_mods ) {
-            put_in( item::spawn( mod, turn, qty ) );
+            put_in_unchecked( item::spawn( mod, turn, qty ) );
         }
 
     } else if( type->magazine ) {
         if( type->magazine->count > 0 ) {
-            put_in( item::spawn( type->magazine->default_ammo, calendar::turn, type->magazine->count ) );
+            put_in_unchecked( item::spawn( type->magazine->default_ammo, calendar::turn, type->magazine->count ) );
         }
 
     } else if( goes_bad() ) {
@@ -718,7 +718,7 @@ void item::ammo_set( const itype_id &ammo, int qty )
             set_ammo->set_flag( flag_NO_DROP );
             set_ammo->set_flag( flag_IRREMOVABLE );
         }
-        put_in( std::move( set_ammo ) );
+        put_in_unchecked( std::move( set_ammo ) );
 
     } else if( magazine_integral() ) {
         curammo = atype;
@@ -754,7 +754,7 @@ void item::ammo_set( const itype_id &ammo, int qty )
                     }
                 }
             }
-            put_in( item::spawn( mag ) );
+            put_in_unchecked( item::spawn( mag ) );
         }
         magazine_current()->ammo_set( ammo, qty );
     }
@@ -1078,7 +1078,7 @@ detached_ptr<item> item::in_container( const itype_id &cont, detached_ptr<item> 
         detached_ptr<item> ret = item::spawn( cont, self->birthday() );
         ret->invlet = self->invlet;
         item &obj = *self;
-        ret->put_in( std::move( self ) );
+        ret->put_in_unchecked( std::move( self ) );
 
         if( obj.made_of( LIQUID ) && ret->is_container() ) {
             // Note: we can't use any of the normal container functions as they check the
@@ -1294,17 +1294,30 @@ bool item::merge_charges( detached_ptr<item> &&rhs, bool force )
     return true;
 }
 
-void item::put_in( detached_ptr<item> &&payload )
+detached_ptr<item> item::put_in( detached_ptr<item> &&payload )
 {
     if( !payload || payload->typeId() == itype_id::NULL_ID() ) {
         debugmsg( "Tried to insert non-item into %s", debug_name() );
-        return;
+        return std::move( payload );
     }
     if( &*payload == this ) {
         debugmsg( "Tried to put %s inside itself", debug_name().c_str() );
-        return;
+        // Previously this dropped the payload on the floor, destroying the item.
+        return std::move( payload );
     }
-    contents.insert_item( std::move( payload ) );
+    if( !contents.insert_item( std::move( payload ) ).success() ) {
+        // NOLINTNEXTLINE(bugprone-use-after-move)
+        return std::move( payload );
+    }
+    return detached_ptr<item>();
+}
+
+void item::put_in_unchecked( detached_ptr<item> &&payload )
+{
+    // TODO(pocket-enforcement): this call site needs a real answer for refusal
+    // before enforcement can be enabled.
+    detached_ptr<item> refused = put_in( std::move( payload ) );
+    static_cast<void>( refused );
 }
 
 void item::add_item_with_id( const itype_id &itype, int count )
@@ -9460,7 +9473,13 @@ bool item::reload( Character &who, item &loc, int qty )
         }
         if( !merged ) {
             // NOLINTNEXTLINE(bugprone-use-after-move)
-            put_in( std::move( to_reload ) );
+            detached_ptr<item> refused = put_in( std::move( to_reload ) );
+            if( refused ) {
+                // Hand the rounds back to the caller's stack rather than losing
+                // them, and report the reload as failed.
+                ammo->merge_charges( std::move( refused ) );
+                return false;
+            }
         }
     } else if( is_container() ) {
         if( container ) {
@@ -9482,7 +9501,11 @@ bool item::reload( Character &who, item &loc, int qty )
             }
         }
 
-        put_in( ammo->detach() );
+        if( put_in( ammo->detach() ) ) {
+            // The magazine was refused; the caller keeps its ammo and the reload
+            // did not happen.
+            return false;
+        }
         return true;
 
     } else {
@@ -9901,7 +9924,11 @@ detached_ptr<item> item::fill_with( detached_ptr<item> &&liquid, int amount )
     } else {
         detached_ptr<item> liquid_copy = item::spawn( *liquid );
         liquid_copy->charges = amount;
-        put_in( std::move( liquid_copy ) );
+        if( put_in( std::move( liquid_copy ) ) ) {
+            // Refused: none of the liquid was transferred, so give the caller
+            // back everything it handed us.
+            return std::move( liquid );
+        }
     }
 
     liquid->mod_charges( -amount );

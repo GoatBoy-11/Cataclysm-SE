@@ -112,7 +112,7 @@ void perform_reload( vehicle &veh, vehicle_part &cargo_part, item &gun, item &so
 
         // Move new mag
         auto mag = cargo_part.remove_item( source_item );
-        gun.put_in( std::move( mag ) );
+        gun.put_in_unchecked( std::move( mag ) );
 
     } else {
         // Load single round

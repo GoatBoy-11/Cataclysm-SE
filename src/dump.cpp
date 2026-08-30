@@ -193,14 +193,14 @@ bool game::dump_stats( const std::string &what, dump_mode mode,
             if( e->gun ) {
                 item &gun = *item::spawn_temporary( e );
                 if( !gun.magazine_integral() ) {
-                    gun.put_in( item::spawn( gun.magazine_default() ) );
+                    gun.put_in_unchecked( item::spawn( gun.magazine_default() ) );
                 }
                 gun.ammo_set( gun.ammo_default( false ), gun.ammo_capacity() );
 
                 dump( test_npc, gun );
 
                 if( gun.type->gun->barrel_volume > 0_ml ) {
-                    gun.put_in( item::spawn( "barrel_small" ) );
+                    gun.put_in_unchecked( item::spawn( "barrel_small" ) );
                     dump( test_npc, gun );
                 }
             }
