@@ -6081,7 +6081,7 @@ std::vector<item *> map::place_items( const item_group_id &loc, const int chance
         if( e->is_tool() || e->is_gun() || e->is_magazine() ) {
             if( rng( 0, 99 ) < magazine && !e->magazine_current() &&
                 e->magazine_default() != itype_id::NULL_ID() ) {
-                e->put_in_unchecked( item::spawn( e->magazine_default(), e->birthday() ) );
+                e->put_in_expected( item::spawn( e->magazine_default(), e->birthday() ) );
             }
             if( rng( 0, 99 ) < ammo && e->ammo_remaining() == 0 ) {
                 e->ammo_set( e->ammo_default(), e->ammo_capacity() );

@@ -2490,7 +2490,7 @@ static void cycle_action( item &weap, const tripoint_bub_ms &pos )
             || gunmod_find_with( parent, []( auto * e ) -> bool { return e->has_flag( flag_BRASS_CATCHER ); } ) ) {
             detached_ptr<item> det = item::spawn( casing );
             det->set_flag( flag_CASING );
-            parent.put_in_unchecked( std::move( det ) );
+            parent.put_in_expected( std::move( det ) );
         } else {
             if( cargo.empty() ) {
                 here.add_item_or_charges( eject, item::spawn( casing ) );
@@ -2509,7 +2509,7 @@ static void cycle_action( item &weap, const tripoint_bub_ms &pos )
         detached_ptr<item> linkage = item::spawn( *mag->type->magazine->linkage, calendar::turn, 1 );
         if( gunmod_find_with( parent, []( auto * e ) -> bool { return e->has_flag( flag_BRASS_CATCHER ); } ) ) {
             linkage->set_flag( flag_CASING );
-            parent.put_in_unchecked( std::move( linkage ) );
+            parent.put_in_expected( std::move( linkage ) );
         } else if( cargo.empty() ) {
             here.add_item_or_charges( eject, std::move( linkage ) );
         } else {

@@ -6737,7 +6737,7 @@ void vehicle::place_spawn_items()
                                   !e->magazine_current();
 
                 if( spawn_mag ) {
-                    e->put_in_unchecked( item::spawn( e->magazine_default(), e->birthday() ) );
+                    e->put_in_expected( item::spawn( e->magazine_default(), e->birthday() ) );
                 }
                 if( spawn_ammo ) {
                     e->ammo_set( e->ammo_default() );

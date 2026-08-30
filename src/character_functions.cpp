@@ -649,8 +649,16 @@ void normalize( Character &who )
 void store_in_container( Character &who, item &container, detached_ptr<item> &&put, bool penalties,
                          int base_cost )
 {
-    who.moves -= who.item_store_cost( *put, container, penalties, base_cost );
-    container.put_in_unchecked( std::move( put ) );
+    const int cost = who.item_store_cost( *put, container, penalties, base_cost );
+    detached_ptr<item> refused = container.put_in( std::move( put ) );
+    if( refused ) {
+        // No pocket will take it: keep it on the player and charge nothing.
+        who.add_msg_if_player( m_bad, _( "Your %1$s will not hold the %2$s." ),
+                               container.type_name(), refused->tname() );
+        who.i_add( std::move( refused ) );
+        return;
+    }
+    who.moves -= cost;
     who.reset_encumbrance();
 }
 

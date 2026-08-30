@@ -316,7 +316,7 @@ void item_contents::migrate_item( item &obj, const std::set<itype_id> &migration
             }
         }
         if( !found ) {
-            obj.put_in_unchecked( item::spawn( c, obj.birthday() ) );
+            obj.put_in_expected( item::spawn( c, obj.birthday() ) );
         }
     }
 }

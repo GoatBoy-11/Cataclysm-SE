@@ -11669,7 +11669,7 @@ void Character::place_corpse( const tripoint_abs_omt &om_target )
     }
     for( const bionic &bio : get_bionic_collection() ) {
         if( bio.info().itype().is_valid() ) {
-            body->put_in_unchecked( item::spawn( bio.info().itype(), calendar::turn ) );
+            body->put_in_expected( item::spawn( bio.info().itype(), calendar::turn ) );
         }
     }
     get_mapbuffer().add_item_or_charges( fin, std::move( body ), {

@@ -382,7 +382,7 @@ void computer_session::action_sample()
                 }
                 capa = std::min( sewage->charges, capa );
                 if( elem->contents.empty() ) {
-                    elem->put_in_unchecked( item::spawn( itype_sewage, calendar::turn ) );
+                    elem->put_in_expected( item::spawn( itype_sewage, calendar::turn ) );
                     elem->contents.front().charges = capa;
                 } else {
                     elem->contents.front().charges += capa;
@@ -756,7 +756,7 @@ void computer_session::action_download_software()
         detached_ptr<item> software = item::spawn( miss->get_item_id(), calendar::start_of_cataclysm );
         software->mission_id = comp.mission_id;
         usb->contents.clear_items();
-        usb->put_in_unchecked( std::move( software ) );
+        usb->put_in_expected( std::move( software ) );
         print_line( _( "Software downloaded." ) );
     } else {
         print_error( _( "USB drive required!" ) );
@@ -789,7 +789,7 @@ void computer_session::action_blood_anal()
                         if( item *const usb = pick_usb() ) {
                             detached_ptr<item> software = item::spawn( "software_blood_data", calendar::start_of_cataclysm );
                             usb->contents.clear_items();
-                            usb->put_in_unchecked( std::move( software ) );
+                            usb->put_in_expected( std::move( software ) );
                             print_line( _( "Software downloaded." ) );
                         } else {
                             print_error( _( "USB drive required!" ) );

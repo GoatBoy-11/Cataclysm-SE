@@ -372,7 +372,7 @@ void gunmod_add( avatar &you, item &gun, item &mod )
     bool requery = false;
 
     item &modded = *item::spawn_temporary( gun );
-    modded.put_in_unchecked( item::spawn( mod ) );
+    modded.put_in_expected( item::spawn( mod ) );
     bool no_magazines = false;
     if( !modded.magazine_integral() && !mod.type->mod->ammo_modifier.empty() ) {
         no_magazines = true;

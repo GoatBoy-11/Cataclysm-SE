@@ -2542,7 +2542,7 @@ void talk_effect_fun_t::set_u_buy_item( const itype_id &item_name, int cost, int
             }
         } else {
             detached_ptr<item> container = item::spawn( container_name, calendar::turn );
-            container->put_in_unchecked( item::spawn( item_name, calendar::turn, count ) );
+            container->put_in_expected( item::spawn( item_name, calendar::turn, count ) );
             //~ %1%s is the NPC name, %2$s is an item
             popup( _( "%1$s gives you a %2$s." ), p.name, container->tname() );
             u.i_add( std::move( container ) );

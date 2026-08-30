@@ -1065,7 +1065,7 @@ void defense_game::caravan()
                 // Guns bought from the caravan should always come with an empty
                 // magazine.
                 if( tmp->is_gun() && !tmp->magazine_integral() ) {
-                    tmp->put_in_unchecked( item::spawn( tmp->magazine_default() ) );
+                    tmp->put_in_expected( item::spawn( tmp->magazine_default() ) );
                 }
 
                 if( g->u.can_pick_volume( *tmp ) && g->u.can_pick_weight( *tmp ) ) {
