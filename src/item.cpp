@@ -3362,6 +3362,11 @@ void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts
     if( !parts->test( iteminfo_parts::POCKET_DETAILS ) ) {
         return;
     }
+    // In classic mode the player is not supposed to see or feel pockets at all;
+    // the storage line already describes the item the old way.
+    if( pockets_are_classic() ) {
+        return;
+    }
     // Synthesized pockets duplicate what the legacy sections already show: guns
     // list their magazines and mod locations, magazines their capacity,
     // containers their volume. Only authored pockets carry information that

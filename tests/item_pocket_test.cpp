@@ -379,6 +379,24 @@ TEST_CASE( "classic_mode_still_respects_volume", "[item][pocket][classic]" )
     CHECK( res.value() == item_pocket::contain_code::ERR_TOO_BIG );
 }
 
+TEST_CASE( "classic_mode_hides_the_pocket_info_section", "[item][pocket][classic]" )
+{
+    const auto info_text = []( const item & it ) {
+        std::string joined;
+        for( const iteminfo &entry : it.info() ) {
+            joined += entry.sName;
+            joined += "\n";
+        }
+        return joined;
+    };
+
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    REQUIRE( info_text( *bag ).find( "This item has" ) != std::string::npos );
+
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    CHECK( info_text( *bag ).find( "This item has" ) == std::string::npos );
+}
+
 TEST_CASE( "classic_mode_best_pocket_is_first_fit", "[item][pocket][classic]" )
 {
     detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
