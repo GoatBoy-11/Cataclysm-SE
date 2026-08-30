@@ -37,7 +37,7 @@ def main():
             if not isinstance(e, dict):
                 continue
             i = e.get("id")
-            if ( isinstance(i, str) and i in remaining and "pocket_data" not in e
+            if ( isinstance(i, str) and i in remaining
                     and e.get("type") in ITEM_TYPES ):
                 e["pocket_data"] = overlay[i]
                 remaining.discard(i)
@@ -49,7 +49,10 @@ def main():
             touched.append(f)
 
     for f in touched:
-        subprocess.run([FORMATTER, f], check=True, capture_output=True)
+        # The formatter exits 1 when it reformatted the file; only >1 is an error.
+        r = subprocess.run([FORMATTER, f], capture_output=True)
+        if r.returncode > 1:
+            raise RuntimeError(f"formatter failed on {f}: {r.stderr!r}")
 
     print(f"applied={len(overlay) - len(remaining)} files_touched={len(touched)}")
     if remaining:

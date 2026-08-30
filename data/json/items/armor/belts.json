@@ -30,9 +30,30 @@
     "flags": [ "FANCY", "WAIST", "COMPACT", "WATER_FRIENDLY", "ALLOWS_WINGS" ],
     "pocket_data": [
       { "max_contains_volume": "1 L", "max_contains_weight": "1500 g", "moves": 100 },
-      { "max_contains_volume": "2 L", "max_contains_weight": "6 kg", "max_item_length": "90 cm", "moves": 50 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 }
+      {
+        "max_contains_volume": "2 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "90 cm",
+        "moves": 50,
+        "flag_restriction": [ "BELT_CLIP" ],
+        "holster": true
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      }
     ]
   },
   {
@@ -138,12 +159,54 @@
     "valid_mods": [ "resized_large", "resized_small" ],
     "flags": [ "WAIST", "COMPACT", "WATER_FRIENDLY", "ALLOWS_WINGS" ],
     "pocket_data": [
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 110 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 110 }
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 110,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 110,
+        "flag_restriction": [ "BELT_CLIP" ]
+      }
     ]
   },
   {
@@ -195,9 +258,30 @@
       { "max_contains_volume": "500 ml", "max_contains_weight": "1500 g", "moves": 100 },
       { "max_contains_volume": "500 ml", "max_contains_weight": "1500 g", "moves": 100 },
       { "max_contains_volume": "500 ml", "max_contains_weight": "1500 g", "moves": 100 },
-      { "max_contains_volume": "2250 ml", "max_contains_weight": "3600 g", "max_item_length": "70 cm", "moves": 50 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 }
+      {
+        "holster": true,
+        "max_contains_volume": "2250 ml",
+        "max_contains_weight": "3600 g",
+        "max_item_length": "70 cm",
+        "moves": 50,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      }
     ]
   },
   {
@@ -230,13 +314,13 @@
     },
     "flags": [ "WATER_FRIENDLY", "STURDY", "WAIST", "COMPACT", "OVERSIZE" ],
     "pocket_data": [
-      { "max_contains_volume": "1 L", "max_contains_weight": "2 kg", "max_item_length": "70 cm", "moves": 20 },
       {
-        "pocket_type": "CONTAINER",
-        "max_contains_volume": "800 ml",
-        "max_contains_weight": "1000 g",
-        "max_item_length": "13 cm",
-        "moves": 50
+        "holster": true,
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "70 cm",
+        "moves": 20,
+        "flag_restriction": [ "SHEATH_KNIFE" ]
       },
       {
         "pocket_type": "CONTAINER",
@@ -275,12 +359,26 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "1000 g",
+        "max_item_length": "13 cm",
+        "moves": 50
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "1000 ml",
         "max_contains_weight": "2 kg",
         "max_item_length": "30 cm",
         "moves": 50
       },
-      { "max_contains_volume": "2 L", "max_contains_weight": "6 kg", "max_item_length": "90 cm", "moves": 50 }
+      {
+        "max_contains_volume": "2 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "90 cm",
+        "moves": 50,
+        "flag_restriction": [ "BELT_CLIP" ]
+      }
     ]
   },
   {
@@ -318,11 +416,46 @@
     "pocket_data": [
       { "max_contains_volume": "1500 ml", "max_contains_weight": "5000 g", "max_item_length": "20 cm", "moves": 100 },
       { "max_contains_volume": "1500 ml", "max_contains_weight": "5000 g", "max_item_length": "20 cm", "moves": 100 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 50 },
-      { "max_contains_volume": "1500 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 50 },
-      { "max_contains_volume": "1500 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 50 }
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 50,
+        "flag_restriction": [ "BELT_CLIP", "SHEATH_KNIFE" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "1500 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 50,
+        "flag_restriction": [ "BELT_CLIP", "SHEATH_KNIFE" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "1500 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 50,
+        "flag_restriction": [ "BELT_CLIP", "SHEATH_KNIFE" ]
+      }
     ]
   },
   {
@@ -353,10 +486,38 @@
     "valid_mods": [ "resized_large", "resized_small" ],
     "flags": [ "WAIST", "COMPACT", "WATER_FRIENDLY", "ALLOWS_WINGS" ],
     "pocket_data": [
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 110 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "2500 g", "max_item_length": "70 cm", "moves": 110 }
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 110,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "70 cm",
+        "moves": 110,
+        "flag_restriction": [ "BELT_CLIP" ]
+      }
     ]
   }
 ]

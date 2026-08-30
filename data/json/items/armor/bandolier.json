@@ -216,6 +216,7 @@
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
         "moves": 30,
+        "flag_restriction": [ "GRENADE" ],
         "max_item_length": "180 mm"
       },
       {
@@ -223,6 +224,7 @@
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
         "moves": 30,
+        "flag_restriction": [ "GRENADE" ],
         "max_item_length": "180 mm"
       },
       {
@@ -230,6 +232,7 @@
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
         "moves": 30,
+        "flag_restriction": [ "GRENADE" ],
         "max_item_length": "180 mm"
       },
       {
@@ -237,6 +240,7 @@
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
         "moves": 30,
+        "flag_restriction": [ "GRENADE" ],
         "max_item_length": "180 mm"
       }
     ]

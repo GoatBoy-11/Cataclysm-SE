@@ -54,12 +54,54 @@
     },
     "flags": [ "WAIST", "COMPACT", "OVERSIZE", "WATER_FRIENDLY" ],
     "pocket_data": [
-      { "max_contains_volume": "3 L", "max_contains_weight": "4 kg", "max_item_length": "130 cm", "moves": 30 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 60 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 110 },
-      { "max_contains_volume": "2000 ml", "max_contains_weight": "1750 g", "max_item_length": "70 cm", "moves": 110 }
+      {
+        "max_contains_volume": "3 L",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "130 cm",
+        "moves": 30,
+        "holster": true,
+        "flag_restriction": [ "SHEATH_SWORD" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 60,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 110,
+        "flag_restriction": [ "BELT_CLIP" ]
+      },
+      {
+        "holster": true,
+        "max_contains_volume": "2000 ml",
+        "max_contains_weight": "1750 g",
+        "max_item_length": "70 cm",
+        "moves": 110,
+        "flag_restriction": [ "BELT_CLIP" ]
+      }
     ]
   },
   {

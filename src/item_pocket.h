@@ -61,6 +61,17 @@ struct pocket_data {
     std::set<itype_id> item_restriction;
 
     /**
+     * Accept only items carrying at least one of these flags. Empty means no
+     * flag rule. CDDA's schema; values are validated against flags CSE actually
+     * uses at import time, because a restriction naming a flag no item carries
+     * would refuse everything.
+     */
+    std::set<std::string> flag_restriction;
+
+    /** A holster holds exactly one item at a time. */
+    bool holster = false;
+
+    /**
      * Which gunmod locations this pocket accepts, and how many of each, keyed by
      * the location id (`gunmod_location::str()`).
      *

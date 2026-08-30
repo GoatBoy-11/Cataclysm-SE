@@ -334,6 +334,67 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
 }
 
 // ---------------------------------------------------------------------------
+// Flag restrictions and holsters
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "a_flag_restricted_pocket_accepts_only_flagged_items",
+           "[item][pocket][restrict][flags]" )
+{
+    // The baldric's first pocket takes SHEATH_SWORD, its belt loops BELT_CLIP.
+    detached_ptr<item> baldric = item::spawn( "baldric" );
+    const std::vector<item_pocket> &pockets = baldric->contents.get_pockets();
+    REQUIRE( pockets.size() >= 2 );
+    REQUIRE_FALSE( pockets[1].definition().flag_restriction.empty() );
+
+    // A baton carries BELT_CLIP and fits the loop's 2 L / 1750 g limits; sugar
+    // carries no relevant flag. (A 2h_flail_steel also has BELT_CLIP but weighs
+    // 1800 g, so CDDA's weight cap refuses it - correctly.)
+    detached_ptr<item> baton = item::spawn( "baton" );
+    CHECK( pockets[1].can_contain( *baton ).success() );
+
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    sugar->charges = 1;
+    CHECK_FALSE( pockets[1].can_contain( *sugar ).success() );
+}
+
+TEST_CASE( "a_holster_pocket_holds_exactly_one_item", "[item][pocket][restrict][holster]" )
+{
+    // The backpack's side pouches are holsters: one bottle each.
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    const std::vector<item_pocket> &pockets = backpack->contents.get_pockets();
+    REQUIRE( pockets.size() >= 2 );
+    REQUIRE( pockets[1].definition().holster );
+
+    item_pocket &pouch = backpack->contents.get_pockets()[1];
+    detached_ptr<item> first = item::spawn( "bottle_plastic" );
+    REQUIRE( pouch.can_contain( *first ).success() );
+    pouch.insert( std::move( first ) );
+
+    detached_ptr<item> second = item::spawn( "bottle_plastic" );
+    const ret_val<item_pocket::contain_code> res = pouch.can_contain( *second );
+    CHECK_FALSE( res.success() );
+    CHECK( res.value() == item_pocket::contain_code::ERR_NO_SPACE );
+}
+
+TEST_CASE( "no_pocket_is_left_with_zero_capacity", "[item][pocket][audit]" )
+{
+    // The first import produced authored 0 ml pockets whose CDDA capacity lived
+    // in fields that do not translate; the re-import drops such pockets.
+    std::vector<std::string> offenders;
+    for( const itype *def : item_controller->all() ) {
+        for( const pocket_data &pocket : def->pockets ) {
+            if( !pocket.synthesized && pocket.type == pocket_type::CONTAINER &&
+                pocket.max_contains_volume == 0_ml &&
+                pocket.ammo_restriction.empty() ) {
+                offenders.push_back( def->get_id().str() );
+            }
+        }
+    }
+    CAPTURE( offenders );
+    CHECK( offenders.empty() );
+}
+
+// ---------------------------------------------------------------------------
 // Enforcement: insertion can refuse, and nothing is destroyed by refusal
 // ---------------------------------------------------------------------------
 

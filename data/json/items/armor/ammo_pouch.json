@@ -165,28 +165,32 @@
         "max_item_length": "240 mm",
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
-        "moves": 40
+        "moves": 40,
+        "flag_restriction": [ "MAG_COMPACT" ]
       },
       {
         "pocket_type": "CONTAINER",
         "max_item_length": "240 mm",
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
-        "moves": 40
+        "moves": 40,
+        "flag_restriction": [ "MAG_COMPACT" ]
       },
       {
         "pocket_type": "CONTAINER",
         "max_item_length": "240 mm",
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
-        "moves": 40
+        "moves": 40,
+        "flag_restriction": [ "MAG_COMPACT" ]
       },
       {
         "pocket_type": "CONTAINER",
         "max_item_length": "240 mm",
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
-        "moves": 40
+        "moves": 40,
+        "flag_restriction": [ "MAG_COMPACT" ]
       }
     ]
   },
@@ -225,6 +229,7 @@
         "max_contains_volume": "1250 ml",
         "max_contains_weight": "2 kg",
         "moves": 60,
+        "flag_restriction": [ "JAVELIN" ],
         "max_item_length": "150 cm"
       },
       {
@@ -232,6 +237,7 @@
         "max_contains_volume": "1250 ml",
         "max_contains_weight": "2 kg",
         "moves": 60,
+        "flag_restriction": [ "JAVELIN" ],
         "max_item_length": "150 cm"
       },
       {
@@ -239,6 +245,7 @@
         "max_contains_volume": "1250 ml",
         "max_contains_weight": "2 kg",
         "moves": 60,
+        "flag_restriction": [ "JAVELIN" ],
         "max_item_length": "150 cm"
       },
       {
@@ -246,6 +253,7 @@
         "max_contains_volume": "1250 ml",
         "max_contains_weight": "2 kg",
         "moves": 60,
+        "flag_restriction": [ "JAVELIN" ],
         "max_item_length": "150 cm"
       },
       {
@@ -253,6 +261,7 @@
         "max_contains_volume": "1250 ml",
         "max_contains_weight": "2 kg",
         "moves": 60,
+        "flag_restriction": [ "JAVELIN" ],
         "max_item_length": "150 cm"
       }
     ]
@@ -322,14 +331,16 @@
         "max_item_length": "240 mm",
         "max_contains_volume": "500 ml",
         "max_contains_weight": "2 kg",
-        "moves": 40
+        "moves": 40,
+        "flag_restriction": [ "MAG_COMPACT" ]
       },
       {
         "pocket_type": "CONTAINER",
         "max_item_length": "240 mm",
         "max_contains_volume": "500 ml",
         "max_contains_weight": "2 kg",
-        "moves": 40
+        "moves": 40,
+        "flag_restriction": [ "MAG_COMPACT" ]
       }
     ]
   },
@@ -494,6 +505,7 @@
     "pocket_data": [
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "1000 ml",
         "max_contains_weight": "2 kg",
         "max_item_length": "30 cm",

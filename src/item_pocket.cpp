@@ -138,6 +138,11 @@ void pocket_data::load( const JsonObject &jo )
         item_restriction.clear();
         jo.read( "item_restriction", item_restriction );
     }
+    if( jo.has_array( "flag_restriction" ) ) {
+        flag_restriction.clear();
+        jo.read( "flag_restriction", flag_restriction );
+    }
+    optional( jo, false, "holster", holster, holster );
 }
 
 void pocket_data::deserialize( JsonIn &jsin )
@@ -213,6 +218,27 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
                     _( "is too heavy" ) );
         }
         return ret_val<contain_code>::make_success( contain_code::SUCCESS );
+    }
+
+    // A holster carries one item at a time.
+    if( data->holster && !contents.empty() ) {
+        return ret_val<contain_code>::make_failure( contain_code::ERR_NO_SPACE,
+                _( "already holds something" ) );
+    }
+
+    // A flag-restricted pocket takes only items carrying one of its flags.
+    if( !data->flag_restriction.empty() ) {
+        bool any = false;
+        for( const std::string &fl : data->flag_restriction ) {
+            if( it.has_flag( flag_id( fl ) ) ) {
+                any = true;
+                break;
+            }
+        }
+        if( !any ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_ITEM,
+                    _( "does not belong in this pocket" ) );
+        }
     }
 
     // A pocket that names specific items takes only those. This is what keeps a

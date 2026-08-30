@@ -32,6 +32,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "510 ml",
         "max_contains_weight": "1 kg",
         "max_item_length": "24 cm",
@@ -39,6 +40,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "4 kg",
         "max_item_length": "150 cm",
@@ -46,6 +48,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -119,14 +122,18 @@
         "max_contains_volume": "1 L",
         "max_contains_weight": "2 kg",
         "max_item_length": "70 cm",
-        "moves": 40
+        "moves": 40,
+        "holster": true,
+        "flag_restriction": [ "SHEATH_KNIFE", "SHEATH_SWORD" ]
       },
       {
         "pocket_type": "CONTAINER",
         "max_contains_volume": "1 L",
         "max_contains_weight": "2 kg",
         "max_item_length": "70 cm",
-        "moves": 40
+        "moves": 40,
+        "holster": true,
+        "flag_restriction": [ "SHEATH_KNIFE", "SHEATH_SWORD" ]
       },
       {
         "pocket_type": "CONTAINER",
@@ -137,6 +144,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -144,6 +152,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -151,6 +160,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -158,6 +168,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -223,6 +234,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "4 kg",
         "max_item_length": "150 cm",
@@ -283,6 +295,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -290,6 +303,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -297,6 +311,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -379,6 +394,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -386,6 +402,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -448,6 +465,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "4 kg",
         "max_item_length": "150 cm",
@@ -455,6 +473,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -542,6 +561,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "4 kg",
         "max_item_length": "150 cm",
@@ -549,6 +569,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "510 ml",
         "max_contains_weight": "1 kg",
         "max_item_length": "24 cm",
@@ -556,6 +577,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -620,6 +642,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -875,6 +898,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "4 kg",
         "max_item_length": "150 cm",
@@ -992,6 +1016,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -999,6 +1024,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1006,6 +1032,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "4 kg",
         "max_item_length": "150 cm",
@@ -1167,6 +1194,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "4 kg",
         "max_item_length": "150 cm",
@@ -1174,6 +1202,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1181,6 +1210,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1188,6 +1218,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1395,6 +1426,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -1402,6 +1434,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -1409,6 +1442,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -1459,6 +1493,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "510 ml",
         "max_contains_weight": "1 kg",
         "max_item_length": "24 cm",
@@ -1466,6 +1501,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -1473,6 +1509,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1480,6 +1517,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1518,6 +1556,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1525,6 +1564,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1532,6 +1572,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "5 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "120 cm",
@@ -1539,6 +1580,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -1546,6 +1588,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -1651,6 +1694,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "510 ml",
         "max_contains_weight": "1 kg",
         "max_item_length": "24 cm",
@@ -1658,6 +1702,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",
@@ -1665,6 +1710,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "4 L",
         "max_contains_weight": "6 kg",
         "max_item_length": "100 cm",

@@ -18,6 +18,7 @@ SUPPORTED = {
     "pocket_type", "max_contains_volume", "max_contains_weight",
     "max_item_length", "rigid", "watertight", "sealed",
     "spoil_multiplier", "moves", "ammo_restriction", "item_restriction",
+    "flag_restriction", "holster",
 }
 POCKET_TYPES = {"CONTAINER", "MAGAZINE", "MAGAZINE_WELL", "MOD", "CORPSE", "MIGRATION"}
 VOL_RE = re.compile(r"^\d+(\.\d+)?\s*(ml|L)$")
@@ -42,13 +43,18 @@ def main():
         if isinstance(e.get("id"), str) and "pocket_data" in e:
             cdda_pocketed[e["id"]] = e
 
-    cse_ids, cse_ammotypes = set(), set()
+    cse_ids, cse_ammotypes, cse_flags = set(), set(), set()
     for e in entries(CSE, "/data/json/**/*.json"):
         i = e.get("id")
         if isinstance(i, str):
             cse_ids.add(i)
             if e.get("type") == "ammunition_type":
                 cse_ammotypes.add(i)
+        fl = e.get("flags")
+        if isinstance(fl, list):
+            cse_flags.update(x for x in fl if isinstance(x, str))
+        elif isinstance(fl, str):
+            cse_flags.add(fl)
 
     overlay = {}
     report = []
@@ -101,6 +107,21 @@ def main():
                     else:
                         notes.append(f"pocket {idx}: ammo_restriction entirely unknown {missing}, pocket skipped")
                         continue
+            fr = out.get("flag_restriction")
+            if fr:
+                kept_flags = [x for x in fr if x in cse_flags]
+                dropped_flags = [x for x in fr if x not in cse_flags]
+                if dropped_flags:
+                    notes.append(f"pocket {idx}: dropped unknown flags {dropped_flags}")
+                if kept_flags:
+                    out["flag_restriction"] = kept_flags
+                else:
+                    out.pop("flag_restriction")
+            # A pocket left with no capacity and no ammo rule can hold nothing in
+            # CSE (its CDDA meaning lived in fields we cannot express yet).
+            if "max_contains_volume" not in out and "ammo_restriction" not in out:
+                notes.append(f"pocket {idx}: no capacity survives translation, pocket dropped")
+                continue
             pockets_out.append(out)
         if len(pockets_out) >= 2:
             overlay[item_id] = pockets_out

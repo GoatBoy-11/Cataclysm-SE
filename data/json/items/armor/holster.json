@@ -184,6 +184,7 @@
     "pocket_data": [
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "650 ml",
         "max_contains_weight": "2 kg",
         "max_item_length": "250 mm",
@@ -194,7 +195,8 @@
         "max_item_length": "240 mm",
         "max_contains_volume": "750 ml",
         "max_contains_weight": "2 kg",
-        "moves": 40
+        "moves": 40,
+        "flag_restriction": [ "MAG_COMPACT" ]
       }
     ]
   },
@@ -232,6 +234,7 @@
     "pocket_data": [
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "8 L",
         "max_contains_weight": "8200 g",
         "max_item_length": "120 cm",
@@ -291,6 +294,7 @@
     "pocket_data": [
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "1 L",
         "max_contains_weight": "2 kg",
         "max_item_length": "35 cm",
@@ -298,6 +302,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "1 L",
         "max_contains_weight": "2 kg",
         "max_item_length": "35 cm",
@@ -305,6 +310,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "1 L",
         "max_contains_weight": "2 kg",
         "max_item_length": "35 cm",
@@ -312,6 +318,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "1 L",
         "max_contains_weight": "2 kg",
         "max_item_length": "35 cm",
@@ -319,6 +326,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "1 L",
         "max_contains_weight": "2 kg",
         "max_item_length": "35 cm",
@@ -326,6 +334,7 @@
       },
       {
         "pocket_type": "CONTAINER",
+        "holster": true,
         "max_contains_volume": "1 L",
         "max_contains_weight": "2 kg",
         "max_item_length": "35 cm",
