@@ -21,7 +21,37 @@
     "warmth": 6,
     "material_thickness": 2,
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "BELTED", "ALLOWS_WINGS" ]
+    "flags": [ "BELTED", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "25 L",
+        "max_contains_weight": "30 kg",
+        "max_item_length": "40 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "510 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "24 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "150 cm",
+        "moves": 200
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      }
+    ]
   },
   {
     "id": "backpack_hiking",
@@ -54,7 +84,86 @@
       "draw_cost": 150,
       "flags": [ "SHEATH_KNIFE", "SHEATH_SWORD" ]
     },
-    "flags": [ "BELTED", "WATERPROOF", "ONLY_ONE", "OVERSIZE" ]
+    "flags": [ "BELTED", "WATERPROOF", "ONLY_ONE", "OVERSIZE" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "50 L",
+        "max_contains_weight": "50 kg",
+        "max_item_length": "60 cm",
+        "moves": 450
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "8 kg",
+        "max_item_length": "35 cm",
+        "moves": 450
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "2 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "25 cm",
+        "moves": 450
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "2 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "25 cm",
+        "moves": 450
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "70 cm",
+        "moves": 40
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "70 cm",
+        "moves": 40
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3250 ml",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "30 cm",
+        "moves": 500
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      }
+    ]
   },
   {
     "id": "backpack_giant",
@@ -103,7 +212,23 @@
     "warmth": 9,
     "material_thickness": 3,
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "BELTED", "WATER_FRIENDLY", "ALLOWS_WINGS" ]
+    "flags": [ "BELTED", "WATER_FRIENDLY", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "25 L",
+        "max_contains_weight": "30 kg",
+        "max_item_length": "40 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "150 cm",
+        "moves": 200
+      }
+    ]
   },
   {
     "id": "backpack_tactical_large",
@@ -126,7 +251,58 @@
     "storage": "65 L",
     "warmth": 10,
     "material_thickness": 2,
-    "flags": [ "BELTED", "WATERPROOF", "ONLY_ONE", "OVERSIZE" ]
+    "flags": [ "BELTED", "WATERPROOF", "ONLY_ONE", "OVERSIZE" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "55 L",
+        "max_contains_weight": "70 kg",
+        "max_item_length": "70 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "10 kg",
+        "max_item_length": "40 cm",
+        "moves": 200
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3 L",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "30 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3 L",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "30 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      }
+    ]
   },
   {
     "id": "basket_laundry",
@@ -171,7 +347,51 @@
     "storage": "80 L",
     "warmth": 10,
     "material_thickness": 2,
-    "flags": [ "BELTED", "WATERPROOF", "ONLY_ONE", "OVERSIZE" ]
+    "flags": [ "BELTED", "WATERPROOF", "ONLY_ONE", "OVERSIZE" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "70 L",
+        "max_contains_weight": "70 kg",
+        "max_item_length": "75 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "10 kg",
+        "max_item_length": "40 cm",
+        "moves": 200
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3 L",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "30 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3 L",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "30 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      }
+    ]
   },
   {
     "id": "bindle",
@@ -216,7 +436,31 @@
     "bashing": 16,
     "cutting": 4,
     "price": "35 USD",
-    "flags": [ "BELTED", "OVERSIZE", "NO_REPAIR" ]
+    "flags": [ "BELTED", "OVERSIZE", "NO_REPAIR" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "rigid": true,
+        "max_contains_volume": "15 L",
+        "max_contains_weight": "60 kg",
+        "max_item_length": "50 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "150 cm",
+        "moves": 200
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      }
+    ]
   },
   {
     "id": "briefcase",
@@ -287,7 +531,37 @@
     "max_encumbrance": 20,
     "storage": "24 L",
     "warmth": 5,
-    "flags": [ "BELTED", "OVERSIZE", "STURDY" ]
+    "flags": [ "BELTED", "OVERSIZE", "STURDY" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "24 L",
+        "max_contains_weight": "32 kg",
+        "max_item_length": "60 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "150 cm",
+        "moves": 200
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "510 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "24 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      }
+    ]
   },
   {
     "id": "dive_bag",
@@ -335,7 +609,23 @@
     "warmth": 10,
     "material_thickness": 2,
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "BELTED", "WATER_FRIENDLY", "ALLOWS_WINGS" ]
+    "flags": [ "BELTED", "WATER_FRIENDLY", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "60 L",
+        "max_contains_weight": "60 kg",
+        "max_item_length": "55 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 80
+      }
+    ]
   },
   {
     "id": "dump_pouch",
@@ -414,7 +704,23 @@
       "max_volume": "1 L",
       "draw_cost": 150,
       "flags": [ "SHEATH_GOLF" ]
-    }
+    },
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "40 L",
+        "max_contains_weight": "200 kg",
+        "moves": 300,
+        "rigid": true,
+        "max_item_length": "150 cm"
+      },
+      { "max_contains_volume": "90 ml", "max_contains_weight": "750 g", "max_item_length": "10 cm", "moves": 200 },
+      { "max_contains_volume": "90 ml", "max_contains_weight": "750 g", "max_item_length": "10 cm", "moves": 200 },
+      { "max_contains_volume": "1350 ml", "max_contains_weight": "4 kg", "max_item_length": "25 cm", "moves": 300 },
+      { "max_contains_volume": "675 ml", "max_contains_weight": "2 kg", "max_item_length": "20 cm", "moves": 300 },
+      { "max_contains_volume": "675 ml", "max_contains_weight": "2 kg", "max_item_length": "20 cm", "moves": 300 },
+      { "max_contains_volume": "500 ml", "max_contains_weight": "300 g", "max_item_length": "15 cm", "moves": 100 }
+    ]
   },
   {
     "id": "hide_bag",
@@ -558,7 +864,23 @@
     "warmth": 5,
     "material_thickness": 1,
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "BELTED", "WATER_FRIENDLY", "ALLOWS_WINGS" ]
+    "flags": [ "BELTED", "WATER_FRIENDLY", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "10 kg",
+        "max_item_length": "70 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "150 cm",
+        "moves": 200
+      }
+    ]
   },
   {
     "id": "makeshift_sling",
@@ -645,7 +967,51 @@
       "draw_cost": 120,
       "flags": [ "SHEATH_KNIFE", "SHEATH_SWORD", "SHEATH_AXE", "MAG_COMPACT", "MAG_BULKY", "MAG_BELT", "SPEEDLOADER", "BELT_CLIP" ],
       "skills": [ "pistol", "smg", "shotgun", "rifle", "launcher" ]
-    }
+    },
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "20 L",
+        "max_contains_weight": "40 kg",
+        "max_item_length": "50 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "7 L",
+        "max_contains_weight": "10 kg",
+        "max_item_length": "30 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3250 ml",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "30 cm",
+        "moves": 500
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "150 cm",
+        "moves": 200
+      }
+    ]
   },
   {
     "id": "petpack",
@@ -762,7 +1128,72 @@
     "warmth": 8,
     "material_thickness": 2,
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "BELTED", "WATER_FRIENDLY", "ALLOWS_WINGS" ]
+    "flags": [ "BELTED", "WATER_FRIENDLY", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "40 L",
+        "max_contains_weight": "60 kg",
+        "max_item_length": "55 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "10 kg",
+        "max_item_length": "35 cm",
+        "moves": 200
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3 L",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "30 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3 L",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "30 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "3250 ml",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "30 cm",
+        "moves": 500
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "4 kg",
+        "max_item_length": "150 cm",
+        "moves": 200
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      }
+    ]
   },
   {
     "id": "runner_bag",
@@ -953,7 +1384,37 @@
     "max_encumbrance": 28,
     "storage": "38 L",
     "material_thickness": 2,
-    "flags": [ "WATER_FRIENDLY", "STURDY", "BELTED", "OVERSIZE" ]
+    "flags": [ "WATER_FRIENDLY", "STURDY", "BELTED", "OVERSIZE" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "66 L",
+        "max_contains_weight": "60 kg",
+        "max_item_length": "60 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 80
+      }
+    ]
   },
   {
     "id": "survivor_pack",
@@ -987,7 +1448,44 @@
       "flags": [ "SHEATH_KNIFE", "SHEATH_SWORD", "SHEATH_AXE", "MAG_COMPACT", "MAG_BULKY", "MAG_BELT", "SPEEDLOADER", "BELT_CLIP" ],
       "skills": [ "pistol", "smg", "shotgun", "rifle", "launcher" ]
     },
-    "flags": [ "WATER_FRIENDLY", "STURDY", "BELTED", "ALLOWS_WINGS" ]
+    "flags": [ "WATER_FRIENDLY", "STURDY", "BELTED", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "25 L",
+        "max_contains_weight": "32 kg",
+        "max_item_length": "50 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "510 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "24 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      }
+    ]
   },
   {
     "id": "survivor_rucksack",
@@ -1009,7 +1507,51 @@
     "max_encumbrance": 19,
     "storage": "25 L",
     "material_thickness": 2,
-    "flags": [ "WATER_FRIENDLY", "STURDY", "BELTED", "OVERSIZE" ]
+    "flags": [ "WATER_FRIENDLY", "STURDY", "BELTED", "OVERSIZE" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "40 L",
+        "max_contains_weight": "60 kg",
+        "max_item_length": "55 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "5 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "120 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      }
+    ]
   },
   {
     "id": "survivor_runner_pack",
@@ -1077,7 +1619,58 @@
     "warmth": 8,
     "material_thickness": 2,
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "BELTED", "WATERPROOF", "ALLOWS_WINGS" ]
+    "flags": [ "BELTED", "WATERPROOF", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "25 L",
+        "max_contains_weight": "40 kg",
+        "max_item_length": "50 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "10 kg",
+        "max_item_length": "35 cm",
+        "moves": 200
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "20 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "20 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "510 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "24 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "4 L",
+        "max_contains_weight": "6 kg",
+        "max_item_length": "100 cm",
+        "moves": 300
+      }
+    ]
   },
   {
     "id": "vest",
@@ -1099,6 +1692,36 @@
     "storage": "3 L",
     "warmth": 5,
     "material_thickness": 2,
-    "flags": [ "VARSIZE", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "20 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "20 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "20 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "20 cm",
+        "moves": 80
+      }
+    ]
   }
 ]

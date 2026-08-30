@@ -180,7 +180,23 @@
     "price": "100 USD",
     "price_postapoc": "8 USD",
     "covers": [ "arm_either" ],
-    "flags": [ "BELTED", "COMPACT", "OVERSIZE" ]
+    "flags": [ "BELTED", "COMPACT", "OVERSIZE" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "650 ml",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "250 mm",
+        "moves": 30
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "240 mm",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 40
+      }
+    ]
   },
   {
     "id": "survivor_vest",
@@ -212,7 +228,37 @@
       "skills": [ "smg", "shotgun", "rifle", "launcher", "pistol" ]
     },
     "valid_mods": [ "steel_padded", "hard_steel_padded", "alloy_padded", "resized_large", "resized_small" ],
-    "flags": [ "WATER_FRIENDLY", "STURDY", "WAIST", "COMPACT", "ALLOWS_WINGS" ]
+    "flags": [ "WATER_FRIENDLY", "STURDY", "WAIST", "COMPACT", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "8 L",
+        "max_contains_weight": "8200 g",
+        "max_item_length": "120 cm",
+        "moves": 30
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1500 ml",
+        "max_contains_weight": "5 kg",
+        "max_item_length": "20 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1500 ml",
+        "max_contains_weight": "5 kg",
+        "max_item_length": "20 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1500 ml",
+        "max_contains_weight": "5 kg",
+        "max_item_length": "20 cm",
+        "moves": 80
+      }
+    ]
   },
   {
     "id": "baldric_holster",
@@ -241,7 +287,51 @@
       "flags": [ "HOLSTER_PISTOL" ]
     },
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "BELTED", "COMPACT", "ALLOWS_WINGS" ]
+    "flags": [ "BELTED", "COMPACT", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "35 cm",
+        "moves": 50
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "35 cm",
+        "moves": 50
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "35 cm",
+        "moves": 50
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "35 cm",
+        "moves": 50
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "35 cm",
+        "moves": 50
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "35 cm",
+        "moves": 50
+      }
+    ]
   },
   {
     "id": "XL_holster",

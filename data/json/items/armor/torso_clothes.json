@@ -21,7 +21,23 @@
     "material_thickness": 3,
     "environmental_protection": 1,
     "valid_mods": [ "steel_padded", "hard_steel_padded", "alloy_padded", "resized_large", "resized_small" ],
-    "flags": [ "POCKETS", "OUTER", "WATER_FRIENDLY", "ALLOWS_TAIL_SNAKE", "ALLOWS_WINGS" ]
+    "flags": [ "POCKETS", "OUTER", "WATER_FRIENDLY", "ALLOWS_TAIL_SNAKE", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "21 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "21 cm",
+        "moves": 80
+      }
+    ]
   },
   {
     "id": "blazer",
@@ -43,7 +59,30 @@
     "warmth": 20,
     "material_thickness": 3,
     "valid_mods": [ "steel_padded", "hard_steel_padded", "alloy_padded" ],
-    "flags": [ "VARSIZE", "FANCY", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "FANCY", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "11 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "11 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "350 ml",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "9 cm",
+        "moves": 100
+      }
+    ]
   },
   {
     "id": "dress",
@@ -410,7 +449,23 @@
     "storage": "500 ml",
     "warmth": 5,
     "material_thickness": 1,
-    "flags": [ "VARSIZE", "FANCY", "ALLOWS_TAIL_SNAKE", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "FANCY", "ALLOWS_TAIL_SNAKE", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "10 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "200 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "15 cm",
+        "moves": 120
+      }
+    ]
   },
   {
     "id": "polo_shirt",
@@ -451,7 +506,23 @@
     "storage": "1 L",
     "warmth": 5,
     "material_thickness": 1,
-    "flags": [ "VARSIZE", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "15 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "15 cm",
+        "moves": 80
+      }
+    ]
   },
   {
     "id": "sheriffshirt",
@@ -720,7 +791,30 @@
     "material_thickness": 3,
     "environmental_protection": 1,
     "valid_mods": [ "steel_padded", "hard_steel_padded", "alloy_padded" ],
-    "flags": [ "VARSIZE", "POCKETS", "OUTER", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "POCKETS", "OUTER", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "650 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "15 cm",
+        "moves": 80
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "15 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "15 cm",
+        "moves": 120
+      }
+    ]
   },
   {
     "id": "wool_hoodie",

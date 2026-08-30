@@ -89,7 +89,21 @@
     "warmth": 20,
     "material_thickness": 8,
     "techniques": [ "WBLOCK_1" ],
-    "flags": [ "VARSIZE", "WATERPROOF", "STURDY" ]
+    "flags": [ "VARSIZE", "WATERPROOF", "STURDY" ],
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "2 L", "max_contains_weight": "2 kg", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "250 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "400 ml", "max_contains_weight": "400 g", "moves": 250 },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "300 ml",
+        "max_contains_weight": "500 g",
+        "max_item_length": "14 cm",
+        "moves": 100
+      }
+    ]
   },
   {
     "id": "helmet_steel",
@@ -157,7 +171,21 @@
     "warmth": 10,
     "material_thickness": 8,
     "techniques": [ "WBLOCK_1" ],
-    "flags": [ "WATER_FRIENDLY", "STURDY" ]
+    "flags": [ "WATER_FRIENDLY", "STURDY" ],
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "2 L", "max_contains_weight": "2 kg", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "250 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "400 ml", "max_contains_weight": "400 g", "moves": 250 },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "300 ml",
+        "max_contains_weight": "500 g",
+        "max_item_length": "14 cm",
+        "moves": 100
+      }
+    ]
   },
   {
     "id": "firehelmet",
@@ -261,7 +289,11 @@
     "encumbrance": 15,
     "warmth": 15,
     "material_thickness": 4,
-    "techniques": [ "WBLOCK_1" ]
+    "techniques": [ "WBLOCK_1" ],
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "200 ml", "max_contains_weight": "50 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 }
+    ]
   },
   {
     "id": "helmet_chitin",
@@ -790,7 +822,11 @@
     "warmth": 15,
     "material_thickness": 3,
     "valid_mods": [ "steel_padded", "hard_steel_padded", "alloy_padded", "resized_large", "resized_small" ],
-    "flags": [ "FANCY", "STAB" ]
+    "flags": [ "FANCY", "STAB" ],
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "250 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 }
+    ]
   },
   {
     "id": "helmet_corinthian",

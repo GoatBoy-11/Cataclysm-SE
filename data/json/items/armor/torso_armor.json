@@ -239,7 +239,23 @@
     "warmth": 30,
     "material_thickness": 3,
     "environmental_protection": 1,
-    "flags": [ "VARSIZE", "POCKETS", "OUTER", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "POCKETS", "OUTER", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 80,
+        "max_item_length": "10 cm"
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 80,
+        "max_item_length": "10 cm"
+      }
+    ]
   },
   {
     "id": "jacket_leather_bone",
@@ -333,7 +349,51 @@
     "material_thickness": 5,
     "environmental_protection": 1,
     "valid_mods": [ "steel_padded", "hard_steel_padded", "alloy_padded" ],
-    "flags": [ "VARSIZE", "WATERPROOF", "RAINPROOF", "STURDY", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "WATERPROOF", "RAINPROOF", "STURDY", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "13 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "13 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "10 ml",
+        "max_contains_weight": "150 g",
+        "max_item_length": "13 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "250 ml",
+        "max_contains_weight": "500 g",
+        "max_item_length": "13 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "250 ml",
+        "max_contains_weight": "500 g",
+        "max_item_length": "13 cm",
+        "moves": 150
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1000 ml",
+        "max_contains_weight": "2500 g",
+        "max_item_length": "18 cm",
+        "moves": 250
+      }
+    ]
   },
   {
     "id": "motorbike_armor",
@@ -419,7 +479,23 @@
     "warmth": 30,
     "material_thickness": 3,
     "environmental_protection": 1,
-    "flags": [ "VARSIZE", "POCKETS", "OUTER", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "POCKETS", "OUTER", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "15 cm",
+        "moves": 120
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "3 kg",
+        "max_item_length": "15 cm",
+        "moves": 120
+      }
+    ]
   },
   {
     "id": "cuirass_bone",

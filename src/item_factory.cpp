@@ -297,10 +297,9 @@ static void synthesize_pockets_from_legacy( itype &def )
     synthesize_special_pockets_from_legacy( def );
 
     if( !has_only_special_pockets( def ) ) {
-        if( def.container || ( def.armor && def.armor->storage > 0_ml ) ) {
-            debugmsg( "%s defines both legacy storage and pocket_data; pocket_data wins.",
-                      def.get_id().str() );
-        }
+        // Curated items deliberately keep their legacy storage fields alongside
+        // authored pocket_data: the legacy value is what a future classic-mode
+        // world option will collapse pockets back into. pocket_data wins here.
         return;
     }
 

@@ -1253,7 +1253,25 @@
     "max_charges": 100,
     "initial_charges": 100,
     "ammo": "gasfilter_m",
-    "use_action": "GASMASK"
+    "use_action": "GASMASK",
+    "pocket_data": [
+      { "pocket_type": "MAGAZINE_WELL" },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "50 ml",
+        "max_contains_weight": "60 g",
+        "max_item_length": "17 cm",
+        "moves": 250
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "rigid": true,
+        "max_contains_volume": "50 ml",
+        "max_contains_weight": "50 g",
+        "max_item_length": "10 cm",
+        "moves": 380
+      }
+    ]
   },
   {
     "id": "mask_gas_xl",

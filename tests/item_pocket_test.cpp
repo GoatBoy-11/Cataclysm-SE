@@ -103,12 +103,14 @@ TEST_CASE( "item_contents_round_trips_through_a_single_pocket", "[item][pocket][
     CHECK( backpack->contents.empty() );
 }
 
-TEST_CASE( "item_contents_exposes_exactly_one_pocket_in_phase_one", "[item][pocket][contents]" )
+TEST_CASE( "an_uncurated_item_exposes_exactly_one_synthesized_pocket",
+           "[item][pocket][contents]" )
 {
-    detached_ptr<item> backpack = item::spawn( "backpack" );
+    // hoodie rather than backpack: backpack now carries curated pocket_data.
+    detached_ptr<item> hoodie = item::spawn( "hoodie" );
 
-    CHECK( backpack->contents.get_pockets().size() == 1 );
-    CHECK( backpack->contents.get_pockets().front().definition().type == pocket_type::CONTAINER );
+    CHECK( hoodie->contents.get_pockets().size() == 1 );
+    CHECK( hoodie->contents.get_pockets().front().definition().type == pocket_type::CONTAINER );
 }
 
 TEST_CASE( "a_container_gains_one_pocket_sized_from_its_legacy_storage",
@@ -125,12 +127,13 @@ TEST_CASE( "a_container_gains_one_pocket_sized_from_its_legacy_storage",
 
 TEST_CASE( "worn_storage_synthesizes_a_non_rigid_pocket", "[item][pocket][synthesis]" )
 {
-    detached_ptr<item> backpack = item::spawn( "backpack" );
-    const std::vector<item_pocket> &pockets = backpack->contents.get_pockets();
+    // hoodie rather than backpack: backpack now carries curated pocket_data.
+    detached_ptr<item> hoodie = item::spawn( "hoodie" );
+    const std::vector<item_pocket> &pockets = hoodie->contents.get_pockets();
 
     REQUIRE( pockets.size() == 1 );
     CHECK_FALSE( pockets.front().definition().rigid );
-    CHECK( pockets.front().remaining_volume() == backpack->type->armor->storage );
+    CHECK( pockets.front().remaining_volume() == hoodie->type->armor->storage );
 }
 
 TEST_CASE( "pocket_contents_survive_a_serialization_round_trip", "[item][pocket][save]" )
@@ -196,6 +199,30 @@ TEST_CASE( "an_item_saved_before_pockets_keeps_its_contents", "[item][pocket][sa
     REQUIRE( loaded.front()->typeId() == itype_id( "backpack" ) );
     CHECK( loaded.front()->contents.all_items_top().size() == 1 );
     CHECK( loaded.front()->contents.all_items_top().front()->typeId() == itype_id( "sugar" ) );
+}
+
+TEST_CASE( "authored_pockets_appear_in_item_info_and_synthesized_do_not",
+           "[item][pocket][info]" )
+{
+    const auto info_text = []( const item & it ) {
+        std::string joined;
+        for( const iteminfo &entry : it.info() ) {
+            joined += entry.sName;
+            joined += "\n";
+        }
+        return joined;
+    };
+
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    const std::string bag_info = info_text( *bag );
+    CHECK( bag_info.find( "2 pockets" ) != std::string::npos );
+    CHECK( bag_info.find( "watertight" ) != std::string::npos );
+
+    // A hoodie's single synthesized pocket is already described by the legacy
+    // storage line; a pocket section would only duplicate it. Match the section
+    // header, not the bare word: the hoodie's flavour text mentions a pocket.
+    detached_ptr<item> hoodie = item::spawn( "hoodie" );
+    CHECK( info_text( *hoodie ).find( "This item has" ) == std::string::npos );
 }
 
 // NOTE: an end-to-end g->save()/g->load() test was tried here and removed. A
@@ -596,9 +623,9 @@ TEST_CASE( "the_pocket_coverage_report_describes_loaded_items", "[item][pocket][
 TEST_CASE( "synthesized_and_authored_pockets_are_labelled_correctly",
            "[item][pocket][coverage]" )
 {
-    detached_ptr<item> backpack = item::spawn( "backpack" );
-    REQUIRE( backpack->contents.get_pockets().size() == 1 );
-    CHECK( backpack->contents.get_pockets().front().definition().synthesized );
+    detached_ptr<item> hoodie = item::spawn( "hoodie" );
+    REQUIRE( hoodie->contents.get_pockets().size() == 1 );
+    CHECK( hoodie->contents.get_pockets().front().definition().synthesized );
 
     detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
     REQUIRE( bag->contents.get_pockets().size() == 2 );
@@ -665,10 +692,9 @@ TEST_CASE( "an_item_declaring_pocket_data_gets_those_pockets", "[item][pocket][j
 
 TEST_CASE( "authored_pocket_data_suppresses_legacy_synthesis", "[item][pocket][json]" )
 {
-    // A synthesized item still gets exactly one pocket, so base-game behaviour
-    // is untouched by pocket_data loading existing.
-    detached_ptr<item> backpack = item::spawn( "backpack" );
-    CHECK( backpack->contents.get_pockets().size() == 1 );
+    // An uncurated item still gets exactly one synthesized pocket.
+    detached_ptr<item> hoodie = item::spawn( "hoodie" );
+    CHECK( hoodie->contents.get_pockets().size() == 1 );
 
     // The authored item keeps its two, rather than gaining a synthesized third.
     detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );

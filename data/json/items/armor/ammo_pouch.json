@@ -158,7 +158,37 @@
       "flags": [ "MAG_COMPACT", "MAG_BULKY", "SPEEDLOADER" ]
     },
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "WATER_FRIENDLY", "BELTED", "COMPACT", "ALLOWS_WINGS" ]
+    "flags": [ "WATER_FRIENDLY", "BELTED", "COMPACT", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "240 mm",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 40
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "240 mm",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 40
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "240 mm",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 40
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "240 mm",
+        "max_contains_volume": "750 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 40
+      }
+    ]
   },
   {
     "id": "javelin_bag",
@@ -188,7 +218,44 @@
       "draw_cost": 30,
       "flags": [ "JAVELIN" ]
     },
-    "flags": [ "WATER_FRIENDLY", "OVERSIZE", "BELTED", "COMPACT" ]
+    "flags": [ "WATER_FRIENDLY", "OVERSIZE", "BELTED", "COMPACT" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1250 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 60,
+        "max_item_length": "150 cm"
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1250 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 60,
+        "max_item_length": "150 cm"
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1250 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 60,
+        "max_item_length": "150 cm"
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1250 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 60,
+        "max_item_length": "150 cm"
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1250 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 60,
+        "max_item_length": "150 cm"
+      }
+    ]
   },
   {
     "id": "legpouch",
@@ -248,7 +315,23 @@
       "draw_cost": 40,
       "flags": [ "MAG_COMPACT", "SPEEDLOADER" ]
     },
-    "flags": [ "WATER_FRIENDLY", "OVERSIZE", "BELTED", "COMPACT", "ALLOWS_TAIL_SNAKE" ]
+    "flags": [ "WATER_FRIENDLY", "OVERSIZE", "BELTED", "COMPACT", "ALLOWS_TAIL_SNAKE" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "240 mm",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 40
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "240 mm",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "2 kg",
+        "moves": 40
+      }
+    ]
   },
   {
     "id": "mag_satchel_leg",
@@ -407,7 +490,52 @@
       "flags": [ "MAG_COMPACT", "MAG_BULKY", "SPEEDLOADER" ]
     },
     "valid_mods": [ "resized_large", "resized_small" ],
-    "flags": [ "WATER_FRIENDLY", "WAIST", "COMPACT", "ALLOWS_WINGS" ]
+    "flags": [ "WATER_FRIENDLY", "WAIST", "COMPACT", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "1000 ml",
+        "max_contains_weight": "2 kg",
+        "max_item_length": "30 cm",
+        "moves": 50
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "300 mm",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "moves": 100
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "300 mm",
+        "max_contains_volume": "1 L",
+        "max_contains_weight": "2 kg",
+        "moves": 100
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "250 mm",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "1600 g",
+        "moves": 100
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "250 mm",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "1600 g",
+        "moves": 100
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_item_length": "250 mm",
+        "max_contains_volume": "800 ml",
+        "max_contains_weight": "1600 g",
+        "moves": 100
+      },
+      { "ammo_restriction": { "410shot": 6, "shot": 6, "signal_flare": 6 }, "moves": 25 }
+    ]
   },
   {
     "id": "ammo_satchel_leg",

@@ -39,7 +39,25 @@
     "warmth": 50,
     "material_thickness": 1,
     "environmental_protection": 2,
-    "flags": [ "VARSIZE", "WATER_FRIENDLY", "SKINTIGHT", "POWERARMOR_COMPATIBLE" ]
+    "flags": [ "VARSIZE", "WATER_FRIENDLY", "SKINTIGHT", "POWERARMOR_COMPATIBLE" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "1 kg",
+        "moves": 130,
+        "max_item_length": "11 cm",
+        "watertight": true
+      },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "500 ml",
+        "max_contains_weight": "1 kg",
+        "moves": 130,
+        "max_item_length": "11 cm",
+        "watertight": true
+      }
+    ]
   },
   {
     "id": "wetsuit_hood",
@@ -108,7 +126,14 @@
     "material_thickness": 4,
     "environmental_protection": 10,
     "resistance": { "bullet": 25 },
-    "flags": [ "VARSIZE", "WATER_FRIENDLY", "POCKETS", "HOOD", "RAINPROOF", "STURDY", "ALLOWS_WINGS" ]
+    "flags": [ "VARSIZE", "WATER_FRIENDLY", "POCKETS", "HOOD", "RAINPROOF", "STURDY", "ALLOWS_WINGS" ],
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "2 L", "max_contains_weight": "6 kg", "moves": 80 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "2 L", "max_contains_weight": "6 kg", "moves": 80 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "1500 ml", "max_contains_weight": "3 kg", "moves": 120 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "1500 ml", "max_contains_weight": "3 kg", "moves": 120 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "3 L", "max_contains_weight": "6 kg", "moves": 200 }
+    ]
   },
   {
     "id": "gloves_h20survivor",

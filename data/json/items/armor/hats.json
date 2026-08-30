@@ -296,7 +296,21 @@
     "warmth": 5,
     "material_thickness": 4,
     "techniques": [ "WBLOCK_1" ],
-    "flags": [ "WATERPROOF" ]
+    "flags": [ "WATERPROOF" ],
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "500 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "250 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "400 ml", "max_contains_weight": "400 g", "moves": 250 },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "300 ml",
+        "max_contains_weight": "500 g",
+        "max_item_length": "14 cm",
+        "moves": 100
+      }
+    ]
   },
   {
     "id": "hat_hard_hooded",
@@ -318,7 +332,19 @@
     "warmth": 6,
     "material_thickness": 4,
     "techniques": [ "WBLOCK_1" ],
-    "flags": [ "WATERPROOF" ]
+    "flags": [ "WATERPROOF" ],
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "250 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "500 ml", "max_contains_weight": "400 g", "moves": 250 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "400 ml", "max_contains_weight": "400 g", "moves": 250 },
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "300 ml",
+        "max_contains_weight": "500 g",
+        "max_item_length": "14 cm",
+        "moves": 100
+      }
+    ]
   },
   {
     "id": "hat_hunting",
