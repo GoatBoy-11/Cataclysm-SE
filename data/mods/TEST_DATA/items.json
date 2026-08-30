@@ -932,7 +932,7 @@
     "symbol": "]",
     "color": "light_gray",
     "pocket_data": [
-      { "pocket_type": "CONTAINER", "max_contains_volume": "100 ml", "max_item_length": "5 cm" },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "100 ml", "max_item_length": "30 cm" },
       { "pocket_type": "CONTAINER", "max_contains_volume": "4 L", "watertight": true, "moves": 200 }
     ]
   }

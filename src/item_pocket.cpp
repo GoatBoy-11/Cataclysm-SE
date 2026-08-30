@@ -241,6 +241,13 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
         }
     }
 
+    // Length: a long item will not go into a short pocket, however much room
+    // it has by volume. Zero means the pocket sets no length limit.
+    if( data->max_item_length > 0_mm && it.length() > data->max_item_length ) {
+        return ret_val<contain_code>::make_failure( contain_code::ERR_TOO_BIG,
+                _( "is too long" ) );
+    }
+
     // A pocket that names specific items takes only those. This is what keeps a
     // magazine well from accepting anything that happens to fit.
     if( !data->item_restriction.empty() &&

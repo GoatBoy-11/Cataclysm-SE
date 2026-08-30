@@ -334,6 +334,72 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
 }
 
 // ---------------------------------------------------------------------------
+// Item length
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "an_undeclared_length_is_derived_from_volume", "[item][pocket][length]" )
+{
+    // CDDA's rule: the edge of a cube with the item's volume.
+    CHECK( units::default_length_from_volume<int>( 1000_ml ) == 10_cm );
+    CHECK( units::default_length_from_volume<int>( 8000_ml ) == 20_cm );
+
+    // And it reaches real items: a 250 ml rock is about 6 cm on a side.
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    CHECK( rock->type->longest_side > 0_mm );
+}
+
+TEST_CASE( "a_stackable_item_is_measured_per_unit", "[item][pocket][length]" )
+{
+    // A box of ammo must not be treated as one object the size of the whole
+    // stack; CDDA divides by stack size before deriving length.
+    detached_ptr<item> round = item::spawn( "9mm" );
+    REQUIRE( round->type->stack_size > 1 );
+    CHECK( round->type->longest_side <
+           units::default_length_from_volume<int>( round->type->volume ) );
+}
+
+TEST_CASE( "a_pocket_refuses_an_item_that_is_too_long", "[item][pocket][length]" )
+{
+    detached_ptr<item> holder = item::spawn( "hoodie" );
+    pocket_data data;
+    data.type = pocket_type::CONTAINER;
+    data.max_contains_volume = 100_liter;
+    data.max_item_length = 5_cm;
+    item_pocket shallow( holder.get(), &data );
+
+    // Roomy by volume, but far too short for a crowbar.
+    detached_ptr<item> crowbar = item::spawn( "crowbar" );
+    REQUIRE( crowbar->length() > 5_cm );
+    const ret_val<item_pocket::contain_code> res = shallow.can_contain( *crowbar );
+    CHECK_FALSE( res.success() );
+    CHECK( res.value() == item_pocket::contain_code::ERR_TOO_BIG );
+}
+
+TEST_CASE( "soft_items_ignore_length_limits", "[item][pocket][length]" )
+{
+    // Cloth squashes, so CDDA gives soft items no length at all.
+    detached_ptr<item> rag = item::spawn( "rag" );
+    if( rag->is_soft() ) {
+        CHECK( rag->length() == 0_mm );
+    }
+}
+
+TEST_CASE( "classic_mode_ignores_length_limits", "[item][pocket][length][classic]" )
+{
+    detached_ptr<item> holder = item::spawn( "hoodie" );
+    pocket_data data;
+    data.type = pocket_type::CONTAINER;
+    data.max_contains_volume = 100_liter;
+    data.max_item_length = 5_cm;
+    item_pocket shallow( holder.get(), &data );
+    detached_ptr<item> crowbar = item::spawn( "crowbar" );
+    REQUIRE_FALSE( shallow.can_contain( *crowbar ).success() );
+
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    CHECK( shallow.can_contain( *crowbar ).success() );
+}
+
+// ---------------------------------------------------------------------------
 // Flag restrictions and holsters
 // ---------------------------------------------------------------------------
 
@@ -915,7 +981,7 @@ TEST_CASE( "an_item_declaring_pocket_data_gets_those_pockets", "[item][pocket][j
 
     REQUIRE( pockets.size() == 2 );
     CHECK( pockets[0].definition().max_contains_volume == 100_ml );
-    CHECK( pockets[0].definition().max_item_length == 5_cm );
+    CHECK( pockets[0].definition().max_item_length == 30_cm );
     CHECK( pockets[1].definition().max_contains_volume == 4_liter );
     CHECK( pockets[1].definition().watertight );
     CHECK( pockets[1].definition().moves == 200 );

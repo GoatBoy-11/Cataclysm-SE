@@ -660,6 +660,9 @@ class item : public location_visitable<item>, public game_object<item>
          * @param integral if true return effective volume if this item was integrated into another
          */
         units::volume volume( bool integral = false ) const;
+        /** Longest dimension, for pockets that limit item length. Soft items
+         *  have no meaningful length and report zero, as in CDDA. */
+        units::length length() const;
 
         /**
          * Simplified, faster volume check for when processing time is important and exact volume is not.

@@ -380,6 +380,15 @@ std::string pocket_coverage_report()
 
 void Item_factory::finalize_pre( itype &obj )
 {
+    // CDDA derives an undeclared longest_side from volume, per unit for
+    // stackables, so pocket length limits apply without per-item authoring.
+    if( obj.longest_side == -1_mm ) {
+        const units::volume effective = obj.count_by_charges() && obj.stack_size > 0
+                                        ? obj.volume / obj.stack_size
+                                        : obj.volume;
+        obj.longest_side = units::default_length_from_volume<int>( effective );
+    }
+
     synthesize_pockets_from_legacy( obj );
 
     // TODO: separate repairing from reinforcing/enhancement
@@ -2883,6 +2892,10 @@ void Item_factory::load_basic_info( const JsonObject &jo, itype &def, const std:
     assign( jo, "weight", def.weight, strict, 0_gram );
     assign( jo, "integral_weight", def.integral_weight );
     assign( jo, "volume", def.volume );
+    if( jo.has_member( "longest_side" ) ) {
+        def.longest_side = read_from_json_string<units::length>(
+                               *jo.get_raw( "longest_side" ), units::length_units );
+    }
     assign( jo, "integral_volume", def.integral_volume );
     assign( jo, "price", def.price, false, 0_cent );
     assign( jo, "price_postapoc", def.price_post, false, 0_cent );

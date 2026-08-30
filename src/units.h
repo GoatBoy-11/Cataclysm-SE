@@ -77,6 +77,18 @@ inline std::ostream &operator<<( std::ostream &o, const quantity<value_type, tag
 
 std::string display( units::energy v );
 
+/**
+ * The length assumed for an item that does not declare one: the edge of a cube
+ * with the item's volume. Ported from CDDA's units::default_length_from_volume
+ * so imported max_item_length values mean what their authors intended.
+ */
+template<typename value_type>
+inline length default_length_from_volume( const volume &v )
+{
+    return from_centimeter<value_type>(
+               static_cast<value_type>( std::lround( std::cbrt( to_milliliter( v ) ) ) ) );
+}
+
 } // namespace units
 
 namespace units

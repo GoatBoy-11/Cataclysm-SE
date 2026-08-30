@@ -1070,6 +1070,13 @@ struct itype {
          * To determine how many of an item can fit in a given space, use @ref charges_per_volume.
          */
         units::volume volume = 0_ml;
+
+        /**
+         * The item's longest dimension, for pockets that limit item length.
+         * -1 means "not declared": finalization then derives it from volume, as
+         * CDDA does, so length limits work without every item declaring one.
+         */
+        units::length longest_side = -1_mm;
         /**
          * Space consumed when integrated as part of another item (defaults to volume)
          * CAUTION: value given is for a default-sized stack. Avoid using this. In general, see @ref item::volume instead.

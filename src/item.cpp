@@ -5868,6 +5868,12 @@ units::volume item::corpse_volume( const mtype *corpse ) const
     return 0_ml;
 }
 
+units::length item::length() const
+{
+    // Soft items squash, so they impose no length limit - CDDA's rule.
+    return is_soft() ? 0_mm : type->longest_side;
+}
+
 units::volume item::base_volume() const
 {
     if( is_null() ) {
