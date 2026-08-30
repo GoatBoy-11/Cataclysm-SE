@@ -3717,7 +3717,7 @@
     "type": "keybinding",
     "category": "INVENTORY_ITEM",
     "name": "Organize pockets",
-    "bindings": [ { "input_method": "keyboard", "key": "P" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "o" }, { "input_method": "keyboard", "key": "P" } ]
   },
   {
     "id": "AUTOPICKUP_ADD",
