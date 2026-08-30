@@ -9,6 +9,7 @@
 #include "item_factory.h"
 #include "itype.h"
 #include "json.h"
+#include "relic.h"
 #include "ret_val.h"
 #include "type_id.h"
 #include "units.h"
@@ -329,6 +330,120 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
 
     CHECK( first.size() == 1 );
     CHECK( first.front() == before );
+}
+
+// ---------------------------------------------------------------------------
+// Classic mode: pooling storage back into one compartment
+// ---------------------------------------------------------------------------
+
+// A stand-in for a curated garment: worn storage plus several authored pockets.
+// Built by hand rather than copied from a loaded itype, because copying one
+// needs complete definitions for every slot it carries.
+static itype curated_garment_stub()
+{
+    itype def;
+    def.armor = cata::make_value<islot_armor>();
+    def.armor->storage = 2500_ml;
+    for( int i = 0; i < 4; i++ ) {
+        pocket_data pocket;
+        pocket.type = pocket_type::CONTAINER;
+        pocket.max_contains_volume = 1250_ml;
+        def.pockets.push_back( pocket );
+    }
+    return def;
+}
+
+TEST_CASE( "classic_mode_pools_curated_pockets_into_legacy_storage",
+           "[item][pocket][classic]" )
+{
+    itype def = curated_garment_stub();
+    REQUIRE( def.pockets.size() == 4 );
+
+    collapse_pockets_for_classic_mode( def, true );
+
+    // One compartment, sized from the legacy field rather than the sum of the
+    // authored pockets: classic mode restores BN's balance, not CDDA's.
+    REQUIRE( def.pockets.size() == 1 );
+    CHECK( def.pockets.front().type == pocket_type::CONTAINER );
+    CHECK( def.pockets.front().max_contains_volume == 2500_ml );
+    CHECK_FALSE( def.pockets.front().rigid );
+}
+
+TEST_CASE( "classic_mode_leaves_magazine_and_mod_pockets_alone",
+           "[item][pocket][classic]" )
+{
+    itype def;
+    for( const pocket_type type : {
+             pocket_type::MAGAZINE_WELL, pocket_type::MOD
+         } ) {
+        pocket_data pocket;
+        pocket.type = type;
+        def.pockets.push_back( pocket );
+    }
+
+    collapse_pockets_for_classic_mode( def, true );
+
+    // A gun has no CONTAINER pocket to pool, so nothing should change: it still
+    // needs its well and mod slots to function.
+    REQUIRE( def.pockets.size() == 2 );
+    CHECK( def.pockets[0].type == pocket_type::MAGAZINE_WELL );
+    CHECK( def.pockets[1].type == pocket_type::MOD );
+}
+
+TEST_CASE( "classic_mode_keeps_special_pockets_beside_the_pooled_one",
+           "[item][pocket][classic]" )
+{
+    // The sparkledogsuit shape: worn storage and a battery well on one item.
+    itype def = curated_garment_stub();
+    pocket_data well;
+    well.type = pocket_type::MAGAZINE_WELL;
+    def.pockets.insert( def.pockets.begin(), well );
+
+    collapse_pockets_for_classic_mode( def, true );
+
+    REQUIRE( def.pockets.size() == 2 );
+    CHECK( def.pockets[0].type == pocket_type::MAGAZINE_WELL );
+    CHECK( def.pockets[1].type == pocket_type::CONTAINER );
+    CHECK( def.pockets[1].max_contains_volume == 2500_ml );
+}
+
+TEST_CASE( "full_mode_changes_nothing", "[item][pocket][classic]" )
+{
+    itype def = curated_garment_stub();
+
+    collapse_pockets_for_classic_mode( def, false );
+
+    CHECK( def.pockets.size() == 4 );
+}
+
+TEST_CASE( "a_full_mode_save_loads_without_losing_items_in_classic_mode",
+           "[item][pocket][classic][save]" )
+{
+    // Write contents spread across a curated item's pockets. Placed pocket by
+    // pocket on purpose: best_pocket() would otherwise pile small items into the
+    // same compartment, and stackable ones would merge into a single entry.
+    detached_ptr<item> pants = item::spawn( "pants_cargo" );
+    REQUIRE( pants->contents.get_pockets().size() >= 3 );
+    for( int i = 0; i < 3; i++ ) {
+        detached_ptr<item> sugar = item::spawn( "sugar" );
+        sugar->charges = 1;
+        pants->contents.get_pockets()[i].insert( std::move( sugar ) );
+    }
+    REQUIRE( pants->contents.all_items_top().size() == 3 );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    pants->contents.serialize( jo );
+
+    // ...then read them back into an item with only one pocket, as classic mode
+    // would build it. Nothing may be dropped on the floor.
+    detached_ptr<item> holder = item::spawn( "hoodie" );
+    REQUIRE( holder->contents.get_pockets().size() == 1 );
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    holder->contents.deserialize( ji );
+
+    CHECK( holder->contents.all_items_top().size() == 3 );
 }
 
 // ---------------------------------------------------------------------------

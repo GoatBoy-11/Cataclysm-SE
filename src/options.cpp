@@ -2892,6 +2892,12 @@ void options_manager::add_options_world_default()
     }, "reset"
        );
 
+    add( "POCKET_SYSTEM", world_default, translate_marker( "Item pocket system" ),
+    translate_marker( "Full gives items their individual pockets, so a garment's cargo pockets fill separately.  Classic pools each item's storage into one compartment, as before pockets existed." ), {
+        { "full", translate_marker( "Full" ) }, { "classic", translate_marker( "Classic" ) }
+    }, "full"
+       );
+
     add_empty_line();
 
     add( "CITY_SIZE", world_default, translate_marker( "Size of cities" ),

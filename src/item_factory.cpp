@@ -378,9 +378,66 @@ std::string pocket_coverage_report()
     return report;
 }
 
+/**
+ * Classic mode: pool an item's storage back into a single compartment.
+ *
+ * Only CONTAINER pockets collapse. MAGAZINE, MAGAZINE_WELL, MOD and CORPSE
+ * pockets are function rather than storage balance, and removing them would
+ * stop guns and magazines working.
+ */
+void collapse_pockets_for_classic_mode( itype &def, const bool classic )
+{
+    if( !classic ) {
+        return;
+    }
+
+    std::vector<pocket_data> kept;
+    units::volume authored_total = 0_ml;
+    bool had_container = false;
+    for( const pocket_data &pocket : def.pockets ) {
+        if( pocket.type == pocket_type::CONTAINER ) {
+            had_container = true;
+            authored_total += pocket.max_contains_volume;
+        } else {
+            kept.push_back( pocket );
+        }
+    }
+    if( !had_container ) {
+        return;
+    }
+
+    pocket_data pooled;
+    pooled.type = pocket_type::CONTAINER;
+    pooled.synthesized = true;
+    if( def.container ) {
+        pooled.max_contains_volume = def.container->contains;
+        pooled.watertight = def.container->watertight;
+        pooled.sealed = def.container->seals;
+        pooled.rigid = true;
+        if( def.container->preserves ) {
+            pooled.spoil_multiplier = 0.0f;
+        }
+    } else if( def.armor && def.armor->storage > 0_ml ) {
+        pooled.max_contains_volume = def.armor->storage;
+        pooled.rigid = false;
+    } else {
+        // No legacy value to restore: this item only ever existed with authored
+        // pockets, so pooling their volumes is the only number available. Not a
+        // balance choice, just the absence of an alternative.
+        pooled.max_contains_volume = authored_total;
+        pooled.rigid = false;
+    }
+
+    kept.push_back( pooled );
+    def.pockets = kept;
+}
+
 void Item_factory::finalize_pre( itype &obj )
 {
     synthesize_pockets_from_legacy( obj );
+    collapse_pockets_for_classic_mode( obj,
+                                       get_options().has_option( "POCKET_SYSTEM" ) &&
+                                       get_option<std::string>( "POCKET_SYSTEM" ) == "classic" );
 
     // TODO: separate repairing from reinforcing/enhancement
     if( obj.damage_max() == obj.damage_min() ) {
