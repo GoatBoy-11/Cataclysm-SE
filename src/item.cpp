@@ -493,7 +493,7 @@ item::item( const item &source ) : game_object<item>( source ), type( source.typ
     is_favorite = source.is_favorite;
 
     for( item * const &it : source.contents.all_items_top() ) {
-        contents.insert_item( item::spawn( *it ) );
+        contents.insert_item_forced( item::spawn( *it ) );
     }
 
     for( item * const &it : source.components ) {
@@ -547,7 +547,7 @@ item &item::operator=( const item &source )
     contents.clear_items();
 
     for( item * const &it : source.contents.all_items_top() ) {
-        contents.insert_item( item::spawn( *it ) );
+        contents.insert_item_forced( item::spawn( *it ) );
     }
 
     components.clear();
@@ -1314,16 +1314,25 @@ detached_ptr<item> item::put_in( detached_ptr<item> &&payload )
 
 void item::put_in_unchecked( detached_ptr<item> &&payload )
 {
-    // TODO(pocket-enforcement): this call site needs a real answer for refusal
-    // before enforcement can be enabled.
-    detached_ptr<item> refused = put_in( std::move( payload ) );
-    static_cast<void>( refused );
+    // TODO(pocket-enforcement): each caller of this needs a real answer for
+    // refusal. Until it has one, a refused item is forced into pocket 0 rather
+    // than rejected, preserving pre-enforcement behaviour; the audit report
+    // records every such forcing.
+    if( !payload || payload->typeId() == itype_id::NULL_ID() ) {
+        debugmsg( "Tried to insert non-item into %s", debug_name() );
+        return;
+    }
+    if( &*payload == this ) {
+        debugmsg( "Tried to put %s inside itself", debug_name().c_str() );
+        return;
+    }
+    contents.insert_item_forced( std::move( payload ) );
 }
 
 void item::add_item_with_id( const itype_id &itype, int count )
 {
     detached_ptr<item> new_item = item::spawn( itype, calendar::turn, count );
-    contents.insert_item( std::move( new_item ) );
+    contents.insert_item_forced( std::move( new_item ) );
 }
 
 bool item::has_item_with_id( const itype_id &itype ) const

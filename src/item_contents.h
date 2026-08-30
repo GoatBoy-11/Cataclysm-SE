@@ -71,7 +71,17 @@ class item_contents
 
         int best_quality( const quality_id &id ) const;
 
+        /**
+         * Insert an item into whichever pocket accepts it. Fails - leaving the
+         * item with the caller - when no pocket does.
+         */
         ret_val<bool> insert_item( detached_ptr<item> &&it );
+        /**
+         * Insert, forcing the item into pocket 0 when nothing accepts it. For
+         * machinery that must never lose an item: copy construction, save
+         * migration, location reattachment.
+         */
+        void insert_item_forced( detached_ptr<item> &&it );
 
         /**
          * returns the number of items stacks in contents
@@ -131,6 +141,7 @@ class item_contents
             return pockets;
         }
     private:
+        ret_val<bool> insert_item_impl( detached_ptr<item> &&it, bool force );
         auto update_processing_cache() const -> void;
 
         item *owner;

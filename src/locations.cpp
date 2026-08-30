@@ -613,7 +613,7 @@ detached_ptr<item> contents_item_location::detach( item *it )
 
 void contents_item_location::attach( detached_ptr<item> &&obj )
 {
-    container->contents.insert_item( std::move( obj ) );
+    container->contents.insert_item_forced( std::move( obj ) );
     container->on_contents_changed();
 }
 

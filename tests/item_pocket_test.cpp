@@ -334,6 +334,65 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
 }
 
 // ---------------------------------------------------------------------------
+// Enforcement: insertion can refuse, and nothing is destroyed by refusal
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "insert_item_refuses_what_no_pocket_accepts", "[item][pocket][enforce]" )
+{
+    // A magazine's only pocket is ammo-restricted, so sugar has nowhere to go.
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    sugar->charges = 1;
+
+    const ret_val<bool> res = mag->contents.insert_item( std::move( sugar ) );
+
+    CHECK_FALSE( res.success() );
+    // The refused item was not consumed and not destroyed.
+    // NOLINTNEXTLINE(bugprone-use-after-move)
+    REQUIRE( sugar );
+    CHECK( sugar->typeId() == itype_id( "sugar" ) );
+    CHECK( mag->contents.empty() );
+}
+
+TEST_CASE( "put_in_hands_back_a_refused_item", "[item][pocket][enforce]" )
+{
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    sugar->charges = 1;
+
+    detached_ptr<item> refused = mag->put_in( std::move( sugar ) );
+
+    REQUIRE( refused );
+    CHECK( refused->typeId() == itype_id( "sugar" ) );
+    CHECK( mag->contents.empty() );
+}
+
+TEST_CASE( "put_in_unchecked_still_never_loses_an_item", "[item][pocket][enforce]" )
+{
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    sugar->charges = 1;
+
+    mag->put_in_unchecked( std::move( sugar ) );
+
+    // Forced into pocket 0 rather than rejected or destroyed.
+    CHECK( mag->contents.all_items_top().size() == 1 );
+}
+
+TEST_CASE( "classic_mode_accepts_what_full_mode_refuses", "[item][pocket][enforce][classic]" )
+{
+    // Classic relaxes the type rules, so the same insertion succeeds: this is
+    // the first point where the two modes actually behave differently.
+    override_option classic( "POCKET_SYSTEM", "classic" );
+
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    sugar->charges = 1;
+
+    CHECK( mag->contents.insert_item( std::move( sugar ) ).success() );
+}
+
+// ---------------------------------------------------------------------------
 // Classic mode: pooling storage back into one compartment
 // ---------------------------------------------------------------------------
 

@@ -2965,7 +2965,7 @@ void item::deserialize( JsonIn &jsin )
         std::vector<detached_ptr<item>> items;
         data.read( "contents", items );
         for( detached_ptr<item> &obj : items ) {
-            contents.insert_item( std::move( obj ) );
+            contents.insert_item_forced( std::move( obj ) );
         }
     } else {
         data.read( "contents", contents );

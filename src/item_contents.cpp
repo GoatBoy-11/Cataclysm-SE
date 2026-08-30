@@ -134,12 +134,13 @@ item_pocket *item_contents::best_pocket( const item &it )
     return best;
 }
 
-ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
+ret_val<bool> item_contents::insert_item_impl( detached_ptr<item> &&it, const bool force )
 {
     bool stacked = false;
     if( it->count_by_charges() ) {
         for( item_pocket &pocket : pockets ) {
             for( item *check : pocket.all_items_top() ) {
+                // merge_charges leaves the pointer intact on failure.
                 // NOLINTNEXTLINE(bugprone-use-after-move)
                 if( check->merge_charges( std::move( it ) ) ) {
                     stacked = true;
@@ -153,23 +154,21 @@ ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
     }
 
     if( !stacked ) {
-        // Prefer the first pocket that actually accepts the item, so an item with
-        // several authored pockets fills them meaningfully. Insertion still never
-        // fails: synthesis only produces CONTAINER pockets, so gunmods, magazines
-        // and corpse contents have nowhere that would accept them, and capacity
-        // limits are still enforced by the callers that enforced them before
-        // pockets existed. Ranking by priority and rejecting what fits nowhere
-        // belongs with best_pocket() in a later phase.
         // NOLINTNEXTLINE(bugprone-use-after-move)
         item_pocket *chosen = best_pocket( *it );
-        item_pocket *target = chosen != nullptr ? chosen : &pockets.front();
         if( chosen == nullptr ) {
-            // Dry run: this is what enforcement would have rejected. Record it and
-            // let it through anyway, so the audit report can prove whether turning
-            // enforcement on is safe.
+            // Every insertion that no pocket accepts is recorded, whether it is
+            // then refused or forced through; the audit report stays the ledger
+            // of what enforcement rejects.
             // NOLINTNEXTLINE(bugprone-use-after-move)
             record_pocket_audit_miss( owner, *it );
+            if( !force ) {
+                // The item is deliberately NOT consumed: the caller keeps it and
+                // must decide where it goes instead.
+                return ret_val<bool>::make_failure( false, _( "does not fit in any pocket" ) );
+            }
         }
+        item_pocket *target = chosen != nullptr ? chosen : &pockets.front();
         // NOLINTNEXTLINE(bugprone-use-after-move)
         target->insert( std::move( it ) );
     }
@@ -180,6 +179,18 @@ ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
         invalidate_processing_cache();
     }
     return ret_val<bool>::make_success();
+}
+
+ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
+{
+    return insert_item_impl( std::move( it ), false );
+}
+
+void item_contents::insert_item_forced( detached_ptr<item> &&it )
+{
+    // Copy construction, save migration and location reattachment must never
+    // lose an item; they land it in pocket 0 when nothing better accepts it.
+    insert_item_impl( std::move( it ), true );
 }
 
 size_t item_contents::num_item_stacks() const
