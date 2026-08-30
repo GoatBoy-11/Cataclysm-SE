@@ -3343,6 +3343,87 @@ void item::book_info( std::vector<iteminfo> &info, const iteminfo_query *parts, 
     }
 }
 
+void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts, int /*batch*/,
+                        bool /*debug*/ ) const
+{
+    if( !parts->test( iteminfo_parts::POCKET_DETAILS ) ) {
+        return;
+    }
+    // Synthesized pockets duplicate what the legacy sections already show: guns
+    // list their magazines and mod locations, magazines their capacity,
+    // containers their volume. Only authored pockets carry information that
+    // appears nowhere else, so only they get a section.
+    bool any_authored = false;
+    for( const item_pocket &pocket : contents.get_pockets() ) {
+        if( !pocket.definition().synthesized ) {
+            any_authored = true;
+            break;
+        }
+    }
+    if( !any_authored ) {
+        return;
+    }
+
+    insert_separation_line( info );
+    info.emplace_back( "CONTAINER", string_format( vgettext( "This item has <info>%d pocket</info>.",
+                       "This item has <info>%d pockets</info>.", contents.get_pockets().size() ),
+                       static_cast<int>( contents.get_pockets().size() ) ) );
+
+    int index = 0;
+    for( const item_pocket &pocket : contents.get_pockets() ) {
+        index++;
+        const pocket_data &def = pocket.definition();
+        std::string line = string_format( _( "  Pocket %d: " ), index );
+
+        switch( def.type ) {
+            case pocket_type::MAGAZINE:
+                line += _( "<info>magazine</info>, " );
+                break;
+            case pocket_type::MAGAZINE_WELL:
+                line += _( "<info>magazine well</info>, " );
+                break;
+            case pocket_type::MOD:
+                line += _( "<info>mod slots</info>, " );
+                break;
+            case pocket_type::CORPSE:
+            case pocket_type::MIGRATION:
+            case pocket_type::CONTAINER:
+            case pocket_type::LAST:
+                break;
+        }
+
+        if( !def.ammo_restriction.empty() ) {
+            std::string ammo;
+            for( const auto &entry : def.ammo_restriction ) {
+                if( !ammo.empty() ) {
+                    ammo += ", ";
+                }
+                ammo += string_format( _( "%1$d rounds of %2$s" ),
+                                       entry.second, entry.first.str() );
+            }
+            line += ammo;
+        } else {
+            line += string_format( _( "holds <info>%s %s</info>" ),
+                                   format_volume( def.max_contains_volume ),
+                                   volume_units_long() );
+            if( def.max_item_length < units::length_max ) {
+                line += string_format( _( ", items up to <info>%d cm</info> long" ),
+                                       static_cast<int>( units::to_millimeter( def.max_item_length ) / 10 ) );
+            }
+        }
+        if( def.watertight ) {
+            line += _( ", <info>watertight</info>" );
+        }
+        if( !def.rigid ) {
+            line += _( ", <info>flexible</info>" );
+        }
+        if( def.spoil_multiplier <= 0.0f ) {
+            line += _( ", <good>preserves contents</good>" );
+        }
+        info.emplace_back( "CONTAINER", line );
+    }
+}
+
 void item::container_info( std::vector<iteminfo> &info, const iteminfo_query *parts, int /*batch*/,
                            bool /*debug*/ ) const
 {
@@ -4561,6 +4642,7 @@ std::vector<iteminfo> item::info( const iteminfo_query &parts_ref, int batch,
     }
 
     container_info( info, parts, batch, debug );
+    pocket_info( info, parts, batch, debug );
     contents_info( info, parts, batch, debug );
     combat_info( info, parts, batch, debug );
     throw_info( info, parts, batch, debug );

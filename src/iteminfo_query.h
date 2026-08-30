@@ -220,6 +220,8 @@ enum class iteminfo_parts : size_t {
 
     DESCRIPTION_MED_ADDICTING,
 
+    POCKET_DETAILS,
+
     // element count tracker
     NUM_VALUES
 };
