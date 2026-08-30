@@ -213,7 +213,10 @@ static bool has_pocket_of_type( const itype &def, const pocket_type type )
  */
 static void synthesize_special_pockets_from_legacy( itype &def )
 {
-    const auto add_pocket = [&def]( const pocket_type type ) {
+    const auto add_pocket = [&def]( const pocket_type type,
+                                    const std::map<ammotype, int> &ammo = {},
+                                    const std::set<itype_id> &items = {},
+    const std::map<std::string, int> &mods = {} ) {
         if( has_pocket_of_type( def, type ) ) {
             return;
         }
@@ -224,23 +227,44 @@ static void synthesize_special_pockets_from_legacy( itype &def )
         // adds a magazine's volume separately.
         pocket.rigid = true;
         pocket.synthesized = true;
+        pocket.ammo_restriction = ammo;
+        pocket.item_restriction = items;
+        pocket.mod_restriction = mods;
         def.pockets.push_back( pocket );
     };
 
     if( def.magazine ) {
-        add_pocket( pocket_type::MAGAZINE );
+        // Capacity is per ammo type, matching how the legacy magazine slot reads.
+        std::map<ammotype, int> ammo;
+        for( const ammotype &type : def.magazine->type ) {
+            ammo[type] = def.magazine->capacity;
+        }
+        add_pocket( pocket_type::MAGAZINE, ammo );
     }
     if( !def.magazines.empty() ) {
-        add_pocket( pocket_type::MAGAZINE_WELL );
+        // Exactly the magazines this item accepts, across every ammo type.
+        std::set<itype_id> mags;
+        for( const auto &entry : def.magazines ) {
+            mags.insert( entry.second.begin(), entry.second.end() );
+        }
+        add_pocket( pocket_type::MAGAZINE_WELL, {}, mags );
     }
     // A gun with an internal clip and no detachable magazine loads rounds
     // straight into itself, so those rounds need a pocket of their own. Without
     // this every tube-fed shotgun and lever gun has nowhere to put its ammo.
     if( def.gun && def.gun->clip > 0 && def.magazines.empty() ) {
-        add_pocket( pocket_type::MAGAZINE );
+        std::map<ammotype, int> ammo;
+        for( const ammotype &type : def.gun->ammo ) {
+            ammo[type] = def.gun->clip;
+        }
+        add_pocket( pocket_type::MAGAZINE, ammo );
     }
     if( def.gun && !def.gun->valid_mod_locations.empty() ) {
-        add_pocket( pocket_type::MOD );
+        std::map<std::string, int> mods;
+        for( const auto &entry : def.gun->valid_mod_locations ) {
+            mods[entry.first.str()] = entry.second;
+        }
+        add_pocket( pocket_type::MOD, {}, {}, mods );
     }
     if( def.has_flag( flag_CORPSE ) ) {
         add_pocket( pocket_type::CORPSE );

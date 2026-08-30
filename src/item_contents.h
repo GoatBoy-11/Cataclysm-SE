@@ -115,6 +115,14 @@ class item_contents
 
         void on_destroy();
 
+        /**
+         * The pocket this item should go in, or nullptr if none will take it.
+         * Prefers a pocket that specifically names what belongs in it over a
+         * general-purpose one that merely has room, then prefers the tightest
+         * fit so roomy pockets stay free.
+         */
+        item_pocket *best_pocket( const item &it );
+
         /** later phases operate on pockets directly; phase 1 has exactly one */
         std::vector<item_pocket> &get_pockets() {
             return pockets;

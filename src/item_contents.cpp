@@ -93,6 +93,35 @@ auto item_contents::update_processing_cache() const -> void
     processing_cache_dirty = false;
 }
 
+item_pocket *item_contents::best_pocket( const item &it )
+{
+    item_pocket *best = nullptr;
+    int best_rank = -1;
+
+    for( item_pocket &pocket : pockets ) {
+        if( !pocket.can_contain( it ).success() ) {
+            continue;
+        }
+        // A pocket that names what may go in it is the item's proper home; a
+        // general-purpose pocket only happens to have room. Rank the former
+        // higher so a magazine reaches the magazine well rather than the
+        // roomy cargo pocket on the same item.
+        const pocket_data &def = pocket.definition();
+        const bool restricted = !def.ammo_restriction.empty() ||
+                                !def.item_restriction.empty() ||
+                                !def.mod_restriction.empty();
+        const int rank = restricted ? 1 : 0;
+
+        if( best == nullptr || rank > best_rank ||
+            ( rank == best_rank &&
+              pocket.remaining_volume() < best->remaining_volume() ) ) {
+            best = &pocket;
+            best_rank = rank;
+        }
+    }
+    return best;
+}
+
 ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
 {
     bool stacked = false;
@@ -119,17 +148,10 @@ ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
         // limits are still enforced by the callers that enforced them before
         // pockets existed. Ranking by priority and rejecting what fits nowhere
         // belongs with best_pocket() in a later phase.
-        item_pocket *target = &pockets.front();
-        bool accepted = false;
-        for( item_pocket &pocket : pockets ) {
-            // NOLINTNEXTLINE(bugprone-use-after-move)
-            if( pocket.can_contain( *it ).success() ) {
-                target = &pocket;
-                accepted = true;
-                break;
-            }
-        }
-        if( !accepted ) {
+        // NOLINTNEXTLINE(bugprone-use-after-move)
+        item_pocket *chosen = best_pocket( *it );
+        item_pocket *target = chosen != nullptr ? chosen : &pockets.front();
+        if( chosen == nullptr ) {
             // Dry run: this is what enforcement would have rejected. Record it and
             // let it through anyway, so the audit report can prove whether turning
             // enforcement on is safe.

@@ -305,8 +305,7 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
 }
 
 // ---------------------------------------------------------------------------
-// Exhaustive enforcement audit: does every item have a pocket for what it holds?
-// These are the gate for turning can_contain() enforcement back on.
+// Phase 3: restrictions
 // ---------------------------------------------------------------------------
 
 static bool any_pocket_accepts( const item &container, const item &content )
@@ -318,6 +317,186 @@ static bool any_pocket_accepts( const item &container, const item &content )
     }
     return false;
 }
+
+TEST_CASE( "a_magazine_pocket_only_accepts_its_own_ammo", "[item][pocket][restrict]" )
+{
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    const std::vector<item_pocket> &pockets = mag->contents.get_pockets();
+    REQUIRE( pockets.size() == 1 );
+    REQUIRE_FALSE( pockets.front().definition().ammo_restriction.empty() );
+
+    detached_ptr<item> nine_mm = item::spawn( "9mm" );
+    // A spawned stack is far bigger than a magazine; ask about a single round.
+    nine_mm->charges = 1;
+    CHECK( pockets.front().can_contain( *nine_mm ).success() );
+
+    detached_ptr<item> forty_five = item::spawn( "45_acp" );
+    forty_five->charges = 1;
+    const ret_val<item_pocket::contain_code> wrong =
+        pockets.front().can_contain( *forty_five );
+    CHECK_FALSE( wrong.success() );
+    CHECK( wrong.value() == item_pocket::contain_code::ERR_AMMO );
+}
+
+TEST_CASE( "a_magazine_pocket_rejects_things_that_are_not_ammo",
+           "[item][pocket][restrict]" )
+{
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+
+    const ret_val<item_pocket::contain_code> res =
+        mag->contents.get_pockets().front().can_contain( *sugar );
+    CHECK_FALSE( res.success() );
+    CHECK( res.value() == item_pocket::contain_code::ERR_AMMO );
+}
+
+TEST_CASE( "a_magazine_pocket_respects_its_round_capacity", "[item][pocket][restrict]" )
+{
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    const item_pocket &pocket = mag->contents.get_pockets().front();
+    const int capacity = pocket.definition().ammo_restriction.begin()->second;
+    REQUIRE( capacity > 0 );
+
+    detached_ptr<item> rounds = item::spawn( "9mm" );
+    rounds->charges = capacity;
+    CHECK( pocket.can_contain( *rounds ).success() );
+
+    detached_ptr<item> too_many = item::spawn( "9mm" );
+    too_many->charges = capacity + 1;
+    const ret_val<item_pocket::contain_code> res = pocket.can_contain( *too_many );
+    CHECK_FALSE( res.success() );
+    CHECK( res.value() == item_pocket::contain_code::ERR_AMMO );
+}
+
+TEST_CASE( "an_internal_clip_gun_restricts_its_magazine_pocket_to_its_ammo",
+           "[item][pocket][restrict]" )
+{
+    detached_ptr<item> shotgun = item::spawn( "mossberg_500" );
+    const item_pocket *magazine = nullptr;
+    for( const item_pocket &pocket : shotgun->contents.get_pockets() ) {
+        if( pocket.definition().type == pocket_type::MAGAZINE ) {
+            magazine = &pocket;
+        }
+    }
+    REQUIRE( magazine != nullptr );
+    CHECK_FALSE( magazine->definition().ammo_restriction.empty() );
+
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    CHECK_FALSE( magazine->can_contain( *sugar ).success() );
+}
+
+TEST_CASE( "a_magazine_well_only_accepts_magazines_the_gun_takes",
+           "[item][pocket][restrict]" )
+{
+    detached_ptr<item> gun = item::spawn( "glock_19" );
+    const item_pocket *well = nullptr;
+    for( const item_pocket &pocket : gun->contents.get_pockets() ) {
+        if( pocket.definition().type == pocket_type::MAGAZINE_WELL ) {
+            well = &pocket;
+        }
+    }
+    REQUIRE( well != nullptr );
+    REQUIRE_FALSE( well->definition().item_restriction.empty() );
+
+    detached_ptr<item> glockmag = item::spawn( "glockmag" );
+    CHECK( well->can_contain( *glockmag ).success() );
+
+    detached_ptr<item> akmag = item::spawn( "akmag30" );
+    const ret_val<item_pocket::contain_code> wrong = well->can_contain( *akmag );
+    CHECK_FALSE( wrong.success() );
+    CHECK( wrong.value() == item_pocket::contain_code::ERR_ITEM );
+
+    // And it is not a general-purpose pocket either.
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    CHECK_FALSE( well->can_contain( *sugar ).success() );
+}
+
+TEST_CASE( "a_mod_pocket_only_accepts_mods_the_gun_can_take", "[item][pocket][restrict]" )
+{
+    detached_ptr<item> gun = item::spawn( "glock_19" );
+    const item_pocket *mod_pocket = nullptr;
+    for( const item_pocket &pocket : gun->contents.get_pockets() ) {
+        if( pocket.definition().type == pocket_type::MOD ) {
+            mod_pocket = &pocket;
+        }
+    }
+    REQUIRE( mod_pocket != nullptr );
+    REQUIRE_FALSE( mod_pocket->definition().mod_restriction.empty() );
+
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    const ret_val<item_pocket::contain_code> res = mod_pocket->can_contain( *sugar );
+    CHECK_FALSE( res.success() );
+    CHECK( res.value() == item_pocket::contain_code::ERR_MOD );
+}
+
+TEST_CASE( "every_gun_has_a_pocket_for_its_default_mods", "[item][pocket][audit]" )
+{
+    // Default mods are installed on spawn, so if a gun's MOD pocket would refuse
+    // them, enforcement breaks that gun outright.
+    std::vector<std::string> failures;
+    int checked = 0;
+    for( const itype *def : item_controller->all() ) {
+        if( !def->gun || def->gun->default_mods.empty() ) {
+            continue;
+        }
+        for( const itype_id &mod_id : def->gun->default_mods ) {
+            detached_ptr<item> gun = item::spawn( def->get_id() );
+            gun->contents.clear_items();
+            detached_ptr<item> mod = item::spawn( mod_id );
+            checked++;
+            if( !any_pocket_accepts( *gun, *mod ) ) {
+                failures.push_back( def->get_id().str() + " <- " + mod_id.str() );
+            }
+        }
+    }
+    // Guard against a vacuous pass; the data declares default_mods ~23 times.
+    REQUIRE( checked > 10 );
+    CAPTURE( checked );
+    CAPTURE( failures );
+    CHECK( failures.empty() );
+}
+
+TEST_CASE( "a_magazine_goes_to_the_well_not_the_cargo_pocket", "[item][pocket][restrict]" )
+{
+    // sparkledogsuit has both a MAGAZINE_WELL and a roomy CONTAINER pocket, so it
+    // is the case where first-fit and best_pocket could disagree.
+    detached_ptr<item> suit = item::spawn( "sparkledogsuit" );
+    REQUIRE( suit->contents.get_pockets().size() == 2 );
+
+    detached_ptr<item> cell = item::spawn( "light_battery_cell" );
+    item_pocket *chosen = suit->contents.best_pocket( *cell );
+    REQUIRE( chosen != nullptr );
+    CHECK( chosen->definition().type == pocket_type::MAGAZINE_WELL );
+
+    // And something that is not a battery still finds the storage pocket.
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    item_pocket *for_sugar = suit->contents.best_pocket( *sugar );
+    REQUIRE( for_sugar != nullptr );
+    CHECK( for_sugar->definition().type == pocket_type::CONTAINER );
+}
+
+TEST_CASE( "best_pocket_prefers_the_tighter_of_two_storage_pockets",
+           "[item][pocket][restrict]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    REQUIRE( bag->contents.get_pockets().size() == 2 );
+
+    // A single unit of sugar fits both the 100 ml and the 4 L pocket; the small
+    // one should win so the large one stays free. A whole spawned stack is 250 ml
+    // and would only fit the large pocket, which would prove nothing.
+    detached_ptr<item> sugar = item::spawn( "sugar" );
+    sugar->charges = 1;
+    REQUIRE( sugar->volume() <= 100_ml );
+
+    item_pocket *chosen = bag->contents.best_pocket( *sugar );
+    REQUIRE( chosen != nullptr );
+    CHECK( chosen->definition().max_contains_volume == 100_ml );
+}
+
+// ---------------------------------------------------------------------------
+// Exhaustive enforcement audit: does every item have a pocket for what it holds?
+// These are the gate for turning can_contain() enforcement back on.
+// ---------------------------------------------------------------------------
 
 TEST_CASE( "every_gun_has_a_pocket_for_its_default_magazine", "[item][pocket][audit]" )
 {
@@ -355,7 +534,14 @@ TEST_CASE( "every_magazine_has_a_pocket_for_its_default_ammo", "[item][pocket][a
             continue;
         }
         detached_ptr<item> mag = item::spawn( def->get_id() );
+        // Magazines with a "count" spawn already loaded (disposable cells, ammo
+        // belts, weld tanks), and a full magazine rightly refuses more.
+        mag->contents.clear_items();
         detached_ptr<item> ammo = item::spawn( def->magazine->default_ammo );
+        // One round: the question is whether this ammo *type* belongs here.
+        // Spawning gives a full stack, which a magazine may rightly refuse, and
+        // real reloading splits to a fitting quantity first (item::reload).
+        ammo->charges = 1;
         checked++;
         if( !any_pocket_accepts( *mag, *ammo ) ) {
             failures.push_back( def->get_id().str() + " <- " + def->magazine->default_ammo.str() );
@@ -380,7 +566,11 @@ TEST_CASE( "the_insertion_audit_stays_empty_for_ordinary_insertions",
     gun->contents.insert_item( item::spawn( "glockmag" ) );
 
     detached_ptr<item> shotgun = item::spawn( "mossberg_500" );
-    shotgun->contents.insert_item( item::spawn( "shot_00" ) );
+    detached_ptr<item> shells = item::spawn( "shot_00" );
+    // One shell: a spawned box holds more than the tube does, and real reloading
+    // splits to a fitting quantity before inserting.
+    shells->charges = 1;
+    shotgun->contents.insert_item( std::move( shells ) );
 
     const std::string report = pocket_audit_report();
     INFO( report );

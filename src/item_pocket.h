@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+#include <set>
 #include <vector>
 
 #include "enum_traits.h"
@@ -45,6 +47,36 @@ struct pocket_data {
     int moves = 100;
 
     /**
+     * Which ammo may go in, and how many charges of it. Empty means the pocket
+     * is not ammo-restricted at all; non-empty means *only* these are accepted.
+     * Schema matches CDDA's: { "9mm": 17 }.
+     */
+    std::map<ammotype, int> ammo_restriction;
+
+    /**
+     * Which specific items may go in. Empty means unrestricted; non-empty means
+     * *only* these. Used for magazine wells, which accept a known set of
+     * magazines and nothing else. Schema matches CDDA's.
+     */
+    std::set<itype_id> item_restriction;
+
+    /**
+     * Which gunmod locations this pocket accepts, and how many of each, keyed by
+     * the location id (`gunmod_location::str()`).
+     *
+     * CDDA expresses mod restrictions with flag_restriction, which cannot carry
+     * a per-location count. BN's valid_mod_locations can, so this is a superset
+     * of CDDA's schema rather than a rename of it: CDDA content still loads, and
+     * BN's richer mod data survives.
+     *
+     * Keyed by string rather than gunmod_location because that class lives in
+     * itype.h, which already includes this header; keying by the id avoids
+     * restructuring an upstream-shared header for no gain, and loses nothing
+     * since gunmod_location is itself only a string.
+     */
+    std::map<std::string, int> mod_restriction;
+
+    /**
      * True when this pocket was invented by legacy synthesis rather than authored
      * in JSON. Reported by the pocket coverage listing; never serialized.
      */
@@ -79,7 +111,13 @@ class item_pocket
             SUCCESS,
             ERR_TOO_BIG,
             ERR_TOO_HEAVY,
-            ERR_NO_SPACE
+            ERR_NO_SPACE,
+            /** wrong ammo type, or more charges than the pocket holds */
+            ERR_AMMO,
+            /** not one of the specific items this pocket accepts */
+            ERR_ITEM,
+            /** not a gunmod, wrong mod location, or that location is full */
+            ERR_MOD
         };
 
         item_pocket( item *owner, const pocket_data *data );

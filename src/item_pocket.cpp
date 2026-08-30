@@ -126,6 +126,17 @@ void pocket_data::load( const JsonObject &jo )
     optional( jo, false, "sealed", sealed, sealed );
     optional( jo, false, "spoil_multiplier", spoil_multiplier, spoil_multiplier );
     optional( jo, false, "moves", moves, moves );
+
+    if( jo.has_object( "ammo_restriction" ) ) {
+        ammo_restriction.clear();
+        for( const JsonMember member : jo.get_object( "ammo_restriction" ) ) {
+            ammo_restriction[ ammotype( member.name() ) ] = member.get_int();
+        }
+    }
+    if( jo.has_array( "item_restriction" ) ) {
+        item_restriction.clear();
+        jo.read( "item_restriction", item_restriction );
+    }
 }
 
 void pocket_data::deserialize( JsonIn &jsin )
@@ -181,6 +192,65 @@ units::mass item_pocket::contents_weight() const
 
 ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) const
 {
+    // A pocket that names specific items takes only those. This is what keeps a
+    // magazine well from accepting anything that happens to fit.
+    if( !data->item_restriction.empty() &&
+        !data->item_restriction.contains( it.typeId() ) ) {
+        return ret_val<contain_code>::make_failure( contain_code::ERR_ITEM,
+                _( "does not belong in this pocket" ) );
+    }
+
+    // A mod-restricted pocket takes only gunmods for a location this gun has, and
+    // only as many per location as the gun allows.
+    if( !data->mod_restriction.empty() ) {
+        if( !it.is_gunmod() ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_MOD,
+                    _( "is not a gun modification" ) );
+        }
+        const std::string location = it.type->gunmod->location.str();
+        const auto allowed = data->mod_restriction.find( location );
+        if( allowed == data->mod_restriction.end() ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_MOD,
+                    _( "cannot be attached there" ) );
+        }
+        int installed = 0;
+        for( const item * const existing : contents ) {
+            if( existing->is_gunmod() &&
+                existing->type->gunmod->location.str() == location ) {
+                installed++;
+            }
+        }
+        if( installed >= allowed->second ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_MOD,
+                    _( "has no room left there" ) );
+        }
+        return ret_val<contain_code>::make_success( contain_code::SUCCESS );
+    }
+
+    // An ammo-restricted pocket takes nothing but the ammo it names. This is what
+    // stops a magazine doubling as general storage.
+    if( !data->ammo_restriction.empty() ) {
+        if( !it.is_ammo() ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_AMMO,
+                    _( "is not ammunition" ) );
+        }
+        const auto allowed = data->ammo_restriction.find( it.ammo_type() );
+        if( allowed == data->ammo_restriction.end() ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_AMMO,
+                    _( "is the wrong ammunition" ) );
+        }
+        int already = 0;
+        for( const item * const existing : contents ) {
+            already += existing->charges;
+        }
+        if( already + it.charges > allowed->second ) {
+            return ret_val<contain_code>::make_failure( contain_code::ERR_AMMO,
+                    _( "does not have room for that many rounds" ) );
+        }
+        // Ammo capacity is counted in charges, not volume, so stop here.
+        return ret_val<contain_code>::make_success( contain_code::SUCCESS );
+    }
+
     if( it.volume() > remaining_volume() ) {
         return ret_val<contain_code>::make_failure( contain_code::ERR_TOO_BIG,
                 _( "does not fit" ) );
