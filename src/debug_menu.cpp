@@ -183,6 +183,7 @@ enum debug_menu_index {
     DEBUG_DISPLAY_NPC_PATH,
     DEBUG_PRINT_FACTION_INFO,
     DEBUG_POCKET_COVERAGE,
+    DEBUG_POCKET_AUDIT,
     DEBUG_PRINT_NPC_MAGIC,
     DEBUG_QUIT_NOSAVE,
     DEBUG_LUA_CONSOLE,
@@ -278,6 +279,7 @@ static int info_uilist( bool display_all_entries = true )
             { uilist_entry( DEBUG_DISPLAY_NPC_PATH, true, 'n', _( "Toggle NPC pathfinding on map" ) ) },
             { uilist_entry( DEBUG_PRINT_FACTION_INFO, true, 'f', _( "Print faction info to console" ) ) },
             { uilist_entry( DEBUG_POCKET_COVERAGE, true, 'p', _( "Write pocket coverage report" ) ) },
+            { uilist_entry( DEBUG_POCKET_AUDIT, true, 'P', _( "Write pocket insertion audit" ) ) },
             { uilist_entry( DEBUG_PRINT_NPC_MAGIC, true, 'M', _( "Print NPC magic info to console" ) ) },
             { uilist_entry( DEBUG_TEST_WEATHER, true, 'W', _( "Test weather" ) ) },
             { uilist_entry( DEBUG_TEST_MAP_EXTRA_DISTRIBUTION, true, 'e', _( "Test map extra list" ) ) },
@@ -2174,6 +2176,19 @@ void debug()
         case DEBUG_DISPLAY_NPC_PATH:
             g->debug_pathfinding = !g->debug_pathfinding;
             break;
+        case DEBUG_POCKET_AUDIT: {
+            const std::string path = PATH_INFO::config_dir() + "pocket_audit.txt";
+            std::ofstream out( path );
+            if( out ) {
+                out << pocket_audit_report();
+                out.close();
+                popup( _( "Pocket insertion audit written to %s" ), path );
+            } else {
+                popup( _( "Could not write %s" ), path );
+            }
+            break;
+        }
+
         case DEBUG_POCKET_COVERAGE: {
             const std::string path = PATH_INFO::config_dir() + "pocket_coverage.txt";
             std::ofstream out( path );

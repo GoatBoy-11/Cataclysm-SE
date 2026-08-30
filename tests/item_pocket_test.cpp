@@ -304,6 +304,91 @@ TEST_CASE( "all_items_top_stays_stable_across_calls_on_a_multi_pocket_item",
     CHECK( first.front() == before );
 }
 
+// ---------------------------------------------------------------------------
+// Exhaustive enforcement audit: does every item have a pocket for what it holds?
+// These are the gate for turning can_contain() enforcement back on.
+// ---------------------------------------------------------------------------
+
+static bool any_pocket_accepts( const item &container, const item &content )
+{
+    for( const item_pocket &pocket : container.contents.get_pockets() ) {
+        if( pocket.can_contain( content ).success() ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+TEST_CASE( "every_gun_has_a_pocket_for_its_default_magazine", "[item][pocket][audit]" )
+{
+    std::vector<std::string> failures;
+    int checked = 0;
+    for( const itype *def : item_controller->all() ) {
+        if( def->magazines.empty() ) {
+            continue;
+        }
+        for( const auto &entry : def->magazine_default ) {
+            if( entry.second.is_null() ) {
+                continue;
+            }
+            detached_ptr<item> gun = item::spawn( def->get_id() );
+            detached_ptr<item> mag = item::spawn( entry.second );
+            checked++;
+            if( !any_pocket_accepts( *gun, *mag ) ) {
+                failures.push_back( def->get_id().str() + " <- " + entry.second.str() );
+            }
+        }
+    }
+    // Guard against a vacuous pass: an empty sweep would report no failures too.
+    REQUIRE( checked > 50 );
+    CAPTURE( checked );
+    CAPTURE( failures );
+    CHECK( failures.empty() );
+}
+
+TEST_CASE( "every_magazine_has_a_pocket_for_its_default_ammo", "[item][pocket][audit]" )
+{
+    std::vector<std::string> failures;
+    int checked = 0;
+    for( const itype *def : item_controller->all() ) {
+        if( !def->magazine || def->magazine->default_ammo.is_null() ) {
+            continue;
+        }
+        detached_ptr<item> mag = item::spawn( def->get_id() );
+        detached_ptr<item> ammo = item::spawn( def->magazine->default_ammo );
+        checked++;
+        if( !any_pocket_accepts( *mag, *ammo ) ) {
+            failures.push_back( def->get_id().str() + " <- " + def->magazine->default_ammo.str() );
+        }
+    }
+    // Guard against a vacuous pass: an empty sweep would report no failures too.
+    REQUIRE( checked > 50 );
+    CAPTURE( checked );
+    CAPTURE( failures );
+    CHECK( failures.empty() );
+}
+
+TEST_CASE( "the_insertion_audit_stays_empty_for_ordinary_insertions",
+           "[item][pocket][audit]" )
+{
+    clear_pocket_audit();
+
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    backpack->contents.insert_item( item::spawn( "sugar" ) );
+
+    detached_ptr<item> gun = item::spawn( "glock_19" );
+    gun->contents.insert_item( item::spawn( "glockmag" ) );
+
+    detached_ptr<item> shotgun = item::spawn( "mossberg_500" );
+    shotgun->contents.insert_item( item::spawn( "shot_00" ) );
+
+    const std::string report = pocket_audit_report();
+    INFO( report );
+    CHECK( report.find( "No misses recorded" ) != std::string::npos );
+
+    clear_pocket_audit();
+}
+
 TEST_CASE( "the_pocket_coverage_report_describes_loaded_items", "[item][pocket][coverage]" )
 {
     const std::string report = pocket_coverage_report();

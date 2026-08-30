@@ -1,11 +1,14 @@
 #include "item_pocket.h"
 
+#include <map>
+#include <string>
 #include <utility>
 
 #include "debug.h"
 #include "enum_conversions.h"
 #include "generic_factory.h"
 #include "item.h"
+#include "itype.h"
 #include "json.h"
 #include "locations.h"
 #include "translations.h"
@@ -35,6 +38,80 @@ std::string enum_to_string<pocket_type>( pocket_type data )
     abort();
 }
 } // namespace io
+
+namespace
+{
+
+struct audit_key {
+    itype_id container;
+    itype_id inserted;
+
+    bool operator<( const audit_key &rhs ) const {
+        if( container != rhs.container ) {
+            return container < rhs.container;
+        }
+        return inserted < rhs.inserted;
+    }
+};
+
+std::map<audit_key, int> &audit_misses()
+{
+    static std::map<audit_key, int> misses;
+    return misses;
+}
+
+} // namespace
+
+void record_pocket_audit_miss( const item *container, const item &inserted )
+{
+    if( container == nullptr || container->type == nullptr ) {
+        return;
+    }
+    audit_misses()[ { container->typeId(), inserted.typeId() } ]++;
+}
+
+void clear_pocket_audit()
+{
+    audit_misses().clear();
+}
+
+std::string pocket_audit_report()
+{
+    int total = 0;
+    for( const auto &entry : audit_misses() ) {
+        total += entry.second;
+    }
+
+    std::string report = string_format(
+                             "Pocket insertion audit\n"
+                             "  Insertions that would be rejected if can_contain() were enforced.\n"
+                             "  distinct container/item pairs: %d\n"
+                             "  total insertions:              %d\n\n",
+                             static_cast<int>( audit_misses().size() ), total );
+
+    if( audit_misses().empty() ) {
+        report += "No misses recorded. Enforcement looks safe for everything exercised so far.\n";
+        return report;
+    }
+
+    for( const auto &entry : audit_misses() ) {
+        std::string pockets;
+        const itype &def = *entry.first.container;
+        for( const pocket_data &pocket : def.pockets ) {
+            if( !pockets.empty() ) {
+                pockets += ", ";
+            }
+            pockets += io::enum_to_string<pocket_type>( pocket.type );
+        }
+        if( pockets.empty() ) {
+            pockets = "none";
+        }
+        report += string_format( "%s [pockets: %s] <- %s (x%d)\n",
+                                 entry.first.container.str(), pockets,
+                                 entry.first.inserted.str(), entry.second );
+    }
+    return report;
+}
 
 void pocket_data::load( const JsonObject &jo )
 {

@@ -120,12 +120,21 @@ ret_val<bool> item_contents::insert_item( detached_ptr<item> &&it )
         // pockets existed. Ranking by priority and rejecting what fits nowhere
         // belongs with best_pocket() in a later phase.
         item_pocket *target = &pockets.front();
+        bool accepted = false;
         for( item_pocket &pocket : pockets ) {
             // NOLINTNEXTLINE(bugprone-use-after-move)
             if( pocket.can_contain( *it ).success() ) {
                 target = &pocket;
+                accepted = true;
                 break;
             }
+        }
+        if( !accepted ) {
+            // Dry run: this is what enforcement would have rejected. Record it and
+            // let it through anyway, so the audit report can prove whether turning
+            // enforcement on is safe.
+            // NOLINTNEXTLINE(bugprone-use-after-move)
+            record_pocket_audit_miss( owner, *it );
         }
         // NOLINTNEXTLINE(bugprone-use-after-move)
         target->insert( std::move( it ) );

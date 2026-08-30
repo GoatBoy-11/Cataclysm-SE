@@ -55,6 +55,19 @@ struct pocket_data {
 };
 
 /**
+ * Dry-run enforcement audit.
+ *
+ * Phase 1 removed the can_contain() gate from insertion because synthesis could
+ * not yet supply a pocket for everything an item may hold. Rather than guess
+ * when it is safe to put the gate back, every insertion that *would* have been
+ * rejected is recorded here while still being allowed through. An empty report
+ * after exercising the game is the evidence that enforcement can be enabled.
+ */
+void record_pocket_audit_miss( const item *container, const item &inserted );
+std::string pocket_audit_report();
+void clear_pocket_audit();
+
+/**
  * One compartment of an item. Owns its contents through the same
  * contents_item_location the owning item uses, so item ownership and
  * location tracking are unchanged by pockets.
