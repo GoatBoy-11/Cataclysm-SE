@@ -81,7 +81,30 @@ can pre-validate them. The audit becomes the regression net once they exist.
 - [ ] Tests: a magazine goes to the MAGAZINE_WELL and not to a roomy CONTAINER
       pocket on the same item; ammo goes to the MAGAZINE.
 
-### Task 5: Turn enforcement on
+### Task 5: Turn enforcement on — DEFERRED, see below
+
+**This task was stopped before implementation.** Tasks 1-4 shipped as
+`phase-3-pocket-restrictions` (`98e210d6d7`, 953 tests green).
+
+`item::put_in` returns `void` and ignores `insert_item`'s result
+(`src/item.cpp:1297`). If `insert_item` starts returning failure without
+consuming the `detached_ptr`, the payload falls out of scope and **the item is
+silently destroyed**. There are 48 `put_in` call sites and not one of them uses a
+return value.
+
+So enforcement cannot be switched on at `insert_item` alone. It needs `put_in` to
+hand the item back — `detached_ptr<item> put_in( detached_ptr<item> && )`, empty
+on success — and each of the 48 sites to decide what happens to a rejected item
+(drop to ground, keep in inventory, debugmsg). That is a larger job than Tasks
+1-4 combined, in code paths the test suite does not fully reach, so it belongs in
+its own phase with its own playtest rather than as a tail-end step here.
+
+**What is already delivered without it:** `best_pocket()` routes a magazine to
+the well, ammo to the magazine, mods to the mod pocket and everything else to
+storage. Only *rejection* of items that fit nowhere is missing, and the audit
+reports nothing currently needs rejecting.
+
+Original task, for whoever picks this up:
 
 **Files:** `src/item_contents.cpp`, `tests/item_pocket_test.cpp`
 
