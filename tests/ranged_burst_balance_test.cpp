@@ -40,7 +40,7 @@ static void check_burst_penalty(
         itype_id mod_id(mod_type);
         detached_ptr<item> mod = item::spawn(mod_id);
         REQUIRE(gun->is_gunmod_compatible(*mod).success());
-        gun->put_in_expected(std::move(mod));
+        gun->contents.insert_item_forced(std::move(mod));
     }
     check_burst_penalty(shooter, *gun, expected, bipod);
 }

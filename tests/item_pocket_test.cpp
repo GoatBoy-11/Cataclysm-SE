@@ -1364,7 +1364,7 @@ TEST_CASE( "a_converted_gun_accepts_its_conversion_magazines", "[item][pocket][s
     REQUIRE_FALSE( gun->contents.insert_item( std::move( mag ) ).success() );
 
     detached_ptr<item> converted = item::spawn( "smg_luty" );
-    converted->put_in_expected( item::spawn( "retool_luty_40" ) );
+    converted->contents.insert_item_forced( item::spawn( "retool_luty_40" ) );
     REQUIRE( converted->magazine_compatible().count( itype_id( "smg_40_mag" ) ) == 1 );
 
     detached_ptr<item> mag2 = item::spawn( "smg_40_mag" );
@@ -1384,7 +1384,7 @@ TEST_CASE( "an_adapter_gives_an_internal_clip_gun_somewhere_for_its_magazine",
     REQUIRE_FALSE( gun->contents.insert_item( std::move( mag ) ).success() );
 
     detached_ptr<item> adapted = item::spawn( "handmade_carbine" );
-    adapted->put_in_expected( item::spawn( "hc_bar_mag_adapter" ) );
+    adapted->contents.insert_item_forced( item::spawn( "hc_bar_mag_adapter" ) );
     REQUIRE( adapted->magazine_compatible().count( itype_id( "m1918mag" ) ) == 1 );
 
     detached_ptr<item> mag2 = item::spawn( "m1918mag" );

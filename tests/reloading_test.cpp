@@ -110,7 +110,7 @@ TEST_CASE("reload_gun_with_swappable_magazine", "[reload],[gun]") {
     dummy.i_add(std::move(det));
     REQUIRE(gun.ammo_types().count(ammo_type->type) != 0);
 
-    gun.put_in_expected(std::move(mag));
+    gun.contents.insert_item_forced(std::move(mag));
 
     int gun_pos = dummy.inv_position_by_type(itype_glock_19);
     REQUIRE(gun_pos != INT_MIN);

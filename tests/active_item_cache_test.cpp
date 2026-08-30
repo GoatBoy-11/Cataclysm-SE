@@ -131,7 +131,7 @@ TEST_CASE("nested_processing_flag_changes_invalidate_container_cache", "[item]")
     clear_all_state();
 
     auto backpack = item::spawn("backpack");
-    backpack->put_in_expected(item::spawn("rock"));
+    backpack->contents.insert_item_forced(item::spawn("rock"));
     item& stored = backpack->contents.front();
 
     REQUIRE_FALSE(backpack->needs_processing());
@@ -153,7 +153,7 @@ TEST_CASE("nested_processing_food_flag_changes_invalidate_container_cache", "[it
     clear_all_state();
 
     auto backpack = item::spawn("backpack");
-    backpack->put_in_expected(item::spawn("bread"));
+    backpack->contents.insert_item_forced(item::spawn("bread"));
     item& stored = backpack->contents.front();
     stored.deactivate();
 
@@ -177,7 +177,7 @@ TEST_CASE("active_item_cache_moves_items_when_processing_speed_changes", "[item]
     clear_all_state();
 
     auto backpack = item::spawn("backpack");
-    backpack->put_in_expected(item::spawn("sashimi"));
+    backpack->contents.insert_item_forced(item::spawn("sashimi"));
     REQUIRE(backpack->needs_processing());
     REQUIRE(backpack->processing_speed() == to_turns<int>(10_minutes));
 
@@ -188,7 +188,7 @@ TEST_CASE("active_item_cache_moves_items_when_processing_speed_changes", "[item]
     auto active =
         item::spawn("firecracker_act", calendar::start_of_cataclysm, item::default_charges_tag());
     active->activate();
-    backpack->put_in_expected(std::move(active));
+    backpack->contents.insert_item_forced(std::move(active));
     REQUIRE(backpack->needs_processing());
     CHECK(backpack->processing_speed() == 1);
 
@@ -206,7 +206,7 @@ TEST_CASE("content_removal_helpers_invalidate_processing_cache", "[item]") {
         auto active = item::
             spawn("firecracker_act", calendar::start_of_cataclysm, item::default_charges_tag());
         active->activate();
-        backpack->put_in_expected(std::move(active));
+        backpack->contents.insert_item_forced(std::move(active));
 
         REQUIRE(backpack->needs_processing());
         backpack->contents.spill_contents(loc);
@@ -218,7 +218,7 @@ TEST_CASE("content_removal_helpers_invalidate_processing_cache", "[item]") {
         auto casing = item::spawn("rock");
         casing->set_flag(flag_CASING);
         casing->set_flag(flag_RADIO_ACTIVATION);
-        backpack->put_in_expected(std::move(casing));
+        backpack->contents.insert_item_forced(std::move(casing));
 
         REQUIRE(backpack->needs_processing());
         backpack->contents.casings_handle([](detached_ptr<item>&& /*it*/) {
@@ -231,7 +231,7 @@ TEST_CASE("content_removal_helpers_invalidate_processing_cache", "[item]") {
         auto backpack = item::spawn("backpack");
         auto radio = item::spawn("rock");
         radio->set_flag(flag_RADIO_ACTIVATION);
-        backpack->put_in_expected(std::move(radio));
+        backpack->contents.insert_item_forced(std::move(radio));
 
         REQUIRE(backpack->needs_processing());
         backpack->contents.remove_top_items_with([](detached_ptr<item>&& it) {
@@ -246,8 +246,8 @@ TEST_CASE("content_removal_helpers_invalidate_processing_cache", "[item]") {
         auto inner_bag = item::spawn("bag_plastic");
         auto radio = item::spawn("rock");
         radio->set_flag(flag_RADIO_ACTIVATION);
-        inner_bag->put_in_expected(std::move(radio));
-        backpack->put_in_expected(std::move(inner_bag));
+        inner_bag->contents.insert_item_forced(std::move(radio));
+        backpack->contents.insert_item_forced(std::move(inner_bag));
 
         REQUIRE(backpack->needs_processing());
         backpack->contents.front().contents.remove_top_items_with([](detached_ptr<item>&& it) {

@@ -26,7 +26,7 @@ TEST_CASE("revolver_reload_option", "[reload],[reload_option],[gun]") {
     const item_reload_option speedloader_option(&dummy, &speedloader, &speedloader, ammo);
     CHECK(speedloader_option.qty() == speedloader.ammo_capacity());
 
-    speedloader.put_in_expected(item::spawn(ammo));
+    speedloader.contents.insert_item_forced(item::spawn(ammo));
     const item_reload_option gun_speedloader_option(&dummy, &gun, &gun, speedloader);
     CHECK(gun_speedloader_option.qty() == speedloader.ammo_capacity());
 }
@@ -45,7 +45,7 @@ TEST_CASE("magazine_reload_option", "[reload],[reload_option],[gun]") {
     const item_reload_option magazine_option(&dummy, &magazine, &magazine, ammo);
     CHECK(magazine_option.qty() == magazine.ammo_capacity());
 
-    magazine.put_in_expected(item::spawn(ammo));
+    magazine.contents.insert_item_forced(item::spawn(ammo));
     det = item::spawn("glock_19", bday, 0);
     item& gun = *det;
     dummy.i_add(std::move(det));
@@ -72,7 +72,7 @@ TEST_CASE("belt_reload_option", "[reload],[reload_option],[gun]") {
     const item_reload_option belt_option(&dummy, &belt, &belt, ammo);
     CHECK(belt_option.qty() == belt.ammo_capacity());
 
-    belt.put_in_expected(item::spawn(ammo));
+    belt.contents.insert_item_forced(item::spawn(ammo));
     det = item::spawn("m134", bday, 0);
     item& gun = *det;
     dummy.i_add(std::move(det));

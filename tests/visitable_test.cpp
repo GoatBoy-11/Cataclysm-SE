@@ -9,7 +9,7 @@ TEST_CASE("visitable_summation") {
     detached_ptr<item> bottle_of_water = item::spawn("bottle_plastic", calendar::turn);
     detached_ptr<item> water_in_bottle = item::spawn("water", calendar::turn);
     water_in_bottle->charges = bottle_of_water->get_remaining_capacity_for_liquid(*water_in_bottle);
-    bottle_of_water->put_in_expected(std::move(water_in_bottle));
+    bottle_of_water->contents.insert_item_forced(std::move(water_in_bottle));
     test_inv.add_item(*bottle_of_water, false);
 
     test_inv.add_item(

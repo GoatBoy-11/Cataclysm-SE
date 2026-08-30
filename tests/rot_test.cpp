@@ -75,8 +75,8 @@ static auto add_sashimi_to_vehicle_part(vehicle& veh, const int part_index) -> v
 
 static auto make_backpack_with_sashimi() -> detached_ptr<item> {
     auto backpack = item::spawn("backpack");
-    backpack->put_in_expected(item::spawn("rock"));
-    backpack->put_in_expected(item::spawn("sashimi"));
+    backpack->contents.insert_item_forced(item::spawn("rock"));
+    backpack->contents.insert_item_forced(item::spawn("sashimi"));
     REQUIRE(backpack->is_food_container());
     return backpack;
 }
@@ -90,7 +90,7 @@ static auto nested_sashimi_in(item& container) -> item*; // *NOPAD*
 static auto make_plastic_bag_with_sashimi() -> detached_ptr<item> {
     auto bag = item::spawn("bag_plastic");
     REQUIRE(bag->is_container());
-    bag->put_in_expected(item::spawn("sashimi"));
+    bag->contents.insert_item_forced(item::spawn("sashimi"));
     return bag;
 }
 
@@ -99,7 +99,7 @@ static auto make_sealed_carton_with_rotten_nested_sashimi() -> detached_ptr<item
     REQUIRE(carton->is_container());
     REQUIRE(carton->type->container->seals);
     REQUIRE_FALSE(carton->type->container->preserves);
-    carton->put_in_expected(make_plastic_bag_with_sashimi());
+    carton->contents.insert_item_forced(make_plastic_bag_with_sashimi());
     item* sashimi = nested_sashimi_in(*carton);
     sashimi->set_relative_rot(3.0);
     REQUIRE(sashimi->has_rotten_away());
@@ -121,8 +121,8 @@ static auto nested_sashimi_in(item& container) -> item* // *NOPAD*
 TEST_CASE("Food lookup finds nested food after non-food contents", "[item][food]") {
     SECTION("top-level food after non-food content") {
         auto backpack = item::spawn("backpack");
-        backpack->put_in_expected(item::spawn("rock"));
-        backpack->put_in_expected(item::spawn("sashimi"));
+        backpack->contents.insert_item_forced(item::spawn("rock"));
+        backpack->contents.insert_item_forced(item::spawn("sashimi"));
 
         REQUIRE(backpack->is_food_container());
         auto* food = backpack->get_food();
@@ -133,9 +133,9 @@ TEST_CASE("Food lookup finds nested food after non-food contents", "[item][food]
     SECTION("nested food after non-food content") {
         auto outer_bag = item::spawn("bag_canvas");
         auto inner_bag = item::spawn("bag_plastic");
-        inner_bag->put_in_expected(item::spawn("rock"));
-        inner_bag->put_in_expected(item::spawn("sashimi"));
-        outer_bag->put_in_expected(std::move(inner_bag));
+        inner_bag->contents.insert_item_forced(item::spawn("rock"));
+        inner_bag->contents.insert_item_forced(item::spawn("sashimi"));
+        outer_bag->contents.insert_item_forced(std::move(inner_bag));
 
         REQUIRE(outer_bag->is_food_container());
         const auto& const_outer_bag = *outer_bag;
@@ -404,8 +404,8 @@ TEST_CASE("Preserving containers stop contained food rot") {
 
         auto outer = item::spawn("bag_canvas");
         auto inner = item::spawn("bag_plastic");
-        inner->put_in_expected(item::spawn("sashimi"));
-        outer->put_in_expected(std::move(inner));
+        inner->contents.insert_item_forced(item::spawn("sashimi"));
+        outer->contents.insert_item_forced(std::move(inner));
         REQUIRE(outer->needs_processing());
 
         calendar::turn += 25_hours;
@@ -652,8 +652,8 @@ TEST_CASE("Vehicle storage temperature controls food rot") {
     SECTION("powered freezer cargo protects food after non-food container contents") {
         auto fixture = make_storage(vpart_id("minifreezer"), true);
         auto backpack = item::spawn("backpack");
-        backpack->put_in_expected(item::spawn("rock"));
-        backpack->put_in_expected(item::spawn("sashimi"));
+        backpack->contents.insert_item_forced(item::spawn("rock"));
+        backpack->contents.insert_item_forced(item::spawn("sashimi"));
         REQUIRE(backpack->is_food_container());
         REQUIRE_FALSE(fixture.veh->add_item(fixture.part_index, std::move(backpack)));
 
