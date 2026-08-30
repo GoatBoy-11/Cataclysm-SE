@@ -233,6 +233,12 @@ static void synthesize_special_pockets_from_legacy( itype &def )
     if( !def.magazines.empty() ) {
         add_pocket( pocket_type::MAGAZINE_WELL );
     }
+    // A gun with an internal clip and no detachable magazine loads rounds
+    // straight into itself, so those rounds need a pocket of their own. Without
+    // this every tube-fed shotgun and lever gun has nowhere to put its ammo.
+    if( def.gun && def.gun->clip > 0 && def.magazines.empty() ) {
+        add_pocket( pocket_type::MAGAZINE );
+    }
     if( def.gun && !def.gun->valid_mod_locations.empty() ) {
         add_pocket( pocket_type::MOD );
     }

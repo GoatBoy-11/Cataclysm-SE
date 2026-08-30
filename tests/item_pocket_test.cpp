@@ -239,6 +239,29 @@ TEST_CASE( "a_gun_with_mod_locations_gains_a_mod_pocket", "[item][pocket][synthe
     CHECK( has_pocket( *gun, pocket_type::MOD ) );
 }
 
+TEST_CASE( "a_gun_with_an_internal_clip_gains_a_magazine_pocket",
+           "[item][pocket][synthesis]" )
+{
+    // Tube-fed and lever guns load rounds directly rather than taking a
+    // detachable magazine, so they need somewhere to hold them.
+    detached_ptr<item> shotgun = item::spawn( "mossberg_500" );
+    REQUIRE( shotgun->type->gun );
+    REQUIRE( shotgun->type->gun->clip > 0 );
+    REQUIRE( shotgun->type->magazines.empty() );
+
+    CHECK( has_pocket( *shotgun, pocket_type::MAGAZINE ) );
+    CHECK_FALSE( has_pocket( *shotgun, pocket_type::MAGAZINE_WELL ) );
+}
+
+TEST_CASE( "a_gun_taking_detachable_magazines_gains_no_magazine_pocket",
+           "[item][pocket][synthesis]" )
+{
+    // The rounds live in the magazine, which lives in the well.
+    detached_ptr<item> gun = item::spawn( "glock_19" );
+    CHECK( has_pocket( *gun, pocket_type::MAGAZINE_WELL ) );
+    CHECK_FALSE( has_pocket( *gun, pocket_type::MAGAZINE ) );
+}
+
 TEST_CASE( "an_item_with_no_storage_gains_no_special_pockets", "[item][pocket][synthesis]" )
 {
     detached_ptr<item> rock = item::spawn( "test_rock" );
