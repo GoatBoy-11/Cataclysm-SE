@@ -9,9 +9,11 @@ import json
 import glob
 import re
 from collections import Counter
+from pathlib import Path
 
-CDDA = "D:/Projects/CDDA"
-CSE = "D:/Projects/CSE"
+_ROOT = Path(__file__).resolve().parents[2]
+CDDA = (_ROOT.parent / "CDDA").as_posix()
+CSE = _ROOT.as_posix()
 OUT = "."
 
 SUPPORTED = {

@@ -6,8 +6,9 @@ reformatted with the repo's own json_formatter so diffs stay canonical.
 import json
 import glob
 import subprocess
+from pathlib import Path
 
-CSE = "D:/Projects/CSE"
+CSE = Path(__file__).resolve().parents[2].as_posix()
 FORMATTER = CSE + "/out/build/cse-vcpkg/tools/format/RelWithDebInfo/json_formatter.exe"
 OVERLAY = "cdda_pocket_overlay.json"
 
