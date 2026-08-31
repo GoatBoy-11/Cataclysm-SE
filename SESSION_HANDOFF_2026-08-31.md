@@ -1,82 +1,90 @@
-# Session Handoff — 2026-08-31
+# Session Handoff — 2026-08-31 (evening update)
 
-## Current State
+## Committed on `main` today, oldest first
 
-**HEAD:** `9323d082b9` — feat: freeze the pocket system to the world it was made in
-
-All six pocket plans have landed on `main`. What remains is verification, not
-implementation.
-
-## Pocket Port — What Shipped
-
-| Plan | Status |
+| Commit | What |
 |---|---|
-| `2026-08-29-pocket-core.md` (Phase 1) | landed |
-| `2026-08-29-pocket-phase-2.md` (JSON schema) | landed |
-| `2026-08-30-pocket-phase-3.md` (restrictions, enforcement) | landed |
-| `2026-08-30-put-in-refactor.md` | landed |
-| `2026-08-30-pocket-classic-mode.md` | landed |
-| `2026-08-30-pocket-favorites.md` (organization UI, presets) | landed |
+| `aea68c998e` | feat: sealing and preserving belong to the pocket |
+| `71fe1de2d7` | chore: pocket tooling off `D:` |
+| `209e68093e` | docs: CLAUDE.md + handoff corrections |
+| `0ecebf16ff` | feat: show which pocket is holding what (info + organizer contents, dead collapse toggle removed, zero-capacity pockets hidden) |
+| `4620566dba` | fix: CASINGS pocket so RELOAD_EJECT guns stop debugmsg-spamming |
+| `ebb888863c` | feat: pickup routes into worn pockets (milestone 1) |
+| `b7a0e57a15` | feat: pickup refuses what no pocket holds (milestone 3) |
 
-**The plans' checkboxes lie.** Five of the six read as entirely unticked despite
-their work being committed; only the favorites plan was kept current, and even its
-one open "presets" item shipped in `b67e8169ab`. Read `git log`, not the boxes.
+All verified: full suite green apart from the four environmental `vision_*`
+failures documented in CLAUDE.md.
 
-## Uncommitted Work In Flight
+## The strategic decision (Oliver approved)
 
-Per-pocket sealing and preserving — sealing is a property of the compartment, not of
-the whole item, so a coat with a sealed inner pocket no longer preserves what is in
-its sleeve.
+Do NOT port CDDA's inventory model. Graft pockets onto BN's flat inventory,
+incrementally, a visible milestone at a time. The flat inventory stays as a
+hidden fallback/compatibility layer, which is what keeps saves safe and every
+milestone shippable. Oliver accepts balance drift; wants CDDA feel.
 
-- `src/item.cpp` — `pocket_holding()`; `is_in_preserving_container()` and
-  `is_in_sealing_container()` now walk parent *and* child to find the actual pocket,
-  consulting per-pocket `spoil_multiplier` and `sealed`.
-- `src/item_contents.{h,cpp}` — new `pocket_containing()`, identity-compared.
-- `src/item.h` — those two predicates moved from `private` to `public` so the tests
-  can reach them. CBN keeps them private, so this is 2 lines of upstream drift. If
-  that is unwanted, the tests need a public seam to go through instead.
-- `tests/item_pocket_test.cpp`, `data/mods/TEST_DATA/items.json` — 3 new tests and a
-  `test_sealed_pocket_box` fixture.
+- Milestone 1 — pickup routes into worn pockets. Plan:
+  `docs/superpowers/plans/2026-08-31-pocket-pickup-routing.md`
+- Milestone 3 — pickup refuses what no pocket takes. Plan:
+  `docs/superpowers/plans/2026-08-31-pocket-enforcement-pickup.md`
+- Milestone 2 — nested inventory screen. PARKED, no plan yet, cosmetic;
+  biggest chunk, only start when Oliver asks.
 
-This work is on no plan. It postdates all six.
+## Everything below is now COMMITTED - kept for the reasoning
 
-## Last Verified Run — 2026-08-31
+Final suite after both milestones: 1,024 cases, 1,020 passed, only the four
+environmental `vision_*`. Working tree clean apart from Oliver's untracked
+`gfx/Chibi*` files.
 
-From-scratch configure and build, ~25 min. Suite took 548 s.
+## What was uncommitted (now landed)
 
-- **Full suite: 1,006 cases, 1,002 passed, 4 failed.**
-- **Pocket tests: 93 cases, 276 assertions, all pass.**
-- The 4 failures are `vision_*` at `tests/vision_test.cpp:256` and are environmental —
-  see the compute-backend note in `CLAUDE.md`. They are not pocket-related, though this
-  has not been confirmed against a clean tree.
+Milestones 1 and 3 are implemented together, verification in flight:
 
-## Next: Playtest
+- `Character::i_add_to_worn_pockets` (character.cpp/.h) — worn pockets get
+  first refusal on pickup; priority ranks across garments; refusal falls back.
+- Carried-volume model B: `volume_carried()` counts worn-pocket contents in
+  full mode (matches how weight works); `can_pick_volume` asks volume_carried.
+  Classic arithmetic untouched. This fixed `drop_token_test.cpp:375`.
+- Pickup call site + enforcement branch in pickup.cpp: in full mode an item
+  every pocket refuses is not quietly stashed — the existing problematic-pickup
+  flow (wield/wear) handles it; autopickup cancels.
+- `test_pocket_vest` fixture; 6 routing tests green; 3 enforcement end-to-end
+  tests. Enforcement tests hit a test-harness bug (stale reference: capture the
+  item from `map.i_at()` AFTER `add_item_or_charges`, never before) — fix in,
+  rebuild running at handoff time.
 
-Build and run from `F:\Projects\CSE`. `D:` is dead.
+## Next steps, in order
 
-1. **Priority routing:** open container, `P` or `o`, set priority on one pocket, pick up
-   items, confirm they route to the high-priority pocket.
-2. **Item rules:** bar an item type from a pocket, pick up that type, confirm it goes
-   elsewhere.
-3. **Persistence:** save, reload, reopen the pocket menu, confirm rules still apply.
-4. **Presets:** save a preset, apply it to a second pocket.
-5. **Classic mode:** set `POCKET_SYSTEM` to classic, confirm `P` says there is nothing
-   to organize and rules do not apply in play.
+1. **Oliver playtests** (the only open item on both plans). Rebuild first -
+   the exe in the repo root is a copy and goes stale on every build. Check:
+   wear a rucksack/tacvest, set a pocket to priority 5, pick items off the
+   ground - they should route there and show under `o`; bar an item type from
+   every pocket, walk over it, `g` - expect the wield/wear prompt, not a quiet
+   stash; classic world - everything as stock BN.
+2. Tick the playtest boxes in both plan docs afterwards.
+3. Milestone 2 (nested inventory screen) only when Oliver asks. Still parked,
+   still cosmetic, still the biggest remaining chunk.
 
-## After Playtest
+## Test-harness gotchas found the hard way
 
-- Delete the now-unused `put_in_unchecked` definition (held pending playtest clearance).
-- Decide on the `item.h` visibility change above.
-- Tick the plans' checkboxes, or delete them as spent.
+- `pick_one_up` returns true on a silent cancel, so `do_pickup`'s return is not
+  proof of a pickup. Assert on where the item ended up.
+- `wear_item` costs moves; reset `u.moves = 100` AFTER wearing or `do_pickup`'s
+  loop never starts.
+- Capture the item reference from `map.i_at()` AFTER `add_item_or_charges`;
+  the map may not keep the object it was handed.
+- Item identity does not survive `i_add`'s restacking. Assert by `typeId()` and
+  counts, not by pointer.
 
-## Constraints (Always)
+## Build & test (unchanged)
 
-- All 181 existing `.contents.` call sites must compile unchanged. Fix `item_contents`,
-  never the call site.
-- Migration never destroys an item.
-- The pocket system must toggle on and off without breaking saves or gameplay.
+See CLAUDE.md: `cmake --preset cse-msvc`, build `out/build/cse-vcpkg`,
+run suite with `CATA_TEST_COMPUTE_ACCELERATION=cpu`. Four `vision_*` failures
+are environmental. Never pipe builds through a pager. `D:` is dead.
 
-## Key References
+## Standing constraints
 
-- Design spec: `docs/superpowers/specs/2026-08-29-pocket-system-design.md`
-- CDDA reference pinned at `5b915aea09`. Do not track their `master`.
+- 181 `.contents.` call sites compile unchanged; fix `item_contents`, never
+  the call site.
+- No item is ever destroyed; refusal falls back, never force-inserts on the
+  new paths.
+- Classic worlds and old saves behave exactly as stock BN.
