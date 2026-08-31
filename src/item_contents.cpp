@@ -66,6 +66,18 @@ bool item_contents::empty() const
     return true;
 }
 
+const item_pocket *item_contents::pocket_containing( const item &it ) const
+{
+    for( const item_pocket &pocket : pockets ) {
+        for( const item * const candidate : pocket.all_items_top() ) {
+            if( candidate == &it ) {
+                return &pocket;
+            }
+        }
+    }
+    return nullptr;
+}
+
 bool item_contents::settings_edited() const
 {
     for( const item_pocket &pocket : pockets ) {

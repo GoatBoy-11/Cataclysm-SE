@@ -935,5 +935,21 @@
       { "pocket_type": "CONTAINER", "max_contains_volume": "100 ml", "max_item_length": "30 cm" },
       { "pocket_type": "CONTAINER", "max_contains_volume": "4 L", "watertight": true, "moves": 200 }
     ]
+  },
+  {
+    "id": "test_sealed_pocket_box",
+    "type": "GENERIC",
+    "name": "TEST sealed pocket box",
+    "description": "A box with one sealed pocket and one open one, for testing that sealing and preserving belong to the pocket rather than the whole item.",
+    "weight": "500 g",
+    "volume": "2 L",
+    "price": "0 cent",
+    "material": "steel",
+    "symbol": "]",
+    "color": "light_gray",
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "1 L", "sealed": true, "spoil_multiplier": 0.0 },
+      { "pocket_type": "CONTAINER", "max_contains_volume": "1 L" }
+    ]
   }
 ]

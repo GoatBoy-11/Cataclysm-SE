@@ -2479,6 +2479,13 @@ class item : public location_visitable<item>, public game_object<item>
         item *parent_item() const;
         const std::vector<relic_recharge> &get_relic_recharge_scheme() const;
 
+        /**
+         * Whether some enclosing pocket seals or preserves this item. Public only
+         * so the pocket tests can assert on them; nothing outside `item` calls them.
+         */
+        auto is_in_preserving_container() const -> bool;
+        auto is_in_sealing_container() const -> bool;
+
     private:
         struct absolute_rot_process_options {
             bool seals = false;
@@ -2497,8 +2504,6 @@ class item : public location_visitable<item>, public game_object<item>
                                    const rot_context &context, bool seals ) -> detached_ptr<item>;
         static auto process_rot( detached_ptr<item> &&self,
                                  const absolute_rot_process_options &options ) -> detached_ptr<item>;
-        auto is_in_preserving_container() const -> bool;
-        auto is_in_sealing_container() const -> bool;
         auto mark_rot_checked_now() -> void;
 
         /** Helper for checking reloadability. **/

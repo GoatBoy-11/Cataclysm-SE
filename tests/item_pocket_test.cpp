@@ -1484,3 +1484,47 @@ TEST_CASE( "settings_without_a_preset_write_no_name", "[item][pocket][favorites]
 
     CHECK( os.str().find( "name" ) == std::string::npos );
 }
+
+// Sealing and preserving belong to the pocket, not to the whole item.
+
+TEST_CASE( "a_sealed_pocket_seals_what_is_in_it", "[item][pocket][seal]" )
+{
+    detached_ptr<item> box = item::spawn( "test_sealed_pocket_box" );
+    REQUIRE( box->contents.get_pockets().size() == 2 );
+    REQUIRE( box->contents.get_pockets()[0].definition().sealed );
+
+    detached_ptr<item> food = item::spawn( "test_pine_nuts" );
+    food->charges = 1;
+    item &sealed_food = *food;
+    box->contents.get_pockets()[0].insert( std::move( food ) );
+
+    CHECK( sealed_food.is_in_sealing_container() );
+    CHECK( sealed_food.is_in_preserving_container() );
+}
+
+TEST_CASE( "the_open_pocket_of_a_sealed_item_seals_nothing", "[item][pocket][seal]" )
+{
+    detached_ptr<item> box = item::spawn( "test_sealed_pocket_box" );
+    REQUIRE_FALSE( box->contents.get_pockets()[1].definition().sealed );
+
+    detached_ptr<item> food = item::spawn( "test_pine_nuts" );
+    food->charges = 1;
+    item &loose_food = *food;
+    box->contents.get_pockets()[1].insert( std::move( food ) );
+
+    CHECK_FALSE( loose_food.is_in_sealing_container() );
+    CHECK_FALSE( loose_food.is_in_preserving_container() );
+}
+
+TEST_CASE( "pocket_containing_finds_the_right_compartment", "[item][pocket][seal]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    item &stored = *rock;
+    bag->contents.get_pockets()[1].insert( std::move( rock ) );
+
+    CHECK( bag->contents.pocket_containing( stored ) == &bag->contents.get_pockets()[1] );
+
+    detached_ptr<item> elsewhere = item::spawn( "test_rock" );
+    CHECK( bag->contents.pocket_containing( *elsewhere ) == nullptr );
+}

@@ -6621,10 +6621,30 @@ bool item::goes_bad_after_opening( bool strict ) const
                            !contents.empty() && contents.front().goes_bad() );
 }
 
+/**
+ * The pocket of `parent` that `child` sits in, when the two are related that
+ * way. Sealing and preserving are properties of the compartment, not of the
+ * whole item: a coat with a sealed inner pocket does not preserve what is in
+ * its sleeve.
+ */
+static const item_pocket *pocket_holding( const item *parent, const item *child )
+{
+    if( parent == nullptr || child == nullptr ) {
+        return nullptr;
+    }
+    return parent->contents.pocket_containing( *child );
+}
+
 auto item::is_in_preserving_container() const -> bool
 {
-    for( const item *parent = parent_item(); parent != nullptr; parent = parent->parent_item() ) {
+    const item *child = this;
+    for( const item *parent = parent_item(); parent != nullptr;
+         child = parent, parent = parent->parent_item() ) {
         if( parent->type && parent->type->container && parent->type->container->preserves ) {
+            return true;
+        }
+        const item_pocket *pocket = pocket_holding( parent, child );
+        if( pocket != nullptr && pocket->definition().spoil_multiplier <= 0.0f ) {
             return true;
         }
     }
@@ -6633,8 +6653,14 @@ auto item::is_in_preserving_container() const -> bool
 
 auto item::is_in_sealing_container() const -> bool
 {
-    for( const item *parent = parent_item(); parent != nullptr; parent = parent->parent_item() ) {
+    const item *child = this;
+    for( const item *parent = parent_item(); parent != nullptr;
+         child = parent, parent = parent->parent_item() ) {
         if( parent->type && parent->type->container && parent->type->container->seals ) {
+            return true;
+        }
+        const item_pocket *pocket = pocket_holding( parent, child );
+        if( pocket != nullptr && pocket->definition().sealed ) {
             return true;
         }
     }

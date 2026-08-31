@@ -31,6 +31,13 @@ class item_contents
         bool empty() const;
 
         /**
+         * The pocket holding this item, or nullptr when it is not in one.
+         * Compares identity, not equality: two identical items in different
+         * pockets are still in different pockets.
+         */
+        const item_pocket *pocket_containing( const item &it ) const;
+
+        /**
          * True when the player has organised any pocket here. Empty contents are
          * normally left out of the save entirely; settings must survive that, so
          * both save gates ask this as well.
