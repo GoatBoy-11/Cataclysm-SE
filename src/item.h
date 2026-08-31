@@ -1917,6 +1917,14 @@ class item : public location_visitable<item>, public game_object<item>
          * character that wears the item.
          */
         units::volume get_storage() const;
+
+        /**
+         * How much this garment can actually hold. In a full-pocket world the
+         * pockets are the storage, as in CDDA, so their capacities are summed;
+         * the legacy `storage` field only measures items that have no pockets
+         * of their own. Any clothing-mod bonus rides on top either way.
+         */
+        units::volume storage_capacity() const;
         /**
          * Returns the weight capacity modifier (@ref islot_armor::weight_capacity_modifier) that this item provides when worn.
          * For non-armor it returns 1. The modifier is multiplied with the weight capacity of the character that wears the item.

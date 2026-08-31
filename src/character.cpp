@@ -3135,7 +3135,11 @@ static units::volume worn_pocket_contents_volume( const location_vector<item> &w
     units::volume total = 0_ml;
     for( const item *garment : worn ) {
         for( const item_pocket &pocket : garment->contents.get_pockets() ) {
-            total += pocket.contents_volume();
+            // Only general-purpose pockets, matching what storage_capacity()
+            // counts. A battery in a worn tool's magazine well is not cargo.
+            if( pocket.definition().type == pocket_type::CONTAINER ) {
+                total += pocket.contents_volume();
+            }
         }
     }
     return total;
@@ -3293,7 +3297,7 @@ units::volume Character::volume_capacity_reduced_by(
     units::volume ret = -mod;
     for( const auto &i : worn ) {
         if( !without.contains( i ) ) {
-            ret += i->get_storage();
+            ret += i->storage_capacity();
         }
     }
 
@@ -3691,7 +3695,7 @@ bool Character::takeoff( item &it, std::vector<detached_ptr<item>> *res )
     } );
 
     if( res == nullptr ) {
-        if( volume_carried() + it.volume() > volume_capacity_reduced_by( it.get_storage() ) ) {
+        if( volume_carried() + it.volume() > volume_capacity_reduced_by( it.storage_capacity() ) ) {
             if( is_npc() || query_yn( _( "No room in inventory for your %s.  Drop it?" ),
                                       colorize( it.tname(), it.color_in_inventory() ) ) ) {
                 drop( it, bub_pos() );

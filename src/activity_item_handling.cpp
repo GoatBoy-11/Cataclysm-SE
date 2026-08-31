@@ -595,7 +595,7 @@ std::list<act_item> reorder_for_dropping( Character &p, const drop_locations &dr
     // Sort worn items by storage in descending order, but dependent items always go first.
     worn.sort( []( const act_item & first, const act_item & second ) {
         return first.loc->is_worn_only_with( *second.loc )
-               || ( first.loc->get_storage() > second.loc->get_storage()
+               || ( first.loc->storage_capacity() > second.loc->storage_capacity()
                     && !second.loc->is_worn_only_with( *first.loc ) );
     } );
 
@@ -604,9 +604,11 @@ std::list<act_item> reorder_for_dropping( Character &p, const drop_locations &dr
     []( units::volume acc, const act_item & ait ) {
         return acc + ait.loc->volume();
     } );
+    // Must match what volume_capacity() counts, or dropping a bag appears to
+    // free less room than it does and the reorder sheds the wrong items.
     const units::volume dropped_worn_storage = std::accumulate( worn.begin(), worn.end(), 0_ml,
     []( units::volume acc, const act_item & ait ) {
-        return acc + ait.loc->get_storage();
+        return acc + ait.loc->storage_capacity();
     } );
     std::set<int> inv_indices;
     std::ranges::transform( inv, std::inserter( inv_indices, inv_indices.begin() ),
@@ -661,7 +663,7 @@ std::list<act_item> reorder_for_dropping( Character &p, const drop_locations &dr
     units::volume remaining_dropped_storage = dropped_worn_storage;
 
     while( !worn.empty() && !inv.empty() ) {
-        units::volume front_storage = worn.front().loc->get_storage();
+        units::volume front_storage = worn.front().loc->storage_capacity();
         // Does not fit
         // TODO: but maybe an item further down the line does
         if( remaining_dropped_storage < inv.front().loc->volume() ) {
@@ -701,7 +703,7 @@ std::vector<detached_ptr<item>> obtain_and_tokenize_items( player &p, std::list<
     if( items.empty() ) {
         return res;
     }
-    units::volume last_storage_volume = items.front().loc->get_storage();
+    units::volume last_storage_volume = items.front().loc->storage_capacity();
     while( !items.empty() && ( p.is_npc() || p.moves > 0 || items.front().consumed_moves == 0 ) ) {
         act_item &ait = items.front();
 
@@ -731,7 +733,7 @@ std::vector<detached_ptr<item>> obtain_and_tokenize_items( player &p, std::list<
             current_drop.drop_token->parent_number = last_token.parent_number;
         } else {
             last_token = *current_drop.drop_token;
-            last_storage_volume = current_drop.get_storage();
+            last_storage_volume = current_drop.storage_capacity();
         }
 
         items.pop_front();

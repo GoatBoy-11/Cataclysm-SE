@@ -6923,6 +6923,34 @@ units::volume item::get_storage() const
     return storage;
 }
 
+units::volume item::storage_capacity() const
+{
+    // Worn storage only. A vessel's capacity is its container slot, which
+    // get_container_capacity() already reports; counting its synthesized pocket
+    // as well would double every bottle. An item that is both - a waterskin, a
+    // canteen - keeps its legacy storage too: what it holds is liquid, not
+    // cargo space for other gear, and counting it would inflate the bulk it
+    // reports when full.
+    const islot_armor *armor = find_armor_data();
+    if( armor == nullptr || type->container || pockets_are_classic() ) {
+        return get_storage();
+    }
+    units::volume from_pockets = 0_ml;
+    bool any = false;
+    for( const item_pocket &pocket : contents.get_pockets() ) {
+        if( pocket.definition().type == pocket_type::CONTAINER ) {
+            from_pockets += pocket.definition().max_contains_volume;
+            any = true;
+        }
+    }
+    if( !any ) {
+        return get_storage();
+    }
+    // Keep whatever a clothing mod added, which get_storage() folds in on top
+    // of the item's own declared storage.
+    return from_pockets + ( get_storage() - armor->storage );
+}
+
 float item::get_weight_capacity_modifier() const
 {
     const islot_armor *armor = find_armor_data();
@@ -9890,7 +9918,7 @@ units::volume item::get_container_capacity() const
 
 units::volume item::get_total_capacity() const
 {
-    units::volume result = get_storage() + get_container_capacity();
+    units::volume result = storage_capacity() + get_container_capacity();
 
     // Consider various iuse_actors which add containing capability
     // Treating these two as special cases for now; if more appear in the

@@ -190,10 +190,24 @@ TEST_CASE("full backpack drop", "[activity][drop_token]") {
                     AND_THEN(
                         "both containers will be followed by enough same-drop-token items to "
                         "fill them") {
-                        const int expected_duffel_content_count =
-                            duffel_bag.get_total_capacity() / an_item.volume();
-                        const int expected_backpack_content_count =
-                            backpack.get_total_capacity() / an_item.volume();
+                        // Capacity now comes from a garment's pockets rather than its
+                        // legacy `storage` field, so a character's volume allowance
+                        // outgrew their weight allowance: they no longer carry enough to
+                        // fill every dropped container. Containers are still filled in
+                        // order, so distribute what is actually being dropped. When the
+                        // character IS volume-saturated this is the old expectation.
+                        int free_items = std::count_if(
+                            drop_list.begin(), drop_list.end(),
+                            [&](const pickup::act_item& ait) {
+                                return ait.consumed_moves == 0
+                                       && ait.loc->typeId() == an_item.typeId();
+                            });
+                        const int expected_duffel_content_count = std::min(
+                            static_cast<int>(duffel_bag.get_total_capacity() / an_item.volume()),
+                            free_items);
+                        const int expected_backpack_content_count = std::min(
+                            static_cast<int>(backpack.get_total_capacity() / an_item.volume()),
+                            free_items - expected_duffel_content_count);
 
                         int actual_duffel_content_count = 0;
                         for (auto iter = std::next(drop_duffel_iter); iter != drop_list.end();
@@ -260,16 +274,26 @@ TEST_CASE("full backpack drop", "[activity][drop_token]") {
                                     return it->drop_token->is_child_of(
                                         *(*tokenized_backpack_iter)->drop_token);
                                 });
-                            const int expected_duffel_token_count =
-                                duffel_bag.get_total_capacity() / an_item.volume();
-                            const int expected_backpack_token_count =
-                                backpack.get_total_capacity() / an_item.volume();
+                            const int carried_tokens =
+                                actual_duffel_tokens + actual_backpack_tokens;
+                            const int expected_duffel_token_count = std::min(
+                                static_cast<int>(duffel_bag.get_total_capacity()
+                                                 / an_item.volume()),
+                                carried_tokens);
+                            const int expected_backpack_token_count = std::min(
+                                static_cast<int>(backpack.get_total_capacity()
+                                                 / an_item.volume()),
+                                carried_tokens - expected_duffel_token_count);
                             CHECK(actual_duffel_tokens == expected_duffel_token_count);
                             CHECK(actual_backpack_tokens == expected_backpack_token_count);
                             int all_items = tokenized_dropped.size();
-                            // Two containers and one item not belonging to any containers
-                            CHECK(
-                                all_items == actual_duffel_tokens + actual_backpack_tokens + 2 + 1);
+                            // Two containers, their contents, and at most one item that
+                            // belonged to neither. With weight binding first there may be
+                            // no such leftover at all.
+                            const int loose =
+                                all_items - actual_duffel_tokens - actual_backpack_tokens - 2;
+                            CHECK(loose >= 0);
+                            CHECK(loose <= 1);
                         }
                     }
                 }

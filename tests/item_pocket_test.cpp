@@ -1810,19 +1810,22 @@ TEST_CASE( "overflowing_worn_pockets_do_not_crash_the_overflow_drop", "[pocket][
     REQUIRE( !u.wear_item( item::spawn( "test_overfull_pocket_vest" ) ) );
 
     item *vest = u.worn.front();
-    detached_ptr<item> rock = item::spawn( "test_rock" );
-    REQUIRE( !vest->put_in( std::move( rock ) ) );
+    // Forced insertion is how bad data gets past a pocket's capacity: item.cpp
+    // keeps a refused item rather than destroying it. That is the only way to
+    // end up carrying more than the pockets can hold now that capacity comes
+    // from the pockets themselves.
+    for( int i = 0; i < 40; i++ ) {
+        vest->contents.insert_item_forced( item::spawn( "test_rock" ) );
+    }
 
-    // The pocket legitimately holds more than the garment's storage field.
     REQUIRE( u.volume_carried() > u.volume_capacity() );
     REQUIRE( u.inv_size() == 0 );
+    const units::volume carried_before = u.volume_carried();
 
     u.drop_invalid_inventory();
 
     // Nothing to shed, so nothing is shed - and above all, no crash.
-    CHECK( vest->contents.pocket_containing( *vest->contents.get_pockets()[0].all_items_top().front() )
-           != nullptr );
-    CHECK( u.amount_of( itype_id( "test_rock" ) ) == 1 );
+    CHECK( u.volume_carried() == carried_before );
 }
 
 // Enforcement binds only characters who actually wear pockets. Anyone without
@@ -1858,4 +1861,81 @@ TEST_CASE( "classic_mode_still_stashes_to_the_flat_inventory", "[pocket][routing
     CHECK( get_map().i_at( g->u.bub_pos() ).empty() );
     CHECK( g->u.amount_of( itype_id( "test_rock" ) ) == 1 );
     CHECK( g->u.worn.front()->contents.empty() );
+}
+
+// Reproducing Oliver's playtest: real clothing, default settings, no priorities
+// touched. Routing must work out of the box or the feature is invisible.
+TEST_CASE( "default_settings_route_into_real_clothing", "[pocket][routing][repro]" )
+{
+    clear_all_state();
+    standard_npc dummy( "dressed" );
+    REQUIRE( !dummy.wear_item( item::spawn( "dress_shirt" ) ) );
+    REQUIRE( !dummy.wear_item( item::spawn( "jeans" ) ) );
+
+    detached_ptr<item> plant = item::spawn( "withered" );
+    CAPTURE( plant->tname(), units::to_milliliter( plant->volume() ) );
+    detached_ptr<item> left = dummy.i_add_to_worn_pockets( std::move( plant ) );
+
+    CHECK( !left );
+    int in_pockets = 0;
+    for( const item *garment : dummy.worn ) {
+        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+            in_pockets += pocket.all_items_top().size();
+        }
+    }
+    CHECK( in_pockets == 1 );
+}
+
+// Oliver's playtest: routing filled the pockets, but capacity was still measured
+// by the legacy `storage` field - jeans declare 500 ml and carry 4,660 ml of
+// pockets - so a character went "full" almost immediately and pickup refused
+// everything. Capacity and contents must be measured against the same thing.
+TEST_CASE( "capacity_comes_from_the_pockets_that_hold_things", "[pocket][routing][capacity]" )
+{
+    clear_all_state();
+    detached_ptr<item> jeans = item::spawn( "jeans" );
+    units::volume pocket_total = 0_ml;
+    for( const item_pocket &pocket : jeans->contents.get_pockets() ) {
+        pocket_total += pocket.definition().max_contains_volume;
+    }
+    REQUIRE( pocket_total > jeans->get_storage() );
+    CHECK( jeans->storage_capacity() == pocket_total );
+}
+
+// A garment with no authored pockets keeps exactly its old capacity: synthesis
+// builds its single pocket out of the same legacy field.
+TEST_CASE( "unpocketed_clothing_keeps_its_old_capacity", "[pocket][routing][capacity]" )
+{
+    clear_all_state();
+    detached_ptr<item> shirt = item::spawn( "dress_shirt" );
+
+    CHECK( shirt->storage_capacity() == shirt->get_storage() );
+}
+
+TEST_CASE( "classic_mode_measures_capacity_the_old_way", "[pocket][routing][capacity][classic]" )
+{
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    clear_all_state();
+    detached_ptr<item> jeans = item::spawn( "jeans" );
+
+    CHECK( jeans->storage_capacity() == jeans->get_storage() );
+}
+
+// The whole point: fill a real pair of jeans past the old 500 ml limit.
+TEST_CASE( "a_character_can_fill_the_pockets_they_have", "[pocket][routing][capacity]" )
+{
+    clear_all_state();
+    standard_npc dummy( "dressed" );
+    REQUIRE( !dummy.wear_item( item::spawn( "jeans" ) ) );
+
+    int stored = 0;
+    for( int i = 0; i < 8; i++ ) {
+        detached_ptr<item> plant = item::spawn( "withered" );
+        if( !dummy.i_add_to_worn_pockets( std::move( plant ) ) ) {
+            stored++;
+        }
+    }
+    // 8 x 250ml = 2L, far past the legacy 500ml but well inside 4.66L of pockets.
+    CHECK( stored == 8 );
+    CHECK( dummy.volume_carried() <= dummy.volume_capacity() );
 }
