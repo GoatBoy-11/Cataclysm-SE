@@ -5496,7 +5496,10 @@ std::string item::tname( unsigned int quantity, bool with_prefix, unsigned int t
 
         if( is_gun() || is_tool() || is_magazine() ) {
             maintext = labeltext;
-        } else if( contents.num_item_stacks() == 1 ) {
+        } else if( contents.num_item_stacks() == 1 && is_container() ) {
+            // Only a vessel takes its contents' name: "water (bottle)" reads
+            // right, "withered plant (pants)" does not. Pockets made every
+            // garment a container, so the old test caught far too much.
             const item &contents_item = contents.front();
             const unsigned contents_count =
                 ( ( contents_item.made_of( LIQUID ) || contents_item.is_food() ) &&

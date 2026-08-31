@@ -1939,3 +1939,32 @@ TEST_CASE( "a_character_can_fill_the_pockets_they_have", "[pocket][routing][capa
     CHECK( stored == 8 );
     CHECK( dummy.volume_carried() <= dummy.volume_capacity() );
 }
+
+// Pockets made every garment a container, so BN's "contents (container)" name
+// turned a pair of jeans holding one plant into "withered plant (jeans)".
+// That form belongs to vessels only.
+TEST_CASE( "clothing_keeps_its_own_name_when_it_holds_something", "[pocket][naming]" )
+{
+    clear_all_state();
+    detached_ptr<item> jeans = item::spawn( "jeans" );
+    REQUIRE( !jeans->put_in( item::spawn( "withered" ) ) );
+
+    const std::string name = jeans->tname();
+    CAPTURE( name );
+    CHECK( name.find( "jeans" ) != std::string::npos );
+    CHECK( name.find( "withered" ) == std::string::npos );
+}
+
+// A bottle of water is still a bottle of water.
+TEST_CASE( "a_vessel_still_takes_the_name_of_what_is_in_it", "[pocket][naming]" )
+{
+    clear_all_state();
+    detached_ptr<item> bottle = item::spawn( "bottle_plastic" );
+    detached_ptr<item> water = item::spawn( "water" );
+    water->charges = 1;
+    REQUIRE( !bottle->put_in( std::move( water ) ) );
+
+    const std::string name = bottle->tname();
+    CAPTURE( name );
+    CHECK( name.find( "water" ) != std::string::npos );
+}
