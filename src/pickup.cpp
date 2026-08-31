@@ -307,6 +307,11 @@ static auto pick_one_up( const pick_one_up_options &opts ) -> bool
         if( !opts.preferred_option ) {
             newloc = u.i_add_to_container( std::move( newloc ), false );
         }
+        // Worn pockets get first refusal on the rest; the flat inventory backs
+        // them up, so refusal costs nothing.
+        if( !opts.preferred_option && newloc ) {
+            newloc = u.i_add_to_worn_pockets( std::move( newloc ) );
+        }
 
         if( !newloc || ( newloc->count_by_charges() && newloc->charges == 0 ) ) {
             // We've picked up everything into containers, skip the options part

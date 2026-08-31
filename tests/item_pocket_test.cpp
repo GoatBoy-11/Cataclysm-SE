@@ -8,11 +8,13 @@
 #include "item.h"
 #include "item_pocket.h"
 #include "item_factory.h"
+#include "npc.h"
 #include "iteminfo_query.h"
 #include "itype.h"
 #include "json.h"
 #include "options_helpers.h"
 #include "relic.h"
+#include "state_helpers.h"
 #include "ret_val.h"
 #include "type_id.h"
 #include "units.h"
@@ -1617,4 +1619,108 @@ TEST_CASE( "pocket_containing_finds_the_right_compartment", "[item][pocket][seal
 
     detached_ptr<item> elsewhere = item::spawn( "test_rock" );
     CHECK( bag->contents.pocket_containing( *elsewhere ) == nullptr );
+}
+
+// ---------------------------------------------------------------------------
+// Routing: pickup tries worn pockets before the flat inventory
+// (docs/superpowers/plans/2026-08-31-pocket-pickup-routing.md)
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "picking_up_fills_a_worn_pocket_first", "[pocket][routing]" )
+{
+    clear_all_state();
+    standard_npc dummy( "wearer" );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    item &stored = *rock;
+    detached_ptr<item> left = dummy.i_add_to_worn_pockets( std::move( rock ) );
+
+    CHECK( !left );
+    const item *vest = dummy.worn.front();
+    CHECK( vest->contents.pocket_containing( stored ) != nullptr );
+}
+
+TEST_CASE( "a_priority_pocket_wins_across_garments", "[pocket][routing][favorites]" )
+{
+    clear_all_state();
+    standard_npc dummy( "wearer" );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+
+    item *first = dummy.worn.front();
+    item *second = dummy.worn.back();
+    second->contents.get_pockets()[1].get_settings().set_priority( 5 );
+
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    item &stored = *rock;
+    REQUIRE( !dummy.i_add_to_worn_pockets( std::move( rock ) ) );
+
+    CHECK( second->contents.pocket_containing( stored ) != nullptr );
+    CHECK( first->contents.pocket_containing( stored ) == nullptr );
+}
+
+TEST_CASE( "an_item_barred_everywhere_stays_out_of_pockets", "[pocket][routing][favorites]" )
+{
+    clear_all_state();
+    standard_npc dummy( "wearer" );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+    item *vest = dummy.worn.front();
+    for( item_pocket &pocket : vest->contents.get_pockets() ) {
+        pocket.get_settings().blacklist_item( itype_id( "test_rock" ) );
+    }
+
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    detached_ptr<item> left = dummy.i_add_to_worn_pockets( std::move( rock ) );
+
+    REQUIRE( left );
+    CHECK( vest->contents.empty() );
+}
+
+TEST_CASE( "a_disabled_pocket_takes_nothing_on_pickup", "[pocket][routing][favorites]" )
+{
+    clear_all_state();
+    standard_npc dummy( "wearer" );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+    item *vest = dummy.worn.front();
+    for( item_pocket &pocket : vest->contents.get_pockets() ) {
+        pocket.get_settings().set_disabled( true );
+    }
+
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    detached_ptr<item> left = dummy.i_add_to_worn_pockets( std::move( rock ) );
+
+    REQUIRE( left );
+    CHECK( vest->contents.empty() );
+}
+
+TEST_CASE( "classic_mode_never_routes_into_pockets", "[pocket][routing][classic]" )
+{
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    clear_all_state();
+    standard_npc dummy( "wearer" );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    detached_ptr<item> left = dummy.i_add_to_worn_pockets( std::move( rock ) );
+
+    REQUIRE( left );
+    CHECK( dummy.worn.front()->contents.empty() );
+}
+
+// Free space must not depend on where an item sits. A routed item counts as
+// carried exactly as a flat-inventory item would, so routing can never mint
+// extra capacity.
+TEST_CASE( "routing_does_not_mint_carry_capacity", "[pocket][routing]" )
+{
+    clear_all_state();
+    standard_npc dummy( "wearer" );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+
+    const units::volume free_before = dummy.volume_capacity() - dummy.volume_carried();
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    const units::volume rock_volume = rock->volume();
+    REQUIRE( !dummy.i_add_to_worn_pockets( std::move( rock ) ) );
+
+    CHECK( dummy.volume_capacity() - dummy.volume_carried() == free_before - rock_volume );
 }

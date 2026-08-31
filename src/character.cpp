@@ -57,6 +57,7 @@
 #include "game_constants.h"
 #include "int_id.h"
 #include "item_contents.h"
+#include "item_pocket.h"
 #include "item_hauling.h"
 #include "itype.h"
 #include "iuse.h"
@@ -2686,6 +2687,45 @@ int Character::amount_worn( const itype_id &id ) const
     }
     return amount;
 }
+detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it )
+{
+    if( !it || pockets_are_classic() ) {
+        return std::move( it );
+    }
+    // Liquids need a watertight decision the pickup flow already owns, and a
+    // casing routed into clothing would shadow the gun's own casings pocket.
+    if( it->made_of( LIQUID ) || it->has_flag( flag_CASING ) ) {
+        return std::move( it );
+    }
+
+    // The best pocket of each garment competes on player priority; wear order
+    // breaks ties, mirroring best_pocket()'s ranking one level up.
+    item *chosen = nullptr;
+    int chosen_priority = 0;
+    for( item *garment : worn ) {
+        const item_pocket *pocket = garment->contents.best_pocket( *it );
+        if( pocket == nullptr ) {
+            continue;
+        }
+        const int priority = pocket->get_settings().priority();
+        if( chosen == nullptr || priority > chosen_priority ) {
+            chosen = garment;
+            chosen_priority = priority;
+        }
+    }
+    if( chosen == nullptr ) {
+        return std::move( it );
+    }
+
+    const std::string stored_name = it->tname();
+    detached_ptr<item> refused = chosen->put_in( std::move( it ) );
+    if( refused ) {
+        return refused;
+    }
+    add_msg_if_player( _( "You put the %1$s in your %2$s." ), stored_name, chosen->tname() );
+    return detached_ptr<item>();
+}
+
 detached_ptr<item> Character::i_add_to_container( detached_ptr<item> &&it, const bool unloading )
 {
     if( !it->is_ammo() || unloading ) {
@@ -3082,9 +3122,28 @@ units::mass Character::weight_carried() const
     return weight_carried_reduced_by( {} );
 }
 
+/**
+ * What the worn pockets hold. Carried volume counts it in full-pocket worlds:
+ * an item is carried wherever it sits, exactly as weight already works. Classic
+ * mode keeps the old arithmetic, where worn contents ride free.
+ */
+static units::volume worn_pocket_contents_volume( const location_vector<item> &worn )
+{
+    if( pockets_are_classic() ) {
+        return 0_ml;
+    }
+    units::volume total = 0_ml;
+    for( const item *garment : worn ) {
+        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+            total += pocket.contents_volume();
+        }
+    }
+    return total;
+}
+
 units::volume Character::volume_carried() const
 {
-    return inv.volume();
+    return inv.volume() + worn_pocket_contents_volume( worn );
 }
 
 int Character::best_nearby_lifting_assist() const
@@ -3167,9 +3226,9 @@ units::mass Character::weight_carried_reduced_by( const excluded_stacks &without
 units::volume Character::volume_carried_reduced_by( const excluded_stacks &without ) const
 {
     if( without.empty() ) {
-        return inv.volume();
+        return volume_carried();
     } else {
-        return inv.volume_without( without );
+        return inv.volume_without( without ) + worn_pocket_contents_volume( worn );
     }
 }
 
@@ -3246,14 +3305,14 @@ units::volume Character::volume_capacity_reduced_by(
 
 bool Character::can_pick_volume( const item &it ) const
 {
-    return inv.volume() + it.volume() <= volume_capacity();
+    return volume_carried() + it.volume() <= volume_capacity();
 }
 
 bool Character::can_pick_volume( units::volume volume ) const
 {
     // Might not be 100% true because some items restack to a very tiny bit less
     // but close enough not to matter
-    return inv.volume() + volume <= volume_capacity();
+    return volume_carried() + volume <= volume_capacity();
 }
 
 bool Character::can_pick_weight( const item &it, bool safe ) const

@@ -1362,6 +1362,14 @@ class Character : public Creature, public location_visitable<Character>
          * @return Remaining charges which could not be stored in a container.
          */
         detached_ptr<item> i_add_to_container( detached_ptr<item> &&it, bool unloading );
+        /**
+         * Offer an item to the pockets of what is worn, best pocket first, and
+         * return whatever no pocket accepted. Pocket rules (priority, lists,
+         * auto-insert) are honoured; classic mode returns the item untouched.
+         * The flat inventory is the fallback for whatever comes back, so this
+         * can never lose an item.
+         */
+        detached_ptr<item> i_add_to_worn_pockets( detached_ptr<item> &&it );
         item &i_add( detached_ptr<item> &&it, bool should_stack = true );
 
         /**
