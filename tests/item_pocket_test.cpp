@@ -9,6 +9,11 @@
 #include "item_pocket.h"
 #include "item_factory.h"
 #include "npc.h"
+#include "pickup_token.h"
+#include "pickup.h"
+#include "map.h"
+#include "game.h"
+#include "avatar.h"
 #include "iteminfo_query.h"
 #include "itype.h"
 #include "json.h"
@@ -1723,4 +1728,106 @@ TEST_CASE( "routing_does_not_mint_carry_capacity", "[pocket][routing]" )
     REQUIRE( !dummy.i_add_to_worn_pockets( std::move( rock ) ) );
 
     CHECK( dummy.volume_capacity() - dummy.volume_carried() == free_before - rock_volume );
+}
+
+// ---------------------------------------------------------------------------
+// Enforcement: what no worn pocket accepts cannot be stashed by pickup
+// (docs/superpowers/plans/2026-08-31-pocket-enforcement-pickup.md)
+// ---------------------------------------------------------------------------
+
+// Wears a vest, bars rocks from every pocket when asked, drops a rock at the
+// avatar's feet, and runs the real non-interactive pickup over it.
+static item &enforcement_setup( bool barred )
+{
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    // Wearing charges moves, and do_pickup's loop refuses to start below zero.
+    u.moves = 100;
+    if( barred ) {
+        for( item_pocket &pocket : u.worn.front()->contents.get_pockets() ) {
+            pocket.get_settings().blacklist_item( itype_id( "test_rock" ) );
+        }
+    }
+    get_map().add_item_or_charges( u.bub_pos(), item::spawn( "test_rock" ) );
+    // Ask the map what it actually holds: add_item_or_charges may not keep the
+    // object it was handed, and a stale reference makes pickup silently skip.
+    map_stack stack = get_map().i_at( u.bub_pos() );
+    REQUIRE( stack.size() == 1 );
+    return **stack.begin();
+}
+
+TEST_CASE( "pickup_stashes_into_a_worn_pocket_end_to_end", "[pocket][routing][enforce]" )
+{
+    clear_all_state();
+    item &rock = enforcement_setup( false );
+
+    std::vector<pickup::pick_drop_selection> targets{ { rock, std::nullopt, {} } };
+    REQUIRE( pickup::do_pickup( targets, true ) );
+
+    CHECK( get_map().i_at( g->u.bub_pos() ).empty() );
+    // Identity does not survive i_add's restacking, so ask by type: some worn
+    // pocket holds a rock, and the flat inventory does not.
+    int in_pockets = 0;
+    for( const item *garment : g->u.worn ) {
+        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+            for( const item *stored : pocket.all_items_top() ) {
+                if( stored->typeId() == itype_id( "test_rock" ) ) {
+                    in_pockets++;
+                }
+            }
+        }
+    }
+    CHECK( in_pockets == 1 );
+    // One rock total on the character, and the loop above found it in a
+    // pocket, so the flat inventory cannot also be holding one.
+    CHECK( g->u.amount_of( itype_id( "test_rock" ) ) == 1 );
+}
+
+TEST_CASE( "full_pockets_refuse_to_stash_what_no_pocket_takes", "[pocket][routing][enforce]" )
+{
+    clear_all_state();
+    item &rock = enforcement_setup( true );
+
+    std::vector<pickup::pick_drop_selection> targets{ { rock, std::nullopt, {} } };
+    pickup::do_pickup( targets, true );
+
+    // Refused: the rock stays on the ground, nothing was quietly stashed.
+    CHECK( get_map().i_at( g->u.bub_pos() ).size() == 1 );
+    CHECK( g->u.worn.front()->contents.empty() );
+}
+
+// Enforcement binds only characters who actually wear pockets. Anyone without
+// them keeps the legacy flat stash, so ungeared characters and old content
+// keep working until the day the flat inventory itself is retired.
+TEST_CASE( "a_character_with_no_pockets_still_stashes_flat", "[pocket][routing][enforce]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+    u.moves = 100;
+    get_map().add_item_or_charges( u.bub_pos(), item::spawn( "test_rock" ) );
+    map_stack stack = get_map().i_at( u.bub_pos() );
+    REQUIRE( stack.size() == 1 );
+    item &rock = **stack.begin();
+
+    std::vector<pickup::pick_drop_selection> targets{ { rock, std::nullopt, {} } };
+    pickup::do_pickup( targets, true );
+
+    CHECK( get_map().i_at( u.bub_pos() ).empty() );
+    CHECK( u.amount_of( itype_id( "test_rock" ) ) == 1 );
+}
+
+TEST_CASE( "classic_mode_still_stashes_to_the_flat_inventory", "[pocket][routing][enforce][classic]" )
+{
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    clear_all_state();
+    item &rock = enforcement_setup( true );
+
+    std::vector<pickup::pick_drop_selection> targets{ { rock, std::nullopt, {} } };
+    pickup::do_pickup( targets, true );
+
+    CHECK( get_map().i_at( g->u.bub_pos() ).empty() );
+    CHECK( g->u.amount_of( itype_id( "test_rock" ) ) == 1 );
+    CHECK( g->u.worn.front()->contents.empty() );
 }

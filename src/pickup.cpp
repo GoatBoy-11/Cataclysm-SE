@@ -32,6 +32,7 @@
 #include "int_id.h"
 #include "item.h"
 #include "item_contents.h"
+#include "item_pocket.h"
 #include "item_search.h"
 #include "item_stack.h"
 #include "json.h"
@@ -159,6 +160,24 @@ struct pick_one_up_options {
     bool autopickup = false;
     std::optional<pickup_answer> preferred_option;
 };
+
+/**
+ * Whether anything worn offers a usable pocket. Pocket enforcement only binds a
+ * character who actually has pockets; one without any keeps the legacy flat
+ * stash, so ungeared characters, NPCs and old content keep working.
+ */
+static bool wears_usable_pockets( const Character &who )
+{
+    for( const item *garment : who.worn ) {
+        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+            if( pocket.definition().type == pocket_type::CONTAINER &&
+                pocket.can_hold_anything() ) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 static pickup_answer handle_problematic_pickup( const item &it, bool &offered_swap,
         bool has_children, const std::string &explain )
@@ -342,6 +361,19 @@ static auto pick_one_up( const pick_one_up_options &opts ) -> bool
         } else if( !u.can_pick_volume( newloc->volume() + children_volume ) ) {
             if( !opts.autopickup ) {
                 const std::string &explain = string_format( _( "Not enough capacity to stash %s" ),
+                                             newloc->display_name() );
+                option = handle_problematic_pickup( *newloc, offered_swap, !children.empty(), explain );
+                did_prompt = true;
+            } else {
+                option = CANCEL;
+            }
+        } else if( !pockets_are_classic() && wears_usable_pockets( u ) ) {
+            // Full pockets: i_add_to_worn_pockets above had first refusal, so an
+            // item still in hand here fits no worn pocket. The flat inventory is
+            // a compatibility layer, not storage the player can aim at; offer
+            // the hands instead of stashing quietly.
+            if( !opts.autopickup ) {
+                const std::string &explain = string_format( _( "No pocket will hold %s" ),
                                              newloc->display_name() );
                 option = handle_problematic_pickup( *newloc, offered_swap, !children.empty(), explain );
                 did_prompt = true;
