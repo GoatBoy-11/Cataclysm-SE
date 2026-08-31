@@ -14,6 +14,7 @@
 #include "map.h"
 #include "game.h"
 #include "avatar.h"
+#include "avatar_functions.h"
 #include "iteminfo_query.h"
 #include "itype.h"
 #include "json.h"
@@ -1967,4 +1968,23 @@ TEST_CASE( "a_vessel_still_takes_the_name_of_what_is_in_it", "[pocket][naming]" 
     const std::string name = bottle->tname();
     CAPTURE( name );
     CHECK( name.find( "water" ) != std::string::npos );
+}
+
+// Report 3 from Oliver's playtest: an item routed into a pair of jeans could not
+// be got at again. Unload already empties containers, but a garment is not a
+// container, a bandolier or a holster, so it refused to fire at all.
+TEST_CASE( "unloading_a_garment_empties_its_pockets", "[pocket][unload]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "jeans" ) ) );
+    item *jeans = u.worn.front();
+    REQUIRE( !jeans->put_in( item::spawn( "withered" ) ) );
+    REQUIRE( !jeans->contents.empty() );
+
+    u.moves = 100;
+    CHECK( avatar_funcs::unload_item( u, *jeans ) );
+
+    CHECK( jeans->contents.empty() );
+    CHECK( u.amount_of( itype_id( "withered" ) ) == 1 );
 }

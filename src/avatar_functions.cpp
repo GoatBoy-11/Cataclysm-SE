@@ -10,6 +10,7 @@
 #include "game.h"
 #include "game_inventory.h"
 #include "handle_liquid.h"
+#include "item_pocket.h"
 #include "itype.h"
 #include "map.h"
 #include "mapdata.h"
@@ -656,8 +657,23 @@ bool unload_item( avatar &you, item &loc )
     if( !query_consume_ownership( it, you ) ) {
         return false;
     }
+    // Anything holding something in a general-purpose pocket can be emptied.
+    // Pockets made ordinary clothing hold things, and a garment is none of the
+    // three legacy categories below, so without this a routed item is stranded
+    // with no way to get it back. The condition never fires in classic mode,
+    // where nothing routes into clothing in the first place.
+    const auto holds_loose_items = [&it]() {
+        for( const item_pocket &pocket : it.contents.get_pockets() ) {
+            if( pocket.definition().type == pocket_type::CONTAINER && !pocket.empty() ) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     // Unload a container consuming moves per item successfully removed
-    if( it.is_container() || it.is_bandolier() || it.type->can_use( "holster" ) ) {
+    if( it.is_container() || it.is_bandolier() || it.type->can_use( "holster" ) ||
+        holds_loose_items() ) {
         if( it.contents.empty() ) {
             add_msg( m_info, _( "The %s is already empty!" ), it.tname() );
             return false;
