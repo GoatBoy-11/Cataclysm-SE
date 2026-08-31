@@ -2687,7 +2687,8 @@ int Character::amount_worn( const itype_id &id ) const
     }
     return amount;
 }
-detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it )
+detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it,
+        const item *exclude, bool quiet )
 {
     if( !it || pockets_are_classic() ) {
         return std::move( it );
@@ -2703,6 +2704,9 @@ detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it )
     item *chosen = nullptr;
     int chosen_priority = 0;
     for( item *garment : worn ) {
+        if( garment == exclude ) {
+            continue;
+        }
         const item_pocket *pocket = garment->contents.best_pocket( *it );
         if( pocket == nullptr ) {
             continue;
@@ -2722,8 +2726,35 @@ detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it )
     if( refused ) {
         return refused;
     }
-    add_msg_if_player( _( "You put the %1$s in your %2$s." ), stored_name, chosen->tname() );
+    if( !quiet ) {
+        add_msg_if_player( _( "You put the %1$s in your %2$s." ), stored_name, chosen->tname() );
+    }
     return detached_ptr<item>();
+}
+
+void Character::stow_loose_inventory_into_pockets()
+{
+    if( pockets_are_classic() ) {
+        return;
+    }
+    // Detach the whole lot before routing any of it: adding an item back can
+    // restack it with one still on the list, and a pointer into a restacked
+    // stack is not safe to remove twice.
+    std::vector<item *> loose;
+    for( const std::vector<item *> *stack : inv.const_slice() ) {
+        loose.insert( loose.end(), stack->begin(), stack->end() );
+    }
+    std::vector<detached_ptr<item>> detached;
+    detached.reserve( loose.size() );
+    for( item *it : loose ) {
+        detached.push_back( inv.remove_item( it ) );
+    }
+    for( detached_ptr<item> &it : detached ) {
+        it = i_add_to_worn_pockets( std::move( it ), nullptr, true );
+        if( it ) {
+            inv.add_item( std::move( it ), false );
+        }
+    }
 }
 
 detached_ptr<item> Character::i_add_to_container( detached_ptr<item> &&it, const bool unloading )

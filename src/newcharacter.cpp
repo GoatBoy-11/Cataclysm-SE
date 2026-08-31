@@ -807,6 +807,13 @@ bool avatar::create( character_type type, const std::string &tempname )
         }
     }
 
+    // Armour is worn inside the loop above, so nothing had pockets to go into
+    // while the kit was being handed out. Now that it is all on, offer the
+    // loose gear to those pockets, exactly as a pickup would. Whatever no
+    // pocket takes stays in the flat inventory: a starting kit is never
+    // dropped, and classic mode routes nothing at all.
+    stow_loose_inventory_into_pockets();
+
     std::vector<addiction> prof_addictions = prof->addictions();
     for( std::vector<addiction>::const_iterator iter = prof_addictions.begin();
          iter != prof_addictions.end(); ++iter ) {

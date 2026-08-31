@@ -2030,3 +2030,211 @@ TEST_CASE( "children_of_a_pickup_route_like_their_parent", "[pocket][routing][en
     }
     CHECK( rocks_in_pockets == 1 );
 }
+
+// Counts items of a type sitting in a garment's pockets, as opposed to the flat
+// inventory the pockets are meant to replace.
+static int items_in_pockets( const item &garment, const itype_id &what )
+{
+    int found = 0;
+    for( const item_pocket &pocket : garment.contents.get_pockets() ) {
+        for( const item *stored : pocket.all_items_top() ) {
+            if( stored->typeId() == what ) {
+                found++;
+            }
+        }
+    }
+    return found;
+}
+
+// Unloading spent the pocket budget without using a pocket: the freed item went
+// straight to the flat inventory via i_add, charged against capacity the pockets
+// had granted but stored nowhere near them. Route it like a pickup instead.
+TEST_CASE( "unloading_routes_into_a_worn_pocket", "[pocket][routing][unload]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+
+    detached_ptr<item> bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "test_rock" ) ) );
+    item &held = u.i_add( std::move( bag ) );
+
+    u.moves = 100;
+    CHECK( avatar_funcs::unload_item( u, held ) );
+
+    CHECK( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 1 );
+}
+
+// The garment being emptied must not take its own contents back. Without the
+// exclusion, `U` on worn clothing routes each item straight home and reads as a
+// no-op, and the reinsertion happens inside the very iteration doing the removal.
+TEST_CASE( "unloading_does_not_refill_the_garment_being_emptied",
+           "[pocket][routing][unload]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    REQUIRE( !u.wear_item( item::spawn( "jeans" ) ) );
+
+    item *vest = u.worn.front();
+    item *jeans = u.worn.back();
+    REQUIRE( vest->typeId() == itype_id( "test_pocket_vest" ) );
+    REQUIRE( jeans->typeId() == itype_id( "jeans" ) );
+    REQUIRE( !jeans->put_in( item::spawn( "test_rock" ) ) );
+
+    u.moves = 100;
+    CHECK( avatar_funcs::unload_item( u, *jeans ) );
+
+    CHECK( jeans->contents.empty() );
+    CHECK( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 1 );
+}
+
+// Classic mode is stock BN: no routing, the flat inventory takes everything.
+TEST_CASE( "classic_mode_unloads_to_the_flat_inventory",
+           "[pocket][routing][unload][classic]" )
+{
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+
+    detached_ptr<item> bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "test_rock" ) ) );
+    item &held = u.i_add( std::move( bag ) );
+
+    u.moves = 100;
+    CHECK( avatar_funcs::unload_item( u, held ) );
+
+    CHECK( vest->contents.empty() );
+    CHECK( u.amount_of( itype_id( "test_rock" ) ) == 1 );
+}
+
+// Unlike pickup, unloading never drops. Everything freed was already carried and
+// already counted against capacity, so the flat inventory costs nothing and is
+// where stock BN puts it. Emptying the only garment worn must not tip its
+// contents onto the floor.
+TEST_CASE( "unloading_keeps_what_no_worn_pocket_will_hold",
+           "[pocket][routing][unload][enforce]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+    for( item_pocket &pocket : vest->contents.get_pockets() ) {
+        pocket.get_settings().set_disabled( true );
+    }
+
+    detached_ptr<item> bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "test_rock" ) ) );
+    item &held = u.i_add( std::move( bag ) );
+
+    u.moves = 100;
+    CHECK( avatar_funcs::unload_item( u, held ) );
+
+    CHECK( vest->contents.empty() );
+    CHECK( u.amount_of( itype_id( "test_rock" ) ) == 1 );
+    int rocks_on_ground = 0;
+    for( const item * const &it : get_map().i_at( u.bub_pos() ) ) {
+        if( it->typeId() == itype_id( "test_rock" ) ) {
+            rocks_on_ground++;
+        }
+    }
+    CHECK( rocks_on_ground == 0 );
+}
+
+// A character wearing nothing with pockets keeps the legacy flat stash, so
+// ungeared characters and old content go on working.
+TEST_CASE( "unloading_without_pockets_still_stashes_flat",
+           "[pocket][routing][unload][enforce]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( u.worn.empty() );
+
+    detached_ptr<item> bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "test_rock" ) ) );
+    item &held = u.i_add( std::move( bag ) );
+
+    u.moves = 100;
+    CHECK( avatar_funcs::unload_item( u, held ) );
+
+    CHECK( u.amount_of( itype_id( "test_rock" ) ) == 1 );
+}
+
+// Character creation hands out a kit item by item and wears the armour in the
+// same pass, so the starting gear landed in the flat inventory with nothing to
+// route into yet. The sweep afterwards is what puts it in the pockets.
+TEST_CASE( "starting_gear_is_stowed_into_worn_pockets", "[pocket][routing][newchar]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+    u.i_add( item::spawn( "test_rock" ) );
+    REQUIRE( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 0 );
+
+    u.stow_loose_inventory_into_pockets();
+
+    CHECK( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 1 );
+}
+
+// A starting kit is never dropped. What no pocket will take stays exactly where
+// character creation left it.
+TEST_CASE( "starting_gear_no_pocket_takes_stays_in_the_inventory",
+           "[pocket][routing][newchar]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+    for( item_pocket &pocket : vest->contents.get_pockets() ) {
+        pocket.get_settings().set_disabled( true );
+    }
+    u.i_add( item::spawn( "test_rock" ) );
+
+    u.stow_loose_inventory_into_pockets();
+
+    CHECK( vest->contents.empty() );
+    CHECK( u.amount_of( itype_id( "test_rock" ) ) == 1 );
+    CHECK( get_map().i_at( u.bub_pos() ).empty() );
+}
+
+// Classic mode is stock BN: the starting kit stays in the flat inventory.
+TEST_CASE( "classic_mode_leaves_starting_gear_in_the_inventory",
+           "[pocket][routing][newchar][classic]" )
+{
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+    u.i_add( item::spawn( "test_rock" ) );
+
+    u.stow_loose_inventory_into_pockets();
+
+    CHECK( vest->contents.empty() );
+    CHECK( u.amount_of( itype_id( "test_rock" ) ) == 1 );
+}
+
+// Stowing moves the kit around inside what the character already carries, so
+// the totals it is measured by must not shift.
+TEST_CASE( "stowing_starting_gear_preserves_what_is_carried", "[pocket][routing][newchar]" )
+{
+    clear_all_state();
+    standard_npc dummy( "wearer" );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+    dummy.i_add( item::spawn( "test_rock" ) );
+
+    const units::volume before_volume = dummy.volume_carried();
+    const units::mass before_weight = dummy.weight_carried();
+
+    dummy.stow_loose_inventory_into_pockets();
+
+    CHECK( dummy.volume_carried() == before_volume );
+    CHECK( dummy.weight_carried() == before_weight );
+    CHECK( items_in_pockets( *dummy.worn.front(), itype_id( "test_rock" ) ) == 1 );
+}

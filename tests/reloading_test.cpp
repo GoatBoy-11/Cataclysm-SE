@@ -101,6 +101,7 @@ TEST_CASE("reload_gun_with_swappable_magazine", "[reload],[gun]") {
     REQUIRE(ammo_type);
 
     detached_ptr<item> mag = item::spawn(itype_glockmag, bday, 0);
+    item& magazine = *mag;
     const cata::value_ptr<islot_magazine>& magazine_type = mag->type->magazine;
     REQUIRE(magazine_type);
     REQUIRE(magazine_type->type.count(ammo_type->type) != 0);
@@ -115,11 +116,11 @@ TEST_CASE("reload_gun_with_swappable_magazine", "[reload],[gun]") {
     int gun_pos = dummy.inv_position_by_type(itype_glock_19);
     REQUIRE(gun_pos != INT_MIN);
     item& glock = dummy.i_at(gun_pos);
-    // We're expecting the magazine to end up in the inventory.
+    // We're expecting the magazine to stay on the character. It lands in a
+    // pocket of the worn backpack rather than the flat inventory, so look for
+    // it by the reference we kept instead of by inventory position.
     REQUIRE(avatar_funcs::unload_item(dummy, glock));
-    int magazine_pos = dummy.inv_position_by_type(itype_glockmag);
-    REQUIRE(magazine_pos != INT_MIN);
-    item& magazine = dummy.inv_find_item(magazine_pos);
+    REQUIRE(dummy.has_item(magazine));
     REQUIRE(magazine.ammo_remaining() == 0);
 
     int ammo_pos = dummy.inv_position_by_item(&ammo);

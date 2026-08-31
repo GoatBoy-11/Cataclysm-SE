@@ -1368,8 +1368,23 @@ class Character : public Creature, public location_visitable<Character>
          * auto-insert) are honoured; classic mode returns the item untouched.
          * The flat inventory is the fallback for whatever comes back, so this
          * can never lose an item.
+         * @param exclude A garment to leave out of the competition. Emptying a
+         * worn container passes it here, or its contents route straight back in
+         * and the unload reads as a no-op.
+         * @param quiet Suppress the "you put it away" message. Character
+         * creation stows a whole starting kit at once, before there is a game
+         * for the player to read a message log in.
          */
-        detached_ptr<item> i_add_to_worn_pockets( detached_ptr<item> &&it );
+        detached_ptr<item> i_add_to_worn_pockets( detached_ptr<item> &&it,
+                const item *exclude = nullptr, bool quiet = false );
+
+        /**
+         * Offer everything loose in the flat inventory to the pockets of what is
+         * worn. Character creation hands out a kit item by item and wears the
+         * armour in the same pass, so nothing can be routed until the whole lot
+         * is on. Whatever no pocket takes stays where it is: this never drops.
+         */
+        void stow_loose_inventory_into_pockets();
         item &i_add( detached_ptr<item> &&it, bool should_stack = true );
 
         /**
