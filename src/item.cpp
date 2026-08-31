@@ -3415,7 +3415,9 @@ void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts
             break;
         }
     }
-    if( !any_authored ) {
+    // Organising a pocket is worth describing whoever authored it, so a hoodie
+    // the player has set rules on earns the section its data alone would not.
+    if( !any_authored && !contents.settings_edited() ) {
         return;
     }
 
@@ -3476,6 +3478,63 @@ void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts
             line += _( ", <good>preserves contents</good>" );
         }
         info.emplace_back( "CONTAINER", line );
+
+        // What the player has asked of this pocket, which nothing else shows.
+        const pocket_favorite_settings &settings = pocket.get_settings();
+        if( settings.is_null() ) {
+            continue;
+        }
+        std::string rules;
+        const auto add_rule = [&rules]( const std::string & text ) {
+            if( !rules.empty() ) {
+                rules += _( ", " );
+            }
+            rules += text;
+        };
+        if( settings.priority() != 0 ) {
+            add_rule( string_format( _( "priority <info>%d</info>" ), settings.priority() ) );
+        }
+        if( settings.is_disabled() ) {
+            add_rule( _( "<bad>nothing is stored here automatically</bad>" ) );
+        }
+        const auto name_list = []( const auto & ids, const auto & to_name ) {
+            std::string names;
+            for( const auto &id : ids ) {
+                if( !names.empty() ) {
+                    names += ", ";
+                }
+                names += to_name( id );
+            }
+            return names;
+        };
+        const auto item_name = []( const itype_id & id ) {
+            return item::nname( id );
+        };
+        const auto category_name = []( const item_category_id & id ) {
+            return id.is_valid() ? id->name() : id.str();
+        };
+        if( !settings.get_item_whitelist().empty() ) {
+            add_rule( string_format( _( "holds only <info>%s</info>" ),
+                                     name_list( settings.get_item_whitelist(), item_name ) ) );
+        }
+        if( !settings.get_category_whitelist().empty() ) {
+            add_rule( string_format( _( "holds only <info>%s</info>" ),
+                                     name_list( settings.get_category_whitelist(), category_name ) ) );
+        }
+        if( !settings.get_item_blacklist().empty() ) {
+            add_rule( string_format( _( "never <info>%s</info>" ),
+                                     name_list( settings.get_item_blacklist(), item_name ) ) );
+        }
+        if( !settings.get_category_blacklist().empty() ) {
+            add_rule( string_format( _( "never <info>%s</info>" ),
+                                     name_list( settings.get_category_blacklist(), category_name ) ) );
+        }
+        if( !settings.is_unloadable() ) {
+            add_rule( _( "kept when unloading" ) );
+        }
+        if( !rules.empty() ) {
+            info.emplace_back( "CONTAINER", string_format( _( "    Organised: %s" ), rules ) );
+        }
     }
 }
 

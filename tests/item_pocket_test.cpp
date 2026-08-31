@@ -7,6 +7,7 @@
 #include "item.h"
 #include "item_pocket.h"
 #include "item_factory.h"
+#include "iteminfo_query.h"
 #include "itype.h"
 #include "json.h"
 #include "options_helpers.h"
@@ -1390,4 +1391,47 @@ TEST_CASE( "an_adapter_gives_an_internal_clip_gun_somewhere_for_its_magazine",
     detached_ptr<item> mag2 = item::spawn( "m1918mag" );
     mag2->contents.clear_items();
     CHECK( adapted->contents.insert_item( std::move( mag2 ) ).success() );
+}
+
+// Item info: what the player set has to be visible somewhere.
+
+static std::string pocket_info_text( const item &it )
+{
+    std::vector<iteminfo> info;
+    it.pocket_info( info, &iteminfo_query::all, 1, false );
+    std::string text;
+    for( const iteminfo &line : info ) {
+        text += line.sName + line.sFmt;
+    }
+    return text;
+}
+
+TEST_CASE( "item_info_reports_what_the_player_organised", "[item][pocket][favorites][info]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    pocket_favorite_settings &settings = bag->contents.get_pockets()[1].get_settings();
+    settings.set_priority( 4 );
+    settings.blacklist_item( itype_id( "test_rock" ) );
+
+    const std::string text = pocket_info_text( *bag );
+    CHECK( text.find( "Organised" ) != std::string::npos );
+    CHECK( text.find( "priority" ) != std::string::npos );
+}
+
+TEST_CASE( "item_info_stays_quiet_about_pockets_nobody_organised",
+           "[item][pocket][favorites][info]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+
+    CHECK( pocket_info_text( *bag ).find( "Organised" ) == std::string::npos );
+}
+
+TEST_CASE( "classic_mode_says_nothing_about_pockets", "[item][pocket][favorites][info][classic]" )
+{
+    override_option classic( "POCKET_SYSTEM", "classic" );
+
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    bag->contents.get_pockets()[0].get_settings().set_priority( 2 );
+
+    CHECK( pocket_info_text( *bag ).empty() );
 }
