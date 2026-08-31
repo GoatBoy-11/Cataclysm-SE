@@ -464,7 +464,14 @@ static auto pick_one_up( const pick_one_up_options &opts ) -> bool
                 auto &pickup_entry = map_pickup[added.tname()];
                 pickup_entry.first = &added;
                 pickup_entry.second += added.count();
-                u.i_add( added.detach() );
+                // Children go through the same routing as the item they came
+                // with. Without this, a batched pickup put the first item in a
+                // pocket and dropped the rest into the flat inventory, which
+                // looked like routing working only sometimes.
+                detached_ptr<item> child = u.i_add_to_worn_pockets( added.detach() );
+                if( child ) {
+                    u.i_add( std::move( child ) );
+                }
                 if( child_favorite && child_note_pos ) {
                     maybe_remove_favorite_drop_note( *child_note_pos, child_note_name );
                 }

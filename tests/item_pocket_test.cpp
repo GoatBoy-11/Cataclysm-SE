@@ -1988,3 +1988,45 @@ TEST_CASE( "unloading_a_garment_empties_its_pockets", "[pocket][unload]" )
     CHECK( jeans->contents.empty() );
     CHECK( u.amount_of( itype_id( "withered" ) ) == 1 );
 }
+
+// Oliver's playtest: routing looked intermittent. BN groups a pickup into a
+// parent and its children, and the children were added straight to the flat
+// inventory, so a batched pickup routed the first item and no others.
+TEST_CASE( "children_of_a_pickup_route_like_their_parent", "[pocket][routing][enforce]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    u.moves = 100;
+
+    get_map().add_item_or_charges( u.bub_pos(), item::spawn( "bag_plastic" ) );
+    get_map().add_item_or_charges( u.bub_pos(), item::spawn( "test_rock" ) );
+    map_stack stack = get_map().i_at( u.bub_pos() );
+    REQUIRE( stack.size() == 2 );
+
+    item *bag = nullptr;
+    item *rock = nullptr;
+    for( item *it : stack ) {
+        ( it->typeId() == itype_id( "test_rock" ) ? rock : bag ) = it;
+    }
+    REQUIRE( bag != nullptr );
+    REQUIRE( rock != nullptr );
+
+    // The rock rides along as a child of the bag, the shape BN builds when a
+    // pickup is batched.
+    std::vector<pickup::pick_drop_selection> targets{ { *bag, std::nullopt, { *rock } } };
+    pickup::do_pickup( targets, true );
+
+    int rocks_in_pockets = 0;
+    for( const item *garment : u.worn ) {
+        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+            for( const item *stored : pocket.all_items_top() ) {
+                if( stored->typeId() == itype_id( "test_rock" ) ) {
+                    rocks_in_pockets++;
+                }
+            }
+        }
+    }
+    CHECK( rocks_in_pockets == 1 );
+}
