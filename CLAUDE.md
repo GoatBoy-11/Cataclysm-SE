@@ -78,6 +78,40 @@ development with C++"). Once repaired, revert these overrides.
 producing nothing — a stale exe then passes tests that never saw the change:
 `ls -la out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe`.
 
+### The Ninja preset (faster, second build tree)
+
+`cse-ninja` builds the same targets in roughly half the time (8m46s against
+20-25m for a cold full build) and produces a binary that runs the tests at the
+same speed. It lives in its own tree, `out/build/cse-ninja`, so both presets can
+coexist; `ninja.exe` is at `F:/Projects/ninja/ninja.exe`.
+
+**It needs a developer environment**, because Ninja calls `cl.exe` from PATH
+while the VS generator finds the compiler itself. Wrap both configure and build:
+
+```bat
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat"
+cmake --preset cse-ninja
+cmake --build out/build/cse-ninja
+```
+
+Two things the preset must set, both learned the hard way:
+
+- `CMAKE_CXX_FLAGS_RELWITHDEBINFO` / `CMAKE_C_FLAGS_RELWITHDEBINFO` to
+  `/O2 /Oi /Ob2 /DNDEBUG`. The VS generator injects its own per-config
+  optimisation; Ninja does not, and the repo leaves the variable at `/Oi`. Without
+  this the build succeeds but is unoptimised: tests ran 26s instead of 4s, and
+  startup took 90 seconds.
+- `CMAKE_BUILD_TYPE`, since Ninja is single-config.
+
+**`json_formatter` does not link under Ninja** (unresolved `replace_all`), so JSON
+linting uses the VS tree's
+`out/build/cse-vcpkg/tools/format/RelWithDebInfo/json_formatter.exe`. Adding
+`src/string_utils.cpp` to that target does not fix it — it pulls in unicode and
+colour dependencies the tool does not otherwise need. Not diagnosed further.
+
+`sccache` is installed but useless here: it only caches MSVC compilations that use
+`/Z7`, and `/Z7` is exactly what `cse-local-overrides.cmake` exists to avoid.
+
 Adding a file to `tests/` requires re-running `cmake --preset cse-msvc`: the `tests/`
 glob has no `CONFIGURE_DEPENDS`, unlike `src/`.
 
@@ -89,6 +123,10 @@ creation failed"*. Run the suite with the CPU backend instead:
 export CATA_TEST_COMPUTE_ACCELERATION=cpu
 out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe "[optional-filter]"
 ```
+
+Tag-filtered runs are the working loop: `[pocket]` finishes in hundredths of a
+second and `[pocket],[routing]` in about four, against nine minutes for the whole
+suite. Run the full suite before committing, not between edits.
 
 That path is upstream BN's fallback (`7478f040a5`, `b43ea3daff`), and its lighting does
 not match the GPU path exactly: four vision tests fail under it — `vision_wall_obstructs_light`,
