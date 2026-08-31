@@ -3408,9 +3408,21 @@ void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts
     // list their magazines and mod locations, magazines their capacity,
     // containers their volume. Only authored pockets carry information that
     // appears nowhere else, so only they get a section.
-    bool any_authored = false;
+    // A pocket that can hold nothing is not worth a line: describing storage the
+    // player does not have reads as a bug, and an item whose only pocket is one
+    // of those should look exactly like an item with no pockets at all.
+    std::vector<const item_pocket *> describable;
     for( const item_pocket &pocket : contents.get_pockets() ) {
-        if( !pocket.definition().synthesized ) {
+        if( pocket.can_hold_anything() ) {
+            describable.push_back( &pocket );
+        }
+    }
+    if( describable.empty() ) {
+        return;
+    }
+    bool any_authored = false;
+    for( const item_pocket *const pocket : describable ) {
+        if( !pocket->definition().synthesized ) {
             any_authored = true;
             break;
         }
@@ -3423,11 +3435,12 @@ void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts
 
     insert_separation_line( info );
     info.emplace_back( "CONTAINER", string_format( vgettext( "This item has <info>%d pocket</info>.",
-                       "This item has <info>%d pockets</info>.", contents.get_pockets().size() ),
-                       static_cast<int>( contents.get_pockets().size() ) ) );
+                       "This item has <info>%d pockets</info>.", describable.size() ),
+                       static_cast<int>( describable.size() ) ) );
 
     int index = 0;
-    for( const item_pocket &pocket : contents.get_pockets() ) {
+    for( const item_pocket *const pocket_ptr : describable ) {
+        const item_pocket &pocket = *pocket_ptr;
         index++;
         const pocket_data &def = pocket.definition();
         std::string line = string_format( _( "  Pocket %d: " ), index );
@@ -3478,6 +3491,20 @@ void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts
             line += _( ", <good>preserves contents</good>" );
         }
         info.emplace_back( "CONTAINER", line );
+
+        // Which pocket an item ended up in is shown nowhere else: the inventory
+        // screens flatten every pocket away. Without this the routing rules below
+        // cannot be seen working.
+        if( !pocket.empty() ) {
+            std::string held;
+            for( const item *const stored : pocket.all_items_top() ) {
+                if( !held.empty() ) {
+                    held += _( ", " );
+                }
+                held += stored->display_name();
+            }
+            info.emplace_back( "CONTAINER", string_format( _( "    Contains: %s" ), held ) );
+        }
 
         // What the player has asked of this pocket, which nothing else shows.
         const pocket_favorite_settings &settings = pocket.get_settings();

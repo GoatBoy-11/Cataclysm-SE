@@ -544,6 +544,11 @@ TEST_CASE( "no_pocket_is_left_with_zero_capacity", "[item][pocket][audit]" )
     // in fields that do not translate; the re-import drops such pockets.
     std::vector<std::string> offenders;
     for( const itype *def : item_controller->all() ) {
+        // TEST_DATA carries one deliberately degenerate pocket, to prove such a
+        // pocket is described nowhere. The audit is about shipped content.
+        if( def->get_id().str().starts_with( "test_" ) ) {
+            continue;
+        }
         for( const pocket_data &pocket : def->pockets ) {
             if( !pocket.synthesized && pocket.type == pocket_type::CONTAINER &&
                 pocket.max_contains_volume == 0_ml &&
@@ -1416,6 +1421,64 @@ TEST_CASE( "item_info_reports_what_the_player_organised", "[item][pocket][favori
     const std::string text = pocket_info_text( *bag );
     CHECK( text.find( "Organised" ) != std::string::npos );
     CHECK( text.find( "priority" ) != std::string::npos );
+}
+
+// A pocket with no declared volume holds nothing, and describing storage the
+// player does not have is worse than saying nothing.
+TEST_CASE( "a_pocket_with_no_volume_holds_nothing", "[item][pocket][info]" )
+{
+    detached_ptr<item> thing = item::spawn( "test_no_volume_pocket_thing" );
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+
+    CHECK_FALSE( thing->contents.get_pockets()[0].can_hold_anything() );
+    CHECK( bag->contents.get_pockets()[0].can_hold_anything() );
+}
+
+TEST_CASE( "item_info_omits_a_pocket_that_holds_nothing", "[item][pocket][info]" )
+{
+    detached_ptr<item> thing = item::spawn( "test_no_volume_pocket_thing" );
+
+    CHECK( pocket_info_text( *thing ).empty() );
+}
+
+// The organizer is the one screen that shows pockets, so it has to show what is
+// in them: BN's inventory screens flatten pockets away entirely.
+TEST_CASE( "the_organizer_lists_what_a_pocket_holds", "[item][pocket][favorites][menu]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    bag->contents.get_pockets()[0].insert( std::move( rock ) );
+
+    const std::vector<std::string> rows = bag->contents.get_pockets()[0].contents_rows();
+    REQUIRE( rows.size() == 1 );
+    CHECK( rows[0].find( item::nname( itype_id( "test_rock" ) ) ) != std::string::npos );
+}
+
+TEST_CASE( "the_organizer_lists_nothing_for_an_empty_pocket", "[item][pocket][favorites][menu]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+
+    CHECK( bag->contents.get_pockets()[0].contents_rows().empty() );
+}
+
+// Nothing else in the game says which pocket an item ended up in, so the routing
+// is invisible without this.
+TEST_CASE( "item_info_lists_what_each_pocket_holds", "[item][pocket][favorites][info]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    bag->contents.get_pockets()[0].insert( std::move( rock ) );
+
+    const std::string text = pocket_info_text( *bag );
+    CHECK( text.find( "Contains" ) != std::string::npos );
+    CHECK( text.find( item::nname( itype_id( "test_rock" ) ) ) != std::string::npos );
+}
+
+TEST_CASE( "item_info_says_nothing_about_an_empty_pocket", "[item][pocket][favorites][info]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+
+    CHECK( pocket_info_text( *bag ).find( "Contains" ) == std::string::npos );
 }
 
 TEST_CASE( "item_info_stays_quiet_about_pockets_nobody_organised",

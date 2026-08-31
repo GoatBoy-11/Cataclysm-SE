@@ -276,6 +276,22 @@ class item_pocket
         bool empty() const;
         const std::vector<item *> &all_items_top() const;
 
+        /**
+         * One display line per item held, for the organizer. No inventory screen
+         * in CSE renders pockets, so the organizer is the only place the player
+         * can see which compartment a rule actually put something in.
+         */
+        std::vector<std::string> contents_rows() const;
+
+        /**
+         * Whether this pocket can hold anything at all. A CONTAINER pocket that
+         * declares no volume holds nothing, and describing it only tells the
+         * player about storage they do not have. Ammo, item and mod pockets are
+         * bounded by their restrictions rather than by volume, so they always
+         * count as usable.
+         */
+        bool can_hold_anything() const;
+
         /** direct access for the visitable machinery, which needs the vector itself */
         location_vector<item> &get_contents() {
             return contents;

@@ -836,13 +836,14 @@ void one_pocket_menu( const item_contents &contents, item_pocket &pocket, const 
         menu.addentry( 2, true, 'c', _( "Category rules" ) );
         menu.addentry( 3, true, 'd', string_format( _( "Auto-insert: %s" ),
                        settings.is_disabled() ? _( "off" ) : _( "on" ) ) );
-        menu.addentry( 4, true, 'l', string_format( _( "Show contents: %s" ),
-                       settings.is_collapsed() ? _( "collapsed" ) : _( "expanded" ) ) );
-        menu.addentry( 5, true, 'u', string_format( _( "Unload with the rest: %s" ),
+        // No "show contents" entry: the collapse flag it set is stored and saved,
+        // but no inventory screen in CSE renders pockets, so nothing reads it.
+        // It comes back with the nested display, not before.
+        menu.addentry( 4, true, 'u', string_format( _( "Unload with the rest: %s" ),
                        settings.is_unloadable() ? _( "yes" ) : _( "no" ) ) );
-        menu.addentry( 6, true, 's', _( "Save these rules as a preset" ) );
-        menu.addentry( 7, true, 'a', _( "Apply a preset" ) );
-        menu.addentry( 8, true, 'x', _( "Clear this pocket's rules" ) );
+        menu.addentry( 5, true, 's', _( "Save these rules as a preset" ) );
+        menu.addentry( 6, true, 'a', _( "Apply a preset" ) );
+        menu.addentry( 7, true, 'x', _( "Clear this pocket's rules" ) );
         menu.query();
 
         switch( menu.ret ) {
@@ -864,18 +865,15 @@ void one_pocket_menu( const item_contents &contents, item_pocket &pocket, const 
                 settings.set_disabled( !settings.is_disabled() );
                 break;
             case 4:
-                settings.set_collapse( !settings.is_collapsed() );
-                break;
-            case 5:
                 settings.set_unloadable( !settings.is_unloadable() );
                 break;
-            case 6:
+            case 5:
                 save_preset_from( settings );
                 break;
-            case 7:
+            case 6:
                 apply_preset_to( settings );
                 break;
-            case 8:
+            case 7:
                 settings.clear();
                 break;
             default:
@@ -904,7 +902,8 @@ void item_contents::favorite_settings_menu()
     // that.
     std::vector<size_t> organizable;
     for( size_t i = 0; i < pockets.size(); i++ ) {
-        if( pockets[i].definition().type == pocket_type::CONTAINER ) {
+        if( pockets[i].definition().type == pocket_type::CONTAINER &&
+            pockets[i].can_hold_anything() ) {
             organizable.push_back( i );
         }
     }
@@ -917,8 +916,15 @@ void item_contents::favorite_settings_menu()
         uilist menu;
         menu.title = string_format( _( "Organize %s" ), owner->tname() );
         for( size_t i = 0; i < organizable.size(); i++ ) {
+            const item_pocket &pocket = pockets[organizable[i]];
             menu.addentry( static_cast<int>( i ), true, MENU_AUTOASSIGN, "%s",
-                           describe_pocket( pockets[organizable[i]], static_cast<int>( i ) + 1 ) );
+                           describe_pocket( pocket, static_cast<int>( i ) + 1 ) );
+            // Contents are shown, not selectable: this is the only screen in the
+            // game that renders pockets at all, so a rule's effect is invisible
+            // without them.
+            for( const std::string &row : pocket.contents_rows() ) {
+                menu.addentry( -1, false, -1, row );
+            }
         }
         menu.query();
         if( menu.ret < 0 || static_cast<size_t>( menu.ret ) >= organizable.size() ) {

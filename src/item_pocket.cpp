@@ -405,6 +405,26 @@ const std::vector<item *> &item_pocket::all_items_top() const
     return contents.as_vector();
 }
 
+bool item_pocket::can_hold_anything() const
+{
+    const pocket_data &def = definition();
+    if( !def.ammo_restriction.empty() || !def.item_restriction.empty() ||
+        !def.mod_restriction.empty() ) {
+        return true;
+    }
+    return def.max_contains_volume > 0_ml;
+}
+
+std::vector<std::string> item_pocket::contents_rows() const
+{
+    std::vector<std::string> rows;
+    rows.reserve( contents.size() );
+    for( const item *const stored : contents ) {
+        rows.push_back( string_format( "    %s", stored->display_name() ) );
+    }
+    return rows;
+}
+
 units::volume item_pocket::contents_volume() const
 {
     units::volume total = 0_ml;

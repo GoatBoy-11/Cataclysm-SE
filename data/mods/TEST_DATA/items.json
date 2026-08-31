@@ -951,5 +951,18 @@
       { "pocket_type": "CONTAINER", "max_contains_volume": "1 L", "sealed": true, "spoil_multiplier": 0.0 },
       { "pocket_type": "CONTAINER", "max_contains_volume": "1 L" }
     ]
+  },
+  {
+    "id": "test_no_volume_pocket_thing",
+    "type": "GENERIC",
+    "name": "TEST no volume pocket thing",
+    "description": "An item whose only authored pocket declares no volume, so it can hold nothing at all.  For testing that such a pocket is described nowhere.",
+    "weight": "200 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": "steel",
+    "symbol": ")",
+    "color": "light_gray",
+    "pocket_data": [ { "pocket_type": "CONTAINER" } ]
   }
 ]
