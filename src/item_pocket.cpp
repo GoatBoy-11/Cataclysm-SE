@@ -1,11 +1,14 @@
 #include "item_pocket.h"
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <utility>
 
+#include "cata_utility.h"
 #include "debug.h"
 #include "enum_conversions.h"
+#include "fstream_utils.h"
 #include "generic_factory.h"
 #include "item.h"
 #include "item_category.h"
@@ -13,6 +16,8 @@
 #include "json.h"
 #include "locations.h"
 #include "options.h"
+#include "path_info.h"
+#include "translations.h"
 #include "translations.h"
 
 namespace io
@@ -260,6 +265,9 @@ void pocket_favorite_settings::serialize( JsonOut &json ) const
     // "name" is theirs alone for now: presets are not ported, and writing an
     // empty one would claim a preset the player never made.
     json.start_object();
+    if( preset_name.has_value() ) {
+        json.member( "name", *preset_name );
+    }
     json.member( "priority", priority_rating );
     json.member( "item_whitelist", item_whitelist );
     json.member( "item_blacklist", item_blacklist );
@@ -276,6 +284,11 @@ void pocket_favorite_settings::deserialize( JsonIn &jsin )
 {
     JsonObject data = jsin.get_object();
     data.allow_omitted_members();
+    if( data.has_member( "name" ) ) {
+        std::string name;
+        data.read( "name", name );
+        preset_name = name;
+    }
     data.read( "priority", priority_rating );
     data.read( "item_whitelist", item_whitelist );
     data.read( "item_blacklist", item_blacklist );
@@ -289,6 +302,84 @@ void pocket_favorite_settings::deserialize( JsonIn &jsin )
         // from before the flag existed - CDDA's included - was player made.
         player_edited = true;
     }
+}
+
+namespace
+{
+std::vector<pocket_favorite_settings> loaded_presets;
+bool presets_loaded = false;
+
+void write_presets()
+{
+    write_to_file( PATH_INFO::pocket_presets_file(), []( std::ostream & fout ) {
+        JsonOut json( fout, true );
+        json.start_array();
+        for( const pocket_favorite_settings &preset : loaded_presets ) {
+            preset.serialize( json );
+        }
+        json.end_array();
+    }, _( "pocket presets" ) );
+}
+} // namespace
+
+void pocket_presets::load()
+{
+    if( presets_loaded ) {
+        return;
+    }
+    presets_loaded = true;
+    // Optional: a player who has never saved a preset has no file, which is not
+    // a problem worth reporting to them.
+    read_from_file_json( PATH_INFO::pocket_presets_file(), []( JsonIn & jsin ) {
+        loaded_presets.clear();
+        jsin.start_array();
+        while( !jsin.end_array() ) {
+            pocket_favorite_settings preset;
+            preset.deserialize( jsin );
+            loaded_presets.push_back( preset );
+        }
+    }, true );
+}
+
+const std::vector<pocket_favorite_settings> &pocket_presets::all()
+{
+    return loaded_presets;
+}
+
+const pocket_favorite_settings *pocket_presets::find( const std::string &name )
+{
+    for( const pocket_favorite_settings &preset : loaded_presets ) {
+        if( preset.get_preset_name() == name ) {
+            return &preset;
+        }
+    }
+    return nullptr;
+}
+
+void pocket_presets::add( const pocket_favorite_settings &preset )
+{
+    if( !preset.get_preset_name().has_value() ) {
+        debugmsg( "Tried to store a pocket preset with no name" );
+        return;
+    }
+    // Saving over a name the player already used replaces it, which is what
+    // choosing that name again plainly means.
+    remove( *preset.get_preset_name() );
+    loaded_presets.push_back( preset );
+    write_presets();
+}
+
+void pocket_presets::remove( const std::string &name )
+{
+    const auto it = std::ranges::find_if( loaded_presets,
+    [&name]( const pocket_favorite_settings & preset ) {
+        return preset.get_preset_name() == name;
+    } );
+    if( it == loaded_presets.end() ) {
+        return;
+    }
+    loaded_presets.erase( it );
+    write_presets();
 }
 
 item_pocket::item_pocket( item *owner, const pocket_data *data )

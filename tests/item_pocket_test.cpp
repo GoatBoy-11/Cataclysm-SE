@@ -1435,3 +1435,52 @@ TEST_CASE( "classic_mode_says_nothing_about_pockets", "[item][pocket][favorites]
 
     CHECK( pocket_info_text( *bag ).empty() );
 }
+
+// Presets: named settings the player can reuse across pockets and worlds.
+
+TEST_CASE( "a_preset_carries_the_rules_it_was_saved_from", "[item][pocket][favorites][preset]" )
+{
+    pocket_favorite_settings source;
+    source.set_priority( 6 );
+    source.whitelist_item( itype_id( "test_rock" ) );
+    source.set_preset_name( "rocks first" );
+
+    pocket_favorite_settings applied = source;
+    CHECK( applied.priority() == 6 );
+    CHECK( applied.get_item_whitelist().count( itype_id( "test_rock" ) ) == 1 );
+    CHECK( applied.get_preset_name() == "rocks first" );
+}
+
+TEST_CASE( "a_preset_survives_a_serialization_round_trip", "[item][pocket][favorites][preset]" )
+{
+    pocket_favorite_settings preset;
+    preset.set_priority( 2 );
+    preset.blacklist_category( item_category_id( "food" ) );
+    preset.set_preset_name( "no food" );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    preset.serialize( jo );
+
+    pocket_favorite_settings restored;
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    restored.deserialize( ji );
+
+    CHECK( restored.get_preset_name() == "no food" );
+    CHECK( restored.priority() == 2 );
+    CHECK( restored.get_category_blacklist().count( item_category_id( "food" ) ) == 1 );
+}
+
+// Settings with no preset must not claim one, or every save would grow a name.
+TEST_CASE( "settings_without_a_preset_write_no_name", "[item][pocket][favorites][preset]" )
+{
+    pocket_favorite_settings settings;
+    settings.set_priority( 1 );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    settings.serialize( jo );
+
+    CHECK( os.str().find( "name" ) == std::string::npos );
+}

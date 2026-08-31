@@ -18,6 +18,7 @@
 #include "locations.h"
 #include "map.h"
 #include "output.h"
+#include "string_input_popup.h"
 #include "translations.h"
 #include "type_id.h"
 #include "ui.h"
@@ -747,6 +748,70 @@ void category_filter_menu( const item_contents &contents, pocket_favorite_settin
     }
 }
 
+void save_preset_from( const pocket_favorite_settings &settings )
+{
+    if( settings.is_null() ) {
+        popup( _( "There are no rules on this pocket to save." ) );
+        return;
+    }
+    string_input_popup input;
+    const std::string name = input
+                             .title( _( "Name this preset" ) )
+                             .width( 30 )
+                             .text( settings.get_preset_name().value_or( std::string() ) )
+                             .query_string();
+    if( name.empty() ) {
+        return;
+    }
+    if( pocket_presets::find( name ) != nullptr &&
+        !query_yn( _( "Replace the preset named %s?" ), name ) ) {
+        return;
+    }
+    // Store a copy under that name, so later edits to this pocket do not
+    // quietly rewrite a preset the player saved and moved on from.
+    pocket_favorite_settings preset = settings;
+    preset.set_preset_name( name );
+    pocket_presets::add( preset );
+}
+
+void apply_preset_to( pocket_favorite_settings &settings )
+{
+    const std::vector<pocket_favorite_settings> &presets = pocket_presets::all();
+    if( presets.empty() ) {
+        popup( _( "No presets saved yet.  Set a pocket up, then save its rules." ) );
+        return;
+    }
+    uilist menu;
+    menu.title = _( "Apply which preset?" );
+    for( size_t i = 0; i < presets.size(); i++ ) {
+        menu.addentry( static_cast<int>( i ), true, MENU_AUTOASSIGN, "%s",
+                       presets[i].get_preset_name().value_or( _( "unnamed" ) ) );
+    }
+    // Deleting is rare enough to live behind its own entry rather than a key.
+    menu.addentry( static_cast<int>( presets.size() ), true, 'd', _( "Delete a preset" ) );
+    menu.query();
+    if( menu.ret < 0 ) {
+        return;
+    }
+    if( static_cast<size_t>( menu.ret ) == presets.size() ) {
+        uilist which;
+        which.title = _( "Delete which preset?" );
+        for( size_t i = 0; i < presets.size(); i++ ) {
+            which.addentry( static_cast<int>( i ), true, MENU_AUTOASSIGN, "%s",
+                            presets[i].get_preset_name().value_or( _( "unnamed" ) ) );
+        }
+        which.query();
+        if( which.ret >= 0 && static_cast<size_t>( which.ret ) < presets.size() ) {
+            const std::string name = presets[which.ret].get_preset_name().value_or( std::string() );
+            if( !name.empty() ) {
+                pocket_presets::remove( name );
+            }
+        }
+        return;
+    }
+    settings = presets[menu.ret];
+}
+
 void one_pocket_menu( const item_contents &contents, item_pocket &pocket, const int number )
 {
     pocket_favorite_settings &settings = pocket.get_settings();
@@ -763,7 +828,9 @@ void one_pocket_menu( const item_contents &contents, item_pocket &pocket, const 
                        settings.is_collapsed() ? _( "collapsed" ) : _( "expanded" ) ) );
         menu.addentry( 5, true, 'u', string_format( _( "Unload with the rest: %s" ),
                        settings.is_unloadable() ? _( "yes" ) : _( "no" ) ) );
-        menu.addentry( 6, true, 'x', _( "Clear this pocket's rules" ) );
+        menu.addentry( 6, true, 's', _( "Save these rules as a preset" ) );
+        menu.addentry( 7, true, 'a', _( "Apply a preset" ) );
+        menu.addentry( 8, true, 'x', _( "Clear this pocket's rules" ) );
         menu.query();
 
         switch( menu.ret ) {
@@ -791,6 +858,12 @@ void one_pocket_menu( const item_contents &contents, item_pocket &pocket, const 
                 settings.set_unloadable( !settings.is_unloadable() );
                 break;
             case 6:
+                save_preset_from( settings );
+                break;
+            case 7:
+                apply_preset_to( settings );
+                break;
+            case 8:
                 settings.clear();
                 break;
             default:
@@ -803,6 +876,10 @@ void one_pocket_menu( const item_contents &contents, item_pocket &pocket, const 
 
 void item_contents::favorite_settings_menu()
 {
+    // Presets live in a config file shared by every world, and this menu is the
+    // only thing that reads them, so loading here keeps startup out of it.
+    pocket_presets::load();
+
     // Classic mode ignores settings, so offering the menu would promise the
     // player something the mode does not honour.
     if( pockets_are_classic() ) {

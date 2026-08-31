@@ -12,6 +12,8 @@ void set_standard_filenames();
 
 std::string autopickup();
 std::string base_colors();
+/** Pocket organisation presets, shared by every world the player runs. */
+std::string pocket_presets_file();
 std::string base_path();
 std::string colors();
 std::string color_templates();

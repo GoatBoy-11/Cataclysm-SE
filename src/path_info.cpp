@@ -173,6 +173,10 @@ std::string PATH_INFO::autopickup()
 {
     return autopickup_value;
 }
+std::string PATH_INFO::pocket_presets_file()
+{
+    return config_dir_value + "pocket_presets.json";
+}
 std::string PATH_INFO::base_colors()
 {
     return config_dir_value + "base_colors.json";

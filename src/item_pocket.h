@@ -1,7 +1,9 @@
 #pragma once
 
 #include <map>
+#include <optional>
 #include <set>
+#include <string>
 #include <vector>
 
 #include "flat_set.h"
@@ -197,10 +199,20 @@ class pocket_favorite_settings
          */
         bool is_null() const;
 
+        /** The preset these settings came from, if the player applied one. */
+        const std::optional<std::string> &get_preset_name() const {
+            return preset_name;
+        }
+        void set_preset_name( const std::string &name ) {
+            preset_name = name;
+            player_edited = true;
+        }
+
         void serialize( JsonOut &json ) const;
         void deserialize( JsonIn &jsin );
 
     private:
+        std::optional<std::string> preset_name;
         int priority_rating = 0;
         cata::flat_set<itype_id> item_whitelist;
         cata::flat_set<itype_id> item_blacklist;
@@ -211,6 +223,23 @@ class pocket_favorite_settings
         bool unload = true;
         bool player_edited = false;
 };
+
+/**
+ * Named pocket settings the player can reuse.
+ *
+ * These live in the config directory rather than in a save, exactly as CDDA's
+ * do, so a rule worked out once follows the player into every world.
+ */
+namespace pocket_presets
+{
+/** Reads the file. Called once at startup; harmless to call again. */
+void load();
+const std::vector<pocket_favorite_settings> &all();
+/** Stores under the settings' own preset name, replacing any of that name. */
+void add( const pocket_favorite_settings &preset );
+void remove( const std::string &name );
+const pocket_favorite_settings *find( const std::string &name );
+} // namespace pocket_presets
 
 /**
  * One compartment of an item. Owns its contents through the same
