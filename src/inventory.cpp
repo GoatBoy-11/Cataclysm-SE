@@ -698,7 +698,9 @@ std::vector<detached_ptr<item>> location_inventory::remove_randomly_by_volume(
 {
     std::vector<detached_ptr<item>> result;
     units::volume volume_dropped = 0_ml;
-    while( volume_dropped < volume ) {
+    // Nothing left to give: the caller wants more volume gone than this
+    // inventory holds. Stopping here beats dereferencing items.end().
+    while( volume_dropped < volume && !inv.items.empty() ) {
         units::volume cumulative_volume = 0_ml;
         auto chosen_stack = inv.items.begin();
         auto chosen_item = chosen_stack->begin();

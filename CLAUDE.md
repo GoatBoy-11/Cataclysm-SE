@@ -55,6 +55,29 @@ fails, check these before touching any tracked CMake file:
    with `LNK1248`.
 3. `.codegpt-game.json` — launch manifest for the game-development skill.
 
+**A Visual Studio update can break the build outright.** On 2026-08-31 Community
+updated itself to 18.9 and lost both `Common7/Tools/VsDevCmd.bat` and its bundled
+`VC/vcpkg`; CMake then refused to configure at all ("could not find specified
+instance of Visual Studio", or "VsDevCmd.bat not found"). The build currently runs
+against **BuildTools 18.8** instead, via three things:
+
+- `CMakeUserPresets.json` pins `CMAKE_GENERATOR_INSTANCE` to the BuildTools path
+  *with* a `,version=` field, and points `VCPKG_ROOT` at its `VC/vcpkg`.
+- `DevEnvDir` must be exported to `<BuildTools>/Common7/IDE`, or
+  `build-scripts/VsDevCmd.cmake` asks `vswhere -latest` and gets the broken
+  Community install back.
+- `-DVCPKG_MANIFEST_INSTALL=OFF` at configure time: BuildTools' vcpkg has no
+  `bootstrap-vcpkg.bat`, so the manifest install fails. This only works because
+  `out/build/cse-vcpkg/vcpkg_installed` is already populated — a clean build needs
+  a working vcpkg first.
+
+The real fix is repairing Visual Studio (installer → Repair, or re-add "Desktop
+development with C++"). Once repaired, revert these overrides.
+
+**Check timestamps, not just exit codes.** A build can report success while
+producing nothing — a stale exe then passes tests that never saw the change:
+`ls -la out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe`.
+
 Adding a file to `tests/` requires re-running `cmake --preset cse-msvc`: the `tests/`
 glob has no `CONFIGURE_DEPENDS`, unlike `src/`.
 
@@ -125,6 +148,11 @@ Two constraints from the design carry into all pocket work:
 - **All 181 existing `.contents.` call sites must compile unchanged.** If one breaks,
   fix `item_contents`, never the call site.
 - **Migration never destroys an item.**
+
+**The test avatar carries `DEBUG_STORAGE`**, so its carrying capacity is
+effectively infinite and no test using `g->u` can exercise any
+over-capacity path. Use `standard_npc` for those. This is why the suite missed
+a worldgen crash that a few seconds of real play found.
 
 ## Conventions
 

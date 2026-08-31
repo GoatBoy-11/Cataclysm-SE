@@ -3879,8 +3879,15 @@ void Character::drop_invalid_inventory()
     }
 
     if( volume_carried() > volume_capacity() ) {
-        auto items_to_drop = inv.remove_randomly_by_volume( volume_carried() - volume_capacity() );
-        put_into_vehicle_or_drop( *this, item_drop_reason::tumbling, items_to_drop );
+        // Only the flat inventory can be shed here. Carried volume also counts
+        // what worn pockets hold, and those are already bounded by their own
+        // capacities, so asking for more than the loose items amount to would
+        // shed nothing and used to walk off the end of an empty inventory.
+        const units::volume excess = std::min( volume_carried() - volume_capacity(), inv.volume() );
+        if( excess > 0_ml ) {
+            auto items_to_drop = inv.remove_randomly_by_volume( excess );
+            put_into_vehicle_or_drop( *this, item_drop_reason::tumbling, items_to_drop );
+        }
     }
     if( !is_npc() ) {
         return;

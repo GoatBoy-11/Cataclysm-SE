@@ -984,5 +984,22 @@
       { "pocket_type": "CONTAINER", "max_contains_volume": "100 ml", "max_item_length": "30 cm" },
       { "pocket_type": "CONTAINER", "max_contains_volume": "4 L" }
     ]
+  },
+  {
+    "id": "test_overfull_pocket_vest",
+    "type": "ARMOR",
+    "name": "TEST overfull pocket vest",
+    "description": "A vest whose pocket holds far more than its legacy storage field claims, as CDDA-imported pockets can.  For testing that the overflow drop cannot walk off an empty inventory.",
+    "weight": "500 g",
+    "volume": "1 L",
+    "price": "0 cent",
+    "material": [ "cotton" ],
+    "symbol": "[",
+    "color": "light_gray",
+    "covers": [ "torso" ],
+    "coverage": 90,
+    "material_thickness": 1,
+    "storage": "100 ml",
+    "pocket_data": [ { "pocket_type": "CONTAINER", "max_contains_volume": "4 L" } ]
   }
 ]

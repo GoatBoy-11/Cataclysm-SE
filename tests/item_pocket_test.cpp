@@ -1797,6 +1797,34 @@ TEST_CASE( "full_pockets_refuse_to_stash_what_no_pocket_takes", "[pocket][routin
     CHECK( g->u.worn.front()->contents.empty() );
 }
 
+// Regression: a new character's gear sits in worn pockets with an empty flat
+// inventory. Carried volume counts those pockets, so the overflow check fired
+// and asked the empty inventory to shed volume, walking off items.end() and
+// crashing during worldgen (crash.log, 4620566dba).
+TEST_CASE( "overflowing_worn_pockets_do_not_crash_the_overflow_drop", "[pocket][routing]" )
+{
+    clear_all_state();
+    // Not the avatar: the test avatar carries DEBUG_STORAGE, whose infinite
+    // capacity means the overflow branch this guards can never fire.
+    standard_npc u( "overloaded" );
+    REQUIRE( !u.wear_item( item::spawn( "test_overfull_pocket_vest" ) ) );
+
+    item *vest = u.worn.front();
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+    REQUIRE( !vest->put_in( std::move( rock ) ) );
+
+    // The pocket legitimately holds more than the garment's storage field.
+    REQUIRE( u.volume_carried() > u.volume_capacity() );
+    REQUIRE( u.inv_size() == 0 );
+
+    u.drop_invalid_inventory();
+
+    // Nothing to shed, so nothing is shed - and above all, no crash.
+    CHECK( vest->contents.pocket_containing( *vest->contents.get_pockets()[0].all_items_top().front() )
+           != nullptr );
+    CHECK( u.amount_of( itype_id( "test_rock" ) ) == 1 );
+}
+
 // Enforcement binds only characters who actually wear pockets. Anyone without
 // them keeps the legacy flat stash, so ungeared characters and old content
 // keep working until the day the flat inventory itself is retired.
