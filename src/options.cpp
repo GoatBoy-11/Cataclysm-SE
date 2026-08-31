@@ -3836,6 +3836,19 @@ struct string_col {
     string_col( const std::string &s, nc_color col ) : s( s ), col( col ) { }
 };
 
+/**
+ * Options a world is built around, which stay as the world was made.
+ *
+ * The pocket system is one: a character packed under one set of rules should
+ * not find new gear filing itself differently because the option moved
+ * underneath them. Saves stay readable either way - synthesis is identical in
+ * both modes - so this is about a consistent world, not about save safety.
+ */
+static bool is_frozen_after_worldgen( const std::string &option_name )
+{
+    return option_name == "POCKET_SYSTEM";
+}
+
 std::string options_manager::show( bool ingame, const bool world_options_only,
                                    const std::function<bool()> &on_quit )
 {
@@ -4125,6 +4138,12 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
             if( hasPrerequisite && !hasPrerequisiteFulfilled ) {
                 popup( _( "Prerequisite for this option not met!\n(%s)" ),
                        get_options().get_option( current_opt.getPrerequisite() ).getMenuText() );
+                return;
+            }
+
+            if( ingame && is_frozen_after_worldgen( curr_item.data ) ) {
+                popup( _( "%s is fixed when a world is created and cannot be changed here." ),
+                       current_opt.getMenuText() );
                 return;
             }
 
