@@ -23,6 +23,8 @@ enum class pocket_type {
     MAGAZINE,
     MAGAZINE_WELL,
     MOD,
+    /** Spent casings a gun keeps: RELOAD_EJECT guns and brass catchers. */
+    CASINGS,
     CORPSE,
     MIGRATION,
     LAST

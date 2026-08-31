@@ -3413,6 +3413,11 @@ void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts
     // of those should look exactly like an item with no pockets at all.
     std::vector<const item_pocket *> describable;
     for( const item_pocket &pocket : contents.get_pockets() ) {
+        // The casings pocket is plumbing: the player never puts anything there
+        // and cannot take the choice away, so it is not storage worth naming.
+        if( pocket.definition().type == pocket_type::CASINGS ) {
+            continue;
+        }
         if( pocket.can_hold_anything() ) {
             describable.push_back( &pocket );
         }

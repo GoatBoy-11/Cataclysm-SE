@@ -237,6 +237,22 @@ static void synthesize_special_pockets_from_legacy( itype &def )
         def.pockets.push_back( pocket );
     };
 
+    if( def.gun ) {
+        // A gun with RELOAD_EJECT keeps its spent hull, and a brass catcher makes
+        // any gun do the same. `put_in` accepted that before pockets existed; the
+        // magazine pocket takes live rounds only, so casings need their own place
+        // to go or every shot fires a debugmsg. CDDA gives guns the same pocket.
+        if( !has_pocket_of_type( def, pocket_type::CASINGS ) ) {
+            pocket_data casings;
+            casings.type = pocket_type::CASINGS;
+            casings.max_contains_volume = units::from_liter( 100000 );
+            casings.rigid = true;
+            casings.synthesized = true;
+            casings.flag_restriction = { "CASING" };
+            def.pockets.push_back( casings );
+        }
+    }
+
     if( def.magazine ) {
         // Capacity is per ammo type, matching how the legacy magazine slot reads.
         std::map<ammotype, int> ammo;

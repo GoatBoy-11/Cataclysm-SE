@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "detached_ptr.h"
+#include "flag.h"
 #include "item.h"
 #include "item_pocket.h"
 #include "item_factory.h"
@@ -1421,6 +1422,32 @@ TEST_CASE( "item_info_reports_what_the_player_organised", "[item][pocket][favori
     const std::string text = pocket_info_text( *bag );
     CHECK( text.find( "Organised" ) != std::string::npos );
     CHECK( text.find( "priority" ) != std::string::npos );
+}
+
+// A gun with RELOAD_EJECT keeps its spent hull inside itself, and a brass
+// catcher does the same for every gun. Before pockets, `put_in` accepted that
+// unconditionally; a gun's magazine pocket takes live rounds only, so without a
+// pocket for casings every shot fired a debugmsg.
+TEST_CASE( "a_gun_can_hold_its_own_spent_casing", "[item][pocket][casings]" )
+{
+    detached_ptr<item> gun = item::spawn( "shotgun_410" );
+    detached_ptr<item> hull = item::spawn( "410shot_hull" );
+    hull->set_flag( flag_CASING );
+
+    item_pocket *pocket = gun->contents.best_pocket( *hull );
+    REQUIRE( pocket != nullptr );
+    CHECK( pocket->definition().type == pocket_type::CASINGS );
+}
+
+// The casings pocket is plumbing. It is not storage the player can use, so it
+// must not appear as storage anywhere.
+TEST_CASE( "the_casings_pocket_is_not_described", "[item][pocket][casings]" )
+{
+    detached_ptr<item> gun = item::spawn( "shotgun_410" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+
+    CHECK( gun->contents.best_pocket( *rock ) == nullptr );
+    CHECK( pocket_info_text( *gun ).find( "CASINGS" ) == std::string::npos );
 }
 
 // A pocket with no declared volume holds nothing, and describing storage the

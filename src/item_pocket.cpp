@@ -34,6 +34,8 @@ std::string enum_to_string<pocket_type>( pocket_type data )
             return "MAGAZINE_WELL";
         case pocket_type::MOD:
             return "MOD";
+        case pocket_type::CASINGS:
+            return "CASINGS";
         case pocket_type::CORPSE:
             return "CORPSE";
         case pocket_type::MIGRATION:
