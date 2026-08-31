@@ -18,12 +18,15 @@ credits files stay intact; add notices alongside them, never over them.
 
 | Path | What it is | May you edit it? |
 |---|---|---|
-| `D:\Projects\CSE` | This fork. All work happens here. | **Yes** |
-| `D:\Projects\CBN` | Upstream Cataclysm-BN, for reference and diffing | **No — read only** |
-| `D:\Projects\CDDA` | Cataclysm-DDA, the source of features being ported | **No — read only** |
+| `F:\Projects\CSE` | This fork. All work happens here. | **Yes** |
+| `F:\Projects\CBN` | Upstream Cataclysm-BN, for reference and diffing | **No — read only** |
+| `F:\Projects\CDDA` | Cataclysm-DDA, the source of features being ported | **No — read only** |
 
 CBN and CDDA are reference material. Read them freely to compare implementations;
 never write to them. If a task seems to require editing them, you have misread the task.
+
+`D:\Projects\CSE` is dead. Nothing is built, run, or read from there. If you are in
+a `D:` path, you are in the wrong tree.
 
 All three share the root commit `69ffbb2953`, so CDDA and CBN commits can be
 cherry-picked into CSE with real three-way merges.
@@ -54,6 +57,23 @@ fails, check these before touching any tracked CMake file:
 
 Adding a file to `tests/` requires re-running `cmake --preset cse-msvc`: the `tests/`
 glob has no `CONFIGURE_DEPENDS`, unlike `src/`.
+
+**This machine has no working SDL_GPU device.** The test binary defaults to the
+`gpu_software` compute backend and aborts before the first test with *"SDL_GPU: device
+creation failed"*. Run the suite with the CPU backend instead:
+
+```sh
+export CATA_TEST_COMPUTE_ACCELERATION=cpu
+out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe "[optional-filter]"
+```
+
+That path is upstream BN's fallback (`7478f040a5`, `b43ea3daff`), and its lighting does
+not match the GPU path exactly: four vision tests fail under it — `vision_wall_obstructs_light`,
+`vision_single_tile_skylight`, `vision_see_out_of_vehicle`, `vision_see_into_vehicle`, all
+at `tests/vision_test.cpp:256`. Treat those four as environmental. **Any other failure is real.**
+
+Never pipe `cmake --build` through `tail` or `head`: the shell reports the pager's exit
+status, so a failed build looks like a clean one.
 
 ## Fork discipline
 
@@ -86,12 +106,19 @@ Porting CDDA's pocket system (multi-compartment containers with per-pocket limit
 priorities and whitelists) into CSE.
 
 - Design: `docs/superpowers/specs/2026-08-29-pocket-system-design.md`
-- Phase 1 plan: `docs/superpowers/plans/2026-08-29-pocket-core.md`
+- Plans live in `docs/superpowers/plans/`. In dependency order: `2026-08-29-pocket-core.md`
+  (Phase 1), `2026-08-29-pocket-phase-2.md` (JSON), `2026-08-30-pocket-phase-3.md`
+  (restrictions and enforcement), `2026-08-30-put-in-refactor.md`,
+  `2026-08-30-pocket-classic-mode.md`, `2026-08-30-pocket-favorites.md`.
 - CDDA reference is pinned at `5b915aea09`. Do not track their `master`.
 
-Phase 1 Tasks 1–4 are committed. **Task 5 (whole-game verification) has not run**, the
-plan's checkboxes are unticked, and `tests/item_pocket_test.cpp` has uncommitted
-changes. Verify that state before starting anything new.
+**All six plans have landed on `main`** through `9323d082b9`. What is left is verification,
+not implementation: full suite green, and a human playtest of priority routing, item rules,
+persistence across save/reload, and the classic-mode toggle.
+
+**Do not trust the plans' checkboxes.** Five of the six still read as entirely unticked
+despite their work being committed; only `2026-08-30-pocket-favorites.md` was kept current.
+Read `git log` for what actually shipped.
 
 Two constraints from the design carry into all pocket work:
 
