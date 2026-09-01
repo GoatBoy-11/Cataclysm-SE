@@ -1077,8 +1077,14 @@ void inventory_column::draw( const catacurses::window &win, point pos ) const
                                    text_width; // Align either to the left or to the right
                 const std::string &text = entry_cell_cache.text[cell_index];
 
-                if( entry.is_item() && ( selected || !entry.is_selectable() ) ) {
-                    trim_and_print( win, point( text_x, yy ), text_width, selected ? h_white : c_dark_gray,
+                // A companion has to repaint its text on the same highlight as
+                // its bar, exactly as a selected entry does. Left to the normal
+                // path below, the text would carry the default background and
+                // erase the bar everywhere a character sits.
+                if( entry.is_item() && ( selected || companion || !entry.is_selectable() ) ) {
+                    const nc_color line_color = selected ? h_white
+                                                : ( companion ? h_dark_gray : c_dark_gray );
+                    trim_and_print( win, point( text_x, yy ), text_width, line_color,
                                     remove_color_tags( text ) );
                 } else {
                     trim_and_print( win, point( text_x, yy ), text_width, entry_cell_cache.color, text );

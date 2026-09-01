@@ -482,3 +482,35 @@ TEST_CASE("the category copy keeps the item's own category", "[inventory][ui][po
     CHECK(listed.front()->get_category_ptr() ==
           &listed.front()->any_item()->get_category());
 }
+
+TEST_CASE("the copy the cursor is not on echoes the highlight", "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto listed = selector.own_inv_column.get_all_entries(is_test_rock);
+    const auto nested = selector.own_gear_column.get_all_entries(is_test_rock);
+    REQUIRE(listed.size() == 1);
+    REQUIRE(nested.size() == 1);
+
+    // Cursor on the nested copy: the category-list copy is its companion.
+    selector.own_inv_column.set_companion_item(nested.front()->any_item());
+    CHECK(selector.own_inv_column.is_companion(*listed.front()));
+
+    // The garment holding it is a different item and must not echo.
+    const auto is_vest = [](const inventory_entry& entry) {
+        return entry.is_item() && entry.any_item()->typeId() == itype_id("test_pocket_vest");
+    };
+    for (const inventory_entry* entry : selector.own_gear_column.get_all_entries(is_vest)) {
+        CHECK_FALSE(selector.own_gear_column.is_companion(*entry));
+    }
+
+    // With no cursor item, nothing echoes.
+    selector.own_inv_column.set_companion_item(nullptr);
+    CHECK_FALSE(selector.own_inv_column.is_companion(*listed.front()));
+}
