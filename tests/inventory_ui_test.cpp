@@ -2,7 +2,11 @@
 #include "catch/catch.hpp"
 #include "inventory_ui.h"
 #include "item.h"
+#include "item_contents.h"
+#include "item_pocket.h"
+#include "options_helpers.h"
 #include "player_helpers.h"
+#include "type_id.h"
 
 TEST_CASE(
     "inventory selector restores consume selection by item type", "[inventory][ui][consume]") {
@@ -258,4 +262,122 @@ TEST_CASE(
 
     // The column is now ordered by name deterministically.
     CHECK(entries.front()->any_item()->tname(1) < entries.back()->any_item()->tname(1));
+}
+
+// Pickup and unload both route items into worn pockets, but no inventory screen
+// rendered a pocket, so a routed item was invisible and unreachable. These cover
+// the nested display that makes it visible again.
+TEST_CASE("worn pocket contents appear nested under the garment", "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto is_rock = [](const inventory_entry& entry) {
+        return entry.is_item() && entry.any_item()->typeId() == itype_id("test_rock");
+    };
+    const auto entries = selector.own_gear_column.get_all_entries(is_rock);
+    REQUIRE(entries.size() == 1);
+    CHECK(entries.front()->topmost_parent == vest);
+    CHECK(entries.front()->indent == 1);
+}
+
+// Classic mode pools storage into one compartment and must look exactly like
+// stock BN, so nothing nests there.
+TEST_CASE("classic mode nests nothing", "[inventory][ui][pocket][classic]") {
+    override_option classic("POCKET_SYSTEM", "classic");
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto is_rock = [](const inventory_entry& entry) {
+        return entry.is_item() && entry.any_item()->typeId() == itype_id("test_rock");
+    };
+    CHECK(selector.own_gear_column.get_all_entries(is_rock).empty());
+}
+
+// The payoff of BN's raw pointers over CDDA's item_location: a nested entry is
+// already an item*, so every existing action path works on it unchanged.
+TEST_CASE("an item in a worn pocket can be selected", "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+    item* rock = vest->contents.all_items_top().front();
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    REQUIRE(selector.select(rock));
+    CHECK(selector.get_selected().any_item() == rock);
+}
+
+// A garment holding nothing must not sprout an empty nested row.
+TEST_CASE("an empty worn pocket nests nothing", "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto nested = [](const inventory_entry& entry) { return entry.indent > 0; };
+    CHECK(selector.own_gear_column.get_all_entries(nested).empty());
+}
+
+// prepare_paging() sorts a column by category then name. Nested entries share
+// their garment's category, so the sort pulls children away from the container
+// they belong to ("TEST pocket vest" sorts before "TEST rock", so both rocks
+// would end up below both garments). A post-sort pass lifts them back.
+TEST_CASE("nested entries stay under their own container", "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    REQUIRE(!dummy.wear_item(item::spawn("backpack")));
+
+    item* vest = nullptr;
+    item* pack = nullptr;
+    for (item* worn : dummy.worn) {
+        (worn->typeId() == itype_id("test_pocket_vest") ? vest : pack) = worn;
+    }
+    REQUIRE(vest != nullptr);
+    REQUIRE(pack != nullptr);
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+    REQUIRE(!pack->put_in(item::spawn("test_ear_plugs")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+    // select() alone leaves the entries in insertion order, which is already
+    // parent-then-child and would make this test vacuous. select_item_type()
+    // triggers prepare_paging(), which is what actually sorts the column.
+    REQUIRE(selector.select_item_type(itype_id("test_rock")));
+
+    const auto is_item = [](const inventory_entry& entry) { return entry.is_item(); };
+    const auto entries = selector.own_gear_column.get_entries(is_item);
+
+    // Every child must sit immediately after its own parent.
+    for (size_t i = 0; i < entries.size(); ++i) {
+        item* parent = entries[i]->topmost_parent;
+        if (parent == nullptr) {
+            continue;
+        }
+        REQUIRE(i > 0);
+        const inventory_entry& before = *entries[i - 1];
+        const bool follows_parent = before.any_item() == parent
+            || before.topmost_parent == parent;
+        CHECK(follows_parent);
+    }
+    // And both children must actually be present, or the loop above is vacuous.
+    const auto nested = [](const inventory_entry& entry) { return entry.indent > 0; };
+    CHECK(selector.own_gear_column.get_entries(nested).size() == 2);
 }

@@ -57,6 +57,15 @@ class inventory_entry
         int custom_invlet = INT_MIN;
         std::string cached_name;
 
+        /**
+         * The worn item whose pocket holds this one, or nullptr for a top-level
+         * entry. BN's raw item pointers stand in for CDDA's item_location here:
+         * an entry can name its parent without inventing an ownership type.
+         */
+        item *topmost_parent = nullptr;
+        /** How many levels deep this entry is drawn. 0 is top level. */
+        int indent = 0;
+
         inventory_entry() = default;
 
         inventory_entry( const item_category *custom_category ) :
@@ -496,7 +505,9 @@ class inventory_selector
 
         void add_item( inventory_column &target_column,
                        item *location,
-                       const item_category *custom_category = nullptr );
+                       const item_category *custom_category = nullptr,
+                       item *topmost_parent = nullptr,
+                       int indent = 0 );
 
         void remove_item( item *location );
 
@@ -514,7 +525,9 @@ class inventory_selector
 
         void add_entry( inventory_column &target_column,
                         std::vector<item *> &&locations,
-                        const item_category *custom_category = nullptr );
+                        const item_category *custom_category = nullptr,
+                        item *topmost_parent = nullptr,
+                        int indent = 0 );
 
 
         void add_items( inventory_column &target_column,

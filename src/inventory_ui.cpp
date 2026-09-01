@@ -13,6 +13,8 @@
 #include "itype.h"
 #include "item.h"
 #include "item_category.h"
+#include "item_contents.h"
+#include "item_pocket.h"
 #include "item_search.h"
 #include "item_stack.h"
 #include "line.h"
@@ -849,6 +851,38 @@ void inventory_column::prepare_paging( const std::string &filter )
     };
     std::ranges::stable_sort( entries, sort_function );
 
+    // The sort above ranks every entry by category then name, which pulls nested
+    // entries away from the container holding them. Lift each child back under
+    // its own parent, keeping the sorted order among siblings. A stable pass
+    // here is cheaper than teaching the comparator about parentage.
+    if( std::ranges::any_of( entries, []( const inventory_entry & entry ) {
+    return entry.topmost_parent != nullptr;
+    } ) ) {
+        std::vector<inventory_entry> reordered;
+        reordered.reserve( entries.size() );
+        for( const inventory_entry &entry : entries ) {
+            if( entry.topmost_parent != nullptr ) {
+                continue;
+            }
+            reordered.push_back( entry );
+            for( const inventory_entry &child : entries ) {
+                if( child.topmost_parent != nullptr &&
+                    child.topmost_parent == entry.any_item() ) {
+                    reordered.push_back( child );
+                }
+            }
+        }
+        // An orphan would otherwise vanish from the list, which would lose the
+        // player an item they can see. Keep anything the pass did not place.
+        for( const inventory_entry &entry : entries ) {
+            if( entry.topmost_parent != nullptr &&
+                std::ranges::find( reordered, entry ) == reordered.end() ) {
+                reordered.push_back( entry );
+            }
+        }
+        entries = std::move( reordered );
+    }
+
     // Recover categories
     const item_category *current_category = nullptr;
     for( auto iter = entries.begin(); iter != entries.end(); ++iter ) {
@@ -918,7 +952,8 @@ size_t inventory_column::get_entry_indent( const inventory_entry &entry ) const
         return 0;
     }
 
-    size_t res = 2;
+    // Two columns per level lines a nested row up under its container.
+    size_t res = 2 + 2 * static_cast<size_t>( std::max( 0, entry.indent ) );
     if( get_option<bool>( "ITEM_SYMBOLS" ) ) {
         res += 2;
     }
@@ -1220,7 +1255,9 @@ const item_category *inventory_selector::naturalize_category( const item_categor
 
 void inventory_selector::add_entry( inventory_column &target_column,
                                     std::vector<item *> &&locations,
-                                    const item_category *custom_category )
+                                    const item_category *custom_category,
+                                    item *topmost_parent,
+                                    int indent )
 {
     if( !preset.is_shown( locations.front() ) ) {
         return;
@@ -1229,6 +1266,8 @@ void inventory_selector::add_entry( inventory_column &target_column,
     is_empty = false;
     inventory_entry entry( locations, custom_category,
                            preset.get_denial( locations.front() ).empty() );
+    entry.topmost_parent = topmost_parent;
+    entry.indent = indent;
 
     target_column.add_entry( entry );
 
@@ -1240,11 +1279,15 @@ void inventory_selector::add_entry( inventory_column &target_column,
 
 void inventory_selector::add_item( inventory_column &target_column,
                                    item *location,
-                                   const item_category *custom_category )
+                                   const item_category *custom_category,
+                                   item *topmost_parent,
+                                   int indent )
 {
     add_entry( target_column,
                std::vector<item *>( 1, location ),
-               custom_category );
+               custom_category,
+               topmost_parent,
+               indent );
 }
 
 void inventory_selector::add_items( inventory_column &target_column,
@@ -1307,6 +1350,21 @@ void inventory_selector::add_character_items( Character &character )
         } else if( character.is_worn( *it ) ) {
             add_item( own_gear_column, it,
                       &item_category_id( "ITEMS_WORN" ).obj() );
+            // Show what the garment holds, indented beneath it. Routing puts
+            // items in here, so without this they are carried but invisible and
+            // unreachable. Classic mode pools storage and must look like stock
+            // BN, so it nests nothing.
+            if( !pockets_are_classic() ) {
+                for( const item_pocket &pocket : it->contents.get_pockets() ) {
+                    if( pocket.definition().type != pocket_type::CONTAINER ) {
+                        continue;
+                    }
+                    for( item *stored : pocket.all_items_top() ) {
+                        add_item( own_gear_column, stored,
+                                  &item_category_id( "ITEMS_WORN" ).obj(), it, 1 );
+                    }
+                }
+            }
         }
         return VisitResponse::NEXT;
     } );
