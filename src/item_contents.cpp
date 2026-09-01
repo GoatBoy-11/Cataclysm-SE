@@ -261,6 +261,11 @@ ret_val<bool> item_contents::insert_into( size_t pocket_index, detached_ptr<item
         return ret_val<bool>::make_failure( allowed.str() );
     }
     pocket.insert( std::move( it ) );
+    if( owner != nullptr ) {
+        owner->invalidate_processing_cache_upwards();
+    } else {
+        invalidate_processing_cache();
+    }
     return ret_val<bool>::make_success();
 }
 

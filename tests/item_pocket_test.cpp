@@ -2348,3 +2348,19 @@ TEST_CASE( "insert_into refuses an index that does not exist", "[item][pocket][i
     CHECK_FALSE( res.success() );
     CHECK( rock );
 }
+
+TEST_CASE( "insert_into invalidates the container-level all_items_top cache",
+           "[item][pocket][insert]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+
+    // Prime the multi-pocket concatenated cache while it is still empty. If
+    // insert_into skips invalidating it, the next call below returns this
+    // stale (empty) vector instead of seeing the newly inserted item.
+    REQUIRE( bag->contents.all_items_top().empty() );
+
+    const ret_val<bool> res = bag->contents.insert_into( 1, item::spawn( "test_rock" ) );
+    REQUIRE( res.success() );
+
+    CHECK( bag->contents.all_items_top().size() == 1 );
+}
