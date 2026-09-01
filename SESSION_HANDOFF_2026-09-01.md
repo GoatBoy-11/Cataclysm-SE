@@ -139,17 +139,27 @@ Two parked minors from review: `pockets_prompt_on_pickup()` lacks the
   off, bypassing `Character::takeoff` and leaving stale encumbrance. Reserve it
   for genuinely risky diffs.
 
-## The exe rotation the user asked for
+## The exe rotation rule
 
-After every build, the repo-root `cataclysm-bn-tiles.exe` is refreshed and the
-previous one kept as `cataclysm-bn-tiles_old.exe`. `.claude/rotate-game-exe.sh`
-does it, wired to a `PostToolUse` hook in `.claude/settings.local.json`; both are
-excluded via `.git/info/exclude`. It no-ops unless the build tree is newer, and
-refuses rather than half-rotate when `_old.exe` is locked by a running game.
+**After every build, rotate the exe.** The repo-root binary must reflect the
+current HEAD or a human-test will use a stale binary and ghost-report regressions.
 
-**The hook only fires once the settings watcher has seen `.claude/`** — open
-`/hooks` once, or restart. Until then, rotate by hand after each build, or the
-user plays a stale binary.
+Automation: `.claude/rotate-game-exe.sh` is wired to a `PostToolUse` hook in
+`.claude/settings.local.json`; both are excluded via `.git/info/exclude`. It fires
+after every Bash call and no-ops unless the build tree is newer. It refuses rather
+than half-rotate when `_old.exe` is locked by a running game.
+
+**The hook only fires once the settings watcher has seen `.claude/`** — run `/hooks`
+once on session start, or restart the harness. Until then, rotate by hand after
+each build:
+
+```sh
+mv cataclysm-bn-tiles.exe cataclysm-bn-tiles_old.exe
+cp out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe cataclysm-bn-tiles.exe
+```
+
+The `_old.exe` is kept for A/B testing. **Check the repo-root exe timestamp
+against the build tree before trusting any playtest.**
 
 ## The GitHub fork — DO NOT DO THIS UNLESS THE USER ASKS
 
