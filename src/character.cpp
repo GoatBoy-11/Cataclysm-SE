@@ -2695,9 +2695,13 @@ std::vector<pocket_destination> Character::pocket_destinations(
         return destinations;
     }
 
-    // Walk worn in order, then sort stably: wear order survives as the
-    // tie-break among pockets of equal priority, matching how
-    // i_add_to_worn_pockets already ranks them.
+    // Walk worn in order, then sort stably by priority and, within a
+    // priority, ascending remaining volume - the same two keys
+    // item_contents::best_pocket() finishes its ranking on. Whitelist and
+    // restriction rank (best_pocket()'s rank_of()) is not mirrored here:
+    // this is a listing, not the routing path, and folding that in would
+    // mean sharing logic with best_pocket() for a read-only query. Wear
+    // order, via push order and a stable sort, is the final tie-break.
     for( item * const &garment : worn ) {
         if( garment == exclude ) {
             continue;
@@ -2716,9 +2720,14 @@ std::vector<pocket_destination> Character::pocket_destinations(
 
     std::ranges::stable_sort( destinations,
     []( const pocket_destination & a, const pocket_destination & b ) {
-        const int pa = a.container->contents.get_pockets()[a.pocket_index].get_settings().priority();
-        const int pb = b.container->contents.get_pockets()[b.pocket_index].get_settings().priority();
-        return pa > pb;
+        const item_pocket &pa = a.container->contents.get_pockets()[a.pocket_index];
+        const item_pocket &pb = b.container->contents.get_pockets()[b.pocket_index];
+        const int priority_a = pa.get_settings().priority();
+        const int priority_b = pb.get_settings().priority();
+        if( priority_a != priority_b ) {
+            return priority_a > priority_b;
+        }
+        return pa.remaining_volume() < pb.remaining_volume();
     } );
     return destinations;
 }

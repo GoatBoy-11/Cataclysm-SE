@@ -521,16 +521,78 @@ TEST_CASE("pocket destinations list every pocket that would take the item",
     auto& dummy = get_avatar();
     REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
     REQUIRE(!dummy.wear_item(item::spawn("backpack")));
+    item* vest = dummy.worn.front();
+    item* pack = dummy.worn.back();
 
     auto rock = item::spawn("test_rock");
     const auto destinations = dummy.pocket_destinations(*rock);
 
-    // At least the vest's pocket and the backpack's main pocket.
-    CHECK(destinations.size() >= 2);
+    // The vest's small pocket (100 ml) is too small for the 250 ml rock and
+    // must not appear; its large pocket and all four of the backpack's
+    // pockets (25 L main plus three holsters, none item-restricted) do fit
+    // and must all appear - exactly five, no more, no fewer.
+    REQUIRE(destinations.size() == 5);
+    std::vector<std::pair<item*, size_t>> found;
     for (const pocket_destination& dest : destinations) {
-        REQUIRE(dest.container != nullptr);
-        CHECK(dest.pocket_index < dest.container->contents.get_pockets().size());
+        found.emplace_back(dest.container, dest.pocket_index);
     }
+    const auto has = [&found](item* container, size_t pocket_index) {
+        for (const std::pair<item*, size_t>& entry : found) {
+            if (entry.first == container && entry.second == pocket_index) {
+                return true;
+            }
+        }
+        return false;
+    };
+    CHECK(has(vest, 1));
+    CHECK(has(pack, 0));
+    CHECK(has(pack, 1));
+    CHECK(has(pack, 2));
+    CHECK(has(pack, 3));
+}
+
+TEST_CASE("pocket destinations rank higher player priority first",
+          "[inventory][pocket][destination]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    REQUIRE(!dummy.wear_item(item::spawn("backpack")));
+    item* pack = dummy.worn.back();
+
+    // The backpack's main pocket (25 L) is far roomier than the vest's large
+    // pocket (4 L), so on remaining volume alone it would sort last, not
+    // first. Raising its priority must still put it first.
+    pack->contents.get_pockets()[0].get_settings().set_priority(5);
+
+    auto rock = item::spawn("test_rock");
+    const auto destinations = dummy.pocket_destinations(*rock);
+    REQUIRE(!destinations.empty());
+    CHECK(destinations.front().container == pack);
+    CHECK(destinations.front().pocket_index == 0);
+}
+
+TEST_CASE("pocket destinations break a priority tie by smaller remaining volume",
+          "[inventory][pocket][destination]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    REQUIRE(!dummy.wear_item(item::spawn("backpack")));
+    item* vest = dummy.worn.front();
+    item* pack = dummy.worn.back();
+
+    // Equal priority on the vest's large pocket (4 L) and the backpack's
+    // main pocket (25 L): everything else stays at the default priority of
+    // 0, so these two rank above the rest and the smaller one must lead.
+    vest->contents.get_pockets()[1].get_settings().set_priority(3);
+    pack->contents.get_pockets()[0].get_settings().set_priority(3);
+
+    auto rock = item::spawn("test_rock");
+    const auto destinations = dummy.pocket_destinations(*rock);
+    REQUIRE(destinations.size() >= 2);
+    CHECK(destinations[0].container == vest);
+    CHECK(destinations[0].pocket_index == 1);
+    CHECK(destinations[1].container == pack);
+    CHECK(destinations[1].pocket_index == 0);
 }
 
 TEST_CASE("pocket destinations skip the excluded container",
