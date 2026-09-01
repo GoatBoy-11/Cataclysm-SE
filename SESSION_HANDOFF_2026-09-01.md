@@ -4,19 +4,15 @@ Supersedes `SESSION_HANDOFF_2026-08-31.md` and the overnight version of this
 file. Covers two sessions: the overnight one ending at `a239cbd5e3`, and the day
 session ending at `de9b618740`.
 
-**HEAD:** `de9b618740` on branch **`pocket-routing-unload-and-newchar`**.
-`main` is still at `aa7393757a` — 21 commits behind, never merged, nothing
-pushed anywhere.
+**HEAD:** `0155e24c20` on **`main`** (see the evening section at the foot of this
+file; the branch below is merged and done). Nothing pushed anywhere.
 Full suite: **1,070 cases, 1,066 passed**, the four `vision_*` failures
 environmental (see CLAUDE.md).
 
 ## Merge this first
 
-```sh
-git checkout main && git merge pocket-routing-unload-and-newchar
-```
-
-Clean fast-forward.
+Done. `pocket-routing-unload-and-newchar` was fast-forwarded into `main`, as was
+`pocket-longest-side` after it. Nothing is left to merge.
 
 ## Read this before touching the open list
 
@@ -203,3 +199,102 @@ against the clock before trusting any result.
 The SDD workspace at `.superpowers/sdd/2026-09-01-pocket-destination-choice/` was
 deliberately kept rather than deleted: its ledger holds the reasoning behind
 every ruling made during execution. Gitignored scratch, safe to delete once read.
+
+---
+
+# Evening session — the `longest_side` port
+
+**HEAD:** `0155e24c20` on `main`. Full suite **1,072 cases, 1,068 passed**, the
+four `vision_*` failures environmental. Working tree clean.
+
+## Another model is working in this repo
+
+Oliver has a second model porting CDDA's mouse system. Its work is
+`e1b3ada5b0`, and its own handoff is untracked at
+`docs/superpowers/plans/2026-09-01-mouse-enable-port-HANDOFF.md`. **Read that
+before touching `src/`.**
+
+The split is clean and worth preserving: mouse work is `src/`-side (SDL events,
+input enums, options plumbing), pocket work is `data/json`-side. The one shared
+file in principle is `options.cpp`, and even there `ENABLE_MOUSE` sits in
+`add_options_interface()` while pocket options sit in
+`add_options_world_default()`. **Do not let both models into `src/` at once** —
+that is where the 181-call-site fragility lives.
+
+Its untracked `test.full.log` / `test.full.err.log` sit in the repo root. Write
+suite output to the scratchpad instead, or the two of you will clobber each
+other.
+
+## What landed
+
+`0155e24c20` — **825 items now declare `longest_side`**, ported from CDDA for
+every id present in both trees. 162 JSON files plus one test. No `src/`.
+
+This is the half that was missing: `44cbb706fd` gave legacy-synthesized pockets
+a derived length limit back in the morning, but with every item's length also
+derived from volume, the limit could not refuse anything. Now an axe is 78 cm
+rather than 14 cm, so it takes a backpack's 150 cm side pocket and not its 40 cm
+main compartment.
+
+## Things believed true that turned out false
+
+- **The container half was never missing.** The plan I nearly wrote would have
+  authored multi-pocket definitions for CSE's bags. Unnecessary — Phase 2
+  already imported them. `backpack` has had CDDA's four pockets, 150 cm side
+  slot included, the whole time. I inferred a 35 cm ceiling from the legacy
+  `storage: 15 L` field without checking that `synthesize_pockets_from_legacy`
+  returns early when authored pockets exist. It does, at `item_factory.cpp`.
+- **"47 items fit nowhere" was wrong.** That counted only `CONTAINER` pockets
+  with a declared `max_item_length` and ignored holsters, which by the design of
+  `44cbb706fd` carry *no* length limit at all. Of 50 items over 150 cm, 44 fit
+  an existing holster today: `bow_sling` (10 L), `spearsling` (4 L), `bscabbard`
+  (3.75 L), `baldric`, `scabbard`, `sheath`. Every pike, `long_pole`,
+  `stick_long` and `spear_dory` is carryable. The 6 that are not are 60–300 L
+  furniture — mattresses, fridges, a cannon — which volume refused anyway.
+- **CSE's holsters are more permissive than CDDA's.** CDDA caps `spearsling` at
+  250 cm and `bscabbard` at 180 cm; ours are uncapped. Importing CDDA's pocket
+  data for those would *tighten* them. CDDA's three unmatched long containers
+  (`bigframe_pack` 260 cm/**1000 L**, `rope_loop`, `box_oversize_reinforced`)
+  were deliberately not imported: they solve nothing here, and `bigframe_pack`
+  would quietly hand the player a 1000-litre container.
+
+## Process lessons that cost real time
+
+- **A JSON port needs a value-legality check, not just a parse check.** My port
+  copied `"longest_side": "1 meter"` verbatim from CDDA into `generic.json`.
+  Valid JSON; not valid game data — `units::length_units` knows only `mm`, `cm`,
+  `m`, and a string not starting with a digit fails as *"number expected"*. My
+  verification confirmed every file still parsed and differed only by the added
+  key, so it sailed through. The mouse model's build crashed on it and it fixed
+  the value in my uncommitted tree. Both values are now `"1 m"` and all 825 have
+  been scanned against the real unit table.
+- **A script reporting zero work AND zero skips is reporting a bug.** Pass 2 of
+  the port added `[`/`]` to its depth counter, so in a top-level-array file
+  objects sat at depth 2 and the `depth == 1` test never fired. It looked like a
+  clean no-op. Zero edits with zero skips is not "nothing to do", it is "nothing
+  was examined".
+- **Backgrounded test runs report the harness's exit code, not the binary's.**
+  The full suite came back "exit code 0" with 4 failing cases. Same trap as
+  piping through `tail`. Read the case counts.
+- **Ammo pockets are length-checked.** The length test at `item_pocket.cpp:530`
+  runs *before* the ammo early-return at `item_pocket.cpp:599`. Ammo and casings
+  now carry real lengths, so this is the first place to look if reloading
+  misbehaves. `[reload],[gun],[ammo],[magazine]` passes, 1,423 assertions.
+
+## Open, in the order worth doing
+
+1. **Playtest the length limits.** Untested by human. Watch reloading, and watch
+   whether the pocket picker now fires usefully on long tools.
+2. **`+`/`-` at pickup.** Unchanged from this morning; count machinery exists at
+   `pickup.cpp:961`, the `PICKUP` category lacks the keys. Design together with
+   `POCKET_PICKUP=choose` to avoid two prompts for one action.
+3. **Unload in choose mode fires a menu per item.** Needs a "put the rest here
+   too" entry, still deliberately undesigned.
+4. **Gunmod rejections.** `m7` refuses `holo_sight`, `acog_scope`,
+   `rifle_scope`, `muzzle_brake`. Still inert; the audit is a dry run.
+5. **Routing coverage.** Hauling, AIM transfers and crafting returns still call
+   `i_add` directly.
+
+`data/json/obsoletion/items.json` took 51 of the 857 insertions. Harmless —
+obsolete items gaining a field they will never use — but drop them if it offends.
+
