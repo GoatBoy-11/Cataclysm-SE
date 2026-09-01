@@ -3481,7 +3481,7 @@ void item::pocket_info( std::vector<iteminfo> &info, const iteminfo_query *parts
             line += string_format( _( "holds <info>%s %s</info>" ),
                                    format_volume( def.max_contains_volume ),
                                    volume_units_long() );
-            if( def.max_item_length < units::length_max ) {
+            if( def.max_item_length > 0_mm ) {
                 line += string_format( _( ", items up to <info>%d cm</info> long" ),
                                        static_cast<int>( units::to_millimeter( def.max_item_length ) / 10 ) );
             }

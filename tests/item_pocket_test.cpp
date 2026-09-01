@@ -2238,3 +2238,75 @@ TEST_CASE( "stowing_starting_gear_preserves_what_is_carried", "[pocket][routing]
     CHECK( dummy.weight_carried() == before_weight );
     CHECK( items_in_pockets( *dummy.worn.front(), itype_id( "test_rock" ) ) == 1 );
 }
+
+// ---------------------------------------------------------------------------
+// Item length limits
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "a_synthesized_storage_pocket_limits_item_length", "[item][pocket][length]" )
+{
+    // 2250 ml of storage is a 13 cm cube, whose face diagonal is 183 mm.
+    // Nothing longer goes in, however well it fits by volume.
+    detached_ptr<item> hoodie = item::spawn( "hoodie" );
+    const std::vector<item_pocket> &pockets = hoodie->contents.get_pockets();
+
+    REQUIRE( pockets.size() == 1 );
+    CHECK( pockets.front().definition().max_item_length == 183_mm );
+}
+
+TEST_CASE( "a_holster_pocket_keeps_no_length_limit", "[item][pocket][length]" )
+{
+    // A scabbard is sized for a sword by volume alone, so deriving a length
+    // limit from that volume would make it refuse the weapon it exists to hold.
+    detached_ptr<item> scabbard = item::spawn( "scabbard" );
+    const std::vector<item_pocket> &pockets = scabbard->contents.get_pockets();
+
+    REQUIRE( !pockets.empty() );
+    CHECK( pockets.front().definition().max_item_length == 0_mm );
+}
+
+TEST_CASE( "a_wood_axe_does_not_fit_a_jean_pocket", "[item][pocket][length]" )
+{
+    detached_ptr<item> jeans = item::spawn( "jeans" );
+    detached_ptr<item> axe = item::spawn( "ax" );
+
+    // Jeans carry authored pocket_data, so ask every pocket: one accepting
+    // pocket is enough to put the axe in a trouser leg.
+    bool any_accepts = false;
+    for( const item_pocket &pocket : jeans->contents.get_pockets() ) {
+        INFO( "pocket volume " << units::to_milliliter( pocket.definition().max_contains_volume )
+              << " ml, length " << units::to_millimeter( pocket.definition().max_item_length )
+              << " mm" );
+        if( pocket.can_contain( *axe ).success() ) {
+            any_accepts = true;
+        }
+    }
+    INFO( "axe is " << units::to_millimeter( axe->length() ) << " mm long, "
+          << units::to_milliliter( axe->volume() ) << " ml" );
+    CHECK_FALSE( any_accepts );
+}
+
+TEST_CASE( "an_authored_pocket_without_a_length_limit_omits_the_length_line",
+           "[item][pocket][info][length]" )
+{
+    // 0 mm means "this pocket sets no length limit", so it must print nothing
+    // rather than advertising a limit of zero. The bag declares 30 cm on its
+    // first pocket and nothing on its second, so exactly one line may appear -
+    // and counting them beats searching for "0 cm", which "30 cm" contains.
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    std::string joined;
+    for( const iteminfo &entry : bag->info() ) {
+        joined += entry.sName;
+        joined += "\n";
+    }
+
+    int length_lines = 0;
+    for( size_t at = joined.find( "items up to" ); at != std::string::npos;
+         at = joined.find( "items up to", at + 1 ) ) {
+        length_lines++;
+    }
+
+    INFO( joined );
+    CHECK( length_lines == 1 );
+    CHECK( joined.find( "30 cm" ) != std::string::npos );
+}

@@ -323,6 +323,25 @@ static bool has_only_special_pockets( const itype &def )
 }
 
 /**
+ * A pocket that states only a volume accepts anything small enough to fit, so a
+ * legacy garment would swallow a spear. Treat the space as a cube and allow the
+ * diagonal of one face: the longest thing that slides in corner to corner. This
+ * is CDDA's default for an undeclared max_item_length, and it matches how an
+ * item's own longest_side is already derived from its volume below.
+ *
+ * Note this cannot refuse anything volume already refuses while every item's
+ * length is itself derived from its volume, since a cube's face diagonal is
+ * longer than its side. It bites once items start declaring longest_side.
+ */
+static units::length default_pocket_length_from_volume( const units::volume &v )
+{
+    constexpr double face_diagonal = 1.41421356237309504880;
+    const units::length side = units::default_length_from_volume<int>( v );
+    return units::from_millimeter<std::int64_t>(
+               static_cast<std::int64_t>( units::to_millimeter( side ) * face_diagonal ) );
+}
+
+/**
  * Give items that predate pocket_data a pocket built from their legacy storage
  * fields, so CBN base content and every CBN mod gain working pockets with no
  * JSON changes.
@@ -406,6 +425,11 @@ static void synthesize_pockets_from_legacy( itype &def )
         synthesize_use_action_pockets_from_legacy( def );
         return;
     }
+
+    // Only this general-purpose pocket gets a derived length. A holster or
+    // bandolier is sized for one named thing, and a limit inferred from its
+    // volume would make a scabbard refuse its own sword.
+    pocket.max_item_length = default_pocket_length_from_volume( pocket.max_contains_volume );
 
     pocket.synthesized = true;
     def.pockets.push_back( pocket );
