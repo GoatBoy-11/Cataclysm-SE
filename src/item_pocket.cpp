@@ -459,7 +459,11 @@ bool pockets_are_classic()
 bool pockets_prompt_on_pickup()
 {
     // Classic mode pools storage, so there is nothing to choose between.
-    return !pockets_are_classic() && get_option<std::string>( "POCKET_PICKUP" ) == "choose";
+    // pockets_are_classic() carries its own has_option guard, but returns false
+    // when the option is absent, so it cannot stand in for this one.
+    return !pockets_are_classic() &&
+           get_options().has_option( "POCKET_PICKUP" ) &&
+           get_option<std::string>( "POCKET_PICKUP" ) == "choose";
 }
 
 /**

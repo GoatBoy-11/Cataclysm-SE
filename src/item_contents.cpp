@@ -252,6 +252,12 @@ void item_contents::insert_item_forced( detached_ptr<item> &&it )
 
 ret_val<bool> item_contents::insert_into( size_t pocket_index, detached_ptr<item> &&it )
 {
+    if( !it ) {
+        // Callers hand ownership over, so a moved-from or already-detached
+        // pointer arrives here as null. Reporting success would lose the
+        // caller's item silently.
+        return ret_val<bool>::make_failure( _( "there is nothing to put away" ) );
+    }
     if( pocket_index >= pockets.size() ) {
         return ret_val<bool>::make_failure( _( "that pocket does not exist" ) );
     }

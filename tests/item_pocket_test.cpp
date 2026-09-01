@@ -2370,6 +2370,23 @@ TEST_CASE( "insert_into refuses a pocket that cannot hold the item", "[item][poc
     CHECK( bag->contents.get_pockets()[0].empty() );
 }
 
+TEST_CASE( "insert_into refuses a null item instead of dereferencing it",
+           "[item][pocket][insert]" )
+{
+    // detached_ptr::operator* is a raw *get(), so a null one is an access
+    // violation rather than a failed check. Callers hand ownership over, and a
+    // moved-from or already-detached pointer arrives here as null.
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    detached_ptr<item> nothing;
+
+    REQUIRE( !nothing );
+
+    const ret_val<bool> inserted =
+        backpack->contents.insert_into( 0, std::move( nothing ) );
+
+    CHECK_FALSE( inserted.success() );
+}
+
 TEST_CASE( "insert_into refuses an index that does not exist", "[item][pocket][insert]" )
 {
     detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
