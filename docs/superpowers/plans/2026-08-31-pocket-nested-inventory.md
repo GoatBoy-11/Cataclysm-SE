@@ -54,18 +54,18 @@ So an entry can carry a parent pointer without inventing an ownership type.
 
 ## Tasks
 
-- [ ] Tests first (`[pocket][inventory]`): a worn container's contents appear
+- [x] Tests first (`[pocket][inventory]`): a worn container's contents appear
   as entries; they carry the right parent and indent; classic mode shows none;
   an item in a pocket can be selected and dropped. Drive
   `inventory_selector` headlessly as `tests/inventory_ui_test.cpp` does if one
   exists, otherwise assert on the entry list the selector builds.
-- [ ] `inventory_entry` fields.
-- [ ] Entry construction for worn pockets.
-- [ ] Indentation.
-- [ ] Ordering.
-- [ ] Full suite green (four `vision_*` CPU-backend failures stay
+- [x] `inventory_entry` fields.
+- [x] Entry construction for worn pockets.
+- [x] Indentation.
+- [x] Ordering.
+- [x] Full suite green (four `vision_*` CPU-backend failures stay
   environmental).
-- [ ] In-game: pick items up, open inventory, see them nested under the
+- [ ] In-game (Oliver, outstanding): pick items up, open inventory, see them nested under the
   garment; act on one directly; classic world unchanged.
 
 ## Out of scope
