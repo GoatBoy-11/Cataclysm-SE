@@ -25,6 +25,7 @@
 #include <unordered_map>
 #include <vector>
 #include "avatar.h"
+#include "cached_options.h"
 #include "cata_tiles.h"
 #include "cata_utility.h"
 #include "catacharset.h"
@@ -3396,6 +3397,10 @@ static void CheckMessages()
                 // TODO: somehow get the "digipad" values from the axes
                 break;
             case SDL_EVENT_MOUSE_MOTION:
+                if( !mouse_enabled ) {
+                    break;
+                }
+
                 if( get_option<std::string>( "HIDE_CURSOR" ) == "show" ||
                     get_option<std::string>( "HIDE_CURSOR" ) == "hidekb" ) {
                     if( !SDL_CursorVisible() ) {
@@ -3408,6 +3413,10 @@ static void CheckMessages()
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
+                if( !mouse_enabled ) {
+                    break;
+                }
+
                 switch( ev.button.button ) {
                     case SDL_BUTTON_LEFT:
                         last_input = input_event( MOUSE_BUTTON_LEFT, input_event_t::mouse );
@@ -3415,10 +3424,20 @@ static void CheckMessages()
                     case SDL_BUTTON_RIGHT:
                         last_input = input_event( MOUSE_BUTTON_RIGHT, input_event_t::mouse );
                         break;
+                    case SDL_BUTTON_X1:
+                        last_input = input_event( MOUSE_BUTTON_X1, input_event_t::mouse );
+                        break;
+                    case SDL_BUTTON_X2:
+                        last_input = input_event( MOUSE_BUTTON_X2, input_event_t::mouse );
+                        break;
                 }
                 break;
 
             case SDL_EVENT_MOUSE_WHEEL:
+                if( !mouse_enabled ) {
+                    break;
+                }
+
                 if( ev.wheel.y > 0 ) {
                     last_input = input_event( SCROLLWHEEL_UP, input_event_t::mouse );
                 } else if( ev.wheel.y < 0 ) {

@@ -48,6 +48,11 @@ extern bool log_from_top;
 extern int message_ttl;
 extern int message_cooldown;
 
+/** Mouse input enabled by the user (ENABLE_MOUSE). */
+extern bool mouse_enabled;
+/** HideKB cursor mode: cursor hidden on keyboard input, shown on mouse movement. */
+extern bool mouse_hide_kb;
+
 /** Display mod source for items, furniture, terrain and monsters.*/
 extern bool display_mod_source;
 /** Display internal IDs for items, furniture, terrain and monsters.*/

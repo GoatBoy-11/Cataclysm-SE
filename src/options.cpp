@@ -1935,6 +1935,11 @@ void options_manager::add_options_interface()
 
     add_empty_line();
 
+    add( "ENABLE_MOUSE", interface, translate_marker( "Enable mouse" ),
+         translate_marker( "Enable input from mouse." ),
+         true, COPT_NO_HIDE
+       );
+
     add( "ENABLE_JOYSTICK", interface, translate_marker( "Enable joystick" ),
          translate_marker( "Enable input from joystick." ),
          true, COPT_CURSES_HIDE
@@ -1959,6 +1964,9 @@ void options_manager::add_options_interface()
         std::make_tuple( 10, translate_marker( "Fast" ) )
     },
     30, 30, COPT_CURSES_HIDE );
+
+    get_option( "HIDE_CURSOR" ).setPrerequisite( "ENABLE_MOUSE" );
+    get_option( "EDGE_SCROLL" ).setPrerequisite( "ENABLE_MOUSE" );
 
 }
 
@@ -4470,6 +4478,8 @@ void options_manager::cache_to_globals()
     log_from_top = ::get_option<std::string>( "LOG_FLOW" ) == "new_top";
     message_ttl = ::get_option<int>( "MESSAGE_TTL" );
     message_cooldown = ::get_option<int>( "MESSAGE_COOLDOWN" );
+    mouse_enabled = ::get_option<bool>( "ENABLE_MOUSE" );
+    mouse_hide_kb = ::get_option<std::string>( "HIDE_CURSOR" ) == "hidekb";
     angled_sunlight_shadows = ::get_option<bool>( "FOV_3D_OCCLUSION" );
     const auto prevent_occlusion_option = ::get_option<std::string>( "PREVENT_OCCLUSION" );
     prevent_occlusion = prevent_occlusion_option == "off" ? 0 : prevent_occlusion_option == "on" ? 1 :

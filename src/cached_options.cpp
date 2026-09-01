@@ -13,6 +13,8 @@ bool use_tiles_overmap = false;
 bool log_from_top;
 int message_ttl;
 int message_cooldown;
+bool mouse_enabled = true;
+bool mouse_hide_kb = false;
 bool display_mod_source;
 bool display_object_ids;
 bool trigdist;
