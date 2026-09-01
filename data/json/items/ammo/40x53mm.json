@@ -24,6 +24,7 @@
   {
     "id": "40x53mm_m1001",
     "copy-from": "40x53mm_grenade",
+    "longest_side": "112 mm",
     "type": "AMMO",
     "name": { "str": "40x53mm M1001 flechette" },
     "description": "40x53mm canister shot loaded with 17 grain flechettes.",

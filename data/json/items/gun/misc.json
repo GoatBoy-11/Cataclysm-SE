@@ -13,6 +13,7 @@
     "ammo": "homebrew_rocket",
     "weight": "7430 g",
     "volume": "5 L",
+    "longest_side": "90 cm",
     "price_postapoc": "5 USD",
     "dispersion": 300,
     "durability": 5,

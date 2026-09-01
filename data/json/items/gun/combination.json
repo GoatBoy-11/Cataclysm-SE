@@ -12,6 +12,7 @@
     "ammo": "3006",
     "weight": "4200 g",
     "volume": "3 L",
+    "longest_side": "100 cm",
     "blackpowder_tolerance": 72,
     "clip_size": 1,
     "barrel_volume": "500 ml",

@@ -7,6 +7,7 @@
     "description": "A pressurized 3L canister designed to feed a flamethrower.",
     "weight": "600 g",
     "volume": "3 L",
+    "longest_side": "630 mm",
     "price": "50 USD",
     "price_postapoc": "250 cent",
     "material": "steel",

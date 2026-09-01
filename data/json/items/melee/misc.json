@@ -68,6 +68,7 @@
     "weight": "115 g",
     "price_postapoc": "10 cent",
     "volume": "250 ml",
+    "longest_side": "15 cm",
     "cutting": 6,
     "flags": [ "STAB", "SHEATH_KNIFE", "CONDUCTIVE", "FRAGILE_MELEE" ],
     "qualities": [ [ "BUTCHER", -18 ] ]
@@ -100,6 +101,7 @@
     "material": [ "plastic" ],
     "weight": "49 g",
     "volume": "250 ml",
+    "longest_side": "20 cm",
     "bashing": 1,
     "cutting": 3,
     "to_hit": -3,

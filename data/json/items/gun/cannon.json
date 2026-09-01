@@ -8,6 +8,7 @@
     "description": "A light (by artillery standards) rifled cannon widely used in the American Civil War, noted for its reliability.",
     "weight": "371946 g",
     "volume": "134 L",
+    "longest_side": "185 cm",
     "price": "350 USD",
     "price_postapoc": "10 USD",
     "to_hit": -4,

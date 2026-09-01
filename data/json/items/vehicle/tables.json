@@ -11,6 +11,7 @@
     "material": [ "wood" ],
     "flags": [ "TRADER_AVOID", "FLAT_SURFACE" ],
     "volume": "10500 ml",
+    "longest_side": "110 cm",
     "bashing": 6,
     "category": "veh_parts",
     "price": "200 USD",
@@ -33,6 +34,7 @@
     "material": [ "steel" ],
     "bashing": 8,
     "price": "400 USD",
+    "longest_side": "80 cm",
     "copy-from": "v_table"
   },
   {

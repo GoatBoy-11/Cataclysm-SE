@@ -573,6 +573,7 @@
     "material": "plastic",
     "weight": "18 g",
     "volume": "5 ml",
+    "longest_side": "5 cm",
     "to_hit": -3,
     "category": "valuables",
     "//": "Software declares this as its container, so the drive needs a pocket to be one.  CDDA models this as an E_FILE_STORAGE pocket, which BN has no equivalent for yet.",
@@ -653,6 +654,7 @@
     "material": "gold",
     "weight": "1500 g",
     "volume": "250 ml",
+    "longest_side": "28 cm",
     "to_hit": -2,
     "bashing": 9
   },
@@ -705,6 +707,7 @@
     "material": "steel",
     "weight": "349 g",
     "volume": "250 ml",
+    "longest_side": "204 mm",
     "cutting": 14,
     "flags": [ "HURT_WHEN_WIELDED" ],
     "to_hit": -4
@@ -783,6 +786,7 @@
     "material": "steel",
     "weight": "908 g",
     "volume": "1500 ml",
+    "longest_side": "80 cm",
     "bashing": 12,
     "to_hit": -1,
     "qualities": [ [ "HAMMER", 1 ] ],
@@ -845,6 +849,7 @@
     "material": "wood",
     "weight": "751 g",
     "volume": "750 ml",
+    "longest_side": "122 cm",
     "bashing": 8,
     "flags": [ "TRADER_AVOID" ]
   },
@@ -889,6 +894,7 @@
     "material": [ "steel", "iron" ],
     "weight": "22680 g",
     "volume": "6250 ml",
+    "longest_side": "1 m",
     "bashing": 6,
     "to_hit": -4
   },
@@ -905,6 +911,7 @@
     "material": [ "plastic", "aluminum" ],
     "weight": "1133 g",
     "volume": "2500 ml",
+    "longest_side": "1 m",
     "bashing": 4,
     "to_hit": -3,
     "flags": [ "TRADER_AVOID" ]
@@ -2150,6 +2157,7 @@
     "material": "soil",
     "weight": "1750 g",
     "volume": "750 ml",
+    "longest_side": "36 cm",
     "bashing": 2,
     "to_hit": -3,
     "flags": [ "ALLOWS_REMOTE_USE" ],
@@ -2175,6 +2183,7 @@
     "flags": [ "NONCONDUCTIVE" ],
     "weight": "6000 g",
     "volume": "4000 ml",
+    "longest_side": "36 cm",
     "bashing": 10,
     "to_hit": -2,
     "price": "20 USD",

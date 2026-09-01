@@ -14,6 +14,7 @@
     "ammo": "BB",
     "weight": "1723 g",
     "volume": "1500 ml",
+    "longest_side": "90 cm",
     "barrel_volume": "150 ml",
     "range": 12,
     "ranged_damage": { "damage_type": "bullet", "amount": 2 },

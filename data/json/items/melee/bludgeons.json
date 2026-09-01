@@ -8,6 +8,7 @@
     "description": "This is a stout pole with a large steel flanged mace head on a short chain attached to it, based on the peasant flail agricultural tool except now with a metal head and made to thresh people in metal armor rather than grain.",
     "weight": "1800 g",
     "volume": "1850 ml",
+    "longest_side": "160 cm",
     "price": "250 USD",
     "price_postapoc": "30 USD",
     "bashing": 50,
@@ -26,6 +27,7 @@
     "description": "This is a stout pole with a wooden club on a leather cord attached to it, once used as a tool used to thresh wheat and occasionally people when the peasants got angry at their feudal lords.",
     "weight": "1600 g",
     "volume": "1850 ml",
+    "longest_side": "160 cm",
     "price": "40 USD",
     "price_postapoc": "10 USD",
     "bashing": 30,
@@ -50,6 +52,7 @@
     "techniques": [ "WBLOCK_1" ],
     "flags": [ "DURABLE_MELEE" ],
     "volume": "1750 ml",
+    "longest_side": "864 mm",
     "bashing": 26,
     "price": "160 USD",
     "price_postapoc": "750 cent"
@@ -58,6 +61,7 @@
     "id": "bat_metal",
     "type": "GENERIC",
     "copy-from": "bat",
+    "longest_side": "90 cm",
     "name": { "str": "aluminum bat" },
     "description": "An aluminum baseball bat, lighter than a wooden bat and a little easier to swing as a result.",
     "weight": "765 g",
@@ -81,6 +85,7 @@
     "techniques": [  ],
     "flags": [ "FRAGILE_MELEE" ],
     "volume": "2250 ml",
+    "longest_side": "60 cm",
     "price": "25 USD"
   },
   {
@@ -133,6 +138,7 @@
     "flags": [ "DURABLE_MELEE", "BELT_CLIP" ],
     "use_action": { "menu_text": "Expand", "type": "transform", "target": "baton-extended", "msg": "You snap open your baton." },
     "volume": "250 ml",
+    "longest_side": "24 cm",
     "bashing": 4,
     "price": "175 USD"
   },
@@ -147,6 +153,7 @@
     "techniques": [ "WBLOCK_1", "RAPID" ],
     "use_action": { "menu_text": "Collapse", "type": "transform", "target": "baton", "msg": "You collapse your baton." },
     "volume": "750 ml",
+    "longest_side": "60 cm",
     "bashing": 18
   },
   {
@@ -165,6 +172,7 @@
     "flags": [ "BELT_CLIP", "NONCONDUCTIVE" ],
     "weight": "500 g",
     "volume": "350 ml",
+    "longest_side": "20 cm",
     "bashing": 13,
     "to_hit": 1
   },
@@ -184,6 +192,7 @@
     "flags": [ "DURABLE_MELEE", "SHEATH_SWORD" ],
     "weight": "1133 g",
     "volume": "2 L",
+    "longest_side": "100 cm",
     "//": "MA reference I used held that a bokken crushes rather than cuts (or impales) but is otherwise just as damaging as a katana.  Nerfed by popular demand.",
     "bashing": 26,
     "cutting": 1,
@@ -232,6 +241,7 @@
     "techniques": [ "WBLOCK_1" ],
     "flags": [ "DURABLE_MELEE" ],
     "volume": "2250 ml",
+    "longest_side": "40 cm",
     "bashing": 11,
     "price": "10 USD"
   },
@@ -250,6 +260,7 @@
     "techniques": [ "WBLOCK_1" ],
     "flags": [ "NONCONDUCTIVE" ],
     "volume": "1 L",
+    "longest_side": "80 cm",
     "bashing": 10,
     "price": "160 USD",
     "price_postapoc": "1 USD"
@@ -268,6 +279,7 @@
     "material": [ "wood" ],
     "weight": "200 g",
     "volume": "1531 ml",
+    "longest_side": "80 cm",
     "bashing": 3,
     "looks_like": "cane",
     "use_action": {
@@ -296,6 +308,7 @@
     "flags": [ "BELT_CLIP" ],
     "weight": "400 g",
     "volume": "600 ml",
+    "longest_side": "60 cm",
     "bashing": 8,
     "price": "10 USD"
   },
@@ -313,6 +326,7 @@
     "material": "aluminum",
     "weight": "300 g",
     "volume": "1 L",
+    "longest_side": "110 cm",
     "bashing": 14,
     "to_hit": 1,
     "flags": [ "SHEATH_GOLF" ]
@@ -331,6 +345,7 @@
     "flags": [ "NONCONDUCTIVE" ],
     "techniques": [ "WBLOCK_1", "BRUTAL", "WIDE", "SWEEP" ],
     "volume": "1250 ml",
+    "longest_side": "80 cm",
     "bashing": 50,
     "to_hit": 1,
     "price": "120 USD",
@@ -397,6 +412,7 @@
     "techniques": [ "WBLOCK_1" ],
     "weight": "400 g",
     "volume": "1750 ml",
+    "longest_side": "150 cm",
     "bashing": 18,
     "cutting": 1,
     "to_hit": 2
@@ -481,6 +497,7 @@
     "techniques": [ "WBLOCK_1", "WIDE", "SWEEP" ],
     "weight": "3200 g",
     "volume": "3750 ml",
+    "longest_side": "200 cm",
     "bashing": 34,
     "cutting": 34,
     "to_hit": 1,
@@ -519,6 +536,7 @@
     "techniques": [ "SWEEP" ],
     "flags": [ "DURABLE_MELEE", "NONCONDUCTIVE", "BELT_CLIP" ],
     "volume": "1250 ml",
+    "longest_side": "80 cm",
     "//": "Same total damage and slightly higher weight than a morningstar - exchanged.",
     "bashing": 40,
     "price": "1 kUSD",
@@ -571,6 +589,7 @@
     "flags": [ "BELT_CLIP", "NONCONDUCTIVE" ],
     "weight": "400 g",
     "volume": "350 ml",
+    "longest_side": "20 cm",
     "bashing": 12,
     "to_hit": 1,
     "price_postapoc": "50 cent"
@@ -589,6 +608,7 @@
     "techniques": [ "WBLOCK_1", "BRUTAL", "WIDE", "SWEEP" ],
     "flags": [ "NONCONDUCTIVE" ],
     "volume": "2500 ml",
+    "longest_side": "60 cm",
     "bashing": 9999,
     "price": "120 USD",
     "price_postapoc": "500 USD",
@@ -608,6 +628,7 @@
     "material": [ "iron", "wood" ],
     "techniques": [ "SWEEP" ],
     "volume": "1500 ml",
+    "longest_side": "80 cm",
     "bashing": 38,
     "cutting": 6,
     "flags": [ "DURABLE_MELEE", "STAB", "NONCONDUCTIVE" ],
@@ -659,6 +680,7 @@
     "material": [ "wood" ],
     "techniques": [ "WBLOCK_1" ],
     "volume": "1250 ml",
+    "longest_side": "65 cm",
     "bashing": 10,
     "cutting": 3,
     "flags": [ "STAB" ],
@@ -679,6 +701,7 @@
     "material": [ "wood" ],
     "techniques": [ "WBLOCK_1" ],
     "volume": "2 L",
+    "longest_side": "148 cm",
     "bashing": 10,
     "price": "80 USD",
     "price_postapoc": "50 cent"
@@ -698,6 +721,7 @@
     "flags": [ "DURABLE_MELEE", "BELT_CLIP" ],
     "use_action": { "menu_text": "Extend", "type": "transform", "target": "PR24-extended", "msg": "You snap open your PR-24 baton." },
     "volume": "1 L",
+    "longest_side": "20 cm",
     "bashing": 5,
     "price": "300 USD",
     "price_postapoc": "750 cent"
@@ -713,6 +737,7 @@
     "techniques": [ "WBLOCK_2", "RAPID" ],
     "use_action": { "menu_text": "Retract", "type": "transform", "target": "PR24-retracted", "msg": "You collapse your PR-24 baton." },
     "volume": "2 L",
+    "longest_side": "60 cm",
     "bashing": 20
   },
   {
@@ -731,6 +756,7 @@
     "flags": [ "DURABLE_MELEE", "SHEATH_SPEAR" ],
     "weight": "1250 g",
     "volume": "1750 ml",
+    "longest_side": "183 cm",
     "bashing": 20,
     "to_hit": 3
   },
@@ -738,6 +764,7 @@
     "id": "i_staff",
     "type": "GENERIC",
     "copy-from": "q_staff",
+    "longest_side": "180 cm",
     "name": { "str": "ironshod quarterstaff", "str_pl": "ironshod quarterstaves" },
     "description": "A smooth and sturdy staff with a leather-wrapped grip, which has been reinforced with metal bands and caps.  Durable and well-balanced, it is surprisingly easy to handle.",
     "price": "60 USD",
@@ -756,6 +783,7 @@
     "description": "This is an ironshod quarterstaff that has a high-voltage stun gun built into the handle.  The stun gun is wired to the metal caps at either end of the staff, allowing you to zap a dangerous opponent with each strike.  It is currently off.",
     "weight": "1298 g",
     "volume": "1750 ml",
+    "longest_side": "180 cm",
     "price": "80 USD",
     "price_postapoc": "45 USD",
     "ammo": "battery",
@@ -805,6 +833,7 @@
     "material": [ "cotton", "stone" ],
     "weight": "1007 g",
     "volume": "500 ml",
+    "longest_side": "10 cm",
     "bashing": 8,
     "to_hit": -1,
     "qualities": [ [ "HAMMER", 1 ] ]
@@ -825,6 +854,7 @@
     "flags": [ "DURABLE_MELEE", "BELT_CLIP" ],
     "weight": "910 g",
     "volume": "1500 ml",
+    "longest_side": "90 cm",
     "bashing": 26,
     "to_hit": 2
   },
@@ -840,12 +870,14 @@
     "flags": [ "DURABLE_MELEE", "NONCONDUCTIVE" ],
     "weight": "1135 g",
     "volume": "1500 ml",
+    "longest_side": "90 cm",
     "bashing": 30
   },
   {
     "id": "shillelagh_fake",
     "type": "GENERIC",
     "copy-from": "shillelagh",
+    "longest_side": "90 cm",
     "name": { "str": "shillelagh fake" },
     "description": "A fake shillelagh massproduced as a souvenir for tourists.  This knotty stick has not been cured in a chimney like a traditional shillelagh but has had fake black soot painted on.",
     "price": "25 USD",
@@ -873,12 +905,14 @@
     "techniques": [ "WBLOCK_2", "RAPID" ],
     "flags": [ "DURABLE_MELEE", "BELT_CLIP" ],
     "volume": "2 L",
+    "longest_side": "50 cm",
     "bashing": 20
   },
   {
     "id": "tonfa_wood",
     "type": "GENERIC",
     "copy-from": "tonfa",
+    "longest_side": "50 cm",
     "name": { "str": "wooden tonfa" },
     "description": "A stout wooden truncheon of the sort commonly employed by police.  Originally an Okinawan weapon, it consists of a carved stick with a perpendicular handle attached a third of the way down its length.",
     "weight": "921 g",
@@ -893,6 +927,7 @@
     "description": "This is a reinforced plastic tonfa; the core is hollowed out and is filled with capacitors and a battery compartment.  When a switch on the handle is pressed, a high-voltage current is transmitted to the two electrodes mounted in the end of the tonfa, and by extension to anyone unfortunate enough to be in contact with them.  It's currently turned off.",
     "weight": "726 g",
     "volume": "2250 ml",
+    "longest_side": "50 cm",
     "price": "170 USD",
     "price_postapoc": "25 USD",
     "material": [ "plastic", "steel" ],
@@ -945,6 +980,7 @@
     "techniques": [ "WBLOCK_1", "BRUTAL", "SWEEP" ],
     "flags": [ "DURABLE_MELEE", "STAB", "NONCONDUCTIVE", "BELT_CLIP" ],
     "volume": "1250 ml",
+    "longest_side": "66 cm",
     "to_hit": 1,
     "bashing": 22,
     "cutting": 23,

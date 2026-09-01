@@ -254,6 +254,7 @@
     "description": "A battery-powered lighter.  More efficient than a crude electric firestarter, its batteries last for quite a while.",
     "weight": "14 g",
     "volume": "50 ml",
+    "longest_side": "69 mm",
     "looks_like": "lighter",
     "charges_per_use": 1,
     "use_action": { "type": "firestarter", "moves": 50 },

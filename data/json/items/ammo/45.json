@@ -2,6 +2,7 @@
   {
     "id": "45_acp",
     "copy-from": "45_jhp",
+    "longest_side": "32 mm",
     "type": "AMMO",
     "name": { "str": ".45 ACP FMJ" },
     "description": ".45 ACP ammunition with 230gr FMJ bullets.  Noted for its stopping power, the .45 ACP round has been common for almost 150 years.  It's a subsonic round, and is known for working well with suppressors.",

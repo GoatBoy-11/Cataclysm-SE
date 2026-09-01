@@ -6,6 +6,7 @@
     "description": "A complete AR-15 upper assembly with a .300 AAC Blackout barrel.",
     "weight": "1000 g",
     "volume": "500 ml",
+    "longest_side": "480 mm",
     "integral_volume": "0 ml",
     "integral_weight": "0 g",
     "price": "500 USD",

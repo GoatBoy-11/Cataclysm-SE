@@ -29,6 +29,7 @@
     "material": "glass",
     "weight": "5000 g",
     "volume": "2000 ml",
+    "longest_side": "122 cm",
     "bashing": 4,
     "to_hit": -5,
     "use_action": {
@@ -52,6 +53,7 @@
     "material": [ "glass", "steel" ],
     "weight": "6200 g",
     "volume": "2000 ml",
+    "longest_side": "122 cm",
     "bashing": 6,
     "to_hit": -6
   },
@@ -68,6 +70,7 @@
     "material": "glass",
     "weight": "22700 g",
     "volume": "22700 ml",
+    "longest_side": "122 cm",
     "bashing": 6,
     "to_hit": -5
   }

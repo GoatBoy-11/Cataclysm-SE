@@ -7,6 +7,7 @@
     "description": "A SIG Sauer P226 chambered for .357 SIG.  The P226 is a DA/SA, short-recoil operated semi-automatic pistol.",
     "weight": "964 g",
     "volume": "549 ml",
+    "longest_side": "232 mm",
     "price": "500 USD",
     "price_postapoc": "2250 cent",
     "material": [ "steel", "aluminum", "plastic" ],
@@ -25,6 +26,7 @@
     "weight": "660 g",
     "ascii_picture": "glock_20",
     "volume": "443 ml",
+    "longest_side": "234 mm",
     "price_postapoc": "2250 cent",
     "ammo": "357sig",
     "magazines": [ [ "357sig", [ "glock40mag", "glock40bigmag", "glock40drum50rd", "kriss_mag" ] ] ]
@@ -37,6 +39,7 @@
     "description": "The P320 Compact is a semi-automatic, short recoil operated pistol.  This one is chambered for .357 SIG.",
     "weight": "731 g",
     "volume": "462 ml",
+    "longest_side": "217 mm",
     "price": "690 USD",
     "price_postapoc": "2250 cent",
     "to_hit": -2,

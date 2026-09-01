@@ -165,6 +165,7 @@
     "price_postapoc": "50 cent",
     "material": [ "veggy" ],
     "volume": "125 ml",
+    "longest_side": "19 cm",
     "charges": 6,
     "fun": -1,
     "flags": [ "SMOKABLE", "RAW" ],
@@ -226,6 +227,7 @@
     "price_postapoc": "10 cent",
     "material": [ "veggy" ],
     "volume": "750 ml",
+    "longest_side": "19 cm",
     "flags": [ "SMOKABLE", "RAW" ],
     "smoking_result": "dry_veggy",
     "vitamins": [ [ "vitA", 3 ], [ "vitC", 4 ], [ "calcium", 4 ], [ "iron", 1 ], [ "veggy_allergen", 1 ] ]
@@ -311,6 +313,7 @@
     "price_postapoc": "50 cent",
     "material": [ "veggy" ],
     "volume": "750 ml",
+    "longest_side": "22 cm",
     "flags": [ "SMOKABLE", "RAW" ],
     "smoking_result": "dry_veggy",
     "vitamins": [ [ "vitC", 9 ], [ "calcium", 6 ], [ "iron", 6 ], [ "veggy_allergen", 1 ] ]
@@ -703,6 +706,7 @@
     "price_postapoc": "50 cent",
     "material": [ "veggy" ],
     "volume": "250 ml",
+    "longest_side": "19 cm",
     "flags": [ "SMOKABLE", "RAW" ],
     "smoking_result": "dry_veggy",
     "vitamins": [ [ "vitA", 1 ], [ "vitC", 11 ], [ "calcium", 11 ], [ "iron", 2 ], [ "veggy_allergen", 1 ] ]
@@ -862,6 +866,7 @@
     "price_postapoc": "50 cent",
     "material": [ "veggy" ],
     "volume": "250 ml",
+    "longest_side": "22 cm",
     "flags": [ "EATEN_HOT", "SMOKABLE" ],
     "smoking_result": "dry_veggy",
     "vitamins": [ [ "vitC", 39 ], [ "calcium", 3 ], [ "iron", 4 ], [ "veggy_allergen", 1 ] ]

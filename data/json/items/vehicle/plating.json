@@ -11,6 +11,7 @@
     "symbol": "]",
     "material": [ "steel" ],
     "volume": "1 L",
+    "longest_side": "100 cm",
     "bashing": 5,
     "category": "scrap_metal",
     "price": "60 USD",

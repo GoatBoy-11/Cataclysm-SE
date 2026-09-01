@@ -2,6 +2,7 @@
   {
     "id": "mosin44",
     "copy-from": "mosin91_30",
+    "longest_side": "1015 mm",
     "type": "GUN",
     "name": { "str_sp": "Mosin-Nagant M44" },
     "description": "The Model 44 is the carbine sized variant of the standard 1891/30.  It has a shorter barrel, therefore it is weaker than the 1891/30, but easier to carry.",
@@ -50,6 +51,7 @@
     "description": "The Mosin-Nagant 1891/30 is a bolt action, internal magazine-fed, military rifle, developed by the Russian Empire, and later used and perfected by the Soviet Union.",
     "weight": "4000 g",
     "volume": "3 L",
+    "longest_side": "1232 mm",
     "price": "190 USD",
     "price_postapoc": "30 USD",
     "material": [ "steel", "wood" ],

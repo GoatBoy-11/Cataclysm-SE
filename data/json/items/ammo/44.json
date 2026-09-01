@@ -2,6 +2,7 @@
   {
     "id": "44fmj",
     "copy-from": "44magnum",
+    "longest_side": "41 mm",
     "type": "AMMO",
     "name": { "str": ".44 Magnum FMJ" },
     "description": "A brass-jacketed variant of the .44 Magnum round.  This increases penetration at the cost of reduced damage from expansion.",

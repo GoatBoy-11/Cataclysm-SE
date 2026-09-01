@@ -7,6 +7,7 @@
     "description": "A stapler for fastening sheets of paper together.",
     "weight": "300 g",
     "volume": "250 ml",
+    "longest_side": "16 cm",
     "price": "10 USD",
     "price_postapoc": "10 cent",
     "material": "steel",
@@ -21,6 +22,7 @@
     "description": "A plastic ball point pen.  Use it to write something down.",
     "weight": "20 g",
     "volume": "10 ml",
+    "longest_side": "13 cm",
     "price": "25 cent",
     "price_postapoc": "10 cent",
     "material": "plastic",
@@ -41,6 +43,7 @@
     "description": "These are a long pair of heavy-duty scissors.  Use scissors to cut items made from cotton (like clothing) into rags.",
     "weight": "113 g",
     "volume": "250 ml",
+    "longest_side": "18 cm",
     "price": "4 USD",
     "price_postapoc": "10 cent",
     "to_hit": -1,
@@ -64,6 +67,7 @@
     "price_postapoc": "0 cent",
     "material": "paper",
     "volume": "5 ml",
+    "longest_side": "297 mm",
     "stackable": true
   }
 ]

@@ -21,6 +21,7 @@
   {
     "id": "awl_steel",
     "copy-from": "awl_bone",
+    "longest_side": "13 cm",
     "type": "GENERIC",
     "name": { "str": "steel sewing awl" },
     "description": "This is a steel awl with a wooden grip, usually used for leatherworking.  It can also serve as an improvised stabbing weapon, but will break quickly.",
@@ -40,6 +41,7 @@
     "description": "A pair of stout wooden needles with round ends used to turn thread and yarn into cloth.",
     "weight": "56 g",
     "volume": "5 ml",
+    "longest_side": "36 cm",
     "price": "6 USD",
     "price_postapoc": "1 USD",
     "cutting": 1,

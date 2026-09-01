@@ -26,6 +26,7 @@
   {
     "id": "762_m87",
     "copy-from": "762_m43",
+    "longest_side": "56 mm",
     "type": "AMMO",
     "name": { "str": "7.62x39mm M67" },
     "//": "Entirely provisional.  Could someone design a better wound ballistics system?",

@@ -161,6 +161,7 @@
     "description": "A large steel cylinder used for storing pressurized gas.  It is marked with a faded, but legible O2 symbol.",
     "weight": "12888 g",
     "volume": "2500 ml",
+    "longest_side": "92 cm",
     "price": "134 USD",
     "price_postapoc": "5 USD",
     "to_hit": -4,

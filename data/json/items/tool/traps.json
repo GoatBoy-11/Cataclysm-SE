@@ -59,6 +59,7 @@
     "description": "These are several pieces of wood nailed together, with some nails sticking straight up.  If an unsuspecting victim steps on it, they'll get nails through the foot.",
     "weight": "2041 g",
     "volume": "1500 ml",
+    "longest_side": "65 cm",
     "price": "0 cent",
     "price_postapoc": "25 cent",
     "to_hit": -3,

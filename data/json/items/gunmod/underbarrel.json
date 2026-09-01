@@ -161,6 +161,7 @@
     "description": "This is the bayonet integrated in the firearm.",
     "weight": "1 g",
     "volume": "250 ml",
+    "longest_side": "22 cm",
     "price": "40 USD",
     "price_postapoc": "5 USD",
     "to_hit": -1,
@@ -465,6 +466,7 @@
   {
     "id": "makeshift_bayonet",
     "copy-from": "spike",
+    "longest_side": "12 cm",
     "type": "GENERIC",
     "name": { "str": "makeshift bayonet" },
     "description": "A makeshift version of a bayonet that consists of a mere spike with some string.",
@@ -576,6 +578,7 @@
     "description": "The Rivtech RM121 auxiliary weapon system is a magazine-fed semi-automatic caseless shotgun, which can be mounted under the barrel of many rifles.  Accepts RMSA10 box magazines.",
     "weight": "1140 g",
     "volume": "750 ml",
+    "longest_side": "380 mm",
     "price": "1200 USD",
     "price_postapoc": "50 USD",
     "material": [ "superalloy", "ceramic" ],

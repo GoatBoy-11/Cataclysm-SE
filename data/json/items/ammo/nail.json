@@ -18,6 +18,7 @@
     "description": "A pin-shaped piece of iron, can be used to construct various things with a hammer.",
     "weight": "4 g",
     "volume": "250 ml",
+    "longest_side": "115 mm",
     "price": "10 USD",
     "price_postapoc": "250 cent",
     "material": "iron",

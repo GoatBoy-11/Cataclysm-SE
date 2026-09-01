@@ -6,6 +6,7 @@
     "description": "Jacketed .357 SIG ammunition.  The .357 SIG round is a high velocity pistol cartridge, giving it a flatter trajectory than many handgun rounds.",
     "weight": "8 g",
     "volume": "250 ml",
+    "longest_side": "29 mm",
     "price": "370 cent",
     "price_postapoc": "10 USD",
     "material": [ "brass", "powder" ],

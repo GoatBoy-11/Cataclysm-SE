@@ -8,6 +8,7 @@
     "looks_like": "chainsaw_off",
     "weight": "4500 g",
     "volume": "2500 ml",
+    "longest_side": "25 cm",
     "price": "80 USD",
     "price_postapoc": "5 USD",
     "to_hit": -3,

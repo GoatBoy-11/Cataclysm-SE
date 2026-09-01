@@ -117,6 +117,7 @@
     "description": "This is a hand-carved wooden smoking pipe.  It's designed to facilitate consumption of fire cured tobacco leaves.",
     "weight": "372 g",
     "volume": "250 ml",
+    "longest_side": "15 cm",
     "price": "30 USD",
     "price_postapoc": "1 USD",
     "to_hit": -10,

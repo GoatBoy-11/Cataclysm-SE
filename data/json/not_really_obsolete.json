@@ -236,6 +236,7 @@
     "weight": "730 g",
     "//": "Only one third (410 g) of a whole pipe is being used",
     "volume": "500 ml",
+    "longest_side": "229 mm",
     "price": "15 USD",
     "to_hit": 1,
     "bashing": 5,

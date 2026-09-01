@@ -7,6 +7,7 @@
     "description": "A large flamethrower with substantial gas reserves.  Very menacing and deadly.",
     "weight": "1587 g",
     "volume": "4 L",
+    "longest_side": "584 mm",
     "price": "800 USD",
     "price_postapoc": "60 USD",
     "material": "steel",

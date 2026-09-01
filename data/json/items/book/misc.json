@@ -328,6 +328,7 @@
     "type": "BOOK",
     "name": { "str": "samurai novel" },
     "description": "The classic tale of a wandering swordsman who comes to a small settlement and is hired to help the townsfolk defend themselves from a band of marauding outlaws.",
+    "longest_side": "22 cm",
     "copy-from": "paperback_novel"
   },
   {

@@ -2286,6 +2286,38 @@ TEST_CASE( "a_wood_axe_does_not_fit_a_jean_pocket", "[item][pocket][length]" )
     CHECK_FALSE( any_accepts );
 }
 
+TEST_CASE( "a_long_tool_takes_the_backpack_side_pocket_not_the_main_one",
+           "[item][pocket][length]" )
+{
+    // An axe is 78 cm of haft in 2500 ml of volume. Volume alone would drop it
+    // into the 25 L main compartment, which is only 40 cm deep; it belongs in
+    // one of the long side pockets instead. This is what an authored
+    // longest_side buys - derived from volume the axe measures 14 cm and the
+    // main compartment takes it, which is the behaviour this pins against.
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    detached_ptr<item> axe = item::spawn( "ax" );
+
+    REQUIRE( axe->length() > 40_cm );
+
+    bool main_pocket_refuses = false;
+    bool a_long_pocket_accepts = false;
+    for( const item_pocket &pocket : backpack->contents.get_pockets() ) {
+        const units::length limit = pocket.definition().max_item_length;
+        INFO( "pocket " << units::to_milliliter( pocket.definition().max_contains_volume )
+              << " ml, length limit " << units::to_millimeter( limit ) << " mm" );
+        if( limit == 40_cm && !pocket.can_contain( *axe ).success() ) {
+            main_pocket_refuses = true;
+        }
+        if( limit >= 120_cm && pocket.can_contain( *axe ).success() ) {
+            a_long_pocket_accepts = true;
+        }
+    }
+
+    INFO( "axe is " << units::to_millimeter( axe->length() ) << " mm long" );
+    CHECK( main_pocket_refuses );
+    CHECK( a_long_pocket_accepts );
+}
+
 TEST_CASE( "an_authored_pocket_without_a_length_limit_omits_the_length_line",
            "[item][pocket][info][length]" )
 {

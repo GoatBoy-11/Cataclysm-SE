@@ -37,6 +37,7 @@
     "description": "An instrument of hair torture.",
     "symbol": "/",
     "copy-from": "base_toiletries",
+    "longest_side": "24 cm",
     "snippet_category": [
       { "id": "hbrush1", "text": "An instrument of hair torture.  There are round safety tips on the bristles." },
       { "id": "hbrush2", "text": "An old-fashioned hair-straightening device with a faux-wood handle." },
@@ -61,6 +62,7 @@
     "description": "A grooming tool with teeth for straightening your hair.",
     "symbol": "/",
     "copy-from": "base_toiletries",
+    "longest_side": "18 cm",
     "snippet_category": [
       { "id": "pcomb1", "text": "Somehow, a few teeth have already broken off the end of this otherwise pristine comb." },
       {

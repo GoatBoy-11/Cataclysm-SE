@@ -27,6 +27,7 @@
   {
     "id": "762_51",
     "copy-from": "308",
+    "longest_side": "71 mm",
     "type": "AMMO",
     "name": { "str": "7.62x51mm NATO M80" },
     "casing": "762_51_casing",

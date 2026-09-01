@@ -1077,6 +1077,7 @@
     "ammo": "arrow",
     "weight": "540 g",
     "volume": "2500 ml",
+    "longest_side": "152 cm",
     "price_postapoc": "20 USD",
     "bashing": 12,
     "armor_data": { "covers": [ "torso" ], "coverage": 5, "material_thickness": 1, "encumbrance": 20 },
@@ -1105,6 +1106,7 @@
     "min_strength": 9,
     "weight": "400 g",
     "volume": "1500 ml",
+    "longest_side": "183 cm",
     "price_postapoc": "20 USD",
     "bashing": 12,
     "armor_data": { "covers": [ "torso" ], "coverage": 5, "material_thickness": 1, "encumbrance": 14 },
@@ -1161,6 +1163,7 @@
     "ammo": "arrow",
     "weight": "500 g",
     "volume": "2 L",
+    "longest_side": "150 cm",
     "price_postapoc": "60 USD",
     "bashing": 12,
     "armor_data": { "covers": [ "torso" ], "coverage": 5, "material_thickness": 1, "encumbrance": 14 },
@@ -1182,6 +1185,7 @@
     "description": "A glass dinner plate, for people who don't have clumsy children.",
     "looks_like": "ceramic_plate",
     "copy-from": "base_glass_dish",
+    "longest_side": "26 cm",
     "qualities": [ [ "CONTAIN", 1 ] ]
   },
   {
@@ -1192,6 +1196,7 @@
     "symbol": ",",
     "description": "A durable plastic plate, the sort you might use as patio dishware.",
     "copy-from": "base_plastic_dish",
+    "longest_side": "26 cm",
     "qualities": [ [ "CONTAIN", 1 ] ]
   },
   {
@@ -1201,6 +1206,7 @@
     "name": { "str": "fork" },
     "description": "A fork, if you stab something with it, you eat it right away.  Wait… nevermind.",
     "copy-from": "base_silverware",
+    "longest_side": "21 cm",
     "flags": [ "STAB", "SHEATH_KNIFE" ]
   },
   {
@@ -1210,6 +1216,7 @@
     "name": { "str": "spoon" },
     "description": "Do not try to bend the spoon.  That is impossible.",
     "copy-from": "base_silverware",
+    "longest_side": "19 cm",
     "flags": [ "SHEATH_KNIFE" ]
   },
   {
@@ -1219,6 +1226,7 @@
     "name": { "str": "butter knife", "str_pl": "butter knives" },
     "description": "A dull knife, absolutely worthless in combat.  Excellent for spreading soft things on bread.",
     "flags": [ "STAB", "SHEATH_KNIFE" ],
+    "longest_side": "21 cm",
     "copy-from": "base_silverware"
   },
   {
@@ -1229,6 +1237,7 @@
     "description": "Many a pleasant date has been ruined by forgetting this important tool.",
     "flags": [ "STAB", "SHEATH_KNIFE" ],
     "looks_like": "fork",
+    "longest_side": "23 cm",
     "copy-from": "base_silverware"
   },
   {
@@ -1239,6 +1248,7 @@
     "description": "A simple lever for popping open bottles.",
     "looks_like": "fork",
     "copy-from": "base_silverware",
+    "longest_side": "18 cm",
     "snippet_category": [
       { "id": "bottleopener1", "text": "This bottle opener is shaped like a zombie head, the mouth pops open the bottle." },
       { "id": "bottleopener2", "text": "This bottle opener is shaped like a lightsaber." },
@@ -1265,6 +1275,7 @@
     "description": "This is a simple tool for peeling the outer skin off fruit and veggies without stabbing yourself.",
     "flags": [ "SHEATH_KNIFE" ],
     "looks_like": "knife_butter",
+    "longest_side": "19 cm",
     "copy-from": "base_silverware"
   },
   {
@@ -1300,6 +1311,7 @@
     "price_postapoc": "0 cent",
     "weight": "28 g",
     "volume": "15 ml",
+    "longest_side": "23 cm",
     "material": "wood",
     "bashing": 1,
     "cutting": 1,
@@ -1321,6 +1333,7 @@
     "name": { "str": "whisk" },
     "description": "Also known as a 'wire whip', this is a less effective weapon than it sounds.",
     "looks_like": "spoon",
+    "longest_side": "31 cm",
     "copy-from": "base_utensil"
   },
   {
@@ -1339,6 +1352,7 @@
     "name": { "str": "garlic press", "str_pl": "garlic presses" },
     "description": "This tool can squash a clove or two of garlic into a fine paste.",
     "looks_like": "spoon",
+    "longest_side": "17 cm",
     "copy-from": "base_utensil"
   },
   {
@@ -1348,6 +1362,7 @@
     "name": { "str": "can opener" },
     "description": "It's not hard to open cans without this, but it's way messier.",
     "looks_like": "hand_crank_charger",
+    "longest_side": "21 cm",
     "copy-from": "base_utensil"
   },
   {
@@ -1358,6 +1373,7 @@
     "description": "It's like a tiny pitchfork, or a very large dinner fork.  You use it to hold meat still while you slice it.",
     "looks_like": "fork",
     "copy-from": "base_utensil",
+    "longest_side": "29 cm",
     "proportional": { "cutting": 2 },
     "flags": [ "STAB", "SHEATH_KNIFE" ]
   },
@@ -1370,6 +1386,7 @@
     "looks_like": "spoon",
     "proportional": { "weight": 3, "volume": 2 },
     "material": "rubber",
+    "longest_side": "24 cm",
     "copy-from": "base_plastic_silverware"
   },
   {
@@ -1409,6 +1426,7 @@
     "techniques": [ "WBLOCK_2" ],
     "flags": [ "DURABLE_MELEE" ],
     "volume": "900 ml",
+    "longest_side": "41 cm",
     "bashing": 7,
     "price": "2 USD"
   },
@@ -1425,6 +1443,7 @@
     "material": "steel",
     "weight": "300 g",
     "volume": "250 ml",
+    "longest_side": "40 cm",
     "bashing": 2,
     "to_hit": -1,
     "qualities": [ [ "COOK", 1 ], [ "CONTAIN", 1 ] ]
@@ -1437,6 +1456,7 @@
     "description": "A plastic disposable fork.  Great for picnic lunches in the post apocalyptic wasteland.",
     "looks_like": "fork",
     "copy-from": "base_plastic_silverware",
+    "longest_side": "15 cm",
     "flags": [ "STAB", "SHEATH_KNIFE" ]
   },
   {
@@ -1447,6 +1467,7 @@
     "description": "A plastic disposable spoon.  Easier to bend than the metal variety.",
     "looks_like": "spoon",
     "copy-from": "base_plastic_silverware",
+    "longest_side": "15 cm",
     "flags": [ "SHEATH_KNIFE" ]
   },
   {
@@ -1477,6 +1498,7 @@
     "description": "A plastic butter knife.  It's actually a bit sharper than its metal counterpart, but that doesn't make it any more effective as a weapon.",
     "looks_like": "knife_butter",
     "flags": [ "STAB", "SHEATH_KNIFE" ],
+    "longest_side": "15 cm",
     "copy-from": "base_plastic_silverware"
   },
   {
@@ -1501,6 +1523,7 @@
     "techniques": [ "WBLOCK_1", "RAPID" ],
     "flags": [ "DURABLE_MELEE" ],
     "volume": "600 ml",
+    "longest_side": "46 cm",
     "bashing": 7,
     "price": "7 USD"
   },
@@ -1512,6 +1535,7 @@
     "description": "A high-drag projectile used in the sport of badminton.",
     "weight": "5 g",
     "volume": "600 ml",
+    "longest_side": "90 mm",
     "price": "2 USD",
     "price_postapoc": "0 cent",
     "material": [ "rubber", "plastic" ],
@@ -1527,6 +1551,7 @@
     "description": "A pin shaped piece of wood meant for holding a golf ball slightly off the ground.",
     "weight": "3 g",
     "volume": "250 ml",
+    "longest_side": "70 mm",
     "price": "10 USD",
     "price_postapoc": "0 cent",
     "material": "wood",
@@ -1541,6 +1566,7 @@
     "description": "A small ball with round indentations on it.",
     "weight": "50 g",
     "volume": "250 ml",
+    "longest_side": "43 mm",
     "price": "20 USD",
     "price_postapoc": "0 cent",
     "material": "plastic",
@@ -1562,6 +1588,7 @@
     "material": "plastic",
     "weight": "170 g",
     "volume": "250 ml",
+    "longest_side": "57 mm",
     "bashing": 8,
     "to_hit": -3
   },
@@ -1578,6 +1605,7 @@
     "material": "ceramic",
     "weight": "2000 g",
     "volume": "2500 ml",
+    "longest_side": "216 mm",
     "bashing": 16,
     "to_hit": -2
   },
@@ -1594,6 +1622,7 @@
     "material": "leather",
     "weight": "150 g",
     "volume": "250 ml",
+    "longest_side": "75 mm",
     "bashing": 6,
     "to_hit": 3
   },
@@ -1610,6 +1639,7 @@
     "material": "leather",
     "weight": "400 g",
     "volume": "750 ml",
+    "longest_side": "29 cm",
     "bashing": 4,
     "to_hit": -1
   },
@@ -1626,6 +1656,7 @@
     "material": "rubber",
     "weight": "800 g",
     "volume": "1 L",
+    "longest_side": "239 mm",
     "bashing": 6,
     "to_hit": -1
   },
@@ -1642,6 +1673,7 @@
     "material": "rubber",
     "weight": "260 g",
     "volume": "1 L",
+    "longest_side": "26 cm",
     "bashing": 4,
     "to_hit": -1
   },
@@ -1658,6 +1690,7 @@
     "material": "rubber",
     "weight": "280 g",
     "volume": "1 L",
+    "longest_side": "27 cm",
     "bashing": 4,
     "to_hit": -1
   },
@@ -1674,6 +1707,7 @@
     "material": "rubber",
     "weight": "170 g",
     "volume": "250 ml",
+    "longest_side": "76 mm",
     "bashing": 7,
     "to_hit": 2
   },
@@ -1791,6 +1825,7 @@
     "description": "A polygonal ceramic ballistic plate with a slightly concave profile.  Its inner surface is coated with Ultra High Molecular Weight Polyethylene, and is labelled \"TOP\", while its outer surface is labelled \"STRIKE FACE\".  This is intended to be worn in a ballistic vest and can withstand several high energy rifle rounds before breaking.",
     "weight": "2500 g",
     "volume": "1533 ml",
+    "longest_side": "32 cm",
     "price": "600 USD",
     "price_postapoc": "1 USD",
     "material": "ceramic",
@@ -1805,6 +1840,7 @@
     "description": "A polygonal ceramic ballistic plate with a slightly concave profile.  \"STRIKE FACE\" is printed on its outer surface.  This is designed to be worn in the sides of a plate carrier and can withstand several high energy rifle rounds before breaking.",
     "weight": "1 kg",
     "volume": "600 ml",
+    "longest_side": "20 cm",
     "price": "600 USD",
     "price_postapoc": "1 USD",
     "material": "ceramic",
@@ -2214,6 +2250,7 @@
     "type": "BOOK",
     "name": { "str": "coming of age novel" },
     "copy-from": "novel_coa",
+    "longest_side": "27 cm",
     "description": "A graphic novel about a young girl living in Iran during the 1980's, seeing the world change around her as Iraq invaded her country."
   },
   {
@@ -2426,6 +2463,7 @@
     "description": "This jar contains raw milk separated into cream.  It is sealed until you are ready to use it.",
     "weight": "3461 g",
     "volume": "3000 ml",
+    "longest_side": "298 mm",
     "price": "10 cent",
     "price_postapoc": "10 cent",
     "bashing": 8,
@@ -2441,6 +2479,7 @@
     "description": "This jar contains raw milk separating into cream.  You can seal up the jar once the process is completed.",
     "weight": "3461 g",
     "volume": "3000 ml",
+    "longest_side": "298 mm",
     "price": "10 cent",
     "price_postapoc": "10 cent",
     "bashing": 8,
@@ -2485,6 +2524,7 @@
     "material": [ "plastic" ],
     "weight": "49 g",
     "volume": "250 ml",
+    "longest_side": "20 cm",
     "bashing": 1,
     "cutting": 3,
     "to_hit": -3,
@@ -2496,6 +2536,7 @@
     "type": "GENERIC",
     "description": "A shallow dish for holding a bar of soap.  It has ridges to help drain water away from the dish.  Not the most exciting of items.",
     "symbol": "-",
+    "longest_side": "13 cm",
     "copy-from": "base_toiletries"
   },
   {
@@ -2505,6 +2546,7 @@
     "description": "A plastic brush with soft bristles for cleaning your teeth.",
     "symbol": "/",
     "copy-from": "base_toiletries",
+    "longest_side": "18 cm",
     "snippet_category": [
       {
         "id": "tbrush1",
@@ -2691,6 +2733,7 @@
     "description": "This is a heavy metal plate and a sturdy rod, for clamping lab stuff to.",
     "weight": "900 g",
     "volume": "550 ml",
+    "longest_side": "41 cm",
     "price": "75 cent",
     "price_postapoc": "10 cent",
     "to_hit": -1,
@@ -4084,6 +4127,7 @@
     "description": "This is a tank of liquid compressed butane.  It can be used to extract essential oils from organic material.",
     "weight": "22700 g",
     "volume": "18950 ml",
+    "longest_side": "50 cm",
     "price": "250 USD",
     "to_hit": -4,
     "bashing": 10,
@@ -4149,6 +4193,7 @@
     "material": [ "glass", "steel" ],
     "weight": "10040 g",
     "volume": "3 L",
+    "longest_side": "305 mm",
     "bashing": 4,
     "to_hit": -2
   },
@@ -4160,6 +4205,7 @@
     "description": "A home-made rifle.  It is simply a pipe attached to a stock, with a hammer to strike the single round it holds.",
     "weight": "1953 g",
     "volume": "1750 ml",
+    "longest_side": "1000 mm",
     "price": "100 USD",
     "price_postapoc": "5 USD",
     "bashing": 10,
@@ -4178,6 +4224,7 @@
     "description": "A home-made rifle.  It is simply a pipe attached to a stock, with a hammer to strike the single round it holds.",
     "weight": "2114 g",
     "volume": "2 L",
+    "longest_side": "100 cm",
     "price": "100 USD",
     "price_postapoc": "5 USD",
     "ascii_picture": "ps_pipe_gun",
@@ -4212,6 +4259,7 @@
     "description": "A home-made rifle.  It is simply a pipe attached to a stock, with a hammer to strike the single round it holds.",
     "weight": "2114 g",
     "volume": "2 L",
+    "longest_side": "100 cm",
     "price": "100 USD",
     "price_postapoc": "5 USD",
     "ascii_picture": "lg_pipe_gun",
@@ -4390,6 +4438,7 @@
     "//": "Crafting recipe must make use of angle grinder, bench grinder, set square and vise, which don't yet exist in game.",
     "weight": "3274 g",
     "volume": "1750 ml",
+    "longest_side": "538 mm",
     "price": "200 USD",
     "price_postapoc": "750 cent",
     "material": "steel",
@@ -4415,6 +4464,7 @@
     "//": "Crafting recipe must make use of angle grinder, bench grinder, set square and vise, which don't yet exist in game. No factory mags until UMP40, mp5/40, or other straight .40 mags are implemented.",
     "weight": "3274 g",
     "volume": "1750 ml",
+    "longest_side": "538 mm",
     "price": "200 USD",
     "price_postapoc": "15 USD",
     "material": "steel",
@@ -4440,6 +4490,7 @@
     "//": "Crafting recipe must make use of angle grinder, bench grinder, set square and vise, which don't yet exist in game.",
     "weight": "3274 g",
     "volume": "1750 ml",
+    "longest_side": "538 mm",
     "price": "200 USD",
     "price_postapoc": "15 USD",
     "material": "steel",

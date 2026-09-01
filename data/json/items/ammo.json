@@ -165,6 +165,7 @@
     "description": "A roll of incredibly strong tape.  Its uses are innumerable.",
     "material": "plastic",
     "volume": "250 ml",
+    "longest_side": "125 mm",
     "weight": "4 g",
     "ammo_type": "tape",
     "count": 200,
@@ -200,6 +201,7 @@
     "description": "Plastic jacketed copper cable of the type used in small electronics.",
     "material": [ "plastic", "copper" ],
     "volume": "750 ml",
+    "longest_side": "30 cm",
     "weight": "2 g",
     "ammo_type": "components",
     "count": 200
@@ -716,6 +718,7 @@
     "description": "A roll of medical tape, similar to duct tape.",
     "material": "plastic",
     "volume": "250 ml",
+    "longest_side": "20 cm",
     "weight": "3 g",
     "ammo_type": "tape",
     "count": 35,

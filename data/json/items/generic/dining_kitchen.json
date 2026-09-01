@@ -123,6 +123,7 @@
   },
   {
     "copy-from": "base_ceramic_dish",
+    "longest_side": "26 cm",
     "type": "GENERIC",
     "category": "scrap_ceramics",
     "id": "ceramic_plate",
@@ -139,6 +140,7 @@
     "symbol": ")",
     "description": "A perfectly ordinary ceramic soup bowl.",
     "copy-from": "base_ceramic_dish",
+    "longest_side": "13 cm",
     "container_data": { "contains": "500 ml", "watertight": true },
     "qualities": [ [ "BOIL", 2 ], [ "CONTAIN", 1 ] ]
   },
@@ -150,6 +152,7 @@
     "symbol": "u",
     "description": "A light ceramic teacup.  Quite classy.",
     "copy-from": "base_ceramic_dish",
+    "longest_side": "12 cm",
     "proportional": { "weight": 0.6 },
     "container_data": { "contains": "250 ml", "watertight": true },
     "qualities": [ [ "BOIL", 2 ], [ "CONTAIN", 1 ] ]
@@ -162,6 +165,7 @@
     "symbol": "u",
     "description": "A ceramic coffee cup with a logo on the side.",
     "copy-from": "base_ceramic_dish",
+    "longest_side": "12 cm",
     "proportional": { "weight": 0.8 },
     "container_data": { "contains": "250 ml", "watertight": true },
     "qualities": [ [ "BOIL", 2 ], [ "CONTAIN", 1 ] ],
@@ -200,6 +204,7 @@
     "description": "A tin dinner plate, lightweight and clanky.",
     "looks_like": "ceramic_plate",
     "copy-from": "base_tin_dish",
+    "longest_side": "26 cm",
     "qualities": [ [ "CONTAIN", 1 ] ]
   },
   {
@@ -222,6 +227,7 @@
     "name": { "str": "pewter bowl" },
     "description": "A small pewter serving bowl without a lid.  Holds 250 ml of liquid.",
     "copy-from": "base_tin_dish",
+    "longest_side": "11 cm",
     "symbol": "u",
     "container_data": { "contains": "250 ml", "watertight": true },
     "qualities": [ [ "BOIL", 2 ], [ "CONTAIN", 1 ] ]
@@ -234,6 +240,7 @@
     "symbol": "U",
     "description": "A tall drinking glass.",
     "copy-from": "base_glass_dish",
+    "longest_side": "16 cm",
     "container_data": { "contains": "500 ml", "watertight": true },
     "qualities": [ [ "BOIL", 1 ], [ "CONTAIN", 1 ] ]
   },
@@ -246,6 +253,7 @@
     "symbol": "Y",
     "description": "A stemmed drinking glass that makes you feel very fancy when you drink from it.",
     "copy-from": "base_glass_dish",
+    "longest_side": "20 cm",
     "container_data": { "contains": "250 ml", "watertight": true },
     "qualities": [ [ "CONTAIN", 1 ] ]
   },
@@ -257,6 +265,7 @@
     "symbol": "u",
     "description": "A glass bowl for soup or dessert.",
     "copy-from": "base_glass_dish",
+    "longest_side": "13 cm",
     "container_data": { "contains": "500 ml", "watertight": true },
     "qualities": [ [ "BOIL", 1 ], [ "CONTAIN", 1 ] ]
   },
@@ -280,6 +289,7 @@
     "description": "A plastic bowl with a convenient sealing lid.  Holds 750 ml of liquid.",
     "copy-from": "base_plastic_dish",
     "volume": "750 ml",
+    "longest_side": "20 cm",
     "container_data": { "contains": "750 ml", "seals": true, "watertight": true },
     "qualities": [ [ "CONTAIN", 1 ] ]
   },
@@ -341,6 +351,7 @@
     "color": "light_gray",
     "weight": "550 g",
     "volume": "2 L",
+    "longest_side": "19 cm",
     "bashing": 6,
     "container_data": { "contains": "2 L", "watertight": true }
   },
@@ -355,6 +366,7 @@
     "color": "dark_gray",
     "weight": "3000 g",
     "volume": "2 L",
+    "longest_side": "25 cm",
     "bashing": 10,
     "container_data": { "contains": "2 L", "watertight": true }
   },
@@ -369,6 +381,7 @@
     "color": "light_red",
     "weight": "750 g",
     "volume": "2 L",
+    "longest_side": "23 cm",
     "bashing": 6,
     "container_data": { "contains": "2 L", "watertight": true }
   },
@@ -383,6 +396,7 @@
     "color": "white",
     "weight": "650 g",
     "volume": "2 L",
+    "longest_side": "22 cm",
     "bashing": 4,
     "container_data": { "contains": "2 L", "watertight": true },
     "extend": { "flags": [ "SHATTERS" ] }
@@ -398,6 +412,7 @@
     "color": "light_gray",
     "weight": "2490 g",
     "volume": "9 L",
+    "longest_side": "25 cm",
     "//": "Volume assumes you can stick some stuff in the pot inside your bag",
     "bashing": 8,
     "container_data": { "contains": "12 L", "watertight": true }
@@ -410,6 +425,7 @@
     "description": "A very large 25 liter pot, primarily meant for canning food in glass jars via the water bath method, though it can cook normal foods just as well.  Canning foods with it will require a lot of water.  If you're only canning a couple of jars at a time, you'd fill it up with rocks or something to displace the water above the lids.",
     "weight": "5625 g",
     "volume": "25 L",
+    "longest_side": "45 cm",
     "price": "20 USD",
     "to_hit": -2,
     "bashing": 10,
@@ -432,6 +448,7 @@
     "color": "dark_gray",
     "weight": "2628 g",
     "volume": "1 L",
+    "longest_side": "41 cm",
     "bashing": 12,
     "to_hit": 0,
     "container_data": { "contains": "1 L", "watertight": true },
@@ -450,6 +467,7 @@
     "looks_like": "pan",
     "weight": "528 g",
     "volume": "1 L",
+    "longest_side": "35 cm",
     "bashing": 8,
     "container_data": { "contains": "2 L", "watertight": true },
     "delete": { "qualities": [ [ "COOK", 3 ] ] },
@@ -467,6 +485,7 @@
     "looks_like": "pan",
     "weight": "628 g",
     "volume": "1 L",
+    "longest_side": "35 cm",
     "bashing": 7,
     "container_data": { "contains": "1 L", "watertight": true },
     "delete": { "qualities": [ [ "COOK", 3 ] ] },
@@ -480,6 +499,7 @@
     "description": "A sheet of metal crudely hammered into a cooking pot.  Good enough to cook food and boil water, but not as useful as proper cookware.",
     "weight": "6000 g",
     "volume": "1 L",
+    "longest_side": "20 cm",
     "price": "2 USD",
     "price_postapoc": "5 cent",
     "to_hit": 1,
@@ -499,6 +519,7 @@
     "description": "A cooking pot crudely hammered out of copper.  Good enough to cook food and boil water, but not as useful as proper cookware.",
     "weight": "884 g",
     "volume": "1 L",
+    "longest_side": "20 cm",
     "price": "2 USD",
     "price_postapoc": "5 cent",
     "to_hit": 1,
@@ -521,6 +542,7 @@
     "color": "light_gray",
     "weight": "728 g",
     "volume": "1500 ml",
+    "longest_side": "19 cm",
     "bashing": 5,
     "container_data": { "contains": "1500 ml", "watertight": true },
     "delete": { "qualities": [ [ "COOK", 3 ] ] }

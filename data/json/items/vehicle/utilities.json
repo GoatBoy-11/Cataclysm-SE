@@ -154,6 +154,7 @@
     "symbol": "]",
     "material": "steel",
     "volume": "125 L",
+    "longest_side": "840 mm",
     "bashing": 8,
     "category": "veh_parts",
     "price": "600 USD",
@@ -166,6 +167,7 @@
     "description": "Compact version of a chest freezer, designed as a mobile solution for freezing food.  Provides insulation from the elements.",
     "price": "700 USD",
     "price_postapoc": "40 USD",
+    "longest_side": "830 mm",
     "copy-from": "minifridge"
   },
   {

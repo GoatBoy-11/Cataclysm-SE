@@ -2,6 +2,7 @@
   {
     "id": "38_fmj",
     "copy-from": "38_special",
+    "longest_side": "40 mm",
     "type": "AMMO",
     "name": { "str": ".38 FMJ" },
     "description": ".38 Special ammunition with brass jacketed 130gr bullets.  The .38 Special round has been known from its inception for its accuracy and low recoil.  It is also subsonic, and thus works well with suppressors.",

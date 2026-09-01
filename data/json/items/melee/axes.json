@@ -64,6 +64,7 @@
     "techniques": [ "WBLOCK_1", "WIDE", "SWEEP" ],
     "weight": "3175 g",
     "volume": "3750 ml",
+    "longest_side": "180 cm",
     "bashing": 19,
     "cutting": 51,
     "price_postapoc": "100 USD",
