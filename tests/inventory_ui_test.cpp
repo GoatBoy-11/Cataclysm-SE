@@ -577,22 +577,33 @@ TEST_CASE("pocket destinations break a priority tie by smaller remaining volume"
     auto& dummy = get_avatar();
     REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
     REQUIRE(!dummy.wear_item(item::spawn("backpack")));
+    // worn is ordered by clothing layer, not by wear_item() call order - the
+    // backpack's BELTED flag puts it outside the vest's regular layer no
+    // matter which is worn first, so the vest's pockets are always pushed
+    // into pocket_destinations' pre-sort vector before the backpack's.
     item* vest = dummy.worn.front();
     item* pack = dummy.worn.back();
 
-    // Equal priority on the vest's large pocket (4 L) and the backpack's
-    // main pocket (25 L): everything else stays at the default priority of
-    // 0, so these two rank above the rest and the smaller one must lead.
+    // Tie priority between the vest's large pocket (4 L, pushed first) and
+    // the backpack's small holster (510 ml, pushed after it). Push order and
+    // the expected volume order disagree here - vest's larger pocket is
+    // pushed first but must sort *second* once the tie-break is honoured -
+    // so this is the pairing that actually distinguishes "break ties by
+    // volume" from "break ties by push order"; the vest's own main pocket
+    // versus the backpack's main pocket would not, since push order already
+    // agrees with volume order for that pair. Do not swap this pairing back
+    // to the two main pockets - that version stays green even without the
+    // volume tie-break.
     vest->contents.get_pockets()[1].get_settings().set_priority(3);
-    pack->contents.get_pockets()[0].get_settings().set_priority(3);
+    pack->contents.get_pockets()[1].get_settings().set_priority(3);
 
     auto rock = item::spawn("test_rock");
     const auto destinations = dummy.pocket_destinations(*rock);
     REQUIRE(destinations.size() >= 2);
-    CHECK(destinations[0].container == vest);
+    CHECK(destinations[0].container == pack);
     CHECK(destinations[0].pocket_index == 1);
-    CHECK(destinations[1].container == pack);
-    CHECK(destinations[1].pocket_index == 0);
+    CHECK(destinations[1].container == vest);
+    CHECK(destinations[1].pocket_index == 1);
 }
 
 TEST_CASE("pocket destinations skip the excluded container",
@@ -618,3 +629,4 @@ TEST_CASE("classic mode offers no pocket destinations",
     auto rock = item::spawn("test_rock");
     CHECK(dummy.pocket_destinations(*rock).empty());
 }
+
