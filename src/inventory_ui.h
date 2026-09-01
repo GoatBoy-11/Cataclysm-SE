@@ -283,6 +283,16 @@ class inventory_column
          */
         bool is_selected_by_category( const inventory_entry &entry ) const;
 
+        /**
+         * An item in a pocket appears twice: nested under its garment, and again
+         * under its own category. Whichever copy the cursor is not on echoes the
+         * highlight, so the two read as one item rather than two.
+         */
+        void set_companion_item( const item *it ) {
+            companion_item = it;
+        }
+        bool is_companion( const inventory_entry &entry ) const;
+
         const inventory_entry &get_selected() const;
         std::vector<inventory_entry *> get_all_selected() const;
         std::vector<inventory_entry *> get_entries(
@@ -402,6 +412,9 @@ class inventory_column
         bool active = false;
         bool multiselect = false;
         bool visibility = true;
+
+        // Set every frame by the selector; see set_companion_item().
+        const item *companion_item = nullptr;
 
         size_t selected_index = 0;
         size_t page_offset = 0;

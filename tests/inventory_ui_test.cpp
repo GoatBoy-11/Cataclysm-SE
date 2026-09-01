@@ -4,6 +4,7 @@
 #include "item.h"
 #include "item_contents.h"
 #include "item_pocket.h"
+#include "itype.h"
 #include "options_helpers.h"
 #include "player_helpers.h"
 #include "type_id.h"
@@ -380,4 +381,104 @@ TEST_CASE("nested entries stay under their own container", "[inventory][ui][pock
     // And both children must actually be present, or the loop above is vacuous.
     const auto nested = [](const inventory_entry& entry) { return entry.indent > 0; };
     CHECK(selector.own_gear_column.get_entries(nested).size() == 2);
+}
+
+// ---------------------------------------------------------------------------
+// Pocket contents in the category list
+// ---------------------------------------------------------------------------
+
+// get_caption is protected; a derived preset widens it for these tests only.
+struct caption_probe : inventory_selector_preset {
+    using inventory_selector_preset::get_caption;
+};
+
+static bool is_test_rock(const inventory_entry& entry) {
+    return entry.is_item() && entry.any_item()->typeId() == itype_id("test_rock");
+}
+
+TEST_CASE("pocket contents also appear under their own category", "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto nested = selector.own_gear_column.get_all_entries(is_test_rock);
+    REQUIRE(nested.size() == 1);
+    CHECK(nested.front()->indent == 1);
+
+    // The same rock, listed again on the left under the category it declares.
+    const auto listed = selector.own_inv_column.get_all_entries(is_test_rock);
+    REQUIRE(listed.size() == 1);
+    CHECK(listed.front()->indent == 0);
+    CHECK(listed.front()->topmost_parent == vest);
+    CHECK(listed.front()->any_item() == nested.front()->any_item());
+}
+
+TEST_CASE("a pocketed item names its container in the category list",
+          "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto listed = selector.own_inv_column.get_all_entries(is_test_rock);
+    REQUIRE(listed.size() == 1);
+
+    caption_probe preset;
+    const std::string vest_name = vest->type->nname(1);
+    const std::string caption = preset.get_caption(*listed.front());
+    INFO(caption);
+    CHECK(caption.find(vest_name) != std::string::npos);
+    // The bare type name, with no "with 1 item" contents summary trailing it.
+    CHECK(caption.find(vest_name + " with") == std::string::npos);
+
+    // The nested copy is drawn under its parent already, so it must not repeat
+    // it. Its own name carries brackets of its own, so match the vest's name.
+    const auto nested = selector.own_gear_column.get_all_entries(is_test_rock);
+    REQUIRE(nested.size() == 1);
+    const std::string nested_caption = preset.get_caption(*nested.front());
+    INFO(nested_caption);
+    CHECK(nested_caption.find(vest_name) == std::string::npos);
+}
+
+TEST_CASE("classic mode adds no category copy", "[inventory][ui][pocket][classic]") {
+    override_option classic("POCKET_SYSTEM", "classic");
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    CHECK(selector.own_inv_column.get_all_entries(is_test_rock).empty());
+}
+
+TEST_CASE("the category copy keeps the item's own category", "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+    // Force prepare_paging. The reordering pass used to key on parentage, which
+    // swept this entry to the end of the column as an orphan of a parent that
+    // lives in a different column.
+    REQUIRE(selector.select_item_type(itype_id("test_rock")));
+
+    const auto listed = selector.own_inv_column.get_all_entries(is_test_rock);
+    REQUIRE(listed.size() == 1);
+    CHECK(listed.front()->get_category_ptr() ==
+          &listed.front()->any_item()->get_category());
 }

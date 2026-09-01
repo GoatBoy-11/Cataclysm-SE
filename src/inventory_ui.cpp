@@ -296,6 +296,16 @@ std::string inventory_selector_preset::get_caption( const inventory_entry &entry
         disp_name = entry.any_item()->display_name( count );
     }
 
+    // A top-level entry that still knows its container is the category-list copy
+    // of something in a pocket. It has no indent to say where it lives, so the
+    // name says it instead.
+    // The plain type name, not tname(): tname appends a contents summary, and
+    // "combat knife (military backpack with 3 items)" buries the one word the
+    // player is reading this line for.
+    if( entry.topmost_parent != nullptr && entry.indent == 0 ) {
+        disp_name += string_format( " (%s)", entry.topmost_parent->type->nname( 1 ) );
+    }
+
     return ( count > 1 ) ? string_format( "%d %s", count, disp_name ) : disp_name;
 }
 
@@ -627,6 +637,12 @@ bool inventory_column::is_selected( const inventory_entry &entry ) const
     return entry == get_selected() || ( multiselect && is_selected_by_category( entry ) );
 }
 
+bool inventory_column::is_companion( const inventory_entry &entry ) const
+{
+    return companion_item != nullptr && entry.is_item() &&
+           entry.any_item() == companion_item;
+}
+
 bool inventory_column::is_selected_by_category( const inventory_entry &entry ) const
 {
     return entry.is_item() && mode == navigation_mode::CATEGORY
@@ -855,18 +871,22 @@ void inventory_column::prepare_paging( const std::string &filter )
     // entries away from the container holding them. Lift each child back under
     // its own parent, keeping the sorted order among siblings. A stable pass
     // here is cheaper than teaching the comparator about parentage.
+    // Indent, not parentage, is what marks a child. An item in a pocket also
+    // gets a top-level entry in its own category, and that entry knows its
+    // container without wanting to be moved under it - keying this on
+    // topmost_parent would sweep every one of those to the end of the column.
     if( std::ranges::any_of( entries, []( const inventory_entry & entry ) {
-    return entry.topmost_parent != nullptr;
+    return entry.indent > 0;
     } ) ) {
         std::vector<inventory_entry> reordered;
         reordered.reserve( entries.size() );
         for( const inventory_entry &entry : entries ) {
-            if( entry.topmost_parent != nullptr ) {
+            if( entry.indent > 0 ) {
                 continue;
             }
             reordered.push_back( entry );
             for( const inventory_entry &child : entries ) {
-                if( child.topmost_parent != nullptr &&
+                if( child.indent > 0 &&
                     child.topmost_parent == entry.any_item() ) {
                     reordered.push_back( child );
                 }
@@ -875,7 +895,7 @@ void inventory_column::prepare_paging( const std::string &filter )
         // An orphan would otherwise vanish from the list, which would lose the
         // player an item they can see. Keep anything the pass did not place.
         for( const inventory_entry &entry : entries ) {
-            if( entry.topmost_parent != nullptr &&
+            if( entry.indent > 0 &&
                 std::ranges::find( reordered, entry ) == reordered.end() ) {
                 reordered.push_back( entry );
             }
@@ -1003,10 +1023,14 @@ void inventory_column::draw( const catacurses::window &win, point pos ) const
         int yy = pos.y + line;
 
         const bool selected = active && is_selected( entry );
+        // The cursor is on one copy of this item; the other copy gets a quieter
+        // bar, so it reads as an echo rather than a second cursor.
+        const bool companion = !selected && is_companion( entry );
 
-        if( selected && visible_cells() > 1 ) {
+        if( ( selected || companion ) && visible_cells() > 1 ) {
+            const nc_color bar = selected ? h_white : h_dark_gray;
             for( int hx = x1, hx_max = pos.x + get_width(); hx < hx_max; ++hx ) {
-                mvwputch( win, point( hx, yy ), h_white, ' ' );
+                mvwputch( win, point( hx, yy ), bar, ' ' );
             }
         }
 
@@ -1362,6 +1386,14 @@ void inventory_selector::add_character_items( Character &character )
                     for( item *stored : pocket.all_items_top() ) {
                         add_item( own_gear_column, stored,
                                   &item_category_id( "ITEMS_WORN" ).obj(), it, 1 );
+                        // The same item belongs in its own category on the left
+                        // too, so a player hunting for a knife finds it under
+                        // WEAPONS instead of having to remember which garment
+                        // swallowed it. No custom category, so it lands in the
+                        // one the item itself declares; indent 0 keeps it a
+                        // top-level entry, and the parent pointer is there only
+                        // to name where it lives.
+                        add_item( own_inv_column, stored, nullptr, it, 0 );
                     }
                 }
             }
@@ -1902,6 +1934,19 @@ void inventory_selector::draw_columns( const catacurses::window &w ) const
     size_t x = border + 1;
     size_t y = get_header_height() + border + 1;
     size_t active_x = 0;
+
+    // An item in a pocket has an entry in two columns. Tell every column which
+    // item the cursor is on, so the copy the cursor is not on can echo it.
+    const item *highlighted_item = nullptr;
+    if( !empty() ) {
+        const inventory_entry &highlighted = get_active_column().get_selected();
+        if( highlighted.is_item() ) {
+            highlighted_item = highlighted.any_item();
+        }
+    }
+    for( const auto &elem : columns ) {
+        elem->set_companion_item( highlighted_item );
+    }
 
     for( const auto &elem : columns ) {
         if( &elem == &columns.back() ) {
