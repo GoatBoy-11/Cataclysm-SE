@@ -61,7 +61,7 @@ behavioural shift of the session. `reloading_test.cpp` asserted the old
 placement and its expectation was updated — an existing test changed, not a new
 one added, which is worth knowing in review.
 
-## Not verified — Oliver's playtest is outstanding
+## Not verified — the user's playtest is outstanding
 
 Nothing below has been seen by a human. The suite cannot judge any of it.
 
@@ -73,15 +73,15 @@ Nothing below has been seen by a human. The suite cannot judge any of it.
 - Indentation renders as expected. Tests assert `entry.indent == 1`, **not**
   that `get_entry_indent` draws two extra columns. Only eyes can confirm that.
 
-## The GitHub fork — DO NOT DO THIS UNLESS OLIVER ASKS
+## The GitHub fork — DO NOT DO THIS UNLESS THE USER ASKS
 
-Oliver has chosen the fork route. **He has explicitly said not to create it
-yet.** Do not create the repository, do not add remotes, do not push, and do
-not run any part of the setup below unless he asks for it in so many words.
-Publishing is outward-facing and irreversible; his decision to go this route is
-not permission to execute it.
+The user has chosen the fork route. **They have explicitly said not to create
+it yet.** Do not create the repository, do not add remotes, do not push, and do
+not run any part of the setup below unless they ask for it in so many words.
+Publishing is outward-facing and irreversible; their decision to go this route
+is not permission to execute it.
 
-When he does ask:
+When they do ask:
 
 - `gh` is authenticated as **GoatBoy-11** with `repo` scope. Capability is there.
 - **Use GitHub's fork mechanism**, not a fresh standalone repo. A fork shares
@@ -102,7 +102,7 @@ When he does ask:
   tracked files. CBN and CDDA are sibling directories outside this repo, 0
   tracked files. Zero tracked `.exe`, `.pdb`, `debug.log` or save files. This was
   checked; the size is not a hygiene problem.
-- **The tradeoff Oliver accepted:** a fork of a public repo cannot be private.
+- **The tradeoff the user accepted:** a fork of a public repo cannot be private.
 - Per CLAUDE.md, once it exists: rename `origin` (currently upstream BN) to
   `upstream`, add the new fork as `origin`.
 - Untracked in the tree and **not** part of any commit so far: `gfx/ChibiUltica/`
