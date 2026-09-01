@@ -268,15 +268,24 @@ bool run(
     // Moving an item needs somewhere to move it to. The picker declines on its
     // own when there is nothing to choose between, but an entry that always
     // declines reads as broken, so gate it here too.
-    if( !pockets_are_classic() && you.pocket_destinations( itm ).size() >= 2 ) {
+    //
+    // Worn and wielded items are excluded outright. Moving one would have to go
+    // through Character::takeoff() or unwield() to keep encumbrance, sight
+    // limits, the Lua hooks and the NO_TAKEOFF / NO_UNWIELD blocks honest, and a
+    // bare detach() does none of that - it would leave stale encumbrance and let
+    // a NO_UNWIELD weapon be stuffed into a backpack. Take it off first; this
+    // menu already offers that.
+    //
+    // The item is its own exclusion: without that, a worn container lists its
+    // own pockets as destinations and can be inserted into itself, which
+    // detaches it from the world entirely.
+    if( !pockets_are_classic() && !you.is_wearing( itm ) && !you.is_wielding( itm ) &&
+        you.pocket_destinations( itm, &itm ).size() >= 2 ) {
         add_entry( "MOVE_TO_POCKET", hint_rating::good, [&]() {
-            // Ask before touching the item. itm may be worn or wielded, and
-            // detaching it does none of the bookkeeping take-off/unwield do
-            // (encumbrance, sight limits, Lua on_takeoff) - so it must not
-            // happen until the player has actually committed to a
-            // destination. Every decline path (Escape, or the item's own
-            // detach dropping destinations below two) leaves itm untouched.
-            const std::optional<pocket_destination> dest = ask_pocket_destination( you, itm );
+            // Ask before touching the item: every decline path (Escape, or
+            // destinations dropping below two) must leave itm exactly where it
+            // was, so nothing may move until the player has committed.
+            const std::optional<pocket_destination> dest = ask_pocket_destination( you, itm, &itm );
             if( !dest ) {
                 return true;
             }

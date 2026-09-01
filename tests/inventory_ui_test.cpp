@@ -660,11 +660,37 @@ TEST_CASE("character creation routes into pockets without prompting even when ch
     REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
     item* vest = dummy.worn.front();
 
+    // quiet=false deliberately: quiet only suppresses the "you put it away"
+    // message. allow_prompt is what must hold the prompt back, and passing
+    // quiet=true here would let the old `!quiet &&` gate pass this test too.
     auto rock = item::spawn("test_rock");
     detached_ptr<item> refused =
-        dummy.i_add_to_worn_pockets(std::move(rock), nullptr, true, false);
+        dummy.i_add_to_worn_pockets(std::move(rock), nullptr, false, false);
     CHECK_FALSE(refused);
     CHECK(vest->contents.all_items_top().size() == 1);
+}
+
+// A container must never be offered its own pockets: putting an item inside
+// itself detaches it from the world entirely.
+TEST_CASE("a container is not a destination for itself", "[inventory][pocket][destination]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    REQUIRE(!dummy.wear_item(item::spawn("backpack")));
+
+    item* vest = nullptr;
+    for (item* worn : dummy.worn) {
+        if (worn->typeId() == itype_id("test_pocket_vest")) {
+            vest = worn;
+        }
+    }
+    REQUIRE(vest != nullptr);
+
+    // Excluding the vest is what stops its own pockets being offered as
+    // somewhere to put the vest.
+    for (const pocket_destination& dest : dummy.pocket_destinations(*vest, vest)) {
+        CHECK(dest.container != vest);
+    }
 }
 
 TEST_CASE("ask_pocket_destination declines before any menu when there are fewer than two destinations",
