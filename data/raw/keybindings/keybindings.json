@@ -3720,6 +3720,13 @@
     "bindings": [ { "input_method": "keyboard", "key": "o" }, { "input_method": "keyboard", "key": "P" } ]
   },
   {
+    "id": "MOVE_TO_POCKET",
+    "type": "keybinding",
+    "category": "INVENTORY_ITEM",
+    "name": "Move to pocket",
+    "bindings": [ { "input_method": "keyboard", "key": "M" } ]
+  },
+  {
     "id": "AUTOPICKUP_ADD",
     "type": "keybinding",
     "category": "INVENTORY_ITEM",

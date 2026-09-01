@@ -18,6 +18,7 @@
 #include "itype.h"
 #include "messages.h"
 #include "output.h"
+#include "pocket_destination_menu.h"
 #include "salvage.h"
 #include "recipe_dictionary.h"
 #include "rot.h"
@@ -262,6 +263,16 @@ bool run(
                 return false;
             } );
         }
+    }
+
+    // Moving an item needs somewhere to move it to. The picker declines on its
+    // own when there is nothing to choose between, but an entry that always
+    // declines reads as broken, so gate it here too.
+    if( !pockets_are_classic() && you.pocket_destinations( itm ).size() >= 2 ) {
+        add_entry( "MOVE_TO_POCKET", hint_rating::good, [&]() {
+            choose_pocket_destination( you, itm );
+            return true;
+        } );
     }
 
     add_entry( "REASSIGN", hint_rating::good, [&]() {
