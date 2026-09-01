@@ -2310,3 +2310,41 @@ TEST_CASE( "an_authored_pocket_without_a_length_limit_omits_the_length_line",
     CHECK( length_lines == 1 );
     CHECK( joined.find( "30 cm" ) != std::string::npos );
 }
+
+TEST_CASE( "insert_into puts an item in the pocket it names", "[item][pocket][insert]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    REQUIRE( bag->contents.get_pockets().size() == 2 );
+
+    // Pocket 1 holds 4 L; pocket 0 holds only 100 ml. Naming pocket 1 must put
+    // it there even though best_pocket() prefers the tightest fit.
+    const ret_val<bool> res = bag->contents.insert_into( 1, item::spawn( "test_rock" ) );
+
+    CHECK( res.success() );
+    CHECK( bag->contents.get_pockets()[1].all_items_top().size() == 1 );
+    CHECK( bag->contents.get_pockets()[0].empty() );
+}
+
+TEST_CASE( "insert_into refuses a pocket that cannot hold the item", "[item][pocket][insert]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+
+    // Pocket 0 is 100 ml. A refusal must hand the item back, not eat it.
+    const ret_val<bool> res = bag->contents.insert_into( 0, std::move( rock ) );
+
+    CHECK_FALSE( res.success() );
+    CHECK( rock );
+    CHECK( bag->contents.get_pockets()[0].empty() );
+}
+
+TEST_CASE( "insert_into refuses an index that does not exist", "[item][pocket][insert]" )
+{
+    detached_ptr<item> bag = item::spawn( "test_two_pocket_bag" );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+
+    const ret_val<bool> res = bag->contents.insert_into( 99, std::move( rock ) );
+
+    CHECK_FALSE( res.success() );
+    CHECK( rock );
+}

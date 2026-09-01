@@ -99,6 +99,13 @@ class item_contents
         void insert_item_forced( detached_ptr<item> &&it );
 
         /**
+         * Insert into one named pocket rather than whichever best_pocket()
+         * would choose. The player picking a destination is the whole point,
+         * so a full or restricted pocket refuses instead of falling back.
+         */
+        ret_val<bool> insert_into( size_t pocket_index, detached_ptr<item> &&it );
+
+        /**
          * returns the number of items stacks in contents
          * each item that is not count_by_charges,
          * plus whole stacks of items that are

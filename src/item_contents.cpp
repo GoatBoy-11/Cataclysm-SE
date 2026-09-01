@@ -250,6 +250,20 @@ void item_contents::insert_item_forced( detached_ptr<item> &&it )
     insert_item_impl( std::move( it ), true );
 }
 
+ret_val<bool> item_contents::insert_into( size_t pocket_index, detached_ptr<item> &&it )
+{
+    if( pocket_index >= pockets.size() ) {
+        return ret_val<bool>::make_failure( _( "that pocket does not exist" ) );
+    }
+    item_pocket &pocket = pockets[pocket_index];
+    const ret_val<item_pocket::contain_code> allowed = pocket.can_contain( *it );
+    if( !allowed.success() ) {
+        return ret_val<bool>::make_failure( allowed.str() );
+    }
+    pocket.insert( std::move( it ) );
+    return ret_val<bool>::make_success();
+}
+
 size_t item_contents::num_item_stacks() const
 {
     size_t total = 0;
