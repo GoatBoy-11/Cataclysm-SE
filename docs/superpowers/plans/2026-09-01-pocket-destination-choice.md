@@ -60,7 +60,7 @@ currently say "this pocket, not that one", which both features need.
   own refusal reason. An out-of-range index is a failure, not undefined
   behaviour.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```cpp
 TEST_CASE( "insert_into puts an item in the pocket it names", "[item][pocket][insert]" )
@@ -102,7 +102,7 @@ TEST_CASE( "insert_into refuses an index that does not exist", "[item][pocket][i
 }
 ```
 
-- [ ] **Step 2: Run the tests and watch them fail**
+- [x] **Step 2: Run the tests and watch them fail**
 
 ```sh
 cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EXIT=$?"
@@ -110,7 +110,7 @@ cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EX
 
 Expected: the build fails with `error C2039: 'insert_into': is not a member of 'item_contents'`.
 
-- [ ] **Step 3: Declare it**
+- [x] **Step 3: Declare it**
 
 In `src/item_contents.h`, directly below `insert_item`:
 
@@ -123,7 +123,7 @@ In `src/item_contents.h`, directly below `insert_item`:
         ret_val<bool> insert_into( size_t pocket_index, detached_ptr<item> &&it );
 ```
 
-- [ ] **Step 4: Define it**
+- [x] **Step 4: Define it**
 
 In `src/item_contents.cpp`:
 
@@ -147,7 +147,7 @@ If `item_pocket::insert_item` does not take a `detached_ptr<item> &&` under that
 exact name, read the pocket's own insertion method in `src/item_pocket.h` and
 use it - do not add a second one.
 
-- [ ] **Step 5: Run the tests and watch them pass**
+- [x] **Step 5: Run the tests and watch them pass**
 
 ```sh
 cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EXIT=$?"
@@ -157,7 +157,7 @@ out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe "[insert]"
 
 Expected: 3 test cases pass.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/item_contents.h src/item_contents.cpp tests/item_pocket_test.cpp
@@ -186,7 +186,7 @@ the UI so it can be tested without a screen.
     container, which unload needs so a garment does not swallow its own
     contents back. Empty in classic mode.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```cpp
 TEST_CASE( "pocket destinations list every pocket that would take the item",
@@ -232,7 +232,7 @@ TEST_CASE( "classic mode offers no pocket destinations",
 }
 ```
 
-- [ ] **Step 2: Run the tests and watch them fail**
+- [x] **Step 2: Run the tests and watch them fail**
 
 ```sh
 cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EXIT=$?"
@@ -240,7 +240,7 @@ cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EX
 
 Expected: build failure, `'pocket_destinations': is not a member of 'Character'`.
 
-- [ ] **Step 3: Declare the struct and method**
+- [x] **Step 3: Declare the struct and method**
 
 In `src/character.h`, above the `Character` class:
 
@@ -264,7 +264,7 @@ Inside `Character`, beside `i_add_to_worn_pockets`:
             const item &it, const item *exclude = nullptr ) const;
 ```
 
-- [ ] **Step 4: Define it**
+- [x] **Step 4: Define it**
 
 In `src/character.cpp`, above `i_add_to_worn_pockets`:
 
@@ -306,7 +306,7 @@ std::vector<pocket_destination> Character::pocket_destinations(
 }
 ```
 
-- [ ] **Step 5: Run the tests and watch them pass**
+- [x] **Step 5: Run the tests and watch them pass**
 
 ```sh
 cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EXIT=$?"
@@ -316,7 +316,7 @@ out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe "[destination]"
 
 Expected: 3 test cases pass.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/character.h src/character.cpp tests/inventory_ui_test.cpp
@@ -348,7 +348,7 @@ A new file rather than an addition to `examine_item_menu.cpp`, per the fork
 discipline in CLAUDE.md: a new path conflicts only if upstream adds the same
 one, while edits inside an existing function body are the most expensive kind.
 
-- [ ] **Step 1: Write the header**
+- [x] **Step 1: Write the header**
 
 `src/pocket_destination_menu.h`:
 
@@ -367,7 +367,7 @@ class item;
 bool choose_pocket_destination( Character &who, item &it, const item *exclude = nullptr );
 ```
 
-- [ ] **Step 2: Write the menu**
+- [x] **Step 2: Write the menu**
 
 `src/pocket_destination_menu.cpp`:
 
@@ -429,7 +429,7 @@ bool choose_pocket_destination( Character &who, item &it, const item *exclude )
 If `format_volume` or `it.detach()` do not resolve, check the includes in
 `src/item_contents.cpp`, which calls both.
 
-- [ ] **Step 3: Add the menu entry**
+- [x] **Step 3: Add the menu entry**
 
 In `src/examine_item_menu.cpp`, immediately after the `ORGANIZE_POCKETS` block:
 
@@ -448,7 +448,7 @@ In `src/examine_item_menu.cpp`, immediately after the `ORGANIZE_POCKETS` block:
 Return `true`, not `false`: the item has moved, so the menu it was opened from
 is stale and must close. Add `#include "pocket_destination_menu.h"` at the top.
 
-- [ ] **Step 4: Add the keybinding**
+- [x] **Step 4: Add the keybinding**
 
 In `data/raw/keybindings/keybindings.json`, after the `ORGANIZE_POCKETS` object:
 
@@ -462,7 +462,7 @@ In `data/raw/keybindings/keybindings.json`, after the `ORGANIZE_POCKETS` object:
   },
 ```
 
-- [ ] **Step 5: Build**
+- [x] **Step 5: Build**
 
 `src/` globs with `CONFIGURE_DEPENDS`, so a new source file needs no CMake
 change. If the build cannot find it, re-run `cmake --preset cse-msvc`.
@@ -473,7 +473,7 @@ cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EX
 
 Expected: EXIT=0.
 
-- [ ] **Step 6: Lint the JSON**
+- [x] **Step 6: Lint the JSON**
 
 ```sh
 out/build/cse-vcpkg/tools/format/RelWithDebInfo/json_formatter.exe data/raw/keybindings/keybindings.json
@@ -483,7 +483,7 @@ git diff --stat data/raw/keybindings/keybindings.json
 Expected: either no diff, or only formatting the tool applied. Commit whatever
 it produces.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/pocket_destination_menu.h src/pocket_destination_menu.cpp \
@@ -512,7 +512,7 @@ all call, so the branch goes there and covers all three. `quiet` already marks
 the non-interactive caller, which is exactly the flag needed to keep character
 creation silent.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```cpp
 TEST_CASE( "the pickup prompt is off by default and follows the option",
@@ -533,7 +533,7 @@ TEST_CASE( "the pickup prompt is off by default and follows the option",
 }
 ```
 
-- [ ] **Step 2: Run it and watch it fail**
+- [x] **Step 2: Run it and watch it fail**
 
 ```sh
 cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EXIT=$?"
@@ -541,7 +541,7 @@ cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EX
 
 Expected: build failure, `'pockets_prompt_on_pickup': identifier not found`.
 
-- [ ] **Step 3: Add the option**
+- [x] **Step 3: Add the option**
 
 In `src/options.cpp`, directly after the `POCKET_SYSTEM` block:
 
@@ -553,7 +553,7 @@ In `src/options.cpp`, directly after the `POCKET_SYSTEM` block:
        );
 ```
 
-- [ ] **Step 4: Add the predicate**
+- [x] **Step 4: Add the predicate**
 
 In `src/item_pocket.h`, beside `pockets_are_classic()`:
 
@@ -572,7 +572,7 @@ bool pockets_prompt_on_pickup()
 }
 ```
 
-- [ ] **Step 5: Run the test and watch it pass**
+- [x] **Step 5: Run the test and watch it pass**
 
 ```sh
 cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EXIT=$?"
@@ -582,7 +582,7 @@ out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe "[option]"
 
 Expected: PASS.
 
-- [ ] **Step 6: Branch the routing seam**
+- [x] **Step 6: Branch the routing seam**
 
 In `src/character.cpp`, inside `i_add_to_worn_pockets`, after the liquid and
 casing guard and before the automatic ranking loop:
@@ -612,7 +612,7 @@ return `detached_ptr<item>` instead of a reference, and adjust the Task 3 call
 site in `examine_item_menu.cpp` to match. That is the safer shape; do not fight
 the ownership model to preserve a signature written before this was known.
 
-- [ ] **Step 7: Build and run the whole pocket suite**
+- [x] **Step 7: Build and run the whole pocket suite**
 
 ```sh
 cmake --build out/build/cse-vcpkg --config RelWithDebInfo --parallel 6; echo "EXIT=$?"
@@ -623,7 +623,7 @@ out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe "[pocket]"
 Expected: all pass. Routing tests must not regress - the option defaults to
 `auto`, so every existing test takes the old path.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/options.cpp src/item_pocket.h src/item_pocket.cpp \
@@ -637,7 +637,7 @@ git commit -m "feat: add a world option to choose an item's pocket at pickup"
 
 **Files:** none - this task runs things.
 
-- [ ] **Step 1: Full suite**
+- [x] **Step 1: Full suite**
 
 ```sh
 export CATA_TEST_COMPUTE_ACCELERATION=cpu
@@ -650,13 +650,13 @@ Expected: only the four environmental `vision_*` failures named in CLAUDE.md -
 `vision_see_out_of_vehicle`, `vision_see_into_vehicle`. Any other failure is
 real.
 
-- [ ] **Step 2: Rotate the playtest exe**
+- [x] **Step 2: Rotate the playtest exe**
 
 ```sh
 bash .claude/rotate-game-exe.sh
 ```
 
-- [ ] **Step 3: Playtest in `auto` mode**
+- [x] **Step 3: Playtest in `auto` mode**
 
 Nothing below is covered by a test; a `uilist` needs eyes.
 
@@ -667,7 +667,7 @@ Nothing below is covered by a test; a `uilist` needs eyes.
 - An item with fewer than two destinations offers no `m` entry at all.
 - A classic world offers neither `m` nor the option.
 
-- [ ] **Step 4: Playtest in `choose` mode**
+- [x] **Step 4: Playtest in `choose` mode**
 
 Set "Choosing an item's pocket" to Choose in world options, then:
 
@@ -681,7 +681,7 @@ Set "Choosing an item's pocket" to Choose in world options, then:
   likely to break; if creation prompts, `quiet` is not reaching the branch.
 - Escape out of a prompt: the item still ends up somewhere sensible, never lost.
 
-- [ ] **Step 5: Tick this plan's boxes and commit**
+- [x] **Step 5: Tick this plan's boxes and commit**
 
 ```bash
 git add docs/superpowers/plans/2026-09-01-pocket-destination-choice.md
