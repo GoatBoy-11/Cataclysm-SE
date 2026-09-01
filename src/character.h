@@ -266,6 +266,12 @@ struct ret_val<edible_rating>::default_failure : public
     std::integral_constant<edible_rating, edible_rating::inedible> {
 };
 
+/** One place an item could go: a container the player has, and which of its pockets. */
+struct pocket_destination {
+    item *container = nullptr;
+    size_t pocket_index = 0;
+};
+
 class Character : public Creature, public location_visitable<Character>
 {
     public:
@@ -1377,6 +1383,14 @@ class Character : public Creature, public location_visitable<Character>
          */
         detached_ptr<item> i_add_to_worn_pockets( detached_ptr<item> &&it,
                 const item *exclude = nullptr, bool quiet = false );
+
+        /**
+         * Every worn pocket that would accept @p it, best first. @p exclude
+         * skips one container, which unloading needs so a garment does not
+         * take its own contents straight back. Empty in classic mode.
+         */
+        std::vector<pocket_destination> pocket_destinations(
+            const item &it, const item *exclude = nullptr ) const;
 
         /**
          * Offer everything loose in the flat inventory to the pockets of what is

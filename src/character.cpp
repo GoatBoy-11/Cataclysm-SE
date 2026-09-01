@@ -2687,6 +2687,42 @@ int Character::amount_worn( const itype_id &id ) const
     }
     return amount;
 }
+std::vector<pocket_destination> Character::pocket_destinations(
+    const item &it, const item *exclude ) const
+{
+    std::vector<pocket_destination> destinations;
+    if( pockets_are_classic() ) {
+        return destinations;
+    }
+
+    // Walk worn in order, then sort stably: wear order survives as the
+    // tie-break among pockets of equal priority, matching how
+    // i_add_to_worn_pockets already ranks them.
+    for( item * const &garment : worn ) {
+        if( garment == exclude ) {
+            continue;
+        }
+        const std::vector<item_pocket> &pockets = garment->contents.get_pockets();
+        for( size_t i = 0; i < pockets.size(); i++ ) {
+            if( pockets[i].definition().type != pocket_type::CONTAINER ) {
+                continue;
+            }
+            if( !pockets[i].can_contain( it ).success() ) {
+                continue;
+            }
+            destinations.push_back( pocket_destination{ garment, i } );
+        }
+    }
+
+    std::ranges::stable_sort( destinations,
+    []( const pocket_destination & a, const pocket_destination & b ) {
+        const int pa = a.container->contents.get_pockets()[a.pocket_index].get_settings().priority();
+        const int pb = b.container->contents.get_pockets()[b.pocket_index].get_settings().priority();
+        return pa > pb;
+    } );
+    return destinations;
+}
+
 detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it,
         const item *exclude, bool quiet )
 {

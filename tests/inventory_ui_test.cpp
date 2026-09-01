@@ -514,3 +514,45 @@ TEST_CASE("the copy the cursor is not on echoes the highlight", "[inventory][ui]
     selector.own_inv_column.set_companion_item(nullptr);
     CHECK_FALSE(selector.own_inv_column.is_companion(*listed.front()));
 }
+
+TEST_CASE("pocket destinations list every pocket that would take the item",
+          "[inventory][pocket][destination]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    REQUIRE(!dummy.wear_item(item::spawn("backpack")));
+
+    auto rock = item::spawn("test_rock");
+    const auto destinations = dummy.pocket_destinations(*rock);
+
+    // At least the vest's pocket and the backpack's main pocket.
+    CHECK(destinations.size() >= 2);
+    for (const pocket_destination& dest : destinations) {
+        REQUIRE(dest.container != nullptr);
+        CHECK(dest.pocket_index < dest.container->contents.get_pockets().size());
+    }
+}
+
+TEST_CASE("pocket destinations skip the excluded container",
+          "[inventory][pocket][destination]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+
+    auto rock = item::spawn("test_rock");
+    for (const pocket_destination& dest : dummy.pocket_destinations(*rock, vest)) {
+        CHECK(dest.container != vest);
+    }
+}
+
+TEST_CASE("classic mode offers no pocket destinations",
+          "[inventory][pocket][destination][classic]") {
+    override_option classic("POCKET_SYSTEM", "classic");
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+
+    auto rock = item::spawn("test_rock");
+    CHECK(dummy.pocket_destinations(*rock).empty());
+}
