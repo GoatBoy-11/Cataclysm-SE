@@ -270,12 +270,29 @@ bool run(
     // declines reads as broken, so gate it here too.
     if( !pockets_are_classic() && you.pocket_destinations( itm ).size() >= 2 ) {
         add_entry( "MOVE_TO_POCKET", hint_rating::good, [&]() {
-            // choose_pocket_destination() takes ownership of the item; put it
-            // back if it declines rather than let it vanish.
-            detached_ptr<item> declined = choose_pocket_destination( you, itm.detach() );
-            if( declined ) {
-                you.i_add( std::move( declined ) );
+            // Ask before touching the item. itm may be worn or wielded, and
+            // detaching it does none of the bookkeeping take-off/unwield do
+            // (encumbrance, sight limits, Lua on_takeoff) - so it must not
+            // happen until the player has actually committed to a
+            // destination. Every decline path (Escape, or the item's own
+            // detach dropping destinations below two) leaves itm untouched.
+            const std::optional<pocket_destination> dest = ask_pocket_destination( you, itm );
+            if( !dest ) {
+                return true;
             }
+            detached_ptr<item> detached = itm.detach();
+            const std::string moved_name = detached->tname();
+            const std::string container_name = dest->container->tname();
+            ret_val<bool> inserted =
+                dest->container->contents.insert_into( dest->pocket_index, std::move( detached ) );
+            if( !inserted.success() ) {
+                // insert_into() only moves out of `detached` on success, so
+                // on failure the item is still ours to hand back.
+                you.i_add( std::move( detached ) );
+                popup( _( "The %1$s will not go in there: %2$s" ), moved_name, inserted.str() );
+                return true;
+            }
+            you.add_msg_if_player( _( "You put the %1$s in your %2$s." ), moved_name, container_name );
             return true;
         } );
     }

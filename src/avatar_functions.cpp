@@ -630,9 +630,11 @@ void use_item( avatar &you, item &used )
 /**
  * @param source The item the contents came out of, kept out of the pocket
  * competition so emptying a worn container cannot refill it.
+ * @param allow_prompt Whether POCKET_PICKUP=choose may ask where this freed
+ * item goes. False when the caller is unloading in bulk.
  */
 static detached_ptr<item> add_or_drop_with_msg( avatar &you, detached_ptr<item> &&it,
-        bool unloading, const item *source = nullptr )
+        bool unloading, const item *source = nullptr, bool allow_prompt = true )
 {
     if( it->made_of( LIQUID ) ) {
         liquid_handler::consume_liquid( std::move( it ), 1 );
@@ -646,7 +648,7 @@ static detached_ptr<item> add_or_drop_with_msg( avatar &you, detached_ptr<item> 
     // Worn pockets get first refusal, as they do on pickup. Without this the
     // freed item goes straight to the flat inventory, charged against capacity
     // the pockets granted but stored nowhere the player can reach it.
-    it = you.i_add_to_worn_pockets( std::move( it ), source );
+    it = you.i_add_to_worn_pockets( std::move( it ), source, false, allow_prompt );
     if( !it ) {
         return detached_ptr<item>();
     }
@@ -666,7 +668,7 @@ static detached_ptr<item> add_or_drop_with_msg( avatar &you, detached_ptr<item> 
     return detached_ptr<item>();
 }
 
-bool unload_item( avatar &you, item &loc )
+bool unload_item( avatar &you, item &loc, bool allow_prompt )
 {
     item &it = loc;
     //Give the player the same options as when attempting to eat food that doesn't belong to them, bomb out if they say no.
@@ -708,7 +710,7 @@ bool unload_item( avatar &you, item &loc )
             }
             int old_charges = contained->charges;
             item &obj = *contained;
-            contained = add_or_drop_with_msg( you, std::move( contained ), true, &it );
+            contained = add_or_drop_with_msg( you, std::move( contained ), true, &it, allow_prompt );
             if( !contained || contained->charges != old_charges ) {
                 you.mod_moves( -you.item_handling_cost( obj ) );
                 changed = true;
@@ -788,14 +790,14 @@ bool unload_item( avatar &you, item &loc )
         it.contents.remove_top_items_with( [&]( detached_ptr<item> &&contained ) {
             mv += you.item_reload_cost( it, *contained, contained->charges ) / 2;
             qty += contained->charges;
-            return add_or_drop_with_msg( you, std::move( contained ), true, &it );
+            return add_or_drop_with_msg( you, std::move( contained ), true, &it, allow_prompt );
         } );
 
         // remove the belt linkage
         if( it.is_ammo_belt() ) {
             if( it.type->magazine->linkage ) {
                 detached_ptr<item> link = item::spawn( *it.type->magazine->linkage, calendar::turn, qty );
-                add_or_drop_with_msg( you, std::move( link ), true, &it );
+                add_or_drop_with_msg( you, std::move( link ), true, &it, allow_prompt );
             }
             add_msg( _( "You disassemble your %s." ), it.tname() );
         } else {
@@ -811,7 +813,7 @@ bool unload_item( avatar &you, item &loc )
         bool unloaded = false;
         target->contents.remove_top_items_with( [&]( detached_ptr<item> &&it ) {
             if( &*it == mag ) {
-                it = add_or_drop_with_msg( you, std::move( it ), true, target );
+                it = add_or_drop_with_msg( you, std::move( it ), true, target, allow_prompt );
                 if( !it ) {
                     unloaded = true;
                 }
@@ -844,7 +846,7 @@ bool unload_item( avatar &you, item &loc )
         if( ammo->made_of( LIQUID ) ) {
 
 
-            ammo = add_or_drop_with_msg( you, std::move( ammo ), false, target );
+            ammo = add_or_drop_with_msg( you, std::move( ammo ), false, target, allow_prompt );
 
             if( ammo ) {
                 qty -= ammo->charges; // only handled part (or none) of the liquid
@@ -854,7 +856,7 @@ bool unload_item( avatar &you, item &loc )
             }
 
         } else {
-            ammo = add_or_drop_with_msg( you, std::move( ammo ), qty > 1, target );
+            ammo = add_or_drop_with_msg( you, std::move( ammo ), qty > 1, target, allow_prompt );
             if( ammo ) {
                 return false;
             }

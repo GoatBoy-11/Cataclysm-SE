@@ -327,9 +327,10 @@ static auto pick_one_up( const pick_one_up_options &opts ) -> bool
             newloc = u.i_add_to_container( std::move( newloc ), false );
         }
         // Worn pockets get first refusal on the rest; the flat inventory backs
-        // them up, so refusal costs nothing.
+        // them up, so refusal costs nothing. Autopickup sweeps a whole tile
+        // per turn, so it never prompts - only a manual pickup can.
         if( !opts.preferred_option && newloc ) {
-            newloc = u.i_add_to_worn_pockets( std::move( newloc ) );
+            newloc = u.i_add_to_worn_pockets( std::move( newloc ), nullptr, false, !opts.autopickup );
         }
 
         if( !newloc || ( newloc->count_by_charges() && newloc->charges == 0 ) ) {
@@ -467,8 +468,10 @@ static auto pick_one_up( const pick_one_up_options &opts ) -> bool
                 // Children go through the same routing as the item they came
                 // with. Without this, a batched pickup put the first item in a
                 // pocket and dropped the rest into the flat inventory, which
-                // looked like routing working only sometimes.
-                detached_ptr<item> child = u.i_add_to_worn_pockets( added.detach() );
+                // looked like routing working only sometimes. Same autopickup
+                // exemption as the parent item above.
+                detached_ptr<item> child = u.i_add_to_worn_pockets( added.detach(), nullptr, false,
+                        !opts.autopickup );
                 if( child ) {
                     u.i_add( std::move( child ) );
                 }

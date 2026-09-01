@@ -1380,9 +1380,14 @@ class Character : public Creature, public location_visitable<Character>
          * @param quiet Suppress the "you put it away" message. Character
          * creation stows a whole starting kit at once, before there is a game
          * for the player to read a message log in.
+         * @param allow_prompt Whether POCKET_PICKUP=choose may ask the player
+         * for this item. False for any bulk or non-interactive caller -
+         * character creation, autopickup, unload_all - where a menu per item
+         * would be unusable or would prompt before the player has a game to
+         * see it in.
          */
         detached_ptr<item> i_add_to_worn_pockets( detached_ptr<item> &&it,
-                const item *exclude = nullptr, bool quiet = false );
+                const item *exclude = nullptr, bool quiet = false, bool allow_prompt = true );
 
         /**
          * Every worn pocket that would accept @p it, best first. @p exclude

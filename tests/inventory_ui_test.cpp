@@ -7,6 +7,7 @@
 #include "itype.h"
 #include "options_helpers.h"
 #include "player_helpers.h"
+#include "pocket_destination_menu.h"
 #include "type_id.h"
 
 TEST_CASE(
@@ -645,5 +646,37 @@ TEST_CASE("the pickup prompt is off by default and follows the option",
         override_option classic("POCKET_SYSTEM", "classic");
         CHECK_FALSE(pockets_prompt_on_pickup());
     }
+}
+
+// stow_loose_inventory_into_pockets makes exactly this call (quiet=true,
+// allow_prompt=false). It must never block on a menu regardless of the
+// world option - there is no game yet for a new character to be asked
+// anything in - and the item must still end up routed, not lost.
+TEST_CASE("character creation routes into pockets without prompting even when choose is set",
+          "[inventory][pocket][option]") {
+    override_option choose("POCKET_PICKUP", "choose");
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+
+    auto rock = item::spawn("test_rock");
+    detached_ptr<item> refused =
+        dummy.i_add_to_worn_pockets(std::move(rock), nullptr, true, false);
+    CHECK_FALSE(refused);
+    CHECK(vest->contents.all_items_top().size() == 1);
+}
+
+TEST_CASE("ask_pocket_destination declines before any menu when there are fewer than two destinations",
+          "[inventory][pocket][destination]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    // A naked avatar has zero worn pockets, well under the two needed to be
+    // worth asking about. If this ever tried to build and query a real menu
+    // instead of declining first, the test would hang on input.
+    auto rock = item::spawn("test_rock");
+    const std::optional<pocket_destination> dest = ask_pocket_destination(dummy, *rock);
+    CHECK_FALSE(dest.has_value());
+    CHECK(rock->typeId() == itype_id("test_rock"));
 }
 

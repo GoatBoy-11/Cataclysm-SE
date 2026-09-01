@@ -1729,7 +1729,8 @@ void avatar_action::unload_all( avatar &you, bool inv )
         auto items = you.all_items();
         for( item *it : items ) {
             if( item_funcs::can_be_unloaded( *it ) ) {
-                if( !avatar_funcs::unload_item( you, *it ) ) {
+                // Bulk sweep: a menu per item would be unusable here.
+                if( !avatar_funcs::unload_item( you, *it, false ) ) {
                     break;
                 }
                 unloaded = true;
@@ -1739,7 +1740,8 @@ void avatar_action::unload_all( avatar &you, bool inv )
         auto items = get_map().i_at( you.bub_pos() );
         for( item *it : items ) {
             if( item_funcs::can_be_unloaded( *it ) ) {
-                if( !avatar_funcs::unload_item( you, *it ) ) {
+                // Bulk sweep: a menu per item would be unusable here.
+                if( !avatar_funcs::unload_item( you, *it, false ) ) {
                     break;
                 }
                 unloaded = true;

@@ -1,18 +1,20 @@
 #pragma once
 
-#include "detached_ptr.h"
+#include <optional>
+
+#include "character.h"
 
 class Character;
 class item;
 
 /**
- * Ask which pocket an item should go into, and put it there.
+ * Ask which of the worn pockets that would take @p it it should go into.
  *
- * Takes ownership of @p it. Returns an empty detached_ptr when the item was
- * moved into the chosen pocket. Otherwise the item comes back to the caller
- * unchanged - the caller owns it exactly once, either way - because the
- * player escaped the menu, there were fewer than two destinations to choose
- * between, or the chosen pocket refused it.
+ * Query only: never touches @p it or the world, so it is safe to call before
+ * the caller has committed to moving the item anywhere. Returns the chosen
+ * destination, or std::nullopt when the player escaped the menu or there
+ * were fewer than two destinations to choose between - in which case there
+ * is nothing to ask.
  */
-detached_ptr<item> choose_pocket_destination( Character &who, detached_ptr<item> &&it,
+std::optional<pocket_destination> ask_pocket_destination( Character &who, const item &it,
         const item *exclude = nullptr );

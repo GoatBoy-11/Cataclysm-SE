@@ -50,8 +50,13 @@ void toolmod_add( avatar &you, item &tool, item &mod );
 /** Use a tool at given location */
 void use_item( avatar &you, item &used );
 
-/** Unload an item at given location */
-bool unload_item( avatar &you, item &loc );
+/**
+ * Unload an item at given location.
+ * @param allow_prompt Whether POCKET_PICKUP=choose may ask where each freed
+ * item goes. False for a bulk sweep (unload_all), where a menu per item
+ * would be unusable; true for a single deliberate unload.
+ */
+bool unload_item( avatar &you, item &loc, bool allow_prompt = true );
 
 /** List potential theft witnesses */
 std::vector<npc *> list_potential_theft_witnesses( avatar &you, const faction_id &owners );

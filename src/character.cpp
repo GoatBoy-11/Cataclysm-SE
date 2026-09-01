@@ -2734,7 +2734,7 @@ std::vector<pocket_destination> Character::pocket_destinations(
 }
 
 detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it,
-        const item *exclude, bool quiet )
+        const item *exclude, bool quiet, bool allow_prompt )
 {
     if( !it || pockets_are_classic() ) {
         return std::move( it );
@@ -2745,15 +2745,28 @@ detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it,
         return std::move( it );
     }
 
-    // Choose mode asks, but only for a deliberate single action. Character
-    // creation passes quiet and is handed dozens of items; prompting for each
-    // would be unusable, and the player has not started playing yet.
-    if( !quiet && pockets_prompt_on_pickup() ) {
-        it = choose_pocket_destination( *this, std::move( it ), exclude );
-        if( !it ) {
-            return detached_ptr<item>();
+    // Choose mode asks, but only for a deliberate single action - bulk and
+    // non-interactive callers pass allow_prompt = false. The picker is a
+    // query: it does not touch `it`, so nothing here risks the item before
+    // insert_into actually takes ownership of it.
+    if( allow_prompt && pockets_prompt_on_pickup() ) {
+        const std::optional<pocket_destination> dest = ask_pocket_destination( *this, *it, exclude );
+        if( dest ) {
+            const std::string stored_name = it->tname();
+            const std::string container_name = dest->container->tname();
+            ret_val<bool> inserted =
+                dest->container->contents.insert_into( dest->pocket_index, std::move( it ) );
+            if( inserted.success() ) {
+                if( !quiet ) {
+                    add_msg_if_player( _( "You put the %1$s in your %2$s." ), stored_name, container_name );
+                }
+                return detached_ptr<item>();
+            }
+            // insert_into() only moves out of `it` on success, so on failure
+            // it's still ours; fall through to automatic routing below.
         }
-        // Declined or refused: fall through to automatic routing below.
+        // No destination chosen - escaped, or nothing to choose - falls
+        // through to automatic routing below.
     }
 
     // The best pocket of each garment competes on player priority; wear order
@@ -2807,7 +2820,10 @@ void Character::stow_loose_inventory_into_pockets()
         detached.push_back( inv.remove_item( it ) );
     }
     for( detached_ptr<item> &it : detached ) {
-        it = i_add_to_worn_pockets( std::move( it ), nullptr, true );
+        // allow_prompt = false: character creation must never prompt, no
+        // matter the world option - there is no game yet for the player to
+        // be asked about.
+        it = i_add_to_worn_pockets( std::move( it ), nullptr, true, false );
         if( it ) {
             inv.add_item( std::move( it ), false );
         }
