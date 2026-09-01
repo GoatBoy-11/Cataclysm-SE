@@ -2364,3 +2364,25 @@ TEST_CASE( "insert_into invalidates the container-level all_items_top cache",
 
     CHECK( bag->contents.all_items_top().size() == 1 );
 }
+
+// ---------------------------------------------------------------------------
+// Ammo pockets count rounds, not millilitres
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "a quiver holds arrows despite reporting no volume", "[item][pocket][ammo]" )
+{
+    // The pocket coverage report prints these as "0 ml", which reads as a
+    // pocket that holds nothing. It is not: can_contain() returns on the round
+    // count before volume is ever consulted, so the capacity is the 20 arrows
+    // the bandolier action declares. This test exists to stop that number being
+    // "fixed" by giving the pocket a volume it does not want.
+    detached_ptr<item> quiver = item::spawn( "quiver" );
+    detached_ptr<item> arrows = item::spawn( "arrow_wood" );
+
+    REQUIRE( quiver->contents.get_pockets().size() == 1 );
+    const item_pocket &pocket = quiver->contents.get_pockets().front();
+    REQUIRE( pocket.definition().max_contains_volume == 0_ml );
+    REQUIRE( !pocket.definition().ammo_restriction.empty() );
+
+    CHECK( pocket.can_contain( *arrows ).success() );
+}
