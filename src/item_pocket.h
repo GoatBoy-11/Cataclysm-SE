@@ -124,6 +124,9 @@ struct pocket_data {
  */
 bool pockets_are_classic();
 
+/** True when the player has asked to pick a pocket for each item picked up. */
+bool pockets_prompt_on_pickup();
+
 void record_pocket_audit_miss( const item *container, const item &inserted );
 std::string pocket_audit_report();
 void clear_pocket_audit();

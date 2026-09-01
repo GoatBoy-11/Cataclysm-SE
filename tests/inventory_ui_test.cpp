@@ -630,3 +630,20 @@ TEST_CASE("classic mode offers no pocket destinations",
     CHECK(dummy.pocket_destinations(*rock).empty());
 }
 
+TEST_CASE("the pickup prompt is off by default and follows the option",
+          "[inventory][pocket][option]") {
+    CHECK_FALSE(pockets_prompt_on_pickup());
+
+    {
+        override_option choose("POCKET_PICKUP", "choose");
+        CHECK(pockets_prompt_on_pickup());
+    }
+
+    // Classic mode ignores pockets, so it must ignore the prompt too.
+    {
+        override_option choose("POCKET_PICKUP", "choose");
+        override_option classic("POCKET_SYSTEM", "classic");
+        CHECK_FALSE(pockets_prompt_on_pickup());
+    }
+}
+

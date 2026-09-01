@@ -456,6 +456,12 @@ bool pockets_are_classic()
            get_option<std::string>( "POCKET_SYSTEM" ) == "classic";
 }
 
+bool pockets_prompt_on_pickup()
+{
+    // Classic mode pools storage, so there is nothing to choose between.
+    return !pockets_are_classic() && get_option<std::string>( "POCKET_PICKUP" ) == "choose";
+}
+
 /**
  * Whether a magazine only fits because of a conversion mod fitted to the gun.
  *

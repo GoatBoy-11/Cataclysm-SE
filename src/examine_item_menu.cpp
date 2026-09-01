@@ -270,7 +270,12 @@ bool run(
     // declines reads as broken, so gate it here too.
     if( !pockets_are_classic() && you.pocket_destinations( itm ).size() >= 2 ) {
         add_entry( "MOVE_TO_POCKET", hint_rating::good, [&]() {
-            choose_pocket_destination( you, itm );
+            // choose_pocket_destination() takes ownership of the item; put it
+            // back if it declines rather than let it vanish.
+            detached_ptr<item> declined = choose_pocket_destination( you, itm.detach() );
+            if( declined ) {
+                you.i_add( std::move( declined ) );
+            }
             return true;
         } );
     }

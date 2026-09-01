@@ -89,6 +89,7 @@
 #include "overmapbuffer.h"
 #include "player.h"
 #include "player_activity.h"
+#include "pocket_destination_menu.h"
 #include "profession.h"
 #include "profile.h"
 #include "recipe_dictionary.h"
@@ -2742,6 +2743,17 @@ detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it,
     // casing routed into clothing would shadow the gun's own casings pocket.
     if( it->made_of( LIQUID ) || it->has_flag( flag_CASING ) ) {
         return std::move( it );
+    }
+
+    // Choose mode asks, but only for a deliberate single action. Character
+    // creation passes quiet and is handed dozens of items; prompting for each
+    // would be unusable, and the player has not started playing yet.
+    if( !quiet && pockets_prompt_on_pickup() ) {
+        it = choose_pocket_destination( *this, std::move( it ), exclude );
+        if( !it ) {
+            return detached_ptr<item>();
+        }
+        // Declined or refused: fall through to automatic routing below.
     }
 
     // The best pocket of each garment competes on player priority; wear order

@@ -2898,6 +2898,12 @@ void options_manager::add_options_world_default()
     }, "full"
        );
 
+    add( "POCKET_PICKUP", world_default, translate_marker( "Choosing an item's pocket" ),
+    translate_marker( "Auto puts a picked-up item in the best pocket, preferring any priority you have set.  Choose asks which pocket each item should go in.  Ignored by the classic pocket system." ), {
+        { "auto", translate_marker( "Auto" ) }, { "choose", translate_marker( "Choose" ) }
+    }, "auto"
+       );
+
     add_empty_line();
 
     add( "CITY_SIZE", world_default, translate_marker( "Size of cities" ),
