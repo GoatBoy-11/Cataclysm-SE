@@ -8,6 +8,7 @@
 #include "item.h"
 #include "item_pocket.h"
 #include "item_factory.h"
+#include "item_group.h"
 #include "npc.h"
 #include "pickup_token.h"
 #include "pickup.h"
@@ -2645,4 +2646,93 @@ TEST_CASE( "a pocketed item is found by items_with", "[pocket][routing]" )
     } );
     INFO( "items_with found " << found.size() );
     CHECK( !found.empty() );
+}
+
+// The wallet is the first CSE item to use flag_restriction, and the coin
+// wrapper the first to use item_restriction. Both were read and enforced by
+// item_pocket long before any item asked for them, so these cover the data as
+// much as the code: an undeclared flag is erased from the itype on load, which
+// would leave every restriction silently open.
+// Deliberately put_in() and not item::can_contain(): the latter is the legacy
+// container-slot check, which answers false for anything whose storage is
+// pockets rather than an itype container slot. Nothing in the player's path
+// calls it - insertion goes through item_contents::insert_item, which is what
+// put_in() exercises here.
+static bool accepts( const std::string &container, const std::string &content )
+{
+    detached_ptr<item> holder = item::spawn( container );
+    detached_ptr<item> refused = holder->put_in( item::spawn( content ) );
+    return !refused;
+}
+
+TEST_CASE( "wallet_sleeves_take_only_what_they_are_shaped_for", "[item][pocket][wallet]" )
+{
+    clear_all_state();
+    // One per sleeve: a note, a card, a coin.
+    CHECK( accepts( "wallet", "money_one" ) );
+    CHECK( accepts( "wallet", "credit_card" ) );
+    CHECK( accepts( "wallet", "cash_card" ) );
+    CHECK( accepts( "wallet", "coin_quarter" ) );
+    CHECK( accepts( "wallet", "coin_penny" ) );
+    // A rock is none of those shapes and fits by neither volume nor weight
+    // rule but the flag one, which is the rule being tested.
+    CHECK_FALSE( accepts( "wallet", "test_rock" ) );
+    CHECK_FALSE( accepts( "wallet", "rock" ) );
+}
+
+TEST_CASE( "a_wallet_actually_holds_a_coin", "[item][pocket][wallet]" )
+{
+    clear_all_state();
+    detached_ptr<item> holder = item::spawn( "wallet" );
+    item *wallet = &*holder;
+    REQUIRE( !wallet->put_in( item::spawn( "coin_quarter" ) ) );
+    REQUIRE( wallet->contents.all_items_top().size() == 1 );
+    CHECK( wallet->contents.all_items_top().front()->typeId() == itype_id( "coin_quarter" ) );
+}
+
+TEST_CASE( "a_coin_wrapper_takes_coins_and_nothing_else", "[item][pocket][wallet]" )
+{
+    clear_all_state();
+    CHECK( accepts( "coin_wrapper", "coin_quarter" ) );
+    CHECK( accepts( "coin_wrapper", "coin_penny" ) );
+    // Bullion is a coin by shape but not on the wrapper's list, which is what
+    // separates item_restriction from flag_restriction.
+    CHECK_FALSE( accepts( "coin_wrapper", "coin_gold" ) );
+    CHECK_FALSE( accepts( "coin_wrapper", "money_one" ) );
+}
+
+TEST_CASE( "the_card_sleeve_measures_length_not_just_volume", "[item][pocket][wallet]" )
+{
+    clear_all_state();
+    // The sleeve stops at 85 mm and a card is 84 mm, so the margin is one
+    // millimetre. Without the ported longest_side a 5 ml card derives about
+    // 17 mm and the limit would never bite on anything card-sized.
+    detached_ptr<item> card = item::spawn( "credit_card" );
+    CHECK( card->length() <= 85_mm );
+    CHECK( card->length() > 17_mm );
+}
+
+TEST_CASE( "the wallet spawn group fills the wallet it spawns", "[item][pocket][wallet]" )
+{
+    clear_all_state();
+    // A restricted pocket that refuses its own spawn set would fail silently:
+    // the wallet still spawns, just always empty. Probabilities in the group
+    // are 60-80 per entry, so over this many draws an all-empty result is not
+    // chance, it is a broken restriction.
+    int wallets = 0;
+    int filled = 0;
+    for( int i = 0; i < 200; i++ ) {
+        for( detached_ptr<item> &spawned : item_group::items_from( item_group_id( "wallets" ) ) ) {
+            if( !spawned ) {
+                continue;
+            }
+            wallets++;
+            CHECK( spawned->typeId().str().starts_with( "wallet" ) );
+            if( !spawned->contents.all_items_top().empty() ) {
+                filled++;
+            }
+        }
+    }
+    REQUIRE( wallets > 0 );
+    CHECK( filled > 0 );
 }

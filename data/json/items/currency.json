@@ -1,0 +1,198 @@
+[
+  {
+    "//": "Ported from CDDA's currency set, restricted to what a wallet can actually hold. CDDA's category is 'currency', which CSE does not have, so these use 'valuables' like CSE's own coin and money bundle. CDDA's OLD_CURRENCY is dropped: it drives faction exchange rates CSE has no equivalent for, and an undeclared flag would be erased on load anyway. The Free Merchant, Hub 01, campus and church currencies are left out deliberately - they carry CDDA faction lore with no mechanical gain here. coin_quarter already exists in CSE and keeps its own definition.",
+    "type": "GENERIC",
+    "id": "coin_penny",
+    "category": "valuables",
+    "name": { "str": "penny", "str_pl": "pennies" },
+    "description": "A one-cent coin, featuring a portrait of Abraham Lincoln.  You could flip it.",
+    "weight": "3 g",
+    "volume": "1 ml",
+    "price": "1 cent",
+    "price_postapoc": "1 cent",
+    "material": [ "copper" ],
+    "symbol": "o",
+    "color": "brown",
+    "looks_like": "coin_quarter",
+    "stackable": true,
+    "flags": [ "COIN_SHAPED" ],
+    "use_action": "COIN_FLIP"
+  },
+  {
+    "type": "GENERIC",
+    "id": "coin_nickel",
+    "copy-from": "coin_penny",
+    "name": { "str": "nickel" },
+    "description": "A five-cent coin, featuring a portrait of Thomas Jefferson.  You could flip it.",
+    "weight": "5 g",
+    "price": "5 cent",
+    "color": "light_gray"
+  },
+  {
+    "type": "GENERIC",
+    "id": "coin_dime",
+    "copy-from": "coin_penny",
+    "name": { "str": "dime" },
+    "description": "A ten-cent coin, featuring a portrait of Franklin D Roosevelt.  You could flip it.",
+    "weight": "2 g",
+    "price": "10 cent",
+    "color": "light_gray"
+  },
+  {
+    "type": "GENERIC",
+    "id": "coin_half_dollar",
+    "copy-from": "coin_penny",
+    "name": { "str": "half-dollar coin" },
+    "description": "A fifty-cent coin, featuring a portrait of John F Kennedy.  You could flip it.",
+    "weight": "11 g",
+    "price": "50 cent",
+    "color": "light_gray"
+  },
+  {
+    "type": "GENERIC",
+    "id": "coin_dollar",
+    "copy-from": "coin_penny",
+    "name": { "str": "dollar coin" },
+    "description": "A one-dollar coin, featuring a portrait of Susan B Anthony.  You could flip it.",
+    "weight": "8 g",
+    "price": "1 USD",
+    "color": "light_gray"
+  },
+  {
+    "type": "GENERIC",
+    "id": "coin_silver",
+    "copy-from": "coin_penny",
+    "name": { "str": "Silver Eagle coin" },
+    "description": "The official silver bullion coin of the United States, it has a nominal face value of one dollar and is guaranteed to contain one troy ounce of 99.9% pure silver.",
+    "weight": "10 g",
+    "price": "23 USD",
+    "price_postapoc": "3 USD",
+    "material": [ "silver" ],
+    "color": "light_gray"
+  },
+  {
+    "type": "GENERIC",
+    "id": "coin_gold",
+    "copy-from": "coin_penny",
+    "name": { "str": "American Buffalo coin" },
+    "description": "The official 24-karat bullion coin of the United States, it has a nominal face value of fifty dollars and is guaranteed to contain one troy ounce of 99.99% pure gold.",
+    "weight": "38 g",
+    "price": "1750 USD",
+    "price_postapoc": "6 USD",
+    "material": [ "gold" ],
+    "color": "yellow"
+  },
+  {
+    "//": "A wrapper takes coins and nothing else. CSE's item_pocket has always read item_restriction, and until now nothing used it.",
+    "type": "GENERIC",
+    "id": "coin_wrapper",
+    "category": "valuables",
+    "name": { "str": "coin wrapper" },
+    "description": "A paper wrapper capable of holding between twenty and fifty coins, depending on denomination, in accordance with American banking standards.",
+    "weight": "1 g",
+    "volume": "1 ml",
+    "price": "1 cent",
+    "price_postapoc": "0 cent",
+    "material": [ "paper" ],
+    "symbol": "$",
+    "color": "dark_gray",
+    "flags": [ "TINDER" ],
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "rigid": false,
+        "max_contains_volume": "50 ml",
+        "max_contains_weight": "200 g",
+        "moves": 100,
+        "item_restriction": [ "coin_penny", "coin_nickel", "coin_dime", "coin_quarter", "coin_half_dollar", "coin_dollar" ]
+      }
+    ]
+  },
+  {
+    "//": "Bills carry TINDER like CSE's money bundle does. No longest_side: a real note is 156 mm, and setting that would keep bills out of most containers for no gain, so they take the volume-derived length as CDDA's do.",
+    "type": "GENERIC",
+    "id": "money_one",
+    "category": "valuables",
+    "name": { "str": "one-dollar bill" },
+    "description": "A one-dollar bill, featuring a portrait of George Washington.",
+    "weight": "1 g",
+    "volume": "1 ml",
+    "price": "1 USD",
+    "price_postapoc": "0 cent",
+    "material": [ "paper" ],
+    "symbol": "$",
+    "color": "green",
+    "looks_like": "money_bundle",
+    "stackable": true,
+    "flags": [ "BANK_NOTE_SHAPED", "TINDER" ]
+  },
+  {
+    "type": "GENERIC",
+    "id": "money_two",
+    "copy-from": "money_one",
+    "name": { "str": "two-dollar bill" },
+    "description": "A two-dollar bill, featuring a portrait of Thomas Jefferson.",
+    "price": "2 USD"
+  },
+  {
+    "type": "GENERIC",
+    "id": "money_five",
+    "copy-from": "money_one",
+    "name": { "str": "five-dollar bill" },
+    "description": "A five-dollar bill, featuring a portrait of Abraham Lincoln.",
+    "price": "5 USD"
+  },
+  {
+    "type": "GENERIC",
+    "id": "money_ten",
+    "copy-from": "money_one",
+    "name": { "str": "ten-dollar bill" },
+    "description": "A ten-dollar bill, featuring a portrait of Alexander Hamilton.",
+    "price": "10 USD"
+  },
+  {
+    "type": "GENERIC",
+    "id": "money_twenty",
+    "copy-from": "money_one",
+    "name": { "str": "twenty-dollar bill" },
+    "description": "A twenty-dollar bill, featuring a portrait of Andrew Jackson.",
+    "price": "20 USD"
+  },
+  {
+    "type": "GENERIC",
+    "id": "money_fifty",
+    "copy-from": "money_one",
+    "name": { "str": "fifty-dollar bill" },
+    "description": "A fifty-dollar bill, featuring a portrait of Ulysses S Grant.",
+    "price": "50 USD",
+    "price_postapoc": "1 cent"
+  },
+  {
+    "type": "GENERIC",
+    "id": "money_hundred",
+    "copy-from": "money_one",
+    "name": { "str": "hundred-dollar bill" },
+    "description": "A hundred-dollar bill, featuring a portrait of Benjamin Franklin.",
+    "price": "100 USD",
+    "price_postapoc": "1 cent"
+  },
+  {
+    "//": "Length is CDDA's measured card, the same 84 mm given to cash_card, so the wallet's 85 mm card sleeve is a real constraint rather than a formality.",
+    "type": "GENERIC",
+    "id": "credit_card",
+    "category": "valuables",
+    "name": { "str": "credit card" },
+    "description": "A plastic card used to purchase goods and services.  It's useless now.",
+    "weight": "5 g",
+    "volume": "5 ml",
+    "longest_side": "84 mm",
+    "price": "10 USD",
+    "price_postapoc": "0 cent",
+    "material": [ "plastic" ],
+    "symbol": "$",
+    "color": "yellow",
+    "looks_like": "cash_card",
+    "ascii_picture": "cashcard",
+    "flags": [ "CREDIT_CARD_SHAPED" ]
+  }
+]
