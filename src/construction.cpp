@@ -1612,6 +1612,32 @@ bool can_construct( const construction &con )
     return false;
 }
 
+static shared_ptr_fast<game::draw_callback_t> construction_preview_callback(
+    const std::map<tripoint_bub_ms, const construction *> &valid,
+    const std::optional<tripoint_bub_ms> &mouse_pos, const bool &blink )
+{
+    return make_shared_fast<game::draw_callback_t>( [&]() {
+        for( const auto &elem : valid ) {
+            const tripoint_bub_ms &loc = elem.first;
+            const construction &con = *elem.second;
+            const bool preview = !mouse_pos.has_value() || mouse_pos.value() == loc;
+            if( !con.post_furniture.is_empty() ) {
+                if( blink && preview ) {
+                    g->draw_furniture_override( loc, con.post_furniture.id() );
+                }
+                g->draw_highlight( loc );
+            } else if( !con.post_terrain.is_empty() ) {
+                if( blink && preview ) {
+                    g->draw_terrain_override( loc, con.post_terrain.id() );
+                }
+                g->draw_highlight( loc );
+            } else {
+                g->draw_highlight( loc );
+            }
+        }
+    } );
+}
+
 void place_construction( const construction_group_str_id &group )
 {
     const inventory &total_inv = g->u.crafting_inventory();
@@ -1627,15 +1653,22 @@ void place_construction( const construction_group_str_id &group )
         }
     }
 
-    shared_ptr_fast<game::draw_callback_t> draw_valid = make_shared_fast<game::draw_callback_t>( [&]() {
-        map &here = get_map();
-        for( auto &elem : valid ) {
-            here.drawsq( g->w_terrain, elem.first, drawsq_params().highlight( true ).show_items( true ) );
+    std::optional<tripoint_bub_ms> mouse_pos;
+    bool blink = true;
+    const auto cb = [&mouse_pos]( input_context & ctxt,
+    const std::string & action ) -> std::pair<bool, std::optional<tripoint_bub_ms>> {
+        if( action == "MOUSE_MOVE" ) {
+            if( const std::optional<tripoint_bub_ms> coords = ctxt.get_coordinates( g->w_terrain ) ) {
+                mouse_pos = coords;
+            }
         }
-    } );
-    g->add_draw_callback( draw_valid );
+        return { false, std::nullopt };
+    };
 
-    const std::optional<tripoint_bub_ms> pnt_ = choose_adjacent( _( "Construct where?" ) );
+    g->add_draw_callback( construction_preview_callback( valid, mouse_pos, blink ) );
+
+    const std::optional<tripoint_bub_ms> pnt_ = choose_adjacent( g->u.bub_pos(),
+            _( "Construct where?" ), false, -1, cb );
     if( !pnt_ ) {
         return;
     }

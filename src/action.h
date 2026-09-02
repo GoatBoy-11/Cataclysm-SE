@@ -12,6 +12,7 @@
 
 struct tripoint;
 struct point;
+class input_context;
 
 /**
  * Enumerates all discrete actions that can be performed by player
@@ -459,6 +460,17 @@ std::optional<tripoint_bub_ms> choose_adjacent( const std::string &message,
         bool allow_vertical = false );
 
 /**
+ * Like the two-argument @ref choose_adjacent, but anchors the selection around an
+ * explicit position and can accept mouse input plus a callback consulted for each
+ * action.  The callback may return a done flag and an optional chosen location;
+ * when it returns a location, that offset from @p pos is treated as the selection.
+ */
+std::optional<tripoint_bub_ms> choose_adjacent( const tripoint_bub_ms &pos,
+        const std::string &message, bool allow_vertical = false, int timeout = -1,
+        const std::function<std::pair<bool, std::optional<tripoint_bub_ms>>(
+            input_context &ctxt, const std::string &action )> &action_cb = nullptr );
+
+/**
  * Request player input of a direction, possibly including vertical component
  *
  * Asks the player to input a desired direction.  This differs from @ref choose_adjacent in that
@@ -468,9 +480,15 @@ std::optional<tripoint_bub_ms> choose_adjacent( const std::string &message,
  *
  * @param[in] message Message used in assembling the prompt to the player
  * @param[in] allow_vertical Allows direction vector to have vertical component if true
+ * @param[in] allow_mouse Allow mouse click / motion to drive selection
+ * @param[in] timeout Input timeout in tenths of a second, or -1 for none
+ * @param[in] action_cb Optional callback consulted for every action before the
+ * keyboard direction is read
  */
 std::optional<tripoint_rel_ms> choose_direction( const std::string &message,
-        bool allow_vertical = false );
+        bool allow_vertical = false, bool allow_mouse = false, int timeout = -1,
+        const std::function<std::pair<bool, std::optional<tripoint_rel_ms>>(
+            input_context &ctxt, const std::string &action )> &action_cb = nullptr );
 
 /**
  * Request player input of adjacent tile with highlighting, possibly on different z-level

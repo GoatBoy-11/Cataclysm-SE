@@ -1262,7 +1262,9 @@ action_id handle_main_menu()
 }
 
 std::optional<tripoint_rel_ms> choose_direction( const std::string &message,
-        const bool allow_vertical )
+        const bool allow_vertical, const bool allow_mouse, const int timeout,
+        const std::function<std::pair<bool, std::optional<tripoint_rel_ms>>(
+            input_context &ctxt, const std::string &action )> &action_cb )
 {
     input_context ctxt( "DEFAULTMODE" );
     ctxt.set_iso( true );
@@ -1270,19 +1272,33 @@ std::optional<tripoint_rel_ms> choose_direction( const std::string &message,
     ctxt.register_action( "pause" );
     ctxt.register_action( "QUIT" );
     ctxt.register_action( "HELP_KEYBINDINGS" );
+    ctxt.set_timeout( timeout );
     if( allow_vertical ) {
         ctxt.register_action( "LEVEL_UP" );
         ctxt.register_action( "LEVEL_DOWN" );
     }
+    if( allow_mouse ) {
+        ctxt.register_action( "COORDINATE" );
+        ctxt.register_action( "MOUSE_MOVE" );
+        ctxt.register_action( "SELECT" );
+    }
 
     static_popup popup;
     //~ %s: "Close where?" "Pry where?" etc.
-    popup.message( _( "%s (Direction button)" ), message ).on_top( true );
+    popup.message( allow_mouse ? _( "%s (Direction button or click a tile)" ) :
+                   _( "%s (Direction button)" ), message ).on_top( true );
 
     std::string action;
     do {
         ui_manager::redraw();
         action = ctxt.handle_input();
+        if( action_cb ) {
+            const std::pair<bool, std::optional<tripoint_rel_ms>> ret = action_cb( ctxt,
+                    action );
+            if( ret.first ) {
+                return ret.second;
+            }
+        }
         if( const std::optional<tripoint_rel_ms> vec = ctxt.get_direction( action ) ) {
             // Make player's sprite face left/right if interacting with something to the left or right
             if( vec->x() > 0 ) {
@@ -1307,18 +1323,43 @@ std::optional<tripoint_rel_ms> choose_direction( const std::string &message,
 std::optional<tripoint_bub_ms> choose_adjacent( const std::string &message,
         const bool allow_vertical )
 {
-    const std::optional<tripoint_rel_ms> dir = choose_direction( message, allow_vertical );
+    return choose_adjacent( g->u.bub_pos(), message, allow_vertical );
+}
+
+std::optional<tripoint_bub_ms> choose_adjacent( const tripoint_bub_ms &pos,
+        const std::string &message, const bool allow_vertical, const int timeout,
+        const std::function<std::pair<bool, std::optional<tripoint_bub_ms>>(
+            input_context &ctxt, const std::string &action )> &action_cb )
+{
+    const auto cb = [&pos, &action_cb]( input_context & ctxt,
+    const std::string & action ) -> std::pair<bool, std::optional<tripoint_rel_ms>> {
+        if( action == "SELECT" ) {
+            if( const std::optional<tripoint_bub_ms> coords = ctxt.get_coordinates( g->w_terrain ) ) {
+                return { true, *coords - pos };
+            }
+        }
+        if( action_cb ) {
+            const std::pair<bool, std::optional<tripoint_bub_ms>> ret = action_cb( ctxt, action );
+            if( ret.first ) {
+                return { true, ret.second ? std::optional<tripoint_rel_ms>( *ret.second - pos ) : std::nullopt };
+            }
+        }
+        return { false, std::nullopt };
+    };
+
+    const std::optional<tripoint_rel_ms> dir = choose_direction( message, allow_vertical, true,
+            timeout, cb );
 
     if( !dir ) {
         return std::nullopt;
     }
 
-    if( get_map().obstructed_by_vehicle_rotation( g->u.bub_pos(), *dir + g->u.bub_pos() ) ) {
+    if( get_map().obstructed_by_vehicle_rotation( pos, *dir + pos ) ) {
         add_msg( _( "You can't reach through that vehicle's wall." ) );
         return std::nullopt;
     }
 
-    return *dir + g->u.bub_pos();
+    return *dir + pos;
 }
 
 std::optional<tripoint_bub_ms> choose_adjacent_highlight( const std::string &message,
