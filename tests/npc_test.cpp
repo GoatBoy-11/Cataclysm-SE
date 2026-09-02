@@ -7,6 +7,7 @@
 #include "field_type.h"
 #include "game.h"
 #include "item.h"
+#include "item_contents.h"
 #include "itype.h"
 #include "line.h"
 #include "map.h"
@@ -26,6 +27,7 @@
 #include "vehicle_part.h"
 #include "vpart_position.h"
 
+#include <algorithm>
 #include <memory>
 #include <optional>
 #include <set>
@@ -546,6 +548,60 @@ TEST_CASE("npc_move_through_vehicle_holes") {
 
     const npc* m2 = g->critter_at<npc>(mon_origin + tripoint_north_west);
     CHECK(m2 == nullptr);
+}
+
+// An NPC reasoned about what it was carrying from the flat inventory alone.
+// Routing puts acquired items in worn pockets instead, so a well-provisioned
+// NPC read as having nothing at all.
+TEST_CASE("an npc counts rations in its worn pockets", "[npc][pocket]") {
+    clear_all_state();
+    // Two identical NPCs; only one is carrying anything. Asserting the pair
+    // rather than a single absolute rank is what makes this able to fail: with
+    // the pockets unread the two are indistinguishable, so any check that
+    // passed for the carrier would pass for the empty one too.
+    npc& empty_handed = spawn_npc(tripoint_bub_ms(60, 60, 0), "test_talker");
+    npc& provisioned = spawn_npc(tripoint_bub_ms(62, 60, 0), "test_talker");
+    for (npc* guy : {&empty_handed, &provisioned}) {
+        // An NPC spawns with its class kit, food included. Strip it, or both
+        // sides of the comparison are already fed from the flat inventory and
+        // the pocket contributes nothing observable. debug_storage stays off:
+        // it grants unlimited capacity and would mask a real routing failure.
+        clear_character(*guy, false);
+        REQUIRE(!guy->wear_item(item::spawn("test_pocket_vest")));
+        guy->set_stored_kcal(guy->max_stored_kcal());
+        guy->set_thirst(0);
+    }
+    item* vest = provisioned.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("jerky")));
+    // Asserted, not manufactured: the food is carried and the flat inventory
+    // does not hold it. This is the state routing leaves an NPC in.
+    REQUIRE(provisioned.inv_size() == 0);
+    REQUIRE(empty_handed.inv_size() == 0);
+    REQUIRE(vest->contents.all_items_top().front()->get_food() != nullptr);
+
+    empty_handed.decide_needs();
+    provisioned.decide_needs();
+
+    CHECK(std::ranges::find(empty_handed.needs, need_food) != empty_handed.needs.end());
+    CHECK(std::ranges::find(provisioned.needs, need_food) == provisioned.needs.end());
+}
+
+TEST_CASE("an npc values the worst item in its worn pockets", "[npc][pocket]") {
+    clear_all_state();
+    npc& guy = spawn_npc(tripoint_bub_ms(60, 60, 0), "test_talker");
+    clear_character(guy, false);
+    REQUIRE(!guy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = guy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+    item* rock = vest->contents.all_items_top().front();
+    REQUIRE(guy.inv_size() == 0);
+
+    guy.update_worst_item_value();
+
+    // With nothing in the flat inventory the scan used to end at its 99999
+    // sentinel, so the NPC believed it carried nothing it would part with.
+    CHECK(guy.worst_item_value < 99999);
+    CHECK(guy.worst_item_value <= guy.value(*rock));
 }
 
 TEST_CASE("random npc spawn chance") {
