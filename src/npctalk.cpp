@@ -2527,10 +2527,10 @@ void talk_effect_fun_t::set_u_buy_item( const itype_id &item_name, int cost, int
             item &obj = *new_item;
             if( new_item->count_by_charges() ) {
                 new_item->mod_charges( count - 1 );
-                u.i_add( std::move( new_item ) );
+                u.i_add_routed( std::move( new_item ) );
             } else {
                 for( int i_cnt = 0; i_cnt < count; i_cnt++ ) {
-                    u.i_add( item::spawn( *new_item ) );
+                    u.i_add_routed( item::spawn( *new_item ) );
                 }
             }
             if( count == 1 ) {
@@ -2545,7 +2545,7 @@ void talk_effect_fun_t::set_u_buy_item( const itype_id &item_name, int cost, int
             container->put_in_expected( item::spawn( item_name, calendar::turn, count ) );
             //~ %1%s is the NPC name, %2$s is an item
             popup( _( "%1$s gives you a %2$s." ), p.name, container->tname() );
-            u.i_add( std::move( container ) );
+            u.i_add_routed( std::move( container ) );
         }
     };
 

@@ -166,6 +166,91 @@ TEST_CASE( "pocket_contents_survive_a_serialization_round_trip", "[item][pocket]
     CHECK( restored->contents.all_items_top().front()->typeId() == itype_id( "sugar" ) );
 }
 
+TEST_CASE( "a_backpack_keeps_its_capacity_across_a_round_trip", "[item][pocket][save]" )
+{
+    // A worn non-rigid container with no capacity trips a debugmsg in
+    // get_encumber_when_containing and drops everything it held.
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    backpack->contents.insert_item( item::spawn( "sugar" ) );
+    const units::volume before = backpack->get_total_capacity();
+    REQUIRE( before > 0_ml );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    backpack->contents.serialize( jo );
+
+    detached_ptr<item> restored = item::spawn( "backpack" );
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    restored->contents.deserialize( ji );
+
+    INFO( "capacity before " << units::to_milliliter( before ) << " ml, after "
+          << units::to_milliliter( restored->get_total_capacity() ) << " ml" );
+    CHECK( restored->get_total_capacity() == before );
+}
+
+TEST_CASE( "a_backpack_keeps_its_capacity_through_item_serialization",
+           "[item][pocket][save]" )
+{
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    backpack->contents.insert_item( item::spawn( "sugar" ) );
+    const units::volume before = backpack->get_total_capacity();
+    REQUIRE( before > 0_ml );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    backpack->serialize( jo );
+
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    detached_ptr<item> restored = item::spawn( "backpack" );
+    restored->deserialize( ji );
+
+    INFO( "pockets after: " << restored->contents.get_pockets().size() );
+    INFO( "capacity before " << units::to_milliliter( before ) << " ml, after "
+          << units::to_milliliter( restored->get_total_capacity() ) << " ml" );
+    CHECK( restored->get_total_capacity() == before );
+}
+
+TEST_CASE( "an_item_loaded_from_a_save_keeps_its_pockets", "[item][pocket][save]" )
+{
+    // item::spawn( JsonIn& ) builds a null item and then deserializes into it.
+    // item_contents takes its pockets from the type it is constructed with, and
+    // convert() swaps the type without rebuilding them, so a loaded container
+    // can end up with the single 0 ml fallback pocket instead of its own.
+    const units::volume expected = item::spawn( "backpack" )->get_total_capacity();
+    REQUIRE( expected > 0_ml );
+
+    std::istringstream is( R"({"typeid":"backpack"})" );
+    JsonIn ji( is );
+    detached_ptr<item> loaded = item::spawn( ji );
+    REQUIRE( loaded );
+
+    INFO( "pockets: " << loaded->contents.get_pockets().size()
+          << ", capacity " << units::to_milliliter( loaded->get_total_capacity() ) << " ml" );
+    CHECK( loaded->get_total_capacity() == expected );
+}
+
+TEST_CASE( "a_collapsed_pocket_stays_collapsed_across_a_save", "[item][pocket][save]" )
+{
+    detached_ptr<item> backpack = item::spawn( "backpack" );
+    REQUIRE( backpack->contents.get_pockets().size() > 1 );
+    backpack->contents.get_pockets().front().get_settings().set_collapse( true );
+
+    std::ostringstream os;
+    JsonOut jo( os );
+    backpack->serialize( jo );
+
+    std::istringstream is( os.str() );
+    JsonIn ji( is );
+    detached_ptr<item> restored = item::spawn( ji );
+    REQUIRE( restored );
+    REQUIRE( restored->contents.get_pockets().size() ==
+             backpack->contents.get_pockets().size() );
+
+    CHECK( restored->contents.get_pockets().front().get_settings().is_collapsed() );
+}
+
 TEST_CASE( "serialized_contents_use_the_pocket_format", "[item][pocket][save]" )
 {
     detached_ptr<item> backpack = item::spawn( "backpack" );
@@ -2167,6 +2252,38 @@ TEST_CASE( "unloading_without_pockets_still_stashes_flat",
 // Character creation hands out a kit item by item and wears the armour in the
 // same pass, so the starting gear landed in the flat inventory with nothing to
 // route into yet. The sweep afterwards is what puts it in the pockets.
+// Foraging and NPC gifts acquire items without a deliberate per-item action,
+// so they route into worn pockets silently rather than landing loose.
+TEST_CASE( "i_add_routed puts an item in a worn pocket", "[pocket][routing]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+
+    u.i_add_routed( item::spawn( "test_rock" ) );
+
+    CHECK( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 1 );
+}
+
+TEST_CASE( "i_add_routed keeps what no pocket will take", "[pocket][routing]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+    for( item_pocket &pocket : vest->contents.get_pockets() ) {
+        pocket.get_settings().set_disabled( true );
+    }
+
+    u.i_add_routed( item::spawn( "test_rock" ) );
+
+    // Refused by every pocket, so it must still be carried, never dropped.
+    CHECK( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 0 );
+    CHECK( u.has_amount( itype_id( "test_rock" ), 1 ) );
+}
+
 TEST_CASE( "starting_gear_is_stowed_into_worn_pockets", "[pocket][routing][newchar]" )
 {
     clear_all_state();
@@ -2434,4 +2551,98 @@ TEST_CASE( "a quiver holds arrows despite reporting no volume", "[item][pocket][
     REQUIRE( !pocket.definition().ammo_restriction.empty() );
 
     CHECK( pocket.can_contain( *arrows ).success() );
+}
+
+TEST_CASE( "a_pocketed_item_has_no_flat_inventory_position", "[pocket][routing]" )
+{
+    // Dropping used to assume that an item which is neither worn nor wielded
+    // sits in the flat inventory, and walked its stack by position. Routed
+    // items live in a worn pocket instead, so that lookup asks for a negative
+    // position in an empty inventory and the drop fails.
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+
+    u.i_add_routed( item::spawn( "test_rock" ) );
+    REQUIRE( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 1 );
+
+    item *stored = vest->contents.all_items_top().front();
+    REQUIRE( !u.is_worn( *stored ) );
+    REQUIRE( !u.is_wielding( *stored ) );
+
+    INFO( "position " << u.get_item_position( stored ) );
+    CHECK( u.get_item_position( stored ) < 0 );
+}
+
+TEST_CASE( "food in a worn pocket is held in storage, not built in",
+           "[pocket][routing][consume]" )
+{
+    // The consume menu tested an item's parent for is_container() - the
+    // CONTAINER itype slot, which a backpack does not have - so routing food
+    // into a worn pocket hid it from the eat menu entirely. The preset itself
+    // is file-local, so this pins the discriminator it now uses instead: a
+    // garment is not a container, yet it holds the food in a CONTAINER pocket.
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+    item *pack = u.worn.front();
+
+    u.i_add_routed( item::spawn( "sandwich_cheese" ) );
+    REQUIRE( !pack->contents.all_items_top().empty() );
+    item *meal = pack->contents.all_items_top().front();
+    REQUIRE( meal->is_food() );
+    REQUIRE( u.can_consume( *meal ) );
+
+    // Why the old guard rejected it.
+    CHECK_FALSE( pack->is_container() );
+
+    // Why the new one accepts it.
+    bool in_container_pocket = false;
+    for( const item_pocket &pocket : pack->contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER ) {
+            continue;
+        }
+        const std::vector<item *> &stored = pocket.all_items_top();
+        if( std::ranges::find( stored, meal ) != stored.end() ) {
+            in_container_pocket = true;
+        }
+    }
+    CHECK( in_container_pocket );
+}
+
+TEST_CASE( "crafting sees a pocketed component", "[pocket][routing][crafting]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+
+    u.i_add_routed( item::spawn( "duct_tape" ) );
+    u.invalidate_crafting_inventory();
+
+    // Prove the precondition: it really is in a pocket, not loose. Without this
+    // the test passes whether or not crafting can see into pockets.
+    item *pack = u.worn.front();
+    REQUIRE( items_in_pockets( *pack, itype_id( "duct_tape" ) ) == 1 );
+    REQUIRE( u.inv_size() == 0 );
+    CHECK( u.crafting_inventory().has_amount( itype_id( "duct_tape" ), 1 ) );
+}
+
+TEST_CASE( "a pocketed item is found by items_with", "[pocket][routing]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+
+    u.i_add_routed( item::spawn( "9mm", calendar::turn, 50 ) );
+    item *pack = u.worn.front();
+    REQUIRE( items_in_pockets( *pack, itype_id( "9mm" ) ) == 1 );
+    REQUIRE( u.inv_size() == 0 );
+
+    // What the reload UI asks: everything the character could reload from.
+    const std::vector<item *> found = u.items_with( []( const item & it ) {
+        return it.typeId() == itype_id( "9mm" );
+    } );
+    INFO( "items_with found " << found.size() );
+    CHECK( !found.empty() );
 }

@@ -530,6 +530,32 @@ item *game_menus::inv::disassemble( player &p )
                          _( "You don't have any items you could disassemble." ) );
 }
 
+/**
+ * Whether an item sits in something that stores it, rather than being built
+ * into it. A bottle's contents and a backpack's contents both qualify; a
+ * gunmod welded into a rifle does not, because it lives in a MOD pocket.
+ */
+static bool held_in_storage( const item &it )
+{
+    const item *parent = it.parent_item();
+    if( parent == nullptr ) {
+        return true;
+    }
+    if( parent->is_container() ) {
+        return true;
+    }
+    for( const item_pocket &pocket : parent->contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER ) {
+            continue;
+        }
+        const std::vector<item *> &stored = pocket.all_items_top();
+        if( std::ranges::find( stored, &it ) != stored.end() ) {
+            return true;
+        }
+    }
+    return false;
+}
+
 class comestible_inventory_preset : public inventory_selector_preset
 {
     public:
@@ -634,9 +660,15 @@ class comestible_inventory_preset : public inventory_selector_preset
 
         bool is_shown( const item *loc ) const override {
             // If an item was inserted into a non-container, we can't eat it.
-            // For example, we couldn't eat an item mod made of meat
+            // For example, we couldn't eat an item mod made of meat.
+            //
+            // Being inside a garment's pocket is not that. Routing puts food in
+            // worn pockets, and testing the parent for is_container() - the
+            // CONTAINER itype slot, which a backpack does not have - hid every
+            // pocketed meal from this menu. What actually distinguishes a mod
+            // from a meal is the kind of pocket holding it.
             return p.can_consume( *loc ) &&
-                   ( loc->where() != item_location_type::container || loc->parent_item()->is_container() );
+                   ( loc->where() != item_location_type::container || held_in_storage( *loc ) );
         }
 
         std::string get_denial( const item *loc ) const override {

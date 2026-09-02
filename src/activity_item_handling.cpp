@@ -536,8 +536,17 @@ static std::list<pickup::act_item> convert_to_items( Character &p,
                 res.emplace_back( *loc, 1, loc->obtain_cost( p, 1 ) );
                 continue;
             }
+            // Routing puts items in worn pockets, so "not worn and not wielded"
+            // no longer means "in the flat inventory". A pocketed item has no
+            // inventory position and no stack to walk: it already stands for
+            // the whole amount being dropped.
+            const int inventory_position = p.get_item_position( &*loc );
+            if( inventory_position < 0 ) {
+                res.emplace_back( *loc, count, loc->obtain_cost( p, count ) );
+                continue;
+            }
             int obtained = 0;
-            for( item * const &it : p.inv_const_stack( p.get_item_position( &*loc ) ) ) {
+            for( item * const &it : p.inv_const_stack( inventory_position ) ) {
                 if( obtained >= count ) {
                     break;
                 }

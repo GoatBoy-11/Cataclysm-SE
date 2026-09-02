@@ -2220,7 +2220,7 @@ static void handle_harvest( player &p, const std::string &itemid, bool force_dro
         p.can_pick_weight( *harvest, !get_option<bool>( "DANGEROUS_PICKUPS" ) ) ) {
 
         p.add_msg_if_player( _( "You harvest: %s." ), harvest->tname() );
-        p.i_add( std::move( harvest ) );
+        p.i_add_routed( std::move( harvest ) );
     } else {
         p.add_msg_if_player( _( "You harvest and drop: %s." ), harvest->tname() );
         get_map().add_item_or_charges( p.bub_pos(), std::move( harvest ) );

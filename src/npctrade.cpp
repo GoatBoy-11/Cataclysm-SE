@@ -39,12 +39,12 @@ void npc_trading::transfer_items( std::vector<item_pricing> &stuff, Character &,
             auto to_give = gift.split( charges );
             to_give->set_owner( receiver );
 
-            receiver.i_add( std::move( to_give ) );
+            receiver.i_add_routed( std::move( to_give ) );
         } else {
             const auto count = npc_gives ? ip.u_has : ip.npc_has;
             gift.set_owner( receiver );
             std::ranges::for_each( std::views::take( ip.locs, count ), [&]( auto * it ) {
-                receiver.i_add( it->detach() );
+                receiver.i_add_routed( it->detach() );
             } );
         }
     } );
@@ -142,6 +142,33 @@ std::vector<item_pricing> npc_trading::init_buying( Character &buyer, Character 
     std::ranges::for_each( slice, [&]( const auto & i ) {
         check_item( *i, i->size() );
     } );
+
+    // Routing puts a character's goods in worn pockets, so the flat inventory
+    // above is no longer the whole picture: without this the trade window shows
+    // an empty column for anyone whose things were put away properly. Group
+    // what stacks, so twenty pills read as one line and not twenty.
+    std::vector<std::vector<item *>> pocketed;
+    for( item * const &garment : seller.worn ) {
+        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+            if( pocket.definition().type != pocket_type::CONTAINER ) {
+                continue;
+            }
+            for( item *stored : pocket.all_items_top() ) {
+                auto match = std::ranges::find_if( pocketed,
+                [stored]( const std::vector<item *> &stack ) {
+                    return stack.front()->stacks_with( *stored );
+                } );
+                if( match == pocketed.end() ) {
+                    pocketed.push_back( { stored } );
+                } else {
+                    match->push_back( stored );
+                }
+            }
+        }
+    }
+    for( const std::vector<item *> &stack : pocketed ) {
+        check_item( stack, stack.size() );
+    }
 
     if( !seller.primary_weapon().has_flag( json_flag_NO_UNWIELD ) ) {
         check_item( {&seller.primary_weapon()}, 1 );

@@ -1390,6 +1390,23 @@ class Character : public Creature, public location_visitable<Character>
                 const item *exclude = nullptr, bool quiet = false, bool allow_prompt = true );
 
         /**
+         * Give worn pockets first refusal, then fall back to the flat
+         * inventory. For paths that acquire an item without a deliberate
+         * per-item action - foraging, an NPC handing over a gift - which
+         * would otherwise land loose. Never prompts: a menu per berry, or one
+         * interrupting dialogue, reads as a bug rather than a choice.
+         */
+        void i_add_routed( detached_ptr<item> &&it );
+
+        /**
+         * Run on_pickup() for an item routing has just placed in a pocket.
+         * i_add() does this for the flat inventory; without it a routed item is
+         * left unowned, and anything asking is_owned_by() cannot see it.
+         */
+        void note_pocketed_pickup( item &container, size_t pocket_index );
+        void note_pocketed_pickup( item &container, const itype_id &stored_type );
+
+        /**
          * Every worn pocket that would accept @p it, best first. @p exclude
          * skips one container, which unloading needs so a garment does not
          * take its own contents straight back. Empty in classic mode.

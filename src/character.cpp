@@ -2733,6 +2733,57 @@ std::vector<pocket_destination> Character::pocket_destinations(
     return destinations;
 }
 
+void Character::i_add_routed( detached_ptr<item> &&it )
+{
+    if( !it ) {
+        return;
+    }
+    // Worn pockets get first refusal; the flat inventory backs them up, so a
+    // refusal costs nothing and the item can never be lost.
+    it = i_add_to_worn_pockets( std::move( it ), nullptr, false, false );
+    if( it ) {
+        i_add( std::move( it ) );
+    }
+}
+
+/**
+ * Run the bookkeeping i_add() does, for an item that went into a pocket instead.
+ *
+ * on_pickup() is what assigns ownership, and an unowned item is invisible to
+ * anything asking is_owned_by() - trade skipped every routed item because of
+ * it. It also spills buckets, flags encumbrance and fires the item's pickup
+ * callbacks, none of which routing was doing.
+ */
+void Character::note_pocketed_pickup( item &container, size_t pocket_index )
+{
+    std::vector<item_pocket> &pockets = container.contents.get_pockets();
+    if( pocket_index >= pockets.size() ) {
+        return;
+    }
+    const std::vector<item *> &stored = pockets[pocket_index].all_items_top();
+    if( !stored.empty() ) {
+        stored.back()->on_pickup( *this );
+    }
+}
+
+void Character::note_pocketed_pickup( item &container, const itype_id &stored_type )
+{
+    // put_in() chooses the pocket itself, so find what it placed by type. The
+    // most recently added match is the one that just arrived.
+    for( item_pocket &pocket : container.contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER ) {
+            continue;
+        }
+        const std::vector<item *> &stored = pocket.all_items_top();
+        for( auto it = stored.rbegin(); it != stored.rend(); ++it ) {
+            if( ( *it )->typeId() == stored_type ) {
+                ( *it )->on_pickup( *this );
+                return;
+            }
+        }
+    }
+}
+
 detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it,
         const item *exclude, bool quiet, bool allow_prompt )
 {
@@ -2757,6 +2808,7 @@ detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it,
             ret_val<bool> inserted =
                 dest->container->contents.insert_into( dest->pocket_index, std::move( it ) );
             if( inserted.success() ) {
+                note_pocketed_pickup( *dest->container, dest->pocket_index );
                 if( !quiet ) {
                     add_msg_if_player( _( "You put the %1$s in your %2$s." ), stored_name, container_name );
                 }
@@ -2792,10 +2844,12 @@ detached_ptr<item> Character::i_add_to_worn_pockets( detached_ptr<item> &&it,
     }
 
     const std::string stored_name = it->tname();
+    const itype_id stored_type = it->typeId();
     detached_ptr<item> refused = chosen->put_in( std::move( it ) );
     if( refused ) {
         return refused;
     }
+    note_pocketed_pickup( *chosen, stored_type );
     if( !quiet ) {
         add_msg_if_player( _( "You put the %1$s in your %2$s." ), stored_name, chosen->tname() );
     }
@@ -3100,6 +3154,9 @@ detached_ptr<item> Character::i_add_or_drop( detached_ptr<item> &&it )
         return get_map().add_item_or_charges( bub_pos(), std::move( it ) );
     } else {
         inv.assign_empty_invlet( *it, *this );
+        // Deliberately NOT routed into worn pockets. Doing so leaves the map's
+        // active item cache inconsistent - map_test's submap consistency check
+        // catches it - so callers that want routing ask for it themselves.
         i_add( std::move( it ) );
         return detached_ptr<item>();
     }

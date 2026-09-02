@@ -484,7 +484,7 @@ void talk_function::give_equipment( npc &p )
     item &it = *giving[chosen].locs.front();
     it.set_owner( g->u );
     popup( _( "%1$s gives you a %2$s" ), p.name, it.tname() );
-    g->u.i_add( giving[chosen].locs.front()->detach() );
+    g->u.i_add_routed( giving[chosen].locs.front()->detach() );
     p.op_of_u.owed -= giving[chosen].price;
     p.add_effect( effect_asked_for_item, 3_hours );
 }

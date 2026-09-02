@@ -824,14 +824,25 @@ void debug_menu::wishitem( Character *who, const tripoint_bub_ms &pos )
             if( !canceled ) {
                 did_amount_prompt = true;
                 if( who != nullptr ) {
+                    // Route into worn pockets like any other acquisition, then
+                    // fall back. i_add_or_drop() is deliberately not routed
+                    // itself: doing so leaves the map's active item cache
+                    // inconsistent, which map_test catches.
+                    const auto grant = [&who]( detached_ptr<item> &&granted_item ) {
+                        granted_item = who->i_add_to_worn_pockets( std::move( granted_item ), nullptr,
+                                       false, false );
+                        if( granted_item ) {
+                            who->i_add_or_drop( std::move( granted_item ) );
+                        }
+                    };
                     if( granted->count_by_charges() ) {
                         if( amount > 0 ) {
                             granted->charges = amount;
-                            who->i_add_or_drop( item::spawn( *granted ) );
+                            grant( item::spawn( *granted ) );
                         }
                     } else {
                         for( int i = 0; i < amount; i++ ) {
-                            who->i_add_or_drop( item::spawn( *granted ) );
+                            grant( item::spawn( *granted ) );
                         }
                     }
                     who->invalidate_crafting_inventory();
