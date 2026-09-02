@@ -230,12 +230,21 @@ Branding is done: menu, window titles, memorial header, README, and userdata pat
 (`cataclysm-cse`, separate from BN's). Build targets, translations and code comments
 deliberately keep upstream names to hold merge cost down.
 
-`origin` still points at `https://github.com/cataclysmbn/Cataclysm-BN.git`. When CSE
-gets its own repo, rename that remote to `upstream` and add the new one as `origin`.
-**Nothing has ever been pushed.** Oliver has chosen the GitHub *fork* route (a fork
-shares object storage, so only CSE's own commits upload — the repo is 6.96 GB, past
-GitHub's ~2 GB single-push limit) but has explicitly said not to create it yet. Do not
-create it, add remotes, or push unless asked in so many words.
+CSE is on GitHub as of 2026-09-02: `origin` is
+`https://github.com/GoatBoy-11/Cataclysm-SE.git`, `upstream` is
+`https://github.com/cataclysmbn/Cataclysm-BN.git`. The repo is a **public fork** of
+Cataclysm-BN, because a fork shares object storage with its parent — only CSE's own
+commits upload, and the 7.1 GB history does not (a standalone repo would need chunked
+pushes past GitHub's ~2 GB single-push limit). A fork of a public repo cannot be made
+private; that is why it is public, and it was Oliver's second choice.
+
+`origin/main` holds CSE. BN's `main` as it stood at the fork is preserved on
+`origin/bn-main`, and `origin/cse-main` is a leftover duplicate of `main`, safe to
+delete. Sync upstream with `git fetch upstream && git merge upstream/main` — **never**
+GitHub's "Sync fork" button, which would overwrite CSE's `main` with BN's.
+
+**Do not force-push unless asked in so many words**, and never upload anything from
+outside `F:\Projects\CSE`.
 
 Work in progress and its open threads live in the dated handoff files at the repo root,
 `SESSION_HANDOFF_YYYY-MM-DD.md`. **Read the newest one before starting.** It, not this
