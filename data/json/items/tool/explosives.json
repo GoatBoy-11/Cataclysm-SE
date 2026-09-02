@@ -512,6 +512,7 @@
     "description": "This flashbang is active, and will soon detonate with intense light and sound, blinding, deafening and disorienting anyone nearby.  It may be a good idea to throw it!",
     "weight": "236 g",
     "volume": "250 ml",
+    "longest_side": "141 mm",
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "to_hit": -1,
@@ -534,6 +535,7 @@
   {
     "id": "fungicidalbomb",
     "copy-from": "grenade_canister",
+    "longest_side": "158 mm",
     "looks_like": "smokebomb",
     "type": "GENERIC",
     "name": { "str": "fungicidal gas grenade" },
@@ -545,6 +547,7 @@
   {
     "id": "fungicidalbomb_act",
     "copy-from": "gasbomb",
+    "longest_side": "158 mm",
     "looks_like": "smokebomb_act",
     "type": "GENERIC",
     "name": { "str": "armed fungicidal gas canister" },
@@ -557,6 +560,7 @@
   {
     "id": "fungicidalbomb_makeshift",
     "copy-from": "grenade_canister",
+    "longest_side": "158 mm",
     "looks_like": "smokebomb",
     "type": "GENERIC",
     "name": { "str": "makeshift fungicidal gas grenade" },
@@ -568,6 +572,7 @@
   {
     "id": "fungicidalbomb_makeshift_act",
     "copy-from": "gasbomb",
+    "longest_side": "158 mm",
     "looks_like": "smokebomb_act",
     "type": "GENERIC",
     "name": { "str": "armed makeshift fungicidal gas canister" },
@@ -585,6 +590,7 @@
     "description": "This is a crude gasbomb using household chemicals.  Use this item to arm it.  In three turns it will begin to expel a highly toxic gas for a short time.  This gas poisons those exposed to it, in addition to obscuring vision and scent.",
     "weight": "1264 g",
     "volume": "250 ml",
+    "longest_side": "158 mm",
     "price": "5 USD",
     "price_postapoc": "250 cent",
     "to_hit": -1,
@@ -610,6 +616,7 @@
     "description": "This homemade canister of poison gas has been unsealed, and is (or will shortly be) expelling highly toxic gas.  You should consider getting rid of it soon.",
     "weight": "1264 g",
     "volume": "250 ml",
+    "longest_side": "158 mm",
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "to_hit": -1,
@@ -667,6 +674,7 @@
     "description": "This is an active grenade, and will explode any second now.  Better throw it!",
     "weight": "397 g",
     "volume": "250 ml",
+    "longest_side": "110 mm",
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "to_hit": -1,
@@ -810,6 +818,7 @@
   {
     "id": "gasbomb",
     "copy-from": "grenade_canister",
+    "longest_side": "158 mm",
     "type": "GENERIC",
     "name": { "str": "tear gas grenade" },
     "price": "36 USD",
@@ -820,6 +829,7 @@
   {
     "id": "gasbomb_act",
     "copy-from": "gasbomb",
+    "longest_side": "158 mm",
     "type": "GENERIC",
     "name": { "str": "armed tear gas grenade" },
     "price_postapoc": "0 cent",
@@ -832,6 +842,7 @@
   {
     "id": "insecticidalbomb",
     "copy-from": "grenade_canister",
+    "longest_side": "158 mm",
     "looks_like": "smokebomb",
     "type": "GENERIC",
     "name": { "str": "insecticidal gas grenade" },
@@ -843,6 +854,7 @@
   {
     "id": "insecticidalbomb_act",
     "copy-from": "gasbomb",
+    "longest_side": "158 mm",
     "looks_like": "smokebomb_act",
     "type": "GENERIC",
     "name": { "str": "armed insecticidal gas grenade" },
@@ -856,6 +868,7 @@
   {
     "id": "insecticidalbomb_makeshift",
     "copy-from": "grenade_canister",
+    "longest_side": "158 mm",
     "looks_like": "smokebomb",
     "type": "GENERIC",
     "name": { "str": "makeshift insecticidal gas grenade" },
@@ -867,6 +880,7 @@
   {
     "id": "insecticidalbomb_makeshift_act",
     "copy-from": "gasbomb",
+    "longest_side": "158 mm",
     "looks_like": "smokebomb_act",
     "type": "GENERIC",
     "name": { "str": "armed makeshift insecticidal gas grenade" },
@@ -993,6 +1007,7 @@
     "description": "This miniature nuclear bomb has a light blinking on the side, showing that it will soon explode.  You should probably get far, far away from it.",
     "weight": "23000 g",
     "volume": "16 L",
+    "longest_side": "46 cm",
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "to_hit": -2,
@@ -1056,6 +1071,7 @@
     "description": "A bottle of flammable liquid with a flaming rag stoppered in its neck.  Throwing it will shatter the bottle on impact and ignite a fireball.  You can also activate it to smash it on yourself, but why would you want to do that?",
     "weight": "742 g",
     "volume": "750 ml",
+    "longest_side": "29 cm",
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "to_hit": 1,
@@ -1207,6 +1223,7 @@
   {
     "id": "smokebomb",
     "copy-from": "grenade_canister",
+    "longest_side": "158 mm",
     "type": "GENERIC",
     "name": { "str": "smoke bomb" },
     "description": "This is a canister grenade filled with a variety of pyrotechnic chemicals.  Use this item to pull the pin and light the fuse, turning it into an active smoke bomb.  Five turns after you do that, it will begin to expel a thick black smoke.  This smoke will slow those who enter it, as well as obscuring vision and scent.",
@@ -1218,6 +1235,7 @@
   {
     "id": "smokebomb_act",
     "copy-from": "smokebomb",
+    "longest_side": "158 mm",
     "type": "GENERIC",
     "name": { "str": "armed smoke bomb" },
     "description": "This smoke bomb has had its pin removed and is expelling thick smoke.",

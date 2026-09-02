@@ -27,6 +27,7 @@
     "description": "This is a small improvised wood stove, made from a metal can or similar container of the right size.  It's too small to fit anything much larger than splintered wood.  Activate it to Deploy.",
     "weight": "70 g",
     "volume": "500 ml",
+    "longest_side": "10 cm",
     "to_hit": -1,
     "bashing": 2,
     "looks_like": "can_medium_unsealed",

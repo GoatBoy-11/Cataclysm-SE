@@ -929,6 +929,7 @@
     "description": "This battery-devouring device is just the thing to knead the tension out and help you relax.  Use it to take a break and unwind.",
     "weight": "500 g",
     "volume": "500 ml",
+    "longest_side": "20 cm",
     "price": "55 USD",
     "price_postapoc": "1 USD",
     "material": [ "aluminum", "plastic" ],

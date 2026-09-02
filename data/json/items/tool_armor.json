@@ -1285,6 +1285,7 @@
     "description": "A rather roomy mask with filters attached, designed to accommodate exotic anatomy.  Provides excellent protection from smoke, teargas, and other contaminants.  It must be prepared before use.",
     "weight": "1397 g",
     "volume": "1500 ml",
+    "longest_side": "27 cm",
     "price": "250 USD",
     "price_postapoc": "750 cent",
     "to_hit": -3,
@@ -1865,6 +1866,8 @@
     "price_postapoc": "5 cent",
     "material": [ "plastic" ],
     "weight": "4 g",
+    "//": "Declares no volume, so there is no derived length for this to replace.",
+    "longest_side": "45 mm",
     "flags": [ "FANCY" ],
     "repair_difficulty": 2
   },

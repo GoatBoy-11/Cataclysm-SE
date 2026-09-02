@@ -469,6 +469,7 @@
     "description": "A fully customized chainmail suit that can be worn over your normal clothing.  The suit is conductively interconnected, protecting against electricity.",
     "weight": "16836 g",
     "volume": "3500 ml",
+    "longest_side": "15 cm",
     "price": "350 USD",
     "price_postapoc": "90 USD",
     "covers": [ "torso", "head", "arms", "hands", "legs", "feet" ],

@@ -17,6 +17,7 @@
     "description": ".45 ACP ammunition with 185gr JHP bullets.  The .45 ACP round was developed to replace the .38 Long Colt cartridge in the early 20th century.  It has good stopping power but above average recoil.  It's a subsonic round, and is known for working well with suppressors",
     "weight": "10 g",
     "volume": "250 ml",
+    "longest_side": "32 mm",
     "price": "180 cent",
     "price_postapoc": "6 USD",
     "material": [ "brass", "powder" ],
@@ -37,6 +38,7 @@
   {
     "id": "45_super",
     "copy-from": "45_jhp",
+    "longest_side": "32 mm",
     "type": "AMMO",
     "name": { "str": ".45 ACP +P" },
     "description": "Overpressure .45 ACP ammunition with 200gr JHP bullets.  This +P ammunition has higher muzzle energy than typical loads leading to greater damage, accuracy and recoil.",
@@ -66,6 +68,7 @@
   {
     "id": "bp_45_jhp",
     "copy-from": "45_jhp",
+    "longest_side": "32 mm",
     "type": "AMMO",
     "name": { "str": ".45 ACP JHP, black powder" },
     "proportional": {

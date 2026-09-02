@@ -17,6 +17,7 @@
     "description": ".38 Special ammunition with 130gr JHP bullets.  The .38 Special round was extremely common among US police forces during the 20th century.  It is also subsonic, and thus works well with suppressors.",
     "weight": "8 g",
     "volume": "250 ml",
+    "longest_side": "40 mm",
     "price": "210 cent",
     "price_postapoc": "8 USD",
     "material": [ "brass", "powder" ],
@@ -52,6 +53,7 @@
   {
     "id": "bp_38_special",
     "copy-from": "38_special",
+    "longest_side": "40 mm",
     "type": "AMMO",
     "name": { "str": ".38 Special, black powder" },
     "proportional": {

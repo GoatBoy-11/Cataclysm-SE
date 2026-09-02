@@ -24,6 +24,7 @@
   {
     "id": "40x46mm_m1006",
     "copy-from": "40x46mm_grenade",
+    "longest_side": "99 mm",
     "type": "AMMO",
     "name": { "str": "40x46mm M1006 stun" },
     "description": "A low velocity less-lethal 40x46mm round with a foam and plastic projectile intended to cause pain and disorientation to the target.  May still injure or kill.",
@@ -37,6 +38,7 @@
   {
     "id": "40x46mm_m433",
     "copy-from": "40x46mm_grenade",
+    "longest_side": "99 mm",
     "type": "AMMO",
     "name": { "str": "40x46mm M433 HEDP" },
     "description": "A low velocity 40x46mm HEDP grenade.  It can penetrate 2 inches of steel armor and fragmentation of the projectile body also makes it suitable for use against infantry.",
@@ -49,6 +51,7 @@
   {
     "id": "40x46mm_m576",
     "copy-from": "40x46mm_grenade",
+    "longest_side": "99 mm",
     "type": "AMMO",
     "name": { "str": "40x46mm M576 buckshot" },
     "description": "A 40x46mm buckshot load, designed for use in thick vegetation or room clearing.",
@@ -64,6 +67,7 @@
   {
     "id": "40x46mm_m651",
     "copy-from": "40x46mm_grenade",
+    "longest_side": "99 mm",
     "type": "AMMO",
     "name": { "str": "40x46mm M651 teargas" },
     "description": "A low velocity 40mm tear gas canister.  It is effective for riot control and driving infantry from entrenched positions",
