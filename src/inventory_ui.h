@@ -364,6 +364,10 @@ class inventory_column
         }
 
         void set_filter( const std::string &filter );
+        /** Force the next prepare_paging() to rebuild, after what is hidden changes. */
+        void invalidate_paging() {
+            paging_is_valid = false;
+        }
 
         std::vector<inventory_entry> entries;
         std::vector<inventory_entry> entries_hidden;

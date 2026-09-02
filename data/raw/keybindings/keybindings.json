@@ -290,6 +290,20 @@
   },
   {
     "type": "keybinding",
+    "id": "INCREASE_COUNT",
+    "category": "PICKUP",
+    "name": "Take one more",
+    "bindings": [ { "input_method": "keyboard", "key": "+" }, { "input_method": "keyboard", "key": "=" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "DECREASE_COUNT",
+    "category": "PICKUP",
+    "name": "Take one fewer",
+    "bindings": [ { "input_method": "keyboard", "key": "-" } ]
+  },
+  {
+    "type": "keybinding",
     "id": "SCROLL_UP",
     "category": "PICKUP",
     "name": "Scroll item info up",
@@ -1730,6 +1744,13 @@
     "category": "INVENTORY",
     "name": "Toggle item as favorite",
     "bindings": [ { "input_method": "keyboard", "key": "*" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "SHOW_HIDE_CONTENTS",
+    "category": "INVENTORY",
+    "name": "Collapse or expand contents",
+    "bindings": [ { "input_method": "keyboard", "key": "c" } ]
   },
   {
     "type": "keybinding",
@@ -3473,6 +3494,20 @@
     "category": "NPC_TRADE",
     "name": "Autobalance trade",
     "bindings": [ { "input_method": "keyboard", "key": "=" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "INCREASE_COUNT",
+    "category": "NPC_TRADE",
+    "name": "Trade one more",
+    "bindings": [ { "input_method": "keyboard", "key": "+" }, { "input_method": "keyboard", "key": "=" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "DECREASE_COUNT",
+    "category": "NPC_TRADE",
+    "name": "Trade one fewer",
+    "bindings": [ { "input_method": "keyboard", "key": "-" } ]
   },
   {
     "type": "keybinding",

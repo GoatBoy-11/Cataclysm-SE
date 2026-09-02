@@ -286,6 +286,43 @@ std::function<bool( const inventory_entry & )> inventory_selector_preset::get_fi
     };
 }
 
+/**
+ * Whether a container holds anything the inventory would draw beneath it.
+ * Only CONTAINER pockets nest, so a magazine well or a casings pocket does not
+ * make a gun look collapsible.
+ */
+static bool holds_shown_contents( const item &container )
+{
+    for( const item_pocket &pocket : container.contents.get_pockets() ) {
+        if( pocket.definition().type == pocket_type::CONTAINER &&
+            !pocket.all_items_top().empty() ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Whether a container is showing as collapsed. Collapsing sets every CONTAINER
+ * pocket that actually holds something, so the container reads as collapsed
+ * only when all of them are - an empty pocket says nothing either way.
+ */
+static bool contents_are_collapsed( const item &container )
+{
+    bool any = false;
+    for( const item_pocket &pocket : container.contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER ||
+            pocket.all_items_top().empty() ) {
+            continue;
+        }
+        any = true;
+        if( !pocket.get_settings().is_collapsed() ) {
+            return false;
+        }
+    }
+    return any;
+}
+
 std::string inventory_selector_preset::get_caption( const inventory_entry &entry ) const
 {
     const size_t count = entry.get_stack_size();
@@ -304,6 +341,16 @@ std::string inventory_selector_preset::get_caption( const inventory_entry &entry
     // player is reading this line for.
     if( entry.topmost_parent != nullptr && entry.indent == 0 ) {
         disp_name += string_format( " (%s)", entry.topmost_parent->type->nname( 1 ) );
+    }
+
+    // A collapsed container looks exactly like an empty one without this, so
+    // say which it is. Only containers that have something to show are marked.
+    if( entry.topmost_parent == nullptr && entry.indent == 0 ) {
+        if( contents_are_collapsed( *entry.any_item() ) ) {
+            disp_name += _( " [+]" );
+        } else if( holds_shown_contents( *entry.any_item() ) ) {
+            disp_name += _( " [-]" );
+        }
     }
 
     return ( count > 1 ) ? string_format( "%d %s", count, disp_name ) : disp_name;
@@ -843,16 +890,27 @@ void inventory_column::prepare_paging( const std::string &filter )
         entries.push_back( entries_hidden[i] );
     }
 
+    // A collapsed container hides the entries drawn beneath it. This rides on
+    // the filter's hiding machinery so paging, counts and scrolling stay correct
+    // without a second notion of an invisible entry. It MUST agree with the
+    // erase below: an entry that is hidden but not removed is held in both
+    // lists, and the next paging pass adds it back a second time.
+    const auto under_collapsed_parent = []( const inventory_entry & entry ) {
+        return entry.indent > 0 && entry.topmost_parent != nullptr &&
+               contents_are_collapsed( *entry.topmost_parent );
+    };
+
     entries_hidden.clear();
     for( size_t i = 0; i < entries.size(); ++i ) {
-        if( entries[i].is_item() && !filter_fn( entries[i] ) ) {
+        if( entries[i].is_item() &&
+            ( !filter_fn( entries[i] ) || under_collapsed_parent( entries[i] ) ) ) {
             entries_hidden.push_back( entries[i] );
         }
     }
 
     const auto new_end = std::remove_if( entries.begin(),
-    entries.end(), [&filter_fn]( const inventory_entry & entry ) {
-        return !entry.is_item() || !filter_fn( entry );
+    entries.end(), [&filter_fn, &under_collapsed_parent]( const inventory_entry & entry ) {
+        return !entry.is_item() || !filter_fn( entry ) || under_collapsed_parent( entry );
     } );
     entries.erase( new_end, entries.end() );
     // don't sort with stale names
@@ -2048,6 +2106,7 @@ inventory_selector::inventory_selector( player &u, const inventory_selector_pres
     ctxt.register_action( "QUIT", to_translation( "Cancel" ) );
     ctxt.register_action( "CATEGORY_SELECTION", to_translation( "Switch category selection mode" ) );
     ctxt.register_action( "TOGGLE_FAVORITE", to_translation( "Toggle favorite" ) );
+    ctxt.register_action( "SHOW_HIDE_CONTENTS", to_translation( "Collapse or expand contents" ) );
     ctxt.register_action( "HOME", to_translation( "Home" ) );
     ctxt.register_action( "END", to_translation( "End" ) );
     ctxt.register_action( "HELP_KEYBINDINGS" );
@@ -2110,6 +2169,26 @@ void inventory_selector::on_input( const inventory_input &input )
         }
         refresh_active_column(); // Columns can react to actions by losing their activation capacity
         prepare_layout();
+    } else if( input.action == "SHOW_HIDE_CONTENTS" ) {
+        auto &entry = const_cast<inventory_entry &>( get_selected() );
+        // Only a container drawn with contents beneath it can be collapsed;
+        // anything else would toggle a marker the player cannot see.
+        if( entry.is_item() && entry.indent == 0 &&
+            entry.topmost_parent == nullptr &&
+            holds_shown_contents( *entry.any_item() ) ) {
+            const bool collapse = !contents_are_collapsed( *entry.any_item() );
+            for( item_pocket &pocket : entry.any_item()->contents.get_pockets() ) {
+                if( pocket.definition().type == pocket_type::CONTAINER &&
+                    !pocket.all_items_top().empty() ) {
+                    pocket.get_settings().set_collapse( collapse );
+                }
+            }
+            // Hiding happens in prepare_paging, so the pages must be rebuilt.
+            for( inventory_column *elem : columns ) {
+                elem->invalidate_paging();
+            }
+            prepare_layout();
+        }
     } else if( input.action == "WIELD" ) {
         auto &entry = const_cast<inventory_entry &>( get_selected() );
         wield( entry );
