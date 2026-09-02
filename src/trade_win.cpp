@@ -139,6 +139,8 @@ auto register_trade_actions( input_context &ctxt, bool include_any_input ) -> vo
     ctxt.register_action( "CATEGORY_SELECTION" );
     ctxt.register_action( "EXAMINE" );
     ctxt.register_action( "AUTOBALANCE" );
+    ctxt.register_action( "INCREASE_COUNT", to_translation( "Trade one more" ) );
+    ctxt.register_action( "DECREASE_COUNT", to_translation( "Trade one fewer" ) );
     ctxt.register_action( "TOGGLE_ITEM_INFO" );
     ctxt.register_action( "CONFIRM" );
     ctxt.register_action( "QUIT" );
@@ -1375,6 +1377,38 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
         } else if( action == "QUIT" ) {
             exit = true;
             confirm = false;
+        } else if( action == "INCREASE_COUNT" || action == "DECREASE_COUNT" ) {
+            // Nudge the quantity of the highlighted line by one, instead of
+            // reopening the "how many?" popup to retype a number.
+            auto &target_list = focus_them ? state.theirs : state.yours;
+            const auto &filtered = focus_them ? them_filtered : you_filtered;
+            const auto cursor = focus_them ? them_cursor : you_cursor;
+            if( !category_mode && cursor < filtered.size() ) {
+                auto &ip = target_list[filtered[cursor]];
+                auto &owner_sells = focus_them ? ip.u_has : ip.npc_has;
+                auto &owner_sells_charge = focus_them ? ip.u_charges : ip.npc_charges;
+                const int total = ip.charges > 0 ? ip.charges : std::max( ip.count, 1 );
+                int &qty = ip.charges > 0 ? owner_sells_charge : owner_sells;
+
+                const int before = qty;
+                int wanted = before + ( action == "INCREASE_COUNT" ? 1 : -1 );
+                wanted = std::max( 0, std::min( wanted, total ) );
+                if( wanted != before ) {
+                    qty = wanted;
+                    ip.selected = wanted > 0;
+                    // Their column is what you buy and yours is what you sell,
+                    // so the same step moves the balance opposite ways. This is
+                    // the sign the whole-stack toggle below works out too.
+                    const int change_amount = ( wanted - before ) * ( focus_them ? 1 : -1 );
+                    if( !np.will_exchange_items_freely() ) {
+                        state.your_balance -= static_cast<int>( ip.price * change_amount );
+                    }
+                    if( affects_npc_capacity( *ip.locs.front() ) ) {
+                        state.volume_left += ip.vol * change_amount;
+                        state.weight_left += ip.weight * change_amount;
+                    }
+                }
+            }
         } else if( action == "ANY_INPUT" ) {
             const auto evt = ctxt.get_raw_input();
             if( evt.type != input_event_t::keyboard || evt.sequence.empty() ) {

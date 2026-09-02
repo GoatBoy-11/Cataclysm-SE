@@ -279,8 +279,12 @@ bool run(
     // The item is its own exclusion: without that, a worn container lists its
     // own pockets as destinations and can be inserted into itself, which
     // detaches it from the world entirely.
+    //
+    // One destination is enough to offer the move. Requiring two hid the entry
+    // for anything only a single pocket would take, which reads as the feature
+    // being missing rather than the choice being trivial.
     if( !pockets_are_classic() && !you.is_wearing( itm ) && !you.is_wielding( itm ) &&
-        you.pocket_destinations( itm, &itm ).size() >= 2 ) {
+        !you.pocket_destinations( itm, &itm ).empty() ) {
         add_entry( "MOVE_TO_POCKET", hint_rating::good, [&]() {
             // Ask before touching the item: every decline path (Escape, or
             // destinations dropping below two) must leave itm exactly where it

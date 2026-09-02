@@ -778,6 +778,8 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
         ctxt.register_action( "SCROLL_DOWN" );
         ctxt.register_action( "CONFIRM" );
         ctxt.register_action( "SELECT_ALL" );
+        ctxt.register_action( "INCREASE_COUNT", to_translation( "Take one more" ) );
+        ctxt.register_action( "DECREASE_COUNT", to_translation( "Take one fewer" ) );
         ctxt.register_action( "QUIT", to_translation( "Cancel" ) );
         ctxt.register_action( "ANY_INPUT" );
         ctxt.register_action( "HELP_KEYBINDINGS" );
@@ -903,6 +905,11 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                     if( stacked_here[true_it].size() > 1 ) {
                         item_name = string_format( "%d %s", stacked_here[true_it].size(), item_name );
                     }
+                    // Say how many of the stack are marked. Only a partial count
+                    // is worth showing: "+" already means the whole stack.
+                    if( getitem[true_it].pick && getitem[true_it].count ) {
+                        item_name = string_format( "%s [%d]", item_name, *getitem[true_it].count );
+                    }
                     if( get_option<bool>( "ITEM_SYMBOLS" ) ) {
                         item_name = string_format( "%s %s", this_item.symbol().c_str(),
                                                    item_name );
@@ -973,6 +980,51 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                 }
                 if( *itemcount == 0 ) {
                     itemcount.reset();
+                }
+            } else if( action == "INCREASE_COUNT" || action == "DECREASE_COUNT" ) {
+                // Step how much of the highlighted stack is marked. The list
+                // draws "-" for none, "#" for part and "+" for all, so this is
+                // visible as it changes rather than a pending number.
+                if( selected >= 0 && selected < static_cast<int>( matches.size() ) ) {
+                    const size_t true_idx = matches[selected];
+                    pickup_count &stack = getitem[true_idx];
+                    const item &temp = **stacked_here[true_idx].front();
+                    const int amount_available = temp.count_by_charges()
+                                                 ? temp.charges
+                                                 : static_cast<int>( stacked_here[true_idx].size() );
+                    // A marked stack with no count means the whole thing, so
+                    // stepping down starts from the full amount.
+                    const int marked = stack.pick
+                                       ? ( stack.count ? *stack.count : amount_available )
+                                       : 0;
+                    int wanted = marked + ( action == "INCREASE_COUNT" ? 1 : -1 );
+                    wanted = std::max( 0, std::min( wanted, amount_available ) );
+
+                    stack.pick = wanted > 0;
+                    if( wanted <= 0 || wanted >= amount_available ) {
+                        // No count is how both "none" and "all" are expressed;
+                        // pick is what separates them.
+                        stack.count.reset();
+                    } else {
+                        stack.count = wanted;
+                    }
+
+                    // Same bookkeeping a normal mark does, so nested stacks do
+                    // not disagree with their container about being taken.
+                    stack.all_children_picked = stack.pick;
+                    for( size_t child_index : stack.children ) {
+                        pickup_count &child_stack = getitem[child_index];
+                        child_stack.pick = stack.pick;
+                        child_stack.count.reset();
+                    }
+                    if( stack.parent ) {
+                        pickup_count &parent_stack = getitem[*stack.parent];
+                        parent_stack.all_children_picked = stack.pick &&
+                        std::ranges::all_of( parent_stack.children, [&]( size_t child_index ) {
+                            return getitem[child_index].pick;
+                        } );
+                    }
+                    update = true;
                 }
             } else if( action == "SCROLL_UP" ) {
                 iScrollPos--;
