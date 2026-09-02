@@ -85,6 +85,49 @@ scan beside their flat-inventory scan. Mostly inert in practice, since NPC needs
 usually disabled by mod; done because it was thirty lines and testable, not because it
 was urgent.
 
+### Tasks 4 and 5: two more branches, both data only
+
+`feat/cdda-wallet-import` (off `main`, 2 commits) and `feat/longest-side-inherited`
+(off `main`, 1 commit). Neither touches C++ apart from tests. Both suites green.
+
+**The wallet import** is five wallets, the coins and banknotes they are shaped for,
+a credit card, and a coin wrapper. The wallet is the first CSE item to use
+`flag_restriction` and the wrapper the first to use `item_restriction`; both had been
+read and enforced by `item_pocket` since the port, with nothing asking for them.
+
+The thing that would have sunk it silently: **CSE validates item flags and CDDA does
+not.** `Item_factory::finalize_post` *erases* an undeclared flag from the itype and
+reports it. CDDA ships `BANK_NOTE_SHAPED`, `CREDIT_CARD_SHAPED` and `COIN_SHAPED`
+undeclared, so a faithful copy loads a wallet that then refuses everything. They are
+declared in `flags.json` now. This only surfaced by loading the data — reading the
+JSON would never have shown it.
+
+Also worth knowing:
+
+- CDDA's faction currency is deliberately absent: Free Merchant notes, Hub 01 coins,
+  campus tokens, church icons. Lore with no mechanical gain, per the survey note.
+- CDDA's `OLD_CURRENCY` is dropped — it drives faction exchange rates CSE has no
+  equivalent for, and would be erased on load anyway.
+- Wallets spawn through `everyday_gear`, which already carried cash cards and pocket
+  change. Contents are drawn per sleeve, so a spawned wallet exercises all three
+  restrictions rather than filling one and refusing the rest. There is a test for
+  this: a restriction that refused its own spawn set would fail silently, leaving
+  every wallet empty.
+- Both wallet recipes are ported. CDDA's leather one is built from requirement groups
+  CSE lacks; `sewing_standard` plus leather is the equivalent. CDDA defines **no**
+  wallet disassembly at all, so the two uncrafts are CSE's own.
+- **`item::can_contain()` is the legacy container-slot check** and answers false for
+  anything whose storage is pockets. It has no callers in the player's path — only
+  `item_pocket::can_contain` is used — but it cost time in a test, so do not reach
+  for it.
+
+**The longest_side port** adds 161 values CDDA states only through `copy-from`
+inheritance, which the earlier pass could not see; there are no directly-stated ones
+left. All are mm or cm, so nothing can repeat the `"1 meter"` that parsed and crashed.
+The 30 touched files carry insertions and nothing else. Values go on the child rather
+than a shared parent on purpose, so a CSE-only sibling CDDA has no value for does not
+inherit one.
+
 ### Not covered, and worth knowing
 
 - **Nested containers stay one level deep.** A backpack inside a worn vest is listed;
@@ -179,24 +222,28 @@ also skipped bucket spilling, encumbrance flagging and item pickup callbacks.
 
 ## Open, in the order worth doing
 
-Items 1 to 3 of the previous list are **done** — see "The three open pocket-consumer
-gaps are closed" above. What is left, renumbered:
+**Every numbered item on the previous list is done.** Items 1 to 3 are the pocket
+consumers above; 4 and 5 are the two import branches below. What is left:
 
-0. **Playtest `fix/pocket-consumers`.** The suite is green and each fix was falsified,
-   but nothing here has been played. Specifically worth trying: open AIM with a loaded
-   backpack worn, and move, examine and "move all" a pocketed item in both directions.
-   The repo-root exe is that build; `cataclysm-bn-tiles_old.exe` is the one before it.
-1. **Import CDDA items, wallet first.** Agreed as the next job after the pocket system.
-   Full survey in the memory note `cse-cdda-item-import-job`. Short version: CSE's
-   `item_pocket` already reads and enforces `flag_restriction` but no CSE item uses it;
-   the wallet's three flag-restricted pockets exercise it with no C++. Needs the flags
-   `BANK_NOTE_SHAPED`, `CREDIT_CARD_SHAPED`, `COIN_SHAPED` adding and tagging onto
-   `cash_card`, `money_bundle` and the coins. Nineteen further items have zero missing
-   dependencies.
-2. **`longest_side` on more items**, if wanted. 825 values were ported from CDDA for ids
-   present in both trees; anything CSE-only still derives its length from volume.
-3. **`map::is_map_cache_valid` missing return**, described above. Upstream's bug, one
-   line, real UB.
+0. **Playtest, in this order.** Nothing on any of these branches has been played.
+   - `fix/pocket-consumers` — open AIM with a loaded backpack worn, then move,
+     examine and "move all" a pocketed item in both directions. **The repo-root exe
+     is this branch's build**; `cataclysm-bn-tiles_old.exe` is the one before it.
+   - `feat/cdda-wallet-import` — needs a checkout and a fresh exe, or its JSON is
+     simply absent. Loot a house, find a wallet, put a coin and a card in it, and
+     try to put a rock in it.
+   - `feat/longest-side-inherited` — data only, nothing to look at directly.
+1. **The rest of the CDDA item import.** The wallet family is done. The memory note
+   `cse-cdda-item-import-job` lists the remaining zero-dependency picks, of which
+   `cheap_ammo_pouch` is the natural next one: four restricted pockets, so it
+   exercises the same seam again for no C++.
+2. **`money_bundle` is still untagged**, deliberately. BN models it as twenty bills
+   at 250 ml, which neither fits nor belongs in a 150 ml note sleeve. Now that CSE
+   has single banknotes, the bundle could reasonably become a stack of them, or keep
+   its own volume revised — a content decision, not a port.
+3. **`map::is_map_cache_valid` missing return.** Upstream's bug, one line. It has
+   **zero callers**, so the UB is currently unreachable; that is why it was left
+   alone rather than paying tier-4 merge cost inside an existing function body.
 
 Still open from the previous handoff and untouched: gunmod rejections (`m7` refuses four
 scopes; inert, the audit is a dry run) and hauling/crafting-return paths that call
