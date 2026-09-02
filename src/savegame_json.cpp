@@ -2971,6 +2971,13 @@ void item::deserialize( JsonIn &jsin )
     data.allow_omitted_members();
     io::JsonObjectInputArchive archive( data );
     io( archive );
+    // io() is what sets the item's type. Until now this item was the null one
+    // spawn( JsonIn& ) constructs, so item_contents built the single 0 ml
+    // fallback pocket rather than this type's own. Rebuild before any contents
+    // are read, or a loaded container reports no capacity and spills its load.
+    if( contents.empty() ) {
+        contents.rebuild_pockets_from_type();
+    }
     // made for fast forwarding time from 0.D to 0.E
     if( savegame_loading_version < 27 ) {
         legacy_fast_forward_time();

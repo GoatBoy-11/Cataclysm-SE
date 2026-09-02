@@ -44,6 +44,22 @@ item_contents::item_contents( item *container ) : owner( container )
     pockets.emplace_back( container, &default_pocket_data );
 }
 
+void item_contents::rebuild_pockets_from_type()
+{
+    // Mirrors the constructor above. Kept separate rather than reconstructing so
+    // the owner pointer and any settings machinery stay put.
+    pockets.clear();
+    if( owner != nullptr && owner->type != nullptr && !owner->type->pockets.empty() ) {
+        for( const pocket_data &data : owner->type->pockets ) {
+            pockets.emplace_back( owner, &data );
+        }
+        return;
+    }
+    default_pocket_data.type = pocket_type::CONTAINER;
+    default_pocket_data.max_contains_volume = 0_ml;
+    pockets.emplace_back( owner, &default_pocket_data );
+}
+
 /** used to aid migration */
 item_contents::item_contents( item *container,
                               std::vector<detached_ptr<item>> &items ) : item_contents( container )

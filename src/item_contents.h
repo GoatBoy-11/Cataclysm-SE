@@ -31,6 +31,15 @@ class item_contents
         bool empty() const;
 
         /**
+         * Rebuild the pockets from the owner's current type. item_contents takes
+         * its pockets when it is constructed, but a item loaded from a save is
+         * built as a null item and given its real type afterwards, which would
+         * otherwise leave it with the single 0 ml fallback pocket. Only valid
+         * while nothing is stored: rebuilding drops the pockets holding it.
+         */
+        void rebuild_pockets_from_type();
+
+        /**
          * The pocket holding this item, or nullptr when it is not in one.
          * Compares identity, not equality: two identical items in different
          * pockets are still in different pockets.
