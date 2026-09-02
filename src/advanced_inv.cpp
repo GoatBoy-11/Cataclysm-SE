@@ -844,16 +844,21 @@ bool advanced_inventory::move_all_items( bool nested_call )
         drop_locations dropped_favorite;
 
         if( spane.get_area() == AIM_INVENTORY ) {
-            for( size_t index = 0; index < g->u.inv_size(); ++index ) {
-                const std::vector<item *> &stack = g->u.inv_const_stack( index );
-                item *const &it = stack.front();
+            // Walk the pane, not the flat inventory. An item routed into a worn
+            // pocket has no flat index, so iterating 0..inv_size() dropped only
+            // whatever happened to be loose and silently kept the rest.
+            for( const advanced_inv_listitem &listit : spane.items ) {
+                if( !listit.is_item_entry() ) {
+                    continue;
+                }
+                item *const it = listit.items.front();
 
                 if( !spane.is_filtered( *it ) ) {
                     int count;
-                    if( it->count_by_charges() )                         {
+                    if( it->count_by_charges() ) {
                         count = it->charges;
                     } else {
-                        count = stack.size();
+                        count = listit.items.size();
                     }
                     if( it->is_favorite ) {
                         dropped_favorite.emplace_back( *it, count );
@@ -1240,7 +1245,7 @@ bool advanced_inventory::action_move_item( advanced_inv_listitem *sitem,
             g->u.activity->targets.emplace_back( sitem->items.front() );
             g->u.activity->values.push_back( amount_to_move );
         } else {
-            item *itm = &g->u.i_at( sitem->idx );
+            item *itm = sitem->items.front();
 
             drop_locations to_move = { drop_location( *itm, amount_to_move ) };
             g->u.assign_activity( std::make_unique<player_activity>( std::make_unique<drop_activity_actor>
@@ -1300,9 +1305,9 @@ void advanced_inventory::action_examine( advanced_inv_listitem *sitem,
         return colstart + ( src == advanced_inventory::side::left ? w_width / 2 : 0 );
     };
     if( spane.get_area() == AIM_INVENTORY || spane.get_area() == AIM_WORN ) {
-        int idx = spane.get_area() == AIM_INVENTORY ? sitem->idx :
-                  player::worn_position_to_index( sitem->idx );
-        item *loc = &g->u.i_at( idx );
+        // The pane's own pointer, not a flat-inventory index: a pocketed item
+        // has no index, and a synthetic one resolves to a different item.
+        item *loc = sitem->items.front();
         // Setup a "return to AIM" activity. If examining the item creates a new activity
         // (e.g. reading, reloading, activating), the new activity will be put on top of
         // "return to AIM". Once the new activity is finished, "return to AIM" comes back

@@ -11,6 +11,7 @@
 #include "inventory.h"
 #include "item.h"
 #include "item_contents.h"
+#include "item_pocket.h"
 #include "item_search.h"
 #include "make_static.h"
 #include "map.h"
@@ -101,6 +102,31 @@ void advanced_inventory_pane::add_items_from_area( advanced_inv_area &square,
                 item_pointers.push_back( i );
             }
             advanced_inv_listitem it( item_pointers, x, square.id, false );
+            if( is_filtered( *it.items.front() ) ) {
+                continue;
+            }
+            square.volume += it.volume;
+            square.weight += it.weight;
+            items.push_back( it );
+        }
+        // Anything routed into a worn container is carried but absent from the
+        // flat inventory, so the pane showed a pocketed item nowhere at all.
+        // Only CONTAINER pockets: a worn gun's magazine and mods are part of
+        // the gun, not loose kit, and listing them here would offer to move
+        // them out as if they were.
+        std::vector<item *> pocketed;
+        for( item * const &garment : u.worn ) {
+            for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+                if( pocket.definition().type != pocket_type::CONTAINER ) {
+                    continue;
+                }
+                const std::vector<item *> &top = pocket.all_items_top();
+                pocketed.insert( pocketed.end(), top.begin(), top.end() );
+            }
+        }
+        const advanced_inv_area::itemstack pocket_stacks = square.i_stacked( pocketed );
+        for( size_t x = 0; x < pocket_stacks.size(); ++x ) {
+            advanced_inv_listitem it( pocket_stacks[x], stacks.size() + x, square.id, false );
             if( is_filtered( *it.items.front() ) ) {
                 continue;
             }

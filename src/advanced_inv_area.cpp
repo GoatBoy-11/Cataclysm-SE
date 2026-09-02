@@ -467,3 +467,8 @@ advanced_inv_area::itemstack advanced_inv_area::i_stacked<vehicle_stack>( vehicl
 
 template
 advanced_inv_area::itemstack advanced_inv_area::i_stacked<map_stack>( map_stack items );
+
+// Worn pockets hand the pane a plain vector of pointers rather than a stack type.
+template
+advanced_inv_area::itemstack advanced_inv_area::i_stacked<std::vector<item *>>(
+    std::vector<item *> items );
