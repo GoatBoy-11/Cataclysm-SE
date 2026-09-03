@@ -175,24 +175,5 @@
     "description": "A hundred-dollar bill, featuring a portrait of Benjamin Franklin.",
     "price": "100 USD",
     "price_postapoc": "1 cent"
-  },
-  {
-    "//": "Length is CDDA's measured card, the same 84 mm given to cash_card, so the wallet's 85 mm card sleeve is a real constraint rather than a formality.",
-    "type": "GENERIC",
-    "id": "credit_card",
-    "category": "valuables",
-    "name": { "str": "credit card" },
-    "description": "A plastic card used to purchase goods and services.  It's useless now.",
-    "weight": "5 g",
-    "volume": "5 ml",
-    "longest_side": "84 mm",
-    "price": "10 USD",
-    "price_postapoc": "0 cent",
-    "material": [ "plastic" ],
-    "symbol": "$",
-    "color": "yellow",
-    "looks_like": "cash_card",
-    "ascii_picture": "cashcard",
-    "flags": [ "CREDIT_CARD_SHAPED" ]
   }
 ]

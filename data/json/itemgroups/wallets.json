@@ -40,8 +40,7 @@
     "id": "wallet_contents",
     "subtype": "collection",
     "items": [
-      { "item": "credit_card", "prob": 60 },
-      { "item": "cash_card", "prob": 60, "charges-min": 0, "charges-max": 50000 },
+      { "item": "cash_card", "prob": 100, "charges-min": 0, "charges-max": 50000 },
       { "group": "banknotes", "prob": 80, "count": [ 1, 8 ] },
       { "group": "coins", "prob": 80, "count": [ 1, 6 ] },
       { "item": "fp_loyalty_card", "prob": 15 }

@@ -2670,7 +2670,6 @@ TEST_CASE( "wallet_sleeves_take_only_what_they_are_shaped_for", "[item][pocket][
     clear_all_state();
     // One per sleeve: a note, a card, a coin.
     CHECK( accepts( "wallet", "money_one" ) );
-    CHECK( accepts( "wallet", "credit_card" ) );
     CHECK( accepts( "wallet", "cash_card" ) );
     CHECK( accepts( "wallet", "coin_quarter" ) );
     CHECK( accepts( "wallet", "coin_penny" ) );
@@ -2707,7 +2706,7 @@ TEST_CASE( "the_card_sleeve_measures_length_not_just_volume", "[item][pocket][wa
     // The sleeve stops at 85 mm and a card is 84 mm, so the margin is one
     // millimetre. Without the ported longest_side a 5 ml card derives about
     // 17 mm and the limit would never bite on anything card-sized.
-    detached_ptr<item> card = item::spawn( "credit_card" );
+    detached_ptr<item> card = item::spawn( "cash_card" );
     CHECK( card->length() <= 85_mm );
     CHECK( card->length() > 17_mm );
 }
