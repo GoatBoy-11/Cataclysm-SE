@@ -14,7 +14,7 @@ file issues upstream about CSE behaviour.
 Upstream credit and the CC BY-SA 3.0 licence are load-bearing. `LICENSE.txt` and
 credits files stay intact; add notices alongside them, never over them.
 
-The owner is Oliver, who playtests every change personally. Treat "it passes the
+The owner is the user, who playtests every change personally. Treat "it passes the
 suite" as necessary and not sufficient — see **Verification** below.
 
 ## The three folders in this workspace
@@ -158,7 +158,7 @@ Two specific traps, both of which have bitten:
 
 **Playtesting finds what the suite cannot.** Human playtests have found a
 save-corruption bug, four separate item-routing gaps and a UI duplication bug that the
-suite passed clean through. Expect to hand Oliver a build and be told what broke.
+suite passed clean through. Expect to hand the user a build and be told what broke.
 
 ### The exe rotation rule
 
@@ -184,7 +184,7 @@ reporting `e83a742dff` was running `18c1bfbdec`. Trust the exe timestamp. Rememb
 is read at runtime: a data-only change needs no rebuild, and an old binary will still
 pick it up.
 
-Oliver's playtest logs are at `config/debug.log`, which accumulates every session —
+the user's playtest logs are at `config/debug.log`, which accumulates every session —
 split on `Starting log.` and read the newest block, or you will diagnose a stale error.
 
 ## Fork discipline
@@ -213,7 +213,7 @@ Machine-local config belongs in `.git/info/exclude`, never in the tracked `.giti
 Follow `AGENTS.md` for C++ style, formatting, JSON linting and i18n. Two exceptions:
 
 - **Build commands** — use the Windows ones above.
-- **Commit messages** — Oliver wants a short conventional-commit title plus short
+- **Commit messages** — the user wants a short conventional-commit title plus short
   bullet points, always, without being asked. This overrides the "MUST NOT add body"
   rule in `AGENTS.md`.
 
@@ -236,7 +236,7 @@ CSE is on GitHub as of 2026-09-02: `origin` is
 Cataclysm-BN, because a fork shares object storage with its parent — only CSE's own
 commits upload, and the 7.1 GB history does not (a standalone repo would need chunked
 pushes past GitHub's ~2 GB single-push limit). A fork of a public repo cannot be made
-private; that is why it is public, and it was Oliver's second choice.
+private; that is why it is public, and it was the user's second choice.
 
 `origin/main` holds CSE. BN's `main` as it stood at the fork is preserved on
 `origin/bn-main`, and `origin/cse-main` is a leftover duplicate of `main`, safe to

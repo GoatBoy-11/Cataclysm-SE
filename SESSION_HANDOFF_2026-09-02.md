@@ -32,7 +32,7 @@ The fork route is not a preference, it is the only cheap one: a fork shares obje
 storage with its parent, so only CSE's own 35.7 MB of commits upload rather than the
 7.1 GB history, which is past GitHub's ~2 GB single-push limit. A fork of a public repo
 **cannot be made private** — that is the whole reason this is public, and it was
-Oliver's stated second choice.
+the user's stated second choice.
 
 Sync upstream with `git fetch upstream && git merge upstream/main`. **Never use
 GitHub's "Sync fork" button**: it would overwrite CSE's `main` with BN's.
@@ -57,7 +57,7 @@ regression, but it is real UB and a one-line fix if anyone wants it.
 
 ### The three open pocket-consumer gaps are closed
 
-All on `fix/pocket-consumers`, **pushed but not merged** — Oliver reviews before it
+All on `fix/pocket-consumers`, **pushed but not merged** — the user reviews before it
 lands. Each fix was falsified before being believed: broken deliberately, watched to
 fail, restored.
 
@@ -179,7 +179,7 @@ fired on load, and the container dumped its contents on the ground. Worse and qu
 loaded containers bypassed **every** pocket restriction, because a 0 ml fallback pocket
 has no length, volume or item rules to enforce.
 
-Found from Oliver's actual save file after the item-level and contents-level round-trip
+Found from the user's actual save file after the item-level and contents-level round-trip
 tests both passed — the bug only appears through `item::spawn( JsonIn& )`, which is the
 path a real save takes and neither test used.
 
@@ -308,7 +308,7 @@ Worth chasing if it recurs.
 
 ## The GitHub fork — done
 
-Created on the afternoon of 09-02 with Oliver's explicit go-ahead, and described at the
+Created on the afternoon of 09-02 with the user's explicit go-ahead, and described at the
 top of this file. `gh` is authenticated as **GoatBoy-11** with `repo` scope.
 
 Two standing limits, both still in force: **nothing is force-pushed without being asked
