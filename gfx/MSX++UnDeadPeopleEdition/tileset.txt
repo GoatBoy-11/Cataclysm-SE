@@ -2,3 +2,18 @@ NAME: UNDEAD_PEOPLE_BASE
 VIEW: UNDEAD_PEOPLE (NEW VERSION)
 JSON: tile_config.json
 TILESET: tiles.png
+
+# Eight sheets here are not UndeadPeople's own work. small.png and the seven
+# Chibi*.png sheets are taken from the Chibi_Ultica tileset, which ships with
+# Cataclysm: Dark Days Ahead, and are used for items and monsters UndeadPeople
+# has no art for. UndeadPeople's own sprites are untouched and always take
+# precedence where both tilesets draw the same thing.
+#
+# Chibi Ultica is a combination of the MSXotto+ tileset for monsters and
+# characters, the Chibi part, and the Ultica tileset for the rest of the world.
+# Source: https://github.com/I-am-Erk/CDDA-Tilesets/tree/master/gfx
+#
+# Both tilesets are distributed under the Creative Commons
+# Attribution-ShareAlike 3.0 licence, the same licence as the game itself.
+# See LICENSE.txt. Chibi_Ultica's own credits live in its tileset.txt; this
+# notice exists so the attribution travels with the art.
