@@ -41,6 +41,7 @@
   {
     "id": "40x53mm_m430a1",
     "copy-from": "40x53mm_grenade",
+    "longest_side": "112 mm",
     "type": "AMMO",
     "name": { "str": "40x53mm M430A1 HEDP" },
     "description": "A high velocity 40x53mm HEDP grenade.  It can penetrate 3 inches of steel armor and fragmentation of the projectile body also makes it suitable for use against infantry.",
@@ -53,6 +54,7 @@
   {
     "id": "40x53mm_buckshot_m169",
     "copy-from": "40x53mm_grenade",
+    "longest_side": "112 mm",
     "type": "AMMO",
     "name": { "str": "improvised 40x53mm buckshot" },
     "description": "An improvised 40x53mm buckshot load somewhat resembling M576.",
@@ -68,6 +70,7 @@
   {
     "id": "40x53mm_slug_m169",
     "copy-from": "40x53mm_grenade",
+    "longest_side": "112 mm",
     "type": "AMMO",
     "name": { "str": "improvised 40x53mm slug" },
     "description": "An improvised 40x53mm load resembling an oversized shotgun slug.",

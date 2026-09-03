@@ -235,6 +235,7 @@
     "name": { "str": "adventure novel" },
     "description": "The stirring tale of a race against time, in search of a lost city located in the dark heart of the African continent.",
     "copy-from": "paperback_novel",
+    "longest_side": "18 cm",
     "price": "850 cent"
   },
   {
@@ -243,6 +244,7 @@
     "name": { "str": "buddy novel" },
     "description": "A gripping tale of two friends struggling to survive on the streets of New York City.",
     "copy-from": "paperback_novel",
+    "longest_side": "18 cm",
     "price": "650 cent"
   },
   {
@@ -258,10 +260,12 @@
     "name": { "str": "crime novel" },
     "description": "After their diamond heist goes wrong, the surviving criminals begin to suspect that one of them is a police informant.",
     "copy-from": "paperback_novel",
+    "longest_side": "18 cm",
     "price": "850 cent"
   },
   {
     "id": "novel_drama",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "drama novel" },
     "description": "A real book for real adults.",
@@ -269,6 +273,7 @@
   },
   {
     "id": "novel_erotic",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "erotic novel" },
     "description": "A hackneyed fictional narrative concealing low-grade literary smut.",
@@ -276,6 +281,7 @@
   },
   {
     "id": "novel_experimental",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "experimental novel" },
     "description": "A bizarre play about the philosophy of existential absurdity.  Or maybe it's about two guys waiting for their friend to show up.  It's confusing.",
@@ -283,6 +289,7 @@
   },
   {
     "id": "novel_fantasy",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "fantasy novel" },
     "description": "Basic sword & sorcery.",
@@ -290,6 +297,7 @@
   },
   {
     "id": "novel_horror",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "horror novel" },
     "description": "Maybe not the best reading material considering the situation.",
@@ -297,6 +305,7 @@
   },
   {
     "id": "novel_mystery",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "mystery novel" },
     "description": "A detective investigates an unusual murder in a secluded location.",
@@ -304,6 +313,7 @@
   },
   {
     "id": "novel_pulp",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "pulp novel" },
     "description": "A hardboiled detective tale filled with hard hitting action and intrigue.",
@@ -311,6 +321,7 @@
   },
   {
     "id": "novel_road",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "road novel" },
     "description": "A tale about a group of friends who wander the USA in the 1960s against a backdrop of jazz, poetry and drug use.",
@@ -318,6 +329,7 @@
   },
   {
     "id": "novel_romance",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "romance novel" },
     "description": "Drama and mild smut.",
@@ -337,6 +349,7 @@
     "name": { "str": "satire novel" },
     "description": "A political satire of the pre-apocalypse world.  Looking back on it from this side of Armageddon makes it seem all the more ridiculous.",
     "copy-from": "paperback_novel",
+    "longest_side": "18 cm",
     "price": "850 cent"
   },
   {
@@ -345,6 +358,7 @@
     "name": { "str": "scifi novel" },
     "description": "Aliens, ray guns, and space ships.",
     "copy-from": "paperback_novel",
+    "longest_side": "18 cm",
     "price": "850 cent",
     "snippet_category": [
       {
@@ -494,6 +508,7 @@
   },
   {
     "id": "novel_sports",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "sports novel" },
     "description": "The dramatic tale of a small-time boxer who gets a rare chance to fight the heavy-weight champion, and seize his one chance to make a better life for himself while impressing the cute girl who works in the pet store.",
@@ -501,6 +516,7 @@
   },
   {
     "id": "novel_spy",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "spy novel" },
     "description": "A tale of intrigue and espionage amongst Nazis, no, Commies, no, Iraqis!",
@@ -508,6 +524,7 @@
   },
   {
     "id": "novel_swash",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "swashbuckling novel" },
     "description": "An exciting seventeenth century tale of how an enslaved Irish doctor and his comrades-in-chains escape and become heroic pirates of the Robin Hood variety.",
@@ -515,6 +532,7 @@
   },
   {
     "id": "novel_thriller",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "thriller novel" },
     "description": "A suspenseful tale of betrayal and revenge.",
@@ -522,6 +540,7 @@
   },
   {
     "id": "novel_tragedy",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "tragedy novel" },
     "description": "The story of two young lovers whose feuding families threaten to keep them apart.",
@@ -529,6 +548,7 @@
   },
   {
     "id": "novel_war",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "war novel" },
     "description": "A thrilling narrative of survival in a prisoner of war camp during the Second World War, filled with riveting subplots about rat farming and dysentery.",
@@ -536,6 +556,7 @@
   },
   {
     "id": "novel_western",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "western novel" },
     "description": "The classic tale of a gunfighting stranger who comes to a small settlement and is hired to help the townsfolk defend themselves from a band of marauding outlaws.",

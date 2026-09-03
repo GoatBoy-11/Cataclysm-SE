@@ -17,6 +17,7 @@
     "description": ".40 S&W ammunition with 135gr JHP bullets.  The .40 S&W round is a descended from the 10mm Auto cartridge and maintains most of its predecessor's strengths while reducing recoil.",
     "weight": "9 g",
     "volume": "250 ml",
+    "longest_side": "29 mm",
     "price": "220 cent",
     "price_postapoc": "8 USD",
     "material": [ "brass", "powder" ],
@@ -52,6 +53,7 @@
   {
     "id": "bp_40sw",
     "copy-from": "40sw",
+    "longest_side": "29 mm",
     "type": "AMMO",
     "name": { "str": ".40 S&W JHP, black powder" },
     "proportional": {

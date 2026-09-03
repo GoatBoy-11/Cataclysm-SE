@@ -206,6 +206,7 @@
   },
   {
     "id": "novel_crime_murdergrape",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "Murdered by the Grapevine", "str_pl": "copies of Murdered by the Grapevine" },
     "description": "This cheap paperback tells the story of a mob boss done in by mere suspicion.  She never breaks a confidence, never rats out an accomplice, and never turns her back on a friend.  Nonetheless her grip on the reigns of the underworld is eroded by rumor and paranoia.",
@@ -213,6 +214,7 @@
   },
   {
     "id": "novel_spy_comefly",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "Come Fly the Treacherous Skies", "str_pl": "copies of Come Fly the Treacherous Skies" },
     "description": "This tale of intrigue betrays the story of a debonair mechanic driven by a lust for revenge.  As she uncovers a sophisticated network of amateur pilots turned smugglers, the good guys and the bad guys begin to all look the same.",
@@ -220,6 +222,7 @@
   },
   {
     "id": "novel_spy_rocketsci",
+    "longest_side": "18 cm",
     "type": "BOOK",
     "name": { "str": "Lies, Damn Lies, and Rocket Science", "str_pl": "copies of Lies, Damn Lies, and Rocket Science" },
     "description": "This spy novel tells the story of a jaded rocket scientist looking for redemption in all the wrong places.  As selling state secrets becomes her career, she learns there isn't much of difference between a double-agent and a triple-agent.",

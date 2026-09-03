@@ -577,7 +577,15 @@
     "to_hit": -3,
     "category": "valuables",
     "//": "Software declares this as its container, so the drive needs a pocket to be one.  CDDA models this as an E_FILE_STORAGE pocket, which BN has no equivalent for yet.",
-    "pocket_data": [ { "pocket_type": "CONTAINER", "max_contains_volume": "10 ml", "max_contains_weight": "20 g", "rigid": true, "moves": 10 } ]
+    "pocket_data": [
+      {
+        "pocket_type": "CONTAINER",
+        "max_contains_volume": "10 ml",
+        "max_contains_weight": "20 g",
+        "rigid": true,
+        "moves": 10
+      }
+    ]
   },
   {
     "type": "GENERIC",
@@ -2803,6 +2811,7 @@
     "material": "plastic",
     "weight": "6 g",
     "volume": "5 ml",
+    "longest_side": "84 mm",
     "to_hit": -3,
     "flags": [ "MISSION_ITEM" ]
   },
@@ -2820,6 +2829,7 @@
     "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_1", "CREDIT_CARD_SHAPED" ],
     "weight": "6 g",
     "volume": "5 ml",
+    "longest_side": "84 mm",
     "to_hit": -3
   },
   {
@@ -2836,6 +2846,7 @@
     "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_2", "CREDIT_CARD_SHAPED" ],
     "weight": "6 g",
     "volume": "5 ml",
+    "longest_side": "84 mm",
     "to_hit": -3
   },
   {
@@ -2852,6 +2863,7 @@
     "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_3", "CREDIT_CARD_SHAPED" ],
     "weight": "6 g",
     "volume": "5 ml",
+    "longest_side": "84 mm",
     "to_hit": -3
   },
   {
@@ -2867,6 +2879,7 @@
     "weight": "6 g",
     "volume": "15 ml",
     "flags": [ "CREDIT_CARD_SHAPED" ],
+    "longest_side": "84 mm",
     "to_hit": -3,
     "category": "tools_entry"
   },
@@ -2883,6 +2896,7 @@
     "weight": "6 g",
     "volume": "5 ml",
     "flags": [ "CREDIT_CARD_SHAPED" ],
+    "longest_side": "84 mm",
     "to_hit": -3,
     "category": "tools_entry"
   },
@@ -2900,6 +2914,7 @@
     "weight": "6 g",
     "volume": "5 ml",
     "flags": [ "CREDIT_CARD_SHAPED" ],
+    "longest_side": "84 mm",
     "to_hit": -3,
     "category": "tools_entry"
   },

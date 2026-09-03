@@ -2,6 +2,7 @@
   {
     "id": "bp_shot_bird",
     "copy-from": "shot_bird",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "birdshot, black powder" },
     "proportional": {
@@ -16,6 +17,7 @@
   {
     "id": "bp_shot_dragon",
     "copy-from": "shot_dragon",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "dragon's breath shell, black powder" },
     "proportional": {
@@ -30,6 +32,7 @@
   {
     "id": "bp_shot_00",
     "copy-from": "shot_00",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "00 shot, black powder" },
     "proportional": {
@@ -44,6 +47,7 @@
   {
     "id": "bp_shot_flechette",
     "copy-from": "shot_flechette",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "flechette shell, black powder" },
     "proportional": {
@@ -58,6 +62,7 @@
   {
     "id": "bp_shot_slug",
     "copy-from": "shot_slug",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "shotgun slug, black powder" },
     "damage": { "damage_type": "bullet", "amount": 46, "armor_penetration": 9 },
@@ -91,6 +96,7 @@
   {
     "id": "shot_00",
     "copy-from": "shot_abstract",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "00 shot" },
     "description": "A shell filled with metal pellets.  Extremely damaging, plus the spread makes it very accurate at short range.  Favored by SWAT forces.",
@@ -99,6 +105,7 @@
   {
     "id": "shot_beanbag",
     "copy-from": "shot_abstract",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "shotgun beanbag" },
     "description": "A beanbag round for shotguns, not deadly but designed to disable.",
@@ -113,6 +120,7 @@
   {
     "id": "shot_bird",
     "copy-from": "shot_00",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "birdshot" },
     "description": "Weak shotgun ammunition.  Designed for hunting birds and other small game, its applications in combat are very limited.",
@@ -127,6 +135,7 @@
   {
     "id": "shot_dragon",
     "copy-from": "shot_abstract",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "dragon's breath shell" },
     "description": "A shotgun shell filled with magnesium pellets or shards, used mostly as a distress flare or pyrotechnics tool.  When the round is fired, high temperature sparks and flames shoot out of the barrel, igniting everything in their path.",
@@ -141,6 +150,7 @@
   {
     "id": "shot_flechette",
     "copy-from": "shot_00",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "flechette shell" },
     "description": "A shotgun shell filled with tiny steel darts.  Extremely damaging, plus the spread makes it very accurate at short range.  Slices through most forms of armor with ease.",
@@ -181,6 +191,7 @@
   {
     "id": "shot_scrap",
     "copy-from": "shot_00",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "00 shot, scrap loaded" },
     "description": "A shotgun shell filled with whatever was lying around.  They are more damaging than birdshot, but fairly inaccurate.",
@@ -193,6 +204,7 @@
   {
     "id": "bp_shot_scrap",
     "copy-from": "shot_scrap",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "00 shot, black powder, scrap loaded" },
     "proportional": {
@@ -207,6 +219,7 @@
   {
     "id": "shot_slug",
     "copy-from": "shot_abstract",
+    "longest_side": "57 mm",
     "type": "AMMO",
     "name": { "str": "shotgun slug" },
     "description": "A heavy metal slug used with shotguns to give them the range capabilities of a rifle.  Extremely damaging but rather inaccurate.",

@@ -190,6 +190,7 @@
     "description": "Benelli's first gas-operated shotgun, featuring dual pistons for enhanced reliability with various loads and a collapsible buttstock that reduces length by almost 8 inches.  Adopted in 1999 as the M1014 Joint Service Combat Shotgun, the Benelli M4 is one of the finest combat shotguns available.",
     "weight": "3550 g",
     "volume": "2500 ml",
+    "longest_side": "1016 mm",
     "price": "1699 USD",
     "price_postapoc": "35 USD",
     "material": [ "steel", "plastic" ],
