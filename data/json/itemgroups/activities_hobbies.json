@@ -351,6 +351,8 @@
     "type": "item_group",
     "id": "games",
     "items": [
+      [ "agricola", 50 ],
+      [ "alquerque", 50 ],
       [ "chess", 50 ],
       [ "checkers", 50 ],
       [ "deck_of_cards", 50 ],
