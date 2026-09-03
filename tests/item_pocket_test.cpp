@@ -2735,3 +2735,47 @@ TEST_CASE( "the wallet spawn group fills the wallet it spawns", "[item][pocket][
     REQUIRE( wallets > 0 );
     CHECK( filled > 0 );
 }
+
+TEST_CASE( "an ammo box is a rigid box, not a restricted one", "[item][pocket][ammobox]" )
+{
+    clear_all_state();
+    // CDDA gives these no ammo_restriction on purpose, so a spare box takes
+    // anything that fits. This pins that, so a later "tidy-up" adding a
+    // restriction has to be a deliberate decision rather than a silent one.
+    CHECK( accepts( "9mm_ammo_box_50", "9mm" ) );
+    CHECK( accepts( "9mm_ammo_box_50", "coin_quarter" ) );
+    // Rigid: what a rigid pocket holds does not swell the box.
+    detached_ptr<item> holder = item::spawn( "9mm_ammo_box_50" );
+    item *box = &*holder;
+    const units::volume empty = box->volume();
+    REQUIRE( !box->put_in( item::spawn( "9mm", calendar::turn, 10 ) ) );
+    REQUIRE( !box->contents.all_items_top().empty() );
+    CHECK( box->volume() == empty );
+}
+
+TEST_CASE( "an ammo box refuses what will not fit", "[item][pocket][ammobox]" )
+{
+    clear_all_state();
+    // The smallest box holds 36 ml. A rock is 250 ml, so volume alone rejects
+    // it - no flag rule involved, which is the whole difference from a wallet.
+    CHECK_FALSE( accepts( "380_ammo_box_20", "test_rock" ) );
+}
+
+TEST_CASE( "classic mode drops the pocket rules and keeps volume",
+           "[item][pocket][wallet][classic]" )
+{
+    override_option classic( "POCKET_SYSTEM", "classic" );
+    clear_all_state();
+    // Classic is meant to behave as inventory did before pockets: volume and
+    // weight only. So the wallet stops being shaped and becomes three plain
+    // compartments, and a rock goes in one.
+    CHECK( accepts( "wallet", "coin_quarter" ) );
+    // A length of string is none of the three shapes, so in pockets mode the
+    // wallet refuses it. Here it goes in, which is the rule being switched off.
+    CHECK( accepts( "wallet", "string_6" ) );
+    // Volume still bites: the largest sleeve is 150 ml and test_rock is 250 ml,
+    // so "no rules" is not "no limits".
+    CHECK_FALSE( accepts( "wallet", "test_rock" ) );
+    // An ammo box is one pocket, so in classic it is simply a box by volume.
+    CHECK( accepts( "9mm_ammo_box_50", "coin_quarter" ) );
+}

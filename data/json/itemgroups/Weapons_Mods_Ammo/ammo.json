@@ -5,6 +5,7 @@
     "//": "Pistol ammo commonly owned by citizens and found in many locations.",
     "subtype": "distribution",
     "entries": [
+      { "group": "ammo_boxed_pistol", "prob": 35 },
       { "item": "10mm_fmj", "prob": 30, "charges": [ 1, 100 ] },
       { "item": "22_cphp", "prob": 30, "charges": [ 1, 100 ] },
       { "item": "22_lr", "prob": 40, "charges": [ 1, 100 ] },
@@ -199,6 +200,7 @@
     "//": "Rifle ammo commonly owned by citizens and found in many locations.",
     "subtype": "distribution",
     "entries": [
+      { "group": "ammo_boxed_rifle", "prob": 30 },
       { "item": "22_cphp", "prob": 50, "charges": [ 1, 100 ] },
       { "item": "22_lr", "prob": 70, "charges": [ 1, 100 ] },
       { "item": "22_ratshot", "prob": 30, "charges": [ 1, 100 ] },
@@ -318,6 +320,7 @@
     "//": "Shotgun ammo commonly owned by citizens and found in many locations.",
     "subtype": "distribution",
     "entries": [
+      { "group": "ammo_boxed_shotgun", "prob": 30 },
       { "item": "410shot_000", "prob": 30, "charges": [ 1, 100 ] },
       { "item": "shot_00", "prob": 110, "charges": [ 1, 100 ] },
       { "item": "shot_bird", "prob": 70, "charges": [ 1, 100 ] },
