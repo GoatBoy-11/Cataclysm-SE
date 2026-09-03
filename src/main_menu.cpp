@@ -196,25 +196,18 @@ void main_menu::display_sub_menu( int sel, const point &bottom_left, int sel_lin
             display_text( mmenu_motd, _( "MOTD" ), sel_line );
             return;
         case main_menu_opts::SETTINGS:
-            for( int i = 0; static_cast<size_t>( i ) < vSettingsSubItems.size(); ++i ) {
-                nc_color clr = i == sel2 ? hilite( c_yellow ) : c_yellow;
-                sub_opts.push_back( shortcut_text( clr, vSettingsSubItems[i] ) );
-                int len = utf8_width( shortcut_text( clr, vSettingsSubItems[i] ), true );
-                if( len > xlen ) {
-                    xlen = len;
-                }
+        case main_menu_opts::NEWCHAR: {
+            const std::vector<std::string> &items = sel_o == main_menu_opts::SETTINGS
+                                                    ? vSettingsSubItems
+                                                    : vNewGameSubItems;
+            for( const auto &[i, item] : std::views::enumerate( items ) ) {
+                nc_color clr = static_cast<int>( i ) == sel2 ? hilite( c_yellow ) : c_yellow;
+                sub_opts.push_back( shortcut_text( clr, item ) );
+                const int len = utf8_width( sub_opts.back(), true );
+                xlen = std::max( xlen, len );
             }
             break;
-        case main_menu_opts::NEWCHAR:
-            for( int i = 0; static_cast<size_t>( i ) < vNewGameSubItems.size(); i++ ) {
-                nc_color clr = i == sel2 ? hilite( c_yellow ) : c_yellow;
-                sub_opts.push_back( shortcut_text( clr, vNewGameSubItems[i] ) );
-                int len = utf8_width( shortcut_text( clr, vNewGameSubItems[i] ), true );
-                if( len > xlen ) {
-                    xlen = len;
-                }
-            }
-            break;
+        }
         case main_menu_opts::LOADCHAR:
         case main_menu_opts::WORLD: {
             const bool extra_opt = sel == getopt( main_menu_opts::WORLD );
@@ -222,21 +215,15 @@ void main_menu::display_sub_menu( int sel, const point &bottom_left, int sel_lin
                 sub_opts.emplace_back( colorize( _( "Create World" ), sel2 == 0 ? hilite( c_yellow ) : c_yellow ) );
                 xlen = utf8_width( sub_opts.back(), true );
             }
-            std::vector<std::string> all_worldnames = world_generator->all_worldnames();
-            for( int i = 0; static_cast<size_t>( i ) < all_worldnames.size(); i++ ) {
-                WORLDINFO *world = world_generator->get_world( all_worldnames[i] );
-                int savegames_count = world->world_saves.size();
-                nc_color clr = c_white;
-                std::string txt = all_worldnames[i];
-                if( all_worldnames[i] == "TUTORIAL" || all_worldnames[i] == "DEFENSE" ) {
-                    clr = c_light_cyan;
-                }
-                sub_opts.push_back( colorize( string_format( "%s (%d)", txt, savegames_count ),
-                                              ( sel2 == i + ( extra_opt ? 1 : 0 ) ) ? hilite( clr ) : clr ) );
-                int len = utf8_width( sub_opts.back(), true );
-                if( len > xlen ) {
-                    xlen = len;
-                }
+            const std::vector<std::string> all_worldnames = world_generator->all_worldnames();
+            for( const auto &[i, worldname] : std::views::enumerate( all_worldnames ) ) {
+                WORLDINFO *world = world_generator->get_world( worldname );
+                const int savegames_count = world->world_saves.size();
+                nc_color clr = worldname == "TUTORIAL" || worldname == "DEFENSE" ? c_light_cyan : c_white;
+                sub_opts.push_back( colorize( string_format( "%s (%d)", worldname, savegames_count ),
+                                              ( sel2 == static_cast<int>( i ) + ( extra_opt ? 1 : 0 ) ) ? hilite( clr ) : clr ) );
+                const int len = utf8_width( sub_opts.back(), true );
+                xlen = std::max( xlen, len );
             }
         }
         break;
@@ -380,8 +367,8 @@ void main_menu::print_menu( const catacurses::window &w_open, int iSel, const po
                   getVersionString() ) );
 
     int menu_length = 0;
-    for( size_t i = 0; i < vMenuItems.size(); ++i ) {
-        menu_length += utf8_width_notags( vMenuItems[i].c_str() ) + 2;
+    for( const auto &[i, item] : std::views::enumerate( vMenuItems ) ) {
+        menu_length += utf8_width_notags( item.c_str() ) + 2;
         if( !vMenuHotkeys[i].empty() ) {
             menu_length += utf8_width( vMenuHotkeys[i][0] );
         }

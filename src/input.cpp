@@ -1496,8 +1496,7 @@ std::optional<tripoint_bub_ms> input_context::get_coordinates( const catacurses:
         return std::nullopt;
     }
     const point view_size( getmaxx( capture_win ), getmaxy( capture_win ) );
-    const point win_min( getbegx( capture_win ),
-                         getbegy( capture_win ) );
+    const point win_min( getbegx( capture_win ), getbegy( capture_win ) );
     const half_open_rectangle<point> win_bounds( win_min, win_min + view_size );
     if( !win_bounds.contains( coordinate ) ) {
         return std::nullopt;
@@ -1512,6 +1511,20 @@ std::optional<tripoint_bub_ms> input_context::get_coordinates( const catacurses:
     return tripoint_bub_ms( p, g->get_levz() );
 }
 #endif
+
+auto input_context::get_mouse_cell( const catacurses::window &capture_win ) const -> std::optional<point> // *NOPAD*
+{
+    if( !coordinate_input_received ) {
+        return std::nullopt;
+    }
+    const point win_min( getbegx( capture_win ), getbegy( capture_win ) );
+    const point win_size( getmaxx( capture_win ), getmaxy( capture_win ) );
+    const half_open_rectangle<point> win_bounds( win_min, win_min + win_size );
+    if( !win_bounds.contains( coordinate ) ) {
+        return std::nullopt;
+    }
+    return coordinate - win_min;
+}
 
 std::string input_context::get_action_name( const std::string &action_id ) const
 {

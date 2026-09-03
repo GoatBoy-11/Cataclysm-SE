@@ -650,6 +650,14 @@ class input_context
          */
         std::optional<tripoint_bub_ms> get_coordinates( const catacurses::window &capture_win_ );
 
+        /**
+         * Get the last mouse position as a window-relative cell (row/column),
+         * or nullopt when no mouse input was received or the pointer is outside
+         * the given window.  Unlike @ref get_coordinates this does not translate
+         * into map space; it is intended for hit-testing menus/Lists.
+         */
+        std::optional<point> get_mouse_cell( const catacurses::window &capture_win_ ) const; // *NOPAD*
+
         // Below here are shortcuts for registering common key combinations.
         void register_directions();
         void register_updown();
