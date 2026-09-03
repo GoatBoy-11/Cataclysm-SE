@@ -1,3 +1,9 @@
+#include <algorithm>
+#include <vector>
+
+#include "advanced_inv_area.h"
+#include "advanced_inv_listitem.h"
+#include "advanced_inv_pane.h"
 #include "avatar.h"
 #include "catch/catch.hpp"
 #include "inventory_ui.h"
@@ -704,5 +710,92 @@ TEST_CASE("ask_pocket_destination declines before any menu when there are fewer 
     const std::optional<pocket_destination> dest = ask_pocket_destination(dummy, *rock);
     CHECK_FALSE(dest.has_value());
     CHECK(rock->typeId() == itype_id("test_rock"));
+}
+
+// The advanced inventory manager built its inventory pane from the flat
+// inventory alone, so an item routed into a worn pocket appeared in neither
+// pane: not in AIM_INVENTORY, which could not see it, and not in AIM_WORN,
+// which lists garments rather than their contents.
+static advanced_inv_area aim_inventory_square()
+{
+    advanced_inv_area square(AIM_INVENTORY);
+    // init() reads the real map around the player; the inventory square needs
+    // nothing from it beyond being allowed to hold items.
+    square.canputitemsloc = true;
+    return square;
+}
+
+static std::vector<advanced_inv_listitem> aim_inventory_entries(advanced_inv_area& square)
+{
+    advanced_inventory_pane pane;
+    pane.set_area(square, false);
+    pane.add_items_from_area(square);
+    return pane.items;
+}
+
+TEST_CASE("AIM's inventory pane lists an item in a worn pocket", "[inventory][ui][pocket][aim]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+    item* rock = vest->contents.all_items_top().front();
+    // The precondition the bug turned on, asserted rather than manufactured:
+    // the rock is carried but the flat inventory does not hold it.
+    REQUIRE(dummy.inv_size() == 0);
+
+    advanced_inv_area square = aim_inventory_square();
+    const std::vector<advanced_inv_listitem> entries = aim_inventory_entries(square);
+
+    const auto holds = [&entries](const item* target) {
+        return std::ranges::any_of(entries, [target](const advanced_inv_listitem& entry) {
+            return entry.is_item_entry() && entry.items.front() == target;
+        });
+    };
+    CHECK(holds(rock));
+    // The garment belongs to AIM_WORN. Listing it here too would offer to move
+    // a worn item out of the inventory pane.
+    CHECK_FALSE(holds(vest));
+}
+
+TEST_CASE("AIM's inventory pane addresses a pocketed item by pointer",
+          "[inventory][ui][pocket][aim]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+    item* rock = vest->contents.all_items_top().front();
+
+    advanced_inv_area square = aim_inventory_square();
+    const std::vector<advanced_inv_listitem> entries = aim_inventory_entries(square);
+
+    const auto entry = std::ranges::find_if(entries, [](const advanced_inv_listitem& e) {
+        return e.is_item_entry() && e.items.front()->typeId() == itype_id("test_rock");
+    });
+    REQUIRE(entry != entries.end());
+    // This is the whole point of the fix. The entry carries the item itself, so
+    // every action path acts on the rock.
+    CHECK(entry->items.front() == rock);
+    // And the addressing it replaced, shown failing on the same entry: move and
+    // examine both resolved sitem->idx through the flat inventory, which does
+    // not hold the rock, so the index reached something else entirely.
+    CHECK(&dummy.i_at(entry->idx) != rock);
+}
+
+TEST_CASE("AIM's inventory pane leaves an empty garment out",
+          "[inventory][ui][pocket][aim]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+
+    advanced_inv_area square = aim_inventory_square();
+    const std::vector<advanced_inv_listitem> entries = aim_inventory_entries(square);
+
+    // An empty garment contributes nothing, and in particular must not sprout a
+    // row for the garment itself.
+    CHECK(entries.empty());
+    CHECK(vest->contents.all_items_top().empty());
 }
 

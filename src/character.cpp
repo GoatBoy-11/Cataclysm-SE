@@ -3165,10 +3165,7 @@ detached_ptr<item> Character::i_add_or_drop( detached_ptr<item> &&it )
         return get_map().add_item_or_charges( bub_pos(), std::move( it ) );
     } else {
         inv.assign_empty_invlet( *it, *this );
-        // Deliberately NOT routed into worn pockets. Doing so leaves the map's
-        // active item cache inconsistent - map_test's submap consistency check
-        // catches it - so callers that want routing ask for it themselves.
-        i_add( std::move( it ) );
+        i_add_routed( std::move( it ) );
         return detached_ptr<item>();
     }
 }

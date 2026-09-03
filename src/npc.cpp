@@ -38,6 +38,7 @@
 #include "int_id.h"
 #include "item.h"
 #include "item_contents.h"
+#include "item_pocket.h"
 #include "item_group.h"
 #include "itype.h"
 #include "iuse.h"
@@ -1731,12 +1732,26 @@ void npc::decide_needs()
     needrank[need_weapon] = npc_ai::wielded_value( *this );
     needrank[need_food] = 15.0f - ( max_stored_kcal() - get_stored_kcal() ) / 10.0f;
     needrank[need_drink] = 15 - get_thirst();
-    const_invslice slice = inv.const_slice();
-    for( auto &i : slice ) {
-        item &inventory_item = *i->front();
-        if( const item *food = inventory_item.get_food() ) {
+    const auto count_as_provisions = [this, &needrank]( const item & carried ) {
+        if( const item *food = carried.get_food() ) {
             needrank[ need_food ] += nutrition_for( *food ) / 4.0;
             needrank[ need_drink ] += food->get_comestible()->quench / 4.0;
+        }
+    };
+    const_invslice slice = inv.const_slice();
+    for( auto &i : slice ) {
+        count_as_provisions( *i->front() );
+    }
+    // Rations routed into a worn container are carried but absent from the flat
+    // inventory, so an NPC with a full satchel decided it was starving.
+    for( item * const &garment : worn ) {
+        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+            if( pocket.definition().type != pocket_type::CONTAINER ) {
+                continue;
+            }
+            for( const item *stored : pocket.all_items_top() ) {
+                count_as_provisions( *stored );
+            }
         }
     }
     needs.clear();
@@ -2010,6 +2025,22 @@ void npc::update_worst_item_value()
     int inv_val = inv.worst_item_value( this );
     if( inv_val < worst_item_value ) {
         worst_item_value = inv_val;
+    }
+    // A pocketed item is still something the NPC owns and would rather part
+    // with first; leaving it out let a worthless trinket in a satchel go unseen
+    // and the NPC hold out for a better trade than it should.
+    for( item * const &garment : worn ) {
+        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
+            if( pocket.definition().type != pocket_type::CONTAINER ) {
+                continue;
+            }
+            for( const item *stored : pocket.all_items_top() ) {
+                const int stored_val = value( *stored );
+                if( stored_val < worst_item_value ) {
+                    worst_item_value = stored_val;
+                }
+            }
+        }
     }
 }
 
