@@ -202,7 +202,7 @@
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "material": "paper",
-    "flags": [ "TRADER_AVOID" ],
+    "flags": [ "TRADER_AVOID", "CREDIT_CARD_SHAPED" ],
     "weight": "3 g",
     "volume": "5 ml"
   },
@@ -608,6 +608,7 @@
     "material": "plastic",
     "weight": "6 g",
     "volume": "5 ml",
+    "flags": [ "CREDIT_CARD_SHAPED" ],
     "to_hit": -3,
     "category": "valuables"
   },
@@ -2739,9 +2740,11 @@
     "price": "10 USD",
     "price_postapoc": "0 cent",
     "material": "plastic",
-    "flags": [ "NO_UNLOAD", "NO_RELOAD" ],
+    "flags": [ "NO_UNLOAD", "NO_RELOAD", "CREDIT_CARD_SHAPED" ],
     "weight": "6 g",
     "volume": "5 ml",
+    "//2": "Length is CDDA's measured card, 8.4 x 5.3 x 0.1 cm.  Without it a 5 ml volume derives about 17 mm, which no card sleeve would ever reject.",
+    "longest_side": "84 mm",
     "to_hit": -3,
     "max_charges": 200000000,
     "rand_charges": [
@@ -2814,7 +2817,7 @@
     "price": "5 USD",
     "price_postapoc": "0 cent",
     "material": "plastic",
-    "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_1" ],
+    "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_1", "CREDIT_CARD_SHAPED" ],
     "weight": "6 g",
     "volume": "5 ml",
     "to_hit": -3
@@ -2830,7 +2833,7 @@
     "price": "5 USD",
     "price_postapoc": "0 cent",
     "material": "plastic",
-    "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_2" ],
+    "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_2", "CREDIT_CARD_SHAPED" ],
     "weight": "6 g",
     "volume": "5 ml",
     "to_hit": -3
@@ -2846,7 +2849,7 @@
     "price": "5 USD",
     "price_postapoc": "0 cent",
     "material": "plastic",
-    "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_3" ],
+    "flags": [ "GAS_DISCOUNT", "DISCOUNT_VALUE_3", "CREDIT_CARD_SHAPED" ],
     "weight": "6 g",
     "volume": "5 ml",
     "to_hit": -3
@@ -2863,6 +2866,7 @@
     "material": "plastic",
     "weight": "6 g",
     "volume": "15 ml",
+    "flags": [ "CREDIT_CARD_SHAPED" ],
     "to_hit": -3,
     "category": "tools_entry"
   },
@@ -2878,6 +2882,7 @@
     "material": "plastic",
     "weight": "6 g",
     "volume": "5 ml",
+    "flags": [ "CREDIT_CARD_SHAPED" ],
     "to_hit": -3,
     "category": "tools_entry"
   },
@@ -2894,6 +2899,7 @@
     "material": "plastic",
     "weight": "6 g",
     "volume": "5 ml",
+    "flags": [ "CREDIT_CARD_SHAPED" ],
     "to_hit": -3,
     "category": "tools_entry"
   },

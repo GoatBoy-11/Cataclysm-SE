@@ -419,6 +419,7 @@
     "id": "tools_science",
     "//": "tools and equipment you might find on lab benches of nearly any lab.",
     "items": [
+      [ "glass_thermometer", 5 ],
       [ "chemistry_set", 4 ],
       [ "chemistry_set_basic", 2 ],
       [ "analytical_set_basic", 5 ],

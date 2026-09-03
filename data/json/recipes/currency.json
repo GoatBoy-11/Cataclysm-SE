@@ -1,0 +1,71 @@
+[
+  {
+    "//": "CDDA's own, ported as it stands. Without it the wrapper is loot only.",
+    "result": "coin_wrapper",
+    "type": "recipe",
+    "category": "CC_OTHER",
+    "subcategory": "CSC_OTHER_OTHER",
+    "skill_used": "fabrication",
+    "time": "1 s",
+    "autolearn": true,
+    "reversible": true,
+    "components": [ [ [ "paper", 1 ] ] ],
+    "flags": [ "BLIND_EASY" ]
+  },
+  {
+    "//": "CDDA's own. A troy ounce of bullion is worth more as metal than as a face value nobody honours any more.",
+    "result": "coin_silver",
+    "type": "uncraft",
+    "time": "2 s",
+    "qualities": [ { "id": "HAMMER", "level": 1 } ],
+    "components": [ [ [ "silver_small", 2 ] ] ]
+  },
+  {
+    "result": "coin_gold",
+    "type": "uncraft",
+    "time": "2 s",
+    "qualities": [ { "id": "HAMMER", "level": 1 } ],
+    "components": [ [ [ "gold_small", 2 ] ] ]
+  },
+  {
+    "//": "CDDA melts down no circulating coinage, but CSE already does: coin_quarter yields 80 zinc, being 5.6 g of a 6 g coin at 70 mg per unit. These follow that at copper's 2 g per unit, so a coin gives its own weight rounded down. Without them a quarter could be melted and a penny could not.",
+    "result": "coin_penny",
+    "type": "uncraft",
+    "time": "30 s",
+    "qualities": [ { "id": "HAMMER", "level": 1 } ],
+    "components": [ [ [ "copper", 1 ] ] ],
+    "flags": [ "BLIND_EASY" ]
+  },
+  {
+    "result": "coin_nickel",
+    "type": "uncraft",
+    "time": "30 s",
+    "qualities": [ { "id": "HAMMER", "level": 1 } ],
+    "components": [ [ [ "copper", 2 ] ] ],
+    "flags": [ "BLIND_EASY" ]
+  },
+  {
+    "result": "coin_dime",
+    "type": "uncraft",
+    "time": "30 s",
+    "qualities": [ { "id": "HAMMER", "level": 1 } ],
+    "components": [ [ [ "copper", 1 ] ] ],
+    "flags": [ "BLIND_EASY" ]
+  },
+  {
+    "result": "coin_half_dollar",
+    "type": "uncraft",
+    "time": "30 s",
+    "qualities": [ { "id": "HAMMER", "level": 1 } ],
+    "components": [ [ [ "copper", 5 ] ] ],
+    "flags": [ "BLIND_EASY" ]
+  },
+  {
+    "result": "coin_dollar",
+    "type": "uncraft",
+    "time": "30 s",
+    "qualities": [ { "id": "HAMMER", "level": 1 } ],
+    "components": [ [ [ "copper", 4 ] ] ],
+    "flags": [ "BLIND_EASY" ]
+  }
+]

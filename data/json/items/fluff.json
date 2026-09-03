@@ -91,6 +91,7 @@
     "symbol": "o",
     "color": "light_gray",
     "stackable": true,
+    "flags": [ "COIN_SHAPED" ],
     "use_action": "COIN_FLIP"
   },
   {

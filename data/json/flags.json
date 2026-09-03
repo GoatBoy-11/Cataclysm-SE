@@ -2673,5 +2673,21 @@
     "id": "CRAFT_WITH_FULL_MAG",
     "type": "json_flag",
     "context": [ "GENERIC" ]
+  },
+  {
+    "//": "Wallet pockets restrict by these three.  CDDA leaves them undeclared, which it tolerates; CSE erases an undefined flag from the itype and reports it, so they must be declared here to have any effect.",
+    "id": "BANK_NOTE_SHAPED",
+    "type": "json_flag",
+    "context": [ "GENERIC" ]
+  },
+  {
+    "id": "CREDIT_CARD_SHAPED",
+    "type": "json_flag",
+    "context": [ "GENERIC", "TOOL" ]
+  },
+  {
+    "id": "COIN_SHAPED",
+    "type": "json_flag",
+    "context": [ "GENERIC" ]
   }
 ]

@@ -1,0 +1,61 @@
+[
+  {
+    "//": "Spawn side of the wallet import. CDDA's own wallet groups are not ported wholesale: they reach for Foodplace scorecards, science and LIXA ID cards, wallet photos and Free Merchant notes, most of which CSE does not have. These use CSE's currency instead.",
+    "type": "item_group",
+    "id": "coins",
+    "subtype": "distribution",
+    "items": [
+      { "item": "coin_penny", "prob": 57 },
+      { "item": "coin_dime", "prob": 19 },
+      { "item": "coin_quarter", "prob": 13 },
+      { "item": "coin_nickel", "prob": 10 },
+      { "item": "coin_half_dollar", "prob": 1 },
+      { "item": "coin_dollar", "prob": 1 }
+    ]
+  },
+  {
+    "//": "Bullion is not pocket change, so it is not in the everyday coin mix.",
+    "type": "item_group",
+    "id": "coins_bullion",
+    "subtype": "distribution",
+    "items": [ { "item": "coin_silver", "prob": 80 }, { "item": "coin_gold", "prob": 20 } ]
+  },
+  {
+    "type": "item_group",
+    "id": "banknotes",
+    "subtype": "distribution",
+    "items": [
+      { "item": "money_one", "prob": 26 },
+      { "item": "money_twenty", "prob": 23 },
+      { "item": "money_five", "prob": 6 },
+      { "item": "money_ten", "prob": 5 },
+      { "item": "money_fifty", "prob": 5 },
+      { "item": "money_two", "prob": 2 },
+      { "item": "money_hundred", "prob": 2 }
+    ]
+  },
+  {
+    "//": "One entry per sleeve the wallet actually has, so a spawned wallet exercises all three restrictions rather than filling one and refusing the rest.",
+    "type": "item_group",
+    "id": "wallet_contents",
+    "subtype": "collection",
+    "items": [
+      { "item": "cash_card", "prob": 100, "charges-min": 0, "charges-max": 50000 },
+      { "group": "banknotes", "prob": 80, "count": [ 1, 8 ] },
+      { "group": "coins", "prob": 80, "count": [ 1, 6 ] },
+      { "item": "fp_loyalty_card", "prob": 15 }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "wallets",
+    "subtype": "distribution",
+    "items": [
+      { "item": "wallet", "prob": 40, "contents-group": "wallet_contents" },
+      { "item": "wallet_leather", "prob": 25, "contents-group": "wallet_contents" },
+      { "item": "wallet_stylish", "prob": 25, "contents-group": "wallet_contents" },
+      { "item": "wallet_large", "prob": 9, "contents-group": "wallet_contents" },
+      { "item": "wallet_duct_tape", "prob": 1, "contents-group": "wallet_contents" }
+    ]
+  }
+]
