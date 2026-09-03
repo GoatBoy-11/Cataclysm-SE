@@ -35769,6 +35769,1743 @@
         { "offset": 3584, "bold": true, "color": "MAGENTA" },
         { "offset": 3840, "bold": true, "color": "YELLOW" }
       ]
+    },
+    {
+      "file": "small.png",
+      "//": "range 23832 to 25607 - ChibiUltica's item sheet, grafted for CDDA items UNDEAD_PEOPLE has no art for",
+      "sprite_width": 20,
+      "sprite_height": 20,
+      "sprite_offset_x": 0,
+      "sprite_offset_y": 0,
+      "tiles": [
+        {
+          "id": [
+            "357sig_ammo_box_50",
+            "45colt_ammo_box_50",
+            "45colt_ammo_box_20",
+            "38super_ammo_box_50",
+            "30carbine_ammo_box_50",
+            "22lr_ammo_box_100",
+            "10mm_ammo_box_50",
+            "10mm_ammo_box_20",
+            "9mm_ammo_box_100",
+            "9mm_ammo_box_50",
+            "9mm_ammo_box_20",
+            "4570_ammo_box_20",
+            "3006_ammo_box_20",
+            "762_ammo_box_50",
+            "762_ammo_box_20",
+            "460_ammo_box_20",
+            "454_ammo_box_20",
+            "450_ammo_box_20",
+            "410_ammo_box_25",
+            "410_ammo_box_5",
+            "380_ammo_box_20",
+            "357_ammo_box_50",
+            "357_ammo_box_20",
+            "338_ammo_box_20",
+            "308_ammo_box_20",
+            "303_ammo_box_20",
+            "300_ammo_box_20",
+            "223_ammo_box_50",
+            "223_ammo_box_20",
+            "57_ammo_box_50",
+            "45_ammo_box_50",
+            "45_ammo_box_20",
+            "44_ammo_box_20",
+            "40_ammo_box_50",
+            "40_ammo_box_20",
+            "38_ammo_box_50",
+            "38_ammo_box_20",
+            "32_ammo_box_50",
+            "12_ammo_box_10",
+            "12_ammo_box_5",
+            "ammo_box_army_3_clips"
+          ],
+          "fg": 24706
+        },
+        {
+          "id": [
+            "22lr_ammo_box_500",
+            "9mm_ammo_box_250",
+            "3006_ammo_box_100",
+            "380_ammo_box_500",
+            "357_ammo_box_200",
+            "308_ammo_box_100",
+            "223_ammo_box_200",
+            "45_ammo_box_200",
+            "44_ammo_box_200",
+            "44_ammo_box_100",
+            "38_ammo_box_200",
+            "12_ammo_box_25"
+          ],
+          "fg": 24703
+        },
+        {
+          "id": [
+            "22lr_ammo_box_1000",
+            "10mm_ammo_box_500",
+            "3006_ammo_box_200",
+            "762_ammo_box_500",
+            "45_ammo_box_500",
+            "40_ammo_box_500",
+            "38_ammo_box_500",
+            "12_ammo_box_100"
+          ],
+          "fg": 24702
+        },
+        {
+          "id": [
+            "lc_chainmail_hood",
+            "mc_chainmail_hood",
+            "ch_chainmail_hood",
+            "qt_chainmail_hood",
+            "hc_chainmail_hood",
+            "xs_mc_chainmail_hood",
+            "xl_mc_chainmail_hood",
+            "xl_lc_chainmail_hood",
+            "xl_ch_chainmail_hood",
+            "xs_ch_chainmail_hood",
+            "xs_hc_chainmail_hood",
+            "xl_qt_chainmail_hood",
+            "xs_qt_chainmail_hood",
+            "xl_hc_chainmail_hood",
+            "xs_lc_chainmail_hood",
+            "chainmail_junk_hood"
+          ],
+          "fg": 23858
+        },
+        {
+          "id": [
+            "mc_chainmail_legs",
+            "lc_chainmail_legs",
+            "ch_chainmail_legs",
+            "qt_chainmail_legs",
+            "hc_chainmail_legs",
+            "xl_ch_chainmail_legs",
+            "xl_qt_chainmail_legs",
+            "xl_lc_chainmail_legs",
+            "xs_ch_chainmail_legs",
+            "xs_mc_chainmail_legs",
+            "xs_hc_chainmail_legs",
+            "xl_mc_chainmail_legs",
+            "xs_lc_chainmail_legs",
+            "xs_qt_chainmail_legs",
+            "xl_hc_chainmail_legs",
+            "chainmail_junk_legs"
+          ],
+          "fg": 23859
+        },
+        {
+          "id": [
+            "chainmail_suit_faraday_xs",
+            "xl_chainmail_suit_faraday"
+          ],
+          "fg": 23860
+        },
+        {
+          "id": "m9_var_90two",
+          "fg": 24057
+        },
+        {
+          "id": "light_minus_disposable_battery_cell",
+          "fg": 24188
+        },
+        {
+          "id": [
+            "bone_marrow",
+            "human_marrow",
+            "demihuman_marrow"
+          ],
+          "fg": 24195
+        },
+        {
+          "id": "abstractmap",
+          "fg": 24202
+        },
+        {
+          "id": "book_fict_soft_tpl",
+          "fg": 24212
+        },
+        {
+          "id": "wearable_big_light_on",
+          "fg": 24390
+        },
+        {
+          "id": "welding_wire_alloy",
+          "fg": 24500
+        },
+        {
+          "id": "welding_wire_steel",
+          "fg": 24549
+        },
+        {
+          "id": [
+            "brazing_rod_alloy",
+            "welding_rod_alloy"
+          ],
+          "fg": 24499
+        },
+        {
+          "id": [
+            "welding_rod_steel",
+            "brazing_rod_bronze"
+          ],
+          "fg": 24548
+        },
+        {
+          "id": [
+            "waist_apron_short",
+            "waist_apron_long"
+          ],
+          "fg": 25586
+        },
+        {
+          "id": [
+            "paint_can_steel",
+            "paint_can_plastic"
+          ],
+          "fg": 24704
+        },
+        {
+          "id": [
+            "homemade_grenade",
+            "small_homemade_grenade",
+            "military_explosive_grenade",
+            "military_explosive_small_grenade",
+            "sling-ready_grenade",
+            "sling-ready_homemade_grenade",
+            "sling-ready_small_homemade_grenade",
+            "sling-ready_homemade_grenade_2",
+            "sling-ready_small_homemade_grenade_2"
+          ],
+          "fg": 24886
+        },
+        {
+          "id": "sling-ready_molotov",
+          "fg": 24898
+        },
+        {
+          "id": "sling-ready_molotov_lit",
+          "fg": [
+            {
+              "weight": 8,
+              "sprite": 24899
+            },
+            {
+              "weight": 8,
+              "sprite": 24900
+            },
+            {
+              "weight": 8,
+              "sprite": 24901
+            },
+            {
+              "weight": 8,
+              "sprite": 24902
+            }
+          ],
+          "animated": true
+        },
+        {
+          "id": [
+            "homemade_grenade_act",
+            "small_homemade_grenade_act",
+            "military_explosive_grenade_act",
+            "military_explosive_small_grenade_act"
+          ],
+          "fg": [
+            {
+              "weight": 8,
+              "sprite": 24884
+            },
+            {
+              "weight": 8,
+              "sprite": 24885
+            }
+          ],
+          "animated": true
+        },
+        {
+          "id": "homemade_bomb_act",
+          "fg": [
+            {
+              "weight": 8,
+              "sprite": 24896
+            },
+            {
+              "weight": 8,
+              "sprite": 24897
+            }
+          ],
+          "animated": true
+        },
+        {
+          "id": [
+            "sling-ready_grenade_act",
+            "sling-ready_homemade_grenade_act",
+            "sling-ready_small_homemade_grenade_act",
+            "sling-ready_homemade_grenade_2_act",
+            "sling-ready_small_homemade_grenade_2_act"
+          ],
+          "fg": [
+            {
+              "weight": 8,
+              "sprite": 24887
+            },
+            {
+              "weight": 8,
+              "sprite": 24888
+            }
+          ],
+          "animated": true
+        },
+        {
+          "id": [
+            "mutant_marrow",
+            "mutant_human_marrow"
+          ],
+          "fg": 25027
+        },
+        {
+          "id": [
+            "dry_corn",
+            "corn_kernels",
+            "rehydrated_corn_kernels"
+          ],
+          "fg": 25063
+        },
+        {
+          "id": [
+            "egg_brown_trout",
+            "egg_brook_trout",
+            "egg_lake_trout",
+            "egg_rainbow_trout",
+            "egg_salmon",
+            "egg_kokanee_salmon",
+            "egg_rock_bass",
+            "egg_walleye",
+            "egg_sbass",
+            "egg_lbass",
+            "egg_calico_bass",
+            "egg_muskellunge",
+            "egg_fallfish"
+          ],
+          "fg": 25261
+        },
+        {
+          "id": [
+            "egg_pbass",
+            "egg_bullhead",
+            "egg_bullhead_yellow"
+          ],
+          "fg": 25262
+        },
+        {
+          "id": [
+            "egg_whitefish",
+            "egg_bluegill",
+            "egg_pike",
+            "egg_burbot",
+            "egg_whitefish_round"
+          ],
+          "fg": 25266
+        },
+        {
+          "id": [
+            "egg_carp",
+            "egg_grass_carp"
+          ],
+          "fg": 25263
+        },
+        {
+          "id": [
+            "egg_bowfin",
+            "egg_sturgeon_lake",
+            "egg_sturgeon_shortnose"
+          ],
+          "fg": 25264
+        },
+        {
+          "id": [
+            "egg_pumpkinseed",
+            "egg_redbreast",
+            "egg_green_sunfish",
+            "egg_sunfish"
+          ],
+          "fg": 25265
+        },
+        {
+          "id": [
+            "egg_pickerel",
+            "egg_pickerel_american"
+          ],
+          "fg": 25269
+        },
+        {
+          "id": "egg_gar_longnose",
+          "fg": 25268
+        },
+        {
+          "id": [
+            "egg_white_sucker",
+            "egg_goldfish"
+          ],
+          "fg": 25267
+        },
+        {
+          "id": "lc_wire",
+          "fg": 25419
+        },
+        {
+          "id": "emergency_lockpick",
+          "fg": 23878
+        },
+        {
+          "id": "folding_poncho_obsolete",
+          "fg": 23890
+        },
+        {
+          "id": "metalworking_tongs",
+          "fg": 23936
+        },
+        {
+          "id": "archery_target_box",
+          "fg": 24046
+        },
+        {
+          "id": "art_mask",
+          "fg": 24047
+        },
+        {
+          "id": "hybrid_sight_4x",
+          "fg": 24053
+        },
+        {
+          "id": "wooden_grip",
+          "fg": 24055
+        },
+        {
+          "id": "modular_deagle",
+          "fg": 24118
+        },
+        {
+          "id": "modular_m4_carbine_var_m4_cqbr",
+          "fg": 24119
+        },
+        {
+          "id": "modular_ump",
+          "fg": 24120
+        },
+        {
+          "id": "sw629_var_ruger_redhawk",
+          "fg": 24155
+        },
+        {
+          "id": "bath_toy",
+          "fg": 24182
+        },
+        {
+          "id": "block_and_tackle",
+          "fg": 24194
+        },
+        {
+          "id": "bottle_bathroom",
+          "fg": 24238
+        },
+        {
+          "id": "box_small_folded",
+          "fg": 24241
+        },
+        {
+          "id": "onyx_gold_bracelet",
+          "fg": 24252
+        },
+        {
+          "id": "onyx_platinum_bracelet",
+          "fg": 24267
+        },
+        {
+          "id": "onyx_silver_bracelet",
+          "fg": 24283
+        },
+        {
+          "id": "poultry",
+          "fg": 24300
+        },
+        {
+          "id": "honeydew",
+          "fg": 24380
+        },
+        {
+          "id": "chem_zinc_oxide",
+          "fg": 24421
+        },
+        {
+          "id": "grass_keffiyeh",
+          "fg": 24513
+        },
+        {
+          "id": "heavy_dry_cell",
+          "fg": 24515
+        },
+        {
+          "id": "light_dry_cell",
+          "fg": 24521
+        },
+        {
+          "id": "medium_dry_cell",
+          "fg": 24527
+        },
+        {
+          "id": "candy_bracelet",
+          "fg": 24559
+        },
+        {
+          "id": "id_science_visitor_1",
+          "fg": 24566
+        },
+        {
+          "id": "carbon_electrode",
+          "fg": 24571
+        },
+        {
+          "id": "cathod_mix",
+          "fg": 24572
+        },
+        {
+          "id": "chem_washing_soda",
+          "fg": 24573
+        },
+        {
+          "id": "armor_qt_heavy_leg_guard",
+          "fg": 24580
+        },
+        {
+          "id": "armor_qt_heavyarmguard",
+          "fg": 24581
+        },
+        {
+          "id": "armor_thessalonian",
+          "fg": 24582
+        },
+        {
+          "id": "bikini_bottom_var_black_bikini_bottom",
+          "fg": 24583
+        },
+        {
+          "id": "bikini_bottom_var_blue_bikini_bottom",
+          "fg": 24584
+        },
+        {
+          "id": "bikini_bottom_var_camo_bikini_bottom",
+          "fg": 24585
+        },
+        {
+          "id": "bikini_bottom_var_flag_bikini_bottom",
+          "fg": 24586
+        },
+        {
+          "id": "bikini_bottom_var_floral_bikini_bottom",
+          "fg": 24587
+        },
+        {
+          "id": "bikini_bottom_var_maid_bikini_bottom",
+          "fg": 24588
+        },
+        {
+          "id": "bikini_bottom_var_pink_bikini_bottom",
+          "fg": 24589
+        },
+        {
+          "id": "bikini_bottom_var_red_bikini_bottom",
+          "fg": 24590
+        },
+        {
+          "id": "bikini_bottom_var_skull_bikini_bottom",
+          "fg": 24591
+        },
+        {
+          "id": "bikini_bottom_var_tropical_bikini_bottom",
+          "fg": 24592
+        },
+        {
+          "id": "bikini_bottom_var_white_bikini_bottom",
+          "fg": 24593
+        },
+        {
+          "id": "bikini_top_var_black_bikini_top",
+          "fg": 24594
+        },
+        {
+          "id": "bikini_top_var_blue_bikini_top",
+          "fg": 24595
+        },
+        {
+          "id": "bikini_top_var_camo_bikini_top",
+          "fg": 24596
+        },
+        {
+          "id": "bikini_top_var_flag_bikini_top",
+          "fg": 24597
+        },
+        {
+          "id": "bikini_top_var_floral_bikini_top",
+          "fg": 24598
+        },
+        {
+          "id": "bikini_top_var_maid_bikini_top",
+          "fg": 24599
+        },
+        {
+          "id": "bikini_top_var_pink_bikini_top",
+          "fg": 24600
+        },
+        {
+          "id": "bikini_top_var_red_bikini_top",
+          "fg": 24601
+        },
+        {
+          "id": "bikini_top_var_skull_bikini_top",
+          "fg": 24602
+        },
+        {
+          "id": "bikini_top_var_tropical_bikini_top",
+          "fg": 24603
+        },
+        {
+          "id": "bikini_top_var_white_bikini_top",
+          "fg": 24604
+        },
+        {
+          "id": "hoodie_var_hoodie_black",
+          "fg": 24611
+        },
+        {
+          "id": "hoodie_var_hoodie_blue",
+          "fg": 24612
+        },
+        {
+          "id": "hoodie_var_hoodie_brown",
+          "fg": 24613
+        },
+        {
+          "id": "hoodie_var_hoodie_cyan",
+          "fg": 24614
+        },
+        {
+          "id": "hoodie_var_hoodie_green",
+          "fg": 24615
+        },
+        {
+          "id": "hoodie_var_hoodie_pink",
+          "fg": 24616
+        },
+        {
+          "id": "hoodie_var_hoodie_purple",
+          "fg": 24617
+        },
+        {
+          "id": "hoodie_var_hoodie_red",
+          "fg": 24618
+        },
+        {
+          "id": "hoodie_var_hoodie_white",
+          "fg": 24619
+        },
+        {
+          "id": "hoodie_var_hoodie_yellow",
+          "fg": 24620
+        },
+        {
+          "id": "leggings_thessalonian",
+          "fg": 24621
+        },
+        {
+          "id": "skirt_var_skirt_black",
+          "fg": 24625
+        },
+        {
+          "id": "skirt_var_skirt_blue",
+          "fg": 24626
+        },
+        {
+          "id": "skirt_var_skirt_brown",
+          "fg": 24627
+        },
+        {
+          "id": "skirt_var_skirt_cyan",
+          "fg": 24628
+        },
+        {
+          "id": "skirt_var_skirt_green",
+          "fg": 24629
+        },
+        {
+          "id": "skirt_var_skirt_pink",
+          "fg": 24630
+        },
+        {
+          "id": "skirt_var_skirt_purple",
+          "fg": 24631
+        },
+        {
+          "id": "skirt_var_skirt_red",
+          "fg": 24632
+        },
+        {
+          "id": "skirt_var_skirt_white",
+          "fg": 24633
+        },
+        {
+          "id": "skirt_var_skirt_yellow",
+          "fg": 24634
+        },
+        {
+          "id": "stockings_var_stockings_aqua_checkered",
+          "fg": 24635
+        },
+        {
+          "id": "stockings_var_stockings_black",
+          "fg": 24636
+        },
+        {
+          "id": "stockings_var_stockings_blue",
+          "fg": 24637
+        },
+        {
+          "id": "stockings_var_stockings_burgundy_polka_dot",
+          "fg": 24638
+        },
+        {
+          "id": "stockings_var_stockings_charcoal_gray_striped",
+          "fg": 24639
+        },
+        {
+          "id": "stockings_var_stockings_chocolate",
+          "fg": 24640
+        },
+        {
+          "id": "stockings_var_stockings_chocolate_polka_dot",
+          "fg": 24641
+        },
+        {
+          "id": "stockings_var_stockings_coral_striped",
+          "fg": 24642
+        },
+        {
+          "id": "stockings_var_stockings_green",
+          "fg": 24643
+        },
+        {
+          "id": "stockings_var_stockings_indigo_floral",
+          "fg": 24644
+        },
+        {
+          "id": "stockings_var_stockings_ivory_striped",
+          "fg": 24645
+        },
+        {
+          "id": "stockings_var_stockings_lavender_striped",
+          "fg": 24646
+        },
+        {
+          "id": "stockings_var_stockings_lilac_polka_dot",
+          "fg": 24647
+        },
+        {
+          "id": "stockings_var_stockings_magenta_polka_dot",
+          "fg": 24648
+        },
+        {
+          "id": "stockings_var_stockings_maroon_floral",
+          "fg": 24649
+        },
+        {
+          "id": "stockings_var_stockings_mauve_floral",
+          "fg": 24650
+        },
+        {
+          "id": "stockings_var_stockings_navy_floral",
+          "fg": 24651
+        },
+        {
+          "id": "stockings_var_stockings_olive_striped",
+          "fg": 24652
+        },
+        {
+          "id": "stockings_var_stockings_pink",
+          "fg": 24653
+        },
+        {
+          "id": "stockings_var_stockings_plum_polka_dot",
+          "fg": 24654
+        },
+        {
+          "id": "stockings_var_stockings_purple",
+          "fg": 24655
+        },
+        {
+          "id": "stockings_var_stockings_red",
+          "fg": 24656
+        },
+        {
+          "id": "stockings_var_stockings_rose_gold_polka_dot",
+          "fg": 24657
+        },
+        {
+          "id": "stockings_var_stockings_salmon_polka_dot",
+          "fg": 24658
+        },
+        {
+          "id": "stockings_var_stockings_silver_blue_striped",
+          "fg": 24659
+        },
+        {
+          "id": "stockings_var_stockings_sky_blue_striped",
+          "fg": 24660
+        },
+        {
+          "id": "stockings_var_stockings_slate_gray_striped",
+          "fg": 24661
+        },
+        {
+          "id": "stockings_var_stockings_teal_checkered",
+          "fg": 24662
+        },
+        {
+          "id": "stockings_var_stockings_white",
+          "fg": 24663
+        },
+        {
+          "id": "stockings_var_stockings_yellow",
+          "fg": 24664
+        },
+        {
+          "id": "technician_coveralls",
+          "fg": 24665
+        },
+        {
+          "id": "tshirt_var_black_tshirt",
+          "fg": 24667
+        },
+        {
+          "id": "tshirt_var_blue_tshirt",
+          "fg": 24668
+        },
+        {
+          "id": "tshirt_var_brown_tshirt",
+          "fg": 24669
+        },
+        {
+          "id": "tshirt_var_cyan_tshirt",
+          "fg": 24670
+        },
+        {
+          "id": "tshirt_var_green_tshirt",
+          "fg": 24671
+        },
+        {
+          "id": "tshirt_var_pink_tshirt",
+          "fg": 24672
+        },
+        {
+          "id": "tshirt_var_purple_tshirt",
+          "fg": 24673
+        },
+        {
+          "id": "tshirt_var_red_tshirt",
+          "fg": 24674
+        },
+        {
+          "id": "tshirt_var_yellow_tshirt",
+          "fg": 24675
+        },
+        {
+          "id": "comb_lice",
+          "fg": 24676
+        },
+        {
+          "id": "ammunition_can_30",
+          "fg": 24677
+        },
+        {
+          "id": "ammunition_can_50",
+          "fg": 24678
+        },
+        {
+          "id": "ammunition_can_fat_50",
+          "fg": 24679
+        },
+        {
+          "id": "box_compact_wood",
+          "fg": 24686
+        },
+        {
+          "id": "box_longarm",
+          "fg": 24687
+        },
+        {
+          "id": "box_small_metal",
+          "fg": 24689
+        },
+        {
+          "id": "box_small_plastic",
+          "fg": 24690
+        },
+        {
+          "id": "box_small_wood",
+          "fg": 24691
+        },
+        {
+          "id": "box_snack",
+          "fg": 24692
+        },
+        {
+          "id": "pencil_case",
+          "fg": 24705
+        },
+        {
+          "id": "cooked_marrow",
+          "fg": 24708
+        },
+        {
+          "id": "cotton_patchwork",
+          "fg": 24711
+        },
+        {
+          "id": "cottonwood_tree_boll",
+          "fg": 24712
+        },
+        {
+          "id": "onyx_gold_cufflinks",
+          "fg": 24726
+        },
+        {
+          "id": "onyx_platinum_cufflinks",
+          "fg": 24741
+        },
+        {
+          "id": "onyx_silver_cufflinks",
+          "fg": 24756
+        },
+        {
+          "id": "coin_dime",
+          "fg": 24764
+        },
+        {
+          "id": "coin_dollar",
+          "fg": 24765
+        },
+        {
+          "id": "coin_half_dollar",
+          "fg": 24766
+        },
+        {
+          "id": "coin_penny",
+          "fg": 24768
+        },
+        {
+          "id": "money_fifty",
+          "fg": 24770
+        },
+        {
+          "id": "money_five",
+          "fg": 24771
+        },
+        {
+          "id": "money_hundred",
+          "fg": 24772
+        },
+        {
+          "id": "money_two",
+          "fg": 24776
+        },
+        {
+          "id": "home_picture",
+          "fg": 24779
+        },
+        {
+          "id": "dentures",
+          "fg": 24781
+        },
+        {
+          "id": "autumn_olive",
+          "fg": 24834
+        },
+        {
+          "id": "protein_bar_zero",
+          "fg": 24838
+        },
+        {
+          "id": "spicebush_berries",
+          "fg": 24839
+        },
+        {
+          "id": "forged_shears",
+          "fg": 24841
+        },
+        {
+          "id": "rebreather_cartridge_regen",
+          "fg": 24856
+        },
+        {
+          "id": "homemade_bomb",
+          "fg": 24895
+        },
+        {
+          "id": "heavy_wire_rack",
+          "fg": 24914
+        },
+        {
+          "id": "kevlar_shears",
+          "fg": 24920
+        },
+        {
+          "id": "knife_huge_var_knife_butcher",
+          "fg": 24927
+        },
+        {
+          "id": "knife_large_var_knife_bread",
+          "fg": 24929
+        },
+        {
+          "id": "knife_large_var_knife_carving",
+          "fg": 24930
+        },
+        {
+          "id": "knife_large_var_knife_chef",
+          "fg": 24931
+        },
+        {
+          "id": "knife_small_var_knife_paring",
+          "fg": 24934
+        },
+        {
+          "id": "knife_small_var_knife_steak",
+          "fg": 24935
+        },
+        {
+          "id": "propane_lantern",
+          "fg": 24951
+        },
+        {
+          "id": "propane_lantern_on",
+          "fg": 24952
+        },
+        {
+          "id": "large_propane_tank",
+          "fg": 24955
+        },
+        {
+          "id": "leaves",
+          "fg": 24957
+        },
+        {
+          "id": "magnet",
+          "fg": 24960
+        },
+        {
+          "id": "maker_kit_box",
+          "fg": 24961
+        },
+        {
+          "id": "medium_propane_tank",
+          "fg": 24963
+        },
+        {
+          "id": "alcohol_wipes",
+          "fg": 24964
+        },
+        {
+          "id": "eraser",
+          "fg": 24985
+        },
+        {
+          "id": "cash_register",
+          "fg": 24986
+        },
+        {
+          "id": "mortar_lime",
+          "fg": 24990
+        },
+        {
+          "id": "mountable_heater_small",
+          "fg": 24991
+        },
+        {
+          "id": "nuts_bolts",
+          "fg": 25028
+        },
+        {
+          "id": "nylon_bag",
+          "fg": 25029
+        },
+        {
+          "id": "oil_lamp_clay",
+          "fg": 25030
+        },
+        {
+          "id": "oil_lamp_clay_on",
+          "fg": 25031
+        },
+        {
+          "id": "blutwurst_sausage",
+          "fg": 25045
+        },
+        {
+          "id": "cabbage_head",
+          "fg": 25047
+        },
+        {
+          "id": "earthworm",
+          "fg": 25069
+        },
+        {
+          "id": "earthworm_handful",
+          "fg": 25070
+        },
+        {
+          "id": "eggplant",
+          "fg": 25071
+        },
+        {
+          "id": "gelatin_dessert_base",
+          "fg": 25076
+        },
+        {
+          "id": "gelatin_dessert_fruit",
+          "fg": 25077
+        },
+        {
+          "id": "gelatin_dessert_homemade",
+          "fg": 25078
+        },
+        {
+          "id": "gelatin_dessert_processed",
+          "fg": 25079
+        },
+        {
+          "id": "gelatin_dessert_vegan",
+          "fg": 25080
+        },
+        {
+          "id": "gelatin_dessert_vegan_fruit",
+          "fg": 25081
+        },
+        {
+          "id": "gelatin_fresh",
+          "fg": 25082
+        },
+        {
+          "id": "gelatin_powder",
+          "fg": 25083
+        },
+        {
+          "id": "mayapple",
+          "fg": 25095
+        },
+        {
+          "id": "meatball_raw",
+          "fg": 25097
+        },
+        {
+          "id": "mozzarella_cheese",
+          "fg": 25098
+        },
+        {
+          "id": "raw_bamboo",
+          "fg": 25109
+        },
+        {
+          "id": "tortilla_flour",
+          "fg": 25122
+        },
+        {
+          "id": "wild_garlic",
+          "fg": 25124
+        },
+        {
+          "id": "manti",
+          "fg": 25169
+        },
+        {
+          "id": "meatball",
+          "fg": 25174
+        },
+        {
+          "id": "pan_roasted_corn",
+          "fg": 25189
+        },
+        {
+          "id": "ant_egg_acid",
+          "fg": 25225
+        },
+        {
+          "id": "egg_antlion",
+          "fg": 25226
+        },
+        {
+          "id": "egg_butterfly",
+          "fg": 25227
+        },
+        {
+          "id": "egg_centipede_house",
+          "fg": 25229
+        },
+        {
+          "id": "egg_cicada",
+          "fg": 25231
+        },
+        {
+          "id": "egg_fly",
+          "fg": 25234
+        },
+        {
+          "id": "egg_grasshopper",
+          "fg": 25235
+        },
+        {
+          "id": "egg_lady_bug",
+          "fg": 25236
+        },
+        {
+          "id": "egg_lady_bug_giant",
+          "fg": 25237
+        },
+        {
+          "id": "egg_mantis",
+          "fg": 25239
+        },
+        {
+          "id": "egg_mole_cricket",
+          "fg": 25240
+        },
+        {
+          "id": "egg_mosquito",
+          "fg": 25241
+        },
+        {
+          "id": "egg_moth",
+          "fg": 25242
+        },
+        {
+          "id": "egg_silverfish",
+          "fg": 25245
+        },
+        {
+          "id": "egg_slug",
+          "fg": 25246
+        },
+        {
+          "id": "egg_snail",
+          "fg": 25247
+        },
+        {
+          "id": "egg_spider_cellar",
+          "fg": 25248
+        },
+        {
+          "id": "egg_spider_jumping",
+          "fg": 25249
+        },
+        {
+          "id": "egg_spider_trapdoor",
+          "fg": 25250
+        },
+        {
+          "id": "egg_spider_web",
+          "fg": 25251
+        },
+        {
+          "id": "egg_spider_widow",
+          "fg": 25252
+        },
+        {
+          "id": "egg_spider_wolf",
+          "fg": 25253
+        },
+        {
+          "id": "egg_stag_beetle",
+          "fg": 25254
+        },
+        {
+          "id": "egg_strider",
+          "fg": 25255
+        },
+        {
+          "id": "egg_wasp",
+          "fg": 25256
+        },
+        {
+          "id": "egg_water_beetle",
+          "fg": 25257
+        },
+        {
+          "id": "egg_water_bug",
+          "fg": 25258
+        },
+        {
+          "id": "egg_worm",
+          "fg": 25259
+        },
+        {
+          "id": "almond_shelled",
+          "fg": 25289
+        },
+        {
+          "id": "chestnut_shelled",
+          "fg": 25294
+        },
+        {
+          "id": "hazelnut_shelled",
+          "fg": 25298
+        },
+        {
+          "id": "hickory_nut_shelled",
+          "fg": 25300
+        },
+        {
+          "id": "pecan_shelled",
+          "fg": 25303
+        },
+        {
+          "id": "pistachio_shelled",
+          "fg": 25307
+        },
+        {
+          "id": "walnut_shelled",
+          "fg": 25310
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_bsheep",
+          "fg": 25317
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_bwhale",
+          "fg": 25318
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_crab",
+          "fg": 25319
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_duck",
+          "fg": 25320
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_ferret",
+          "fg": 25321
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_goose",
+          "fg": 25322
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_municorn",
+          "fg": 25323
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_penguin",
+          "fg": 25324
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_rabbit",
+          "fg": 25325
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_rooster",
+          "fg": 25326
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_rotter",
+          "fg": 25327
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_sheep",
+          "fg": 25328
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_toad",
+          "fg": 25329
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_trex",
+          "fg": 25330
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_walrus",
+          "fg": 25331
+        },
+        {
+          "id": "teddy_bear_var_toy_plush_wunicorn",
+          "fg": 25332
+        },
+        {
+          "id": "propane_cooker",
+          "fg": 25336
+        },
+        {
+          "id": "robot_kit_box",
+          "fg": 25386
+        },
+        {
+          "id": "field_stone",
+          "fg": 25387
+        },
+        {
+          "id": "scissors_child",
+          "fg": 25397
+        },
+        {
+          "id": "scissors_medical",
+          "fg": 25398
+        },
+        {
+          "id": "scissors_wavy",
+          "fg": 25399
+        },
+        {
+          "id": "extension_cable",
+          "fg": 25405
+        },
+        {
+          "id": "hc_wire",
+          "fg": 25406
+        },
+        {
+          "id": "long_extension_cable",
+          "fg": 25409
+        },
+        {
+          "id": "pine_resin",
+          "fg": 25410
+        },
+        {
+          "id": "red_phosphorous",
+          "fg": 25411
+        },
+        {
+          "id": "scrap_aluminum",
+          "fg": 25413
+        },
+        {
+          "id": "shredded_rubber",
+          "fg": 25414
+        },
+        {
+          "id": "wax_paraffin",
+          "fg": 25418
+        },
+        {
+          "id": "cardboard_roll",
+          "fg": 25420
+        },
+        {
+          "id": "copper_rod",
+          "fg": 25421
+        },
+        {
+          "id": "grinder_cutoff_disc",
+          "fg": 25422
+        },
+        {
+          "id": "grinder_metal_grinding_disc",
+          "fg": 25423
+        },
+        {
+          "id": "shot_glass",
+          "fg": 25426
+        },
+        {
+          "id": "skull_human",
+          "fg": 25429
+        },
+        {
+          "id": "skull_bear",
+          "fg": 25430
+        },
+        {
+          "id": "skull_beaver",
+          "fg": 25431
+        },
+        {
+          "id": "skull_bovine",
+          "fg": 25432
+        },
+        {
+          "id": "skull_canis",
+          "fg": 25433
+        },
+        {
+          "id": "skull_canis_medium",
+          "fg": 25434
+        },
+        {
+          "id": "skull_canis_small",
+          "fg": 25435
+        },
+        {
+          "id": "skull_canis_triclopean",
+          "fg": 25436
+        },
+        {
+          "id": "skull_cervine",
+          "fg": 25437
+        },
+        {
+          "id": "skull_cervine_spideer",
+          "fg": 25438
+        },
+        {
+          "id": "skull_cougar",
+          "fg": 25439
+        },
+        {
+          "id": "skull_equine",
+          "fg": 25440
+        },
+        {
+          "id": "skull_feline_medium",
+          "fg": 25441
+        },
+        {
+          "id": "skull_feline_small",
+          "fg": 25442
+        },
+        {
+          "id": "skull_goat",
+          "fg": 25443
+        },
+        {
+          "id": "skull_llama",
+          "fg": 25444
+        },
+        {
+          "id": "skull_opossum",
+          "fg": 25445
+        },
+        {
+          "id": "skull_pig",
+          "fg": 25446
+        },
+        {
+          "id": "skull_raccoon",
+          "fg": 25447
+        },
+        {
+          "id": "skull_rodent",
+          "fg": 25448
+        },
+        {
+          "id": "skull_sheep",
+          "fg": 25449
+        },
+        {
+          "id": "small_propane_tank",
+          "fg": 25451
+        },
+        {
+          "id": "snail_garden",
+          "fg": 25454
+        },
+        {
+          "id": "squeeze_tube",
+          "fg": 25459
+        },
+        {
+          "id": "squeeze_tube_small",
+          "fg": 25460
+        },
+        {
+          "id": "stirling_kit_box",
+          "fg": 25461
+        },
+        {
+          "id": "sickle_stone",
+          "fg": 25463
+        },
+        {
+          "id": "tainted_marrow",
+          "fg": 25468
+        },
+        {
+          "id": "smallweldtank",
+          "fg": 25470
+        },
+        {
+          "id": "big_pliers",
+          "fg": 25479
+        },
+        {
+          "id": "coffeepot",
+          "fg": 25480
+        },
+        {
+          "id": "electric_spinwheel",
+          "fg": 25486
+        },
+        {
+          "id": "hotcut",
+          "fg": 25499
+        },
+        {
+          "id": "knife_cleaver_var_knife_meat_cleaver",
+          "fg": 25500
+        },
+        {
+          "id": "knife_cleaver_var_knife_vegetable_cleaver",
+          "fg": 25501
+        },
+        {
+          "id": "masonrysaw_off",
+          "fg": 25506
+        },
+        {
+          "id": "masonrysaw_on",
+          "fg": 25507
+        },
+        {
+          "id": "multimeter",
+          "fg": 25508
+        },
+        {
+          "id": "reciprocating_saw",
+          "fg": 25509
+        },
+        {
+          "id": "tin_snips",
+          "fg": 25512
+        },
+        {
+          "id": "bronze_hoe",
+          "fg": 25518
+        },
+        {
+          "id": "bronze_knife",
+          "fg": 25519
+        },
+        {
+          "id": "bronze_shears",
+          "fg": 25520
+        },
+        {
+          "id": "bronze_sickle",
+          "fg": 25521
+        },
+        {
+          "id": "hammer_bronze",
+          "fg": 25522
+        },
+        {
+          "id": "hotcut_bronze",
+          "fg": 25523
+        },
+        {
+          "id": "saw_bronze",
+          "fg": 25524
+        },
+        {
+          "id": "cup_foil",
+          "fg": 25526
+        },
+        {
+          "id": "petri_dish",
+          "fg": 25530
+        },
+        {
+          "id": "toothbrush_electric",
+          "fg": 25531
+        },
+        {
+          "id": "toy_figurine_var_toy_figure_unicorn",
+          "fg": 25535
+        },
+        {
+          "id": "altered_necklace",
+          "fg": 25546
+        },
+        {
+          "id": "apron_cotton",
+          "fg": 25547
+        },
+        {
+          "id": "apron_plastic",
+          "fg": 25550
+        },
+        {
+          "id": "lanyard",
+          "fg": 25574
+        },
+        {
+          "id": "mask_skull_var_unicorn_plastic_mask",
+          "fg": 25576
+        },
+        {
+          "id": "wrapper_foil",
+          "fg": 25588
+        },
+        {
+          "id": "lug_wrench",
+          "fg": 25589
+        },
+        {
+          "id": "wrench_large",
+          "fg": 25590
+        },
+        {
+          "id": "wrench_small",
+          "fg": 25591
+        },
+        {
+          "id": "xl_propane_tank",
+          "fg": 25593
+        },
+        {
+          "id": "young_leaves",
+          "fg": 25594
+        },
+        {
+          "id": "afs_needlepistol",
+          "fg": 25597
+        },
+        {
+          "id": "magi_staff_greater",
+          "fg": 25598
+        },
+        {
+          "id": "magi_staff_lesser",
+          "fg": 25599
+        },
+        {
+          "id": "magi_staff_minor",
+          "fg": 25600
+        },
+        {
+          "id": "caff_gum_flesh",
+          "fg": 25601
+        },
+        {
+          "id": "candy3_flesh",
+          "fg": 25602
+        },
+        {
+          "id": "candy3gator_flesh",
+          "fg": 25603
+        },
+        {
+          "id": "cow_candy_flesh",
+          "fg": 25604
+        },
+        {
+          "id": "grahmcrackers_shell",
+          "fg": 25605
+        },
+        {
+          "id": "gum_flesh",
+          "fg": 25606
+        }
+      ]
     }
   ]
 }
