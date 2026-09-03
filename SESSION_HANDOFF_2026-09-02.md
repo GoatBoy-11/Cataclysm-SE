@@ -276,6 +276,36 @@ Unchanged, see CLAUDE.md, which is now accurate. `cmake --preset cse-msvc`, buil
 `out/build/cse-vcpkg`, run with `CATA_TEST_COMPUTE_ACCELERATION=cpu`, rotate the exe with
 `bash .claude/rotate-game-exe.sh`.
 
+### The suite is not deterministic, and its exit code has two meanings
+
+**Assertion totals differ between identical runs** — 6,714,764, then 6,711,713, on the
+same binary and the same data — despite the log's `Randomness seeded to: 0`. Case counts
+stay put; only assertion counts move. So a one-off failure is not evidence on its own,
+and a single clean run is not proof either. Re-run before believing either.
+
+**Two different exit codes mean two different things**, and confusing them cost time:
+
+- **14** is Catch2's failed-assertion count, being the four environmental
+  `vision_test.cpp:256` failures. Expected.
+- **1** is the harness saying *"Treating result as failure due to error logged during
+  tests"* — a `debugmsg` fired somewhere, even though every assertion passed.
+
+Read the case counts and grep for `ERROR DEBUGMSG`; never read the exit code alone. A
+`debugmsg` with all assertions passing is exactly what the NPC test defect looked like.
+
+**One intermittent seen once, on 09-03, and not reproduced:**
+
+```
+rot.cpp:51 [for_location] Expected vehicle at 59, 60, 0, but couldn't find any
+```
+
+Stack was `item_contents::remove_items_with` → `location_vector::remove_with` →
+`item::prepare_for_location_removal` → `rot::temp::for_location`: an item being removed
+believed it sat in a vehicle that was no longer there. It appeared on the run that
+removed `credit_card` and vanished on an identical re-run, so it is **not** that change;
+it is the same family as the active-item-cache bug behind the old `i_add_or_drop` fence.
+Worth chasing if it recurs.
+
 ## The GitHub fork — done
 
 Created on the afternoon of 09-02 with Oliver's explicit go-ahead, and described at the
