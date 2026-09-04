@@ -1513,6 +1513,25 @@ std::optional<tripoint_bub_ms> input_context::get_coordinates( const catacurses:
 }
 #endif
 
+#if !defined(TILES)
+auto input_context::get_mouse_cell( const catacurses::window &capture_win ) const ->
+std::optional<point>
+{
+    if( !coordinate_input_received ) {
+        return std::nullopt;
+    }
+
+    const auto win_min = point( getbegx( capture_win ), getbegy( capture_win ) );
+    const auto win_size = point( getmaxx( capture_win ), getmaxy( capture_win ) );
+    const auto win_bounds = half_open_rectangle<point>( win_min, win_min + win_size );
+    if( !win_bounds.contains( coordinate ) ) {
+        return std::nullopt;
+    }
+
+    return coordinate - win_min;
+}
+#endif
+
 std::string input_context::get_action_name( const std::string &action_id ) const
 {
     // 1) Check action name overrides specific to this input_context

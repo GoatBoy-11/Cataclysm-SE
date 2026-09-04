@@ -4479,6 +4479,7 @@ void options_manager::cache_to_globals()
     message_ttl = ::get_option<int>( "MESSAGE_TTL" );
     message_cooldown = ::get_option<int>( "MESSAGE_COOLDOWN" );
     mouse_enabled = ::get_option<bool>( "ENABLE_MOUSE" );
+    mouse_cursor_show = ::get_option<std::string>( "HIDE_CURSOR" ) == "show";
     mouse_hide_kb = ::get_option<std::string>( "HIDE_CURSOR" ) == "hidekb";
     angled_sunlight_shadows = ::get_option<bool>( "FOV_3D_OCCLUSION" );
     const auto prevent_occlusion_option = ::get_option<std::string>( "PREVENT_OCCLUSION" );

@@ -362,7 +362,7 @@ static void WinCreate()
 
     // Errors here are ignored, worst case: the option does not work as expected,
     // but that won't crash
-    if( get_option<std::string>( "HIDE_CURSOR" ) != "show" && SDL_CursorVisible() ) {
+    if( !mouse_cursor_show && SDL_CursorVisible() ) {
         SDL_HideCursor();
     } else {
         SDL_ShowCursor();
@@ -3279,7 +3279,7 @@ static void CheckMessages()
 #endif
                 is_repeat = ev.key.repeat;
                 //hide mouse cursor on keyboard input
-                if( get_option<std::string>( "HIDE_CURSOR" ) != "show" && SDL_CursorVisible() ) {
+                if( !mouse_cursor_show && SDL_CursorVisible() ) {
                     SDL_HideCursor();
                 }
                 const int lc = sdl_keysym_to_curses( ev.key.key, ev.key.mod );
@@ -3401,8 +3401,7 @@ static void CheckMessages()
                     break;
                 }
 
-                if( get_option<std::string>( "HIDE_CURSOR" ) == "show" ||
-                    get_option<std::string>( "HIDE_CURSOR" ) == "hidekb" ) {
+                if( mouse_cursor_show || mouse_hide_kb ) {
                     if( !SDL_CursorVisible() ) {
                         SDL_ShowCursor();
                     }
@@ -4188,6 +4187,30 @@ std::optional<tripoint_bub_ms> input_context::get_coordinates( const catacurses:
     }
 
     return tripoint_bub_ms( p, g->get_levz() );
+}
+
+auto input_context::get_mouse_cell( const catacurses::window &capture_win ) const ->
+std::optional<point>
+{
+    if( !coordinate_input_received ) {
+        return std::nullopt;
+    }
+
+    const auto dim = get_window_dimensions( capture_win );
+    if( dim.scaled_font_size.x <= 0 || dim.scaled_font_size.y <= 0 ) {
+        return std::nullopt;
+    }
+
+    const auto win_bounds = half_open_rectangle<point>(
+                                dim.window_pos_pixel,
+                                dim.window_pos_pixel + dim.window_size_pixel );
+    if( !win_bounds.contains( coordinate ) ) {
+        return std::nullopt;
+    }
+
+    const auto screen_pos = coordinate - dim.window_pos_pixel;
+    return point( screen_pos.x / dim.scaled_font_size.x,
+                  screen_pos.y / dim.scaled_font_size.y );
 }
 
 int get_terminal_width()

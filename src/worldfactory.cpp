@@ -35,6 +35,7 @@
 #include "translations.h"
 #include "ui_manager.h"
 #include "name.h"
+#include "ui_mouse.h"
 
 using namespace std::placeholders;
 
@@ -427,11 +428,60 @@ WORLDINFO *worldfactory::pick_world( bool show_prompt, bool empty_only )
     ctxt.register_action( "NEXT_TAB" );
     ctxt.register_action( "PREV_TAB" );
     ctxt.register_action( "CONFIRM" );
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SELECT" );
 
     while( true ) {
         ui_manager::redraw();
 
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+
+        if( action == "MOUSE_MOVE" || action == "SELECT" ) {
+            if( const auto cell = ctxt.get_mouse_cell( w_worlds_border ) ) {
+                const point abs_cell = point( catacurses::getbegx( w_worlds_border ),
+                                                catacurses::getbegy( w_worlds_border ) ) + *cell;
+                bool mouse_handled = false;
+
+                const point list_origin( catacurses::getbegx( w_worlds ),
+                                         catacurses::getbegy( w_worlds ) );
+                if( const auto idx = ui_mouse::hit_test_list(
+                        abs_cell - list_origin, {
+                            .origin = point_zero,
+                            .width = getmaxx( w_worlds ),
+                            .entry_height = 1,
+                            .count = static_cast<int>( world_pages[selpage].size() ),
+                        } ) ) {
+                    mouse_handled = true;
+                    sel = *idx;
+                    if( action == "SELECT" ) {
+                        action = "CONFIRM";
+                    }
+                }
+
+                if( !mouse_handled ) {
+                    std::vector<std::string> page_labels;
+                    std::vector<size_t> page_indices;
+                    for( size_t i = 0; i < num_pages; ++i ) {
+                        if( !world_pages[i].empty() ) {
+                            page_labels.emplace_back( string_format( _( "Page %lu" ), i + 1 ) );
+                            page_indices.push_back( i );
+                        }
+                    }
+                    const point header_origin( catacurses::getbegx( w_worlds_header ),
+                                               catacurses::getbegy( w_worlds_header ) );
+                    if( const auto tab_idx = ui_mouse::hit_test_bracket_tabs(
+                            abs_cell - header_origin, page_labels, { .origin = point( 7, 0 ) } ) ) {
+                        mouse_handled = true;
+                        selpage = page_indices[*tab_idx];
+                        sel = 0;
+                    }
+                }
+
+                if( mouse_handled && action == "MOUSE_MOVE" ) {
+                    continue;
+                }
+            }
+        }
 
         if( action == "QUIT" ) {
             break;
@@ -550,10 +600,15 @@ int worldfactory::show_worldgen_tab_options( const catacurses::window &, WORLDIN
 
 void worldfactory::draw_mod_list( const catacurses::window &w, int &start, size_t cursor,
                                   const std::vector<mod_id> &mods, bool is_active_list,
-                                  const std::string &text_if_empty, const catacurses::window &w_shift )
+                                  const std::string &text_if_empty, const catacurses::window &w_shift,
+                                  std::vector<ui_mouse::indexed_rectangle> *mouse_regions )
 {
     werase( w );
     werase( w_shift );
+
+    if( mouse_regions ) {
+        mouse_regions->clear();
+    }
 
     const int iMaxRows = getmaxy( w );
     size_t iModNum = mods.size();
@@ -635,6 +690,17 @@ void worldfactory::draw_mod_list( const catacurses::window &w, int &start, size_
                     }
                     trim_and_print( w, point( 4, iNum - start ), wwidth, mod_entry_color, mod_entry_name );
 
+                    if( mouse_regions ) {
+                        const int row = iNum - start;
+                        mouse_regions->push_back( {
+                            inclusive_rectangle<point> {
+                                point( 0, row ),
+                                point( getmaxx( w ) - 1, row )
+                            },
+                            static_cast<int>( std::distance( mods.begin(), iter ) )
+                        } );
+                    }
+
                     if( w_shift ) {
                         // get shift information for the active item
                         std::string shift_display;
@@ -707,20 +773,37 @@ void worldfactory::show_active_world_mods( const std::vector<mod_id> &world_mods
     ctxt.register_action( "QUIT" );
     ctxt.register_action( "CONFIRM" );
     ctxt.register_action( "HELP_KEYBINDINGS" );
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SELECT" );
+
+    std::vector<ui_mouse::indexed_rectangle> mod_list_regions;
 
     ui.on_redraw( [&]( const ui_adaptor & ) {
         draw_border( w_border, BORDER_COLOR, _( " ACTIVE WORLD MODS " ) );
         wnoutrefresh( w_border );
 
         draw_mod_list( w_mods, start, static_cast<size_t>( cursor ), world_mods,
-                       true, _( "--NO ACTIVE MODS--" ), catacurses::window() );
+                       true, _( "--NO ACTIVE MODS--" ), catacurses::window(), &mod_list_regions );
         wnoutrefresh( w_mods );
     } );
 
     while( true ) {
         ui_manager::redraw();
 
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+
+        if( action == "MOUSE_MOVE" || action == "SELECT" ) {
+            if( const auto cell = ctxt.get_mouse_cell( w_mods ) ) {
+                if( const auto idx = ui_mouse::hit_test_rectangles( *cell, mod_list_regions ) ) {
+                    cursor = *idx;
+                    if( action == "SELECT" ) {
+                        action = "CONFIRM";
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        }
 
         if( action == "UP" ) {
             cursor--;
@@ -816,6 +899,8 @@ int worldfactory::show_modselection_window( const catacurses::window &win,
     ctxt.register_action( "VIEW_MOD_DESCRIPTION" );
     ctxt.register_action( "FILTER" );
     ctxt.register_action( "TOGGLE_SHOW_OBSOLETE" );
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SELECT" );
 
     point filter_pos;
     int filter_view_len = 0;
@@ -875,6 +960,9 @@ int worldfactory::show_modselection_window( const catacurses::window &win,
     int startsel[2] = {0, 0};
     size_t cursel[2] = {0, 0};
     size_t iCurrentTab = 0;
+
+    std::vector<ui_mouse::indexed_rectangle> mod_list_regions;
+    std::vector<ui_mouse::indexed_rectangle> active_mod_regions;
 
     struct mod_tab {
         std::string id;
@@ -1078,11 +1166,11 @@ int worldfactory::show_modselection_window( const catacurses::window &win,
         const char *msg = current_tab.mods_unfiltered.empty() ?
                           _( "--NO AVAILABLE MODS--" ) : _( "--NO MATCHES--" );
         draw_mod_list( w_list, startsel[0], cursel[0], current_tab.mods, active_header == 0,
-                       msg, catacurses::window() );
+                       msg, catacurses::window(), &mod_list_regions );
 
         // Draw active mods
         draw_mod_list( w_active, startsel[1], cursel[1], active_mod_order, active_header == 1,
-                       _( "--NO ACTIVE MODS--" ), w_shift );
+                       _( "--NO ACTIVE MODS--" ), w_shift, &active_mod_regions );
     } );
 
     const auto set_filter = [&]() {
@@ -1136,7 +1224,108 @@ int worldfactory::show_modselection_window( const catacurses::window &win,
                              prev_selection;
         }
 
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+
+        if( action == "MOUSE_MOVE" || action == "SELECT" ) {
+            if( const auto cell = ctxt.get_mouse_cell( win ) ) {
+                const point abs_cell = point( catacurses::getbegx( win ),
+                                                catacurses::getbegy( win ) ) + *cell;
+                bool mouse_handled = false;
+
+                if( !standalone ) {
+                    static const std::vector<std::string> worldgen_tab_labels = { {
+                            translate_marker( "World Mods" ),
+                            translate_marker( "World Options" ),
+                            translate_marker( "Finalize World" )
+                        }
+                    };
+                    std::vector<std::string> worldgen_tabs( worldgen_tab_labels );
+                    std::ranges::for_each( worldgen_tabs,
+                                           []( std::string & str ) { str = _( str ); } );
+                    if( const auto tab_idx = ui_mouse::hit_test_tabs(
+                            abs_cell - point( catacurses::getbegx( win ), catacurses::getbegy( win ) ),
+                            worldgen_tabs, {
+                                .origin = point( 2, 0 ),
+                                .current_tab = 0,
+                                .max_width = getmaxx( win ),
+                            } ) ) {
+                        mouse_handled = true;
+                        if( *tab_idx > 0 && action == "SELECT" ) {
+                            tab_output = static_cast<int>( *tab_idx );
+                        }
+                    }
+                }
+
+                if( !mouse_handled ) {
+                    std::vector<std::string> category_labels;
+                    category_labels.reserve( get_mod_list_tabs().size() );
+                    for( const std::pair<std::string, std::string> &tab : get_mod_list_tabs() ) {
+                        category_labels.emplace_back( _( tab.second ) );
+                    }
+                    if( const auto tab_idx = ui_mouse::hit_test_bracket_tabs(
+                            abs_cell - point( catacurses::getbegx( win ), catacurses::getbegy( win ) ),
+                            category_labels, { .origin = point( 2, 4 ) } ) ) {
+                        mouse_handled = true;
+                        if( active_header == 0 ) {
+                            iCurrentTab = *tab_idx;
+                            startsel[0] = 0;
+                            cursel[0] = 0;
+                        }
+                    }
+                }
+
+                if( !mouse_handled ) {
+                    for( size_t i = 0; i < header_windows.size(); ++i ) {
+                        const point header_origin( catacurses::getbegx( header_windows[i] ),
+                                                   catacurses::getbegy( header_windows[i] ) );
+                        const inclusive_rectangle<point> header_bounds {
+                            header_origin,
+                            header_origin + point( getmaxx( header_windows[i] ) - 1, 0 )
+                        };
+                        if( header_bounds.contains( abs_cell ) ) {
+                            mouse_handled = true;
+                            active_header = i;
+                            break;
+                        }
+                    }
+                }
+
+                if( !mouse_handled ) {
+                    const point list_origin( catacurses::getbegx( w_list ),
+                                             catacurses::getbegy( w_list ) );
+                    if( const auto idx = ui_mouse::hit_test_rectangles(
+                            abs_cell - list_origin, mod_list_regions ) ) {
+                        mouse_handled = true;
+                        active_header = 0;
+                        cursel[0] = *idx;
+                        if( action == "SELECT" ) {
+                            action = "CONFIRM";
+                        }
+                    }
+                }
+
+                if( !mouse_handled ) {
+                    const point active_origin( catacurses::getbegx( w_active ),
+                                               catacurses::getbegy( w_active ) );
+                    if( const auto idx = ui_mouse::hit_test_rectangles(
+                            abs_cell - active_origin, active_mod_regions ) ) {
+                        mouse_handled = true;
+                        active_header = 1;
+                        cursel[1] = *idx;
+                        if( action == "SELECT" ) {
+                            action = "CONFIRM";
+                        }
+                    }
+                }
+
+                if( mouse_handled && action == "MOUSE_MOVE" ) {
+                    continue;
+                }
+                if( !standalone && tab_output != 0 ) {
+                    continue;
+                }
+            }
+        }
 
         if( action == "DOWN" ) {
             selection = next_selection;

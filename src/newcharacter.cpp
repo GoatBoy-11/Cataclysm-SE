@@ -73,6 +73,7 @@
 #include "type_id.h"
 #include "ui.h"
 #include "ui_manager.h"
+#include "ui_mouse.h"
 #include "units_utility.h"
 #include "veh_type.h"
 #include "worldfactory.h"
@@ -199,7 +200,91 @@ static int get_max_tabs( const profession_id &prof )
     }
     return max;
 }
+
+static int g_mouse_tab_target = -1;
+
+auto take_mouse_tab_target() -> int
+{
+    const int target = g_mouse_tab_target;
+    g_mouse_tab_target = -1;
+    return target;
 }
+
+auto get_character_tab_captions( const profession_id &prof ) -> std::vector<std::string>
+{
+    std::vector<std::string> tab_captions = {
+        _( "POINTS" ),
+        _( "SCENARIO" ),
+        _( "PROFESSION" ),
+        _( "STATS" ),
+        _( "TRAITS" ),
+        _( "SKILLS" ),
+        _( "OVERVIEW" ),
+    };
+    if( has_any_magic( prof ) && !( prof->forbids_spells() ||
+                                    g->scen->forbids_spells() ) ) {
+        tab_captions.insert( tab_captions.begin() + 5, _( "MAGIC" ) );
+    }
+    if( !prof->forbids_bionics() && !g->scen->forbids_bionics() ) {
+        tab_captions.insert( tab_captions.begin() + 5, _( "BIONICS" ) );
+    }
+    return tab_captions;
+}
+
+auto register_new_char_mouse( input_context &ctxt ) -> void
+{
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SELECT" );
+}
+
+auto handle_new_char_tab_mouse( input_context &ctxt, const catacurses::window &w,
+                                const std::string &action, const profession_id &prof,
+                                const std::string &current_tab ) -> bool
+{
+    if( action != "MOUSE_MOVE" && action != "SELECT" ) {
+        return false;
+    }
+    if( const auto cell = ctxt.get_mouse_cell( w ) ) {
+        const auto captions = get_character_tab_captions( prof );
+        const auto current_it = std::ranges::find( captions, current_tab );
+        const int current_idx = current_it == captions.end() ? 0 :
+                                static_cast<int>( std::distance( captions.begin(), current_it ) );
+        if( const auto tab_idx = ui_mouse::hit_test_tabs(
+                *cell, captions, {
+                    .origin = point( 2, 0 ),
+                    .current_tab = current_idx,
+                    .max_width = getmaxx( w ),
+                } ) ) {
+            if( action == "SELECT" && *tab_idx != current_idx ) {
+                g_mouse_tab_target = *tab_idx;
+            }
+            return action == "MOUSE_MOVE";
+        }
+    }
+    return false;
+}
+
+auto handle_new_char_list_mouse( input_context &ctxt, const catacurses::window &w,
+                                 std::string &action, const ui_mouse::list_options &opts,
+                                 int &highlight ) -> bool
+{
+    if( action != "MOUSE_MOVE" && action != "SELECT" ) {
+        return false;
+    }
+    if( const auto cell = ctxt.get_mouse_cell( w ) ) {
+        if( const auto idx = ui_mouse::hit_test_list( *cell, opts ) ) {
+            highlight = *idx;
+            if( action == "SELECT" ) {
+                action = "CONFIRM";
+                return false;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+} // namespace
 
 static int skill_increment_cost( const Character &u, const skill_id &skill );
 
@@ -719,6 +804,11 @@ bool avatar::create( character_type type, const std::string &tempname )
                 break;
         }
 
+        if( const int jump = take_mouse_tab_target(); jump >= 0 ) {
+            tab = jump;
+            result = tab_direction::NONE;
+        }
+
         if( !( tab >= 0 && tab <= get_max_tabs( prof ) ) ) {
             if( tab != -1 && nameExists( name ) ) {
                 tab = get_max_tabs( prof );
@@ -859,22 +949,7 @@ bool avatar::create( character_type type, const std::string &tempname )
 static void draw_character_tabs( const catacurses::window &w, const std::string &sTab,
                                  const profession_id &prof )
 {
-    std::vector<std::string> tab_captions = {
-        _( "POINTS" ),
-        _( "SCENARIO" ),
-        _( "PROFESSION" ),
-        _( "STATS" ),
-        _( "TRAITS" ),
-        _( "SKILLS" ),
-        _( "OVERVIEW" ),
-    };
-    if( has_any_magic( prof ) && !( prof->forbids_spells() ||
-                                    g->scen->forbids_spells() ) ) {
-        tab_captions.insert( tab_captions.begin() + 5, _( "MAGIC" ) );
-    }
-    if( !prof->forbids_bionics() && !g->scen->forbids_bionics() ) {
-        tab_captions.insert( tab_captions.begin() + 5, _( "BIONICS" ) );
-    }
+    const std::vector<std::string> tab_captions = get_character_tab_captions( prof );
 
     draw_tabs( w, tab_captions, sTab );
     draw_border_below_tabs( w );
@@ -934,6 +1009,7 @@ tab_direction set_points( avatar &u, points_left &points )
     ctxt.register_action( "NEXT_TAB" );
     ctxt.register_action( "QUIT" );
     ctxt.register_action( "CONFIRM" );
+    register_new_char_mouse( ctxt );
 
     const std::string point_pool = get_option<std::string>( "CHARACTER_POINT_POOLS" );
 
@@ -994,7 +1070,18 @@ tab_direction set_points( avatar &u, points_left &points )
             highlighted = 0;
         }
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "POINTS" ) ) ) {
+            continue;
+        }
+        if( handle_new_char_list_mouse( ctxt, w, action, {
+                .origin = point( 2, 5 ),
+                .width = getmaxx( w ) - 4,
+                .entry_height = 1,
+                .count = static_cast<int>( opts.size() ),
+            }, highlighted ) ) {
+            continue;
+        }
         if( action == "DOWN" ) {
             highlighted++;
         } else if( action == "UP" ) {
@@ -1027,6 +1114,7 @@ tab_direction set_stats( avatar &u, points_left &points )
     ctxt.register_action( "RANDOMIZE" );
     ctxt.register_action( "NEXT_TAB" );
     ctxt.register_action( "QUIT" );
+    register_new_char_mouse( ctxt );
 
     ui_adaptor ui;
     catacurses::window w;
@@ -1178,7 +1266,18 @@ tab_direction set_stats( avatar &u, points_left &points )
 
     do {
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "STATS" ) ) ) {
+            continue;
+        }
+        if( const auto cell = ctxt.get_mouse_cell( w ) ) {
+            if( cell->x >= 2 && cell->x < iSecondColumn && cell->y >= 6 && cell->y <= 9 ) {
+                sel = static_cast<unsigned char>( cell->y - 5 );
+                if( action == "MOUSE_MOVE" ) {
+                    continue;
+                }
+            }
+        }
         if( action == "DOWN" ) {
             if( sel < 4 ) {
                 sel++;
@@ -1415,6 +1514,7 @@ tab_direction set_traits( avatar &u, points_left &points )
     ctxt.register_action( "REROLL_CHARACTER_WITH_SCENARIO" );
     ctxt.register_action( "REROLL_APPEARANCE" );
     ctxt.register_action( "QUIT" );
+    register_new_char_mouse( ctxt );
 #if defined(TILES)
     ctxt.register_action( "zoom_in" );
     ctxt.register_action( "zoom_out" );
@@ -1535,7 +1635,31 @@ tab_direction set_traits( avatar &u, points_left &points )
 
     do {
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "TRAITS" ) ) ) {
+            continue;
+        }
+        if( const auto cell = ctxt.get_mouse_cell( w ) ) {
+            if( cell->y >= 5 && cell->y < 5 + static_cast<int>( iContentHeight ) && cell->x >= 2 ) {
+                const int page = ( cell->x - 2 ) / static_cast<int>( page_width );
+                if( page >= 0 && page < used_pages && page != iCurWorkingPage ) {
+                    iCurWorkingPage = page;
+                    if( action == "MOUSE_MOVE" ) {
+                        continue;
+                    }
+                }
+            }
+        }
+        if( handle_new_char_list_mouse( ctxt, w, action, {
+                .origin = point( 2 + iCurWorkingPage * static_cast<int>( page_width ), 5 ),
+                .width = static_cast<int>( page_width ),
+                .entry_height = 1,
+                .count = static_cast<int>( traits_size[iCurWorkingPage] ),
+                .offset = iStartPos[iCurWorkingPage],
+                .visible_count = static_cast<int>( iContentHeight ),
+            }, iCurrentLine[iCurWorkingPage] ) ) {
+            continue;
+        }
 #if defined(TILES)
         if( action == "zoom_in" && use_character_preview ) {
             character_preview.zoom_in();
@@ -1854,6 +1978,7 @@ tab_direction set_bionics( avatar &u, points_left &points )
     ctxt.register_action( "REROLL_CHARACTER_WITH_SCENARIO" );
     ctxt.register_action( "REROLL_APPEARANCE" );
     ctxt.register_action( "QUIT" );
+    register_new_char_mouse( ctxt );
 #if defined(TILES)
     ctxt.register_action( "zoom_in" );
     ctxt.register_action( "zoom_out" );
@@ -1974,7 +2099,31 @@ tab_direction set_bionics( avatar &u, points_left &points )
 
     do {
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "BIONICS" ) ) ) {
+            continue;
+        }
+        if( const auto cell = ctxt.get_mouse_cell( w ) ) {
+            if( cell->y >= 5 && cell->y < 5 + static_cast<int>( iContentHeight ) && cell->x >= 2 ) {
+                const int page = ( cell->x - 2 ) / static_cast<int>( page_width );
+                if( page >= 0 && page < used_pages && page != iCurWorkingPage ) {
+                    iCurWorkingPage = page;
+                    if( action == "MOUSE_MOVE" ) {
+                        continue;
+                    }
+                }
+            }
+        }
+        if( handle_new_char_list_mouse( ctxt, w, action, {
+                .origin = point( 2 + iCurWorkingPage * static_cast<int>( page_width ), 5 ),
+                .width = static_cast<int>( page_width ),
+                .entry_height = 1,
+                .count = static_cast<int>( bionics_size[iCurWorkingPage] ),
+                .offset = iStartPos[iCurWorkingPage],
+                .visible_count = static_cast<int>( iContentHeight ),
+            }, iCurrentLine[iCurWorkingPage] ) ) {
+            continue;
+        }
 #if defined(TILES)
         if( action == "zoom_in" && use_character_preview ) {
             character_preview.zoom_in();
@@ -2278,6 +2427,7 @@ tab_direction set_profession( avatar &u, points_left &points,
     ctxt.register_action( "RANDOMIZE" );
     ctxt.register_action( "FILTER" );
     ctxt.register_action( "QUIT" );
+    register_new_char_mouse( ctxt );
 
     bool recalc_profs = true;
     int profs_length = 0;
@@ -2595,7 +2745,21 @@ tab_direction set_profession( avatar &u, points_left &points,
         }
 
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "PROFESSION" ) ) ) {
+            continue;
+        }
+        if( handle_new_char_list_mouse( ctxt, w, action, {
+                .origin = point( 2, 5 ),
+                .width = getmaxx( w ) - 4,
+                .entry_height = 1,
+                .count = profs_length,
+                .offset = iStartPos,
+                .visible_count = iContentHeight,
+            }, cur_id ) ) {
+            desc_offset = 0;
+            continue;
+        }
         if( action == "DOWN" ) {
             cur_id++;
             if( cur_id > profs_length - 1 ) {
@@ -2729,6 +2893,7 @@ tab_direction set_skills( avatar &u, points_left &points )
     ctxt.register_action( "RANDOMIZE" );
     ctxt.register_action( "HELP_KEYBINDINGS" );
     ctxt.register_action( "QUIT" );
+    register_new_char_mouse( ctxt );
 
     std::map<skill_id, int> prof_skills;
     const auto &pskills = u.prof->skills();
@@ -2887,7 +3052,29 @@ tab_direction set_skills( avatar &u, points_left &points )
 
     do {
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "SKILLS" ) ) ) {
+            continue;
+        }
+        bool skill_mouse_move = false;
+        if( const auto cell = ctxt.get_mouse_cell( w ) ) {
+            if( cell->x >= 4 && cell->y >= 5 && cell->y < 5 + iContentHeight ) {
+                for( int i = 0; i < num_skills; ++i ) {
+                    const int y = 5 + skill_list[i].second - cur_offset;
+                    if( y == cell->y && y >= 5 && y < iContentHeight + 5 ) {
+                        cur_pos = i;
+                        currentSkill = skill_list[cur_pos].first;
+                        if( action == "MOUSE_MOVE" ) {
+                            skill_mouse_move = true;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        if( skill_mouse_move ) {
+            continue;
+        }
         if( action == "DOWN" ) {
             cur_pos = modulo( cur_pos + 1, num_skills );
             currentSkill = skill_list[cur_pos].first;
@@ -2992,6 +3179,7 @@ tab_direction set_magic( avatar &u, points_left &points )
     ctxt.register_action( "RANDOMIZE" );
     ctxt.register_action( "HELP_KEYBINDINGS" );
     ctxt.register_action( "QUIT" );
+    register_new_char_mouse( ctxt );
 
     const int remaining_points_length = utf8_width( points.to_string(), true );
 
@@ -3085,7 +3273,29 @@ tab_direction set_magic( avatar &u, points_left &points )
 
     do {
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "MAGIC" ) ) ) {
+            continue;
+        }
+        bool spell_mouse_move = false;
+        if( const auto cell = ctxt.get_mouse_cell( w ) ) {
+            if( cell->x >= 4 && cell->y >= 5 && cell->y < 5 + iContentHeight ) {
+                for( int i = 0; i < num_spells; ++i ) {
+                    const int y = 5 + spell_list[i].second - cur_offset;
+                    if( y == cell->y && y >= 5 && y < iContentHeight + 5 ) {
+                        cur_pos = i;
+                        current_spell = spell_list[cur_pos].first;
+                        if( action == "MOUSE_MOVE" ) {
+                            spell_mouse_move = true;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        if( spell_mouse_move ) {
+            continue;
+        }
         if( action == "DOWN" ) {
             cur_pos = modulo( cur_pos + 1, num_spells );
             current_spell = spell_list[cur_pos].first;
@@ -3211,6 +3421,7 @@ tab_direction set_scenario( avatar &u, points_left &points,
     ctxt.register_action( "RANDOMIZE" );
     ctxt.register_action( "FILTER" );
     ctxt.register_action( "QUIT" );
+    register_new_char_mouse( ctxt );
 
     bool recalc_scens = true;
     int scens_length = 0;
@@ -3469,7 +3680,20 @@ tab_direction set_scenario( avatar &u, points_left &points,
         }
 
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "SCENARIO" ) ) ) {
+            continue;
+        }
+        if( handle_new_char_list_mouse( ctxt, w, action, {
+                .origin = point( 2, 5 ),
+                .width = getmaxx( w ) - 4,
+                .entry_height = 1,
+                .count = scens_length,
+                .offset = iStartPos,
+                .visible_count = iContentHeight,
+            }, cur_id ) ) {
+            continue;
+        }
         if( action == "DOWN" ) {
             cur_id++;
             if( cur_id > scens_length - 1 ) {
@@ -3638,6 +3862,7 @@ tab_direction set_description( avatar &you, const bool allow_reroll,
     ctxt.register_action( "REROLL_CHARACTER_WITH_SCENARIO" );
     ctxt.register_action( "CONFIRM" );
     ctxt.register_action( "QUIT" );
+    register_new_char_mouse( ctxt );
 #if defined(TILES)
     ctxt.register_action( "zoom_in" );
     ctxt.register_action( "zoom_out" );
@@ -4087,7 +4312,10 @@ tab_direction set_description( avatar &you, const bool allow_reroll,
         max_allowed_age = new_max_age;
         you.set_base_age( clamp( you.base_age(), min_allowed_age, max_allowed_age ) );
         ui_manager::redraw();
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+        if( handle_new_char_tab_mouse( ctxt, w, action, you.prof, _( "OVERVIEW" ) ) ) {
+            continue;
+        }
 #if defined(TILES)
         if( action == "zoom_in" && use_character_preview ) {
             character_preview.zoom_in();

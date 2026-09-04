@@ -232,6 +232,7 @@ input_context uilist::create_main_input_context() const
     if( allow_cancel ) {
         ctxt.register_action( "QUIT" );
     }
+    ctxt.register_action( "MOUSE_MOVE" );
     ctxt.register_action( "SELECT" );
     ctxt.register_action( "CONFIRM" );
     ctxt.register_action( "FILTER" );
@@ -885,6 +886,11 @@ void uilist::show( ui_adaptor &ui )
                 mvwputch( window, point( pad_left + 1 + menu_entry_extra_text.left, estart + si ),
                           menu_entry_extra_text.color, menu_entry_extra_text.sym );
             }
+            const int row_right = std::max( pad_left + 1, w_width - 2 );
+            entries[ei].drawn_rect = inclusive_rectangle<point> {
+                point( pad_left + 1, estart + si ),
+                point( row_right, estart + si )
+            };
         } else {
             mvwprintz( window, point( pad_left + 1, estart + si ), c_light_gray, padspaces );
         }
@@ -1075,6 +1081,32 @@ void uilist::query( bool loop, int timeout )
 
         if( scrollby( scroll_amount_from_action( ret_act ) ) ) {
             /* nothing */
+        } else if( ret_act == "MOUSE_MOVE" || ret_act == "SELECT" ) {
+            if( const auto cell = ctxt.get_mouse_cell( window ) ) {
+                for( int fei = vshift, si = 0; si < vmax &&
+                     fei < static_cast<int>( fentries.size() ); fei++, si++ ) {
+                    const int ei = fentries[fei];
+                    const auto &rect = entries[ei].drawn_rect;
+                    if( !rect || !rect->contains( *cell ) ) {
+                        continue;
+                    }
+                    if( fselected != fei || selected != ei ) {
+                        fselected = fei;
+                        selected = ei;
+                        if( callback != nullptr ) {
+                            callback->select( this );
+                        }
+                    }
+                    if( ret_act == "SELECT" ) {
+                        if( entries[ei].enabled ) {
+                            ret = entries[ei].retval;
+                        } else if( allow_disabled ) {
+                            ret = entries[ei].retval;
+                        }
+                    }
+                    break;
+                }
+            }
         } else if( filtering && ret_act == "FILTER" ) {
             inputfilter();
         } else if( categories.size() > 1 && ( ret_act == "LEFT" || ret_act == "RIGHT" ) ) {

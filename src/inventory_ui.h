@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "color.h"
+#include "cuboid_rectangle.h"
 #include "cursesdef.h"
 #include "detached_ptr.h"
 #include "input.h"
@@ -302,7 +303,9 @@ class inventory_column
         std::vector<inventory_entry *> get_all_entries() const;
         inventory_entry *find_by_invlet( int invlet ) const;
 
-        void draw( const catacurses::window &win, point pos ) const;
+        void draw( const catacurses::window &win, point pos,
+                   std::vector<std::pair<inclusive_rectangle<point>, inventory_entry *>> *rect_entry_map =
+                       nullptr ) const;
 
         void add_entry( const inventory_entry &entry );
         void move_entries_to( inventory_column &dest );
@@ -587,6 +590,7 @@ class inventory_selector
 
         /** @return an entry from all entries by its invlet */
         inventory_entry *find_entry_by_invlet( int invlet ) const;
+        inventory_entry *find_entry_by_coordinate( point coordinate ) const;
 
         const std::vector<inventory_column *> &get_all_columns() const {
             return columns;
@@ -696,6 +700,7 @@ class inventory_selector
 
         bool is_empty = true;
         bool display_stats = true;
+        mutable std::vector<std::pair<inclusive_rectangle<point>, inventory_entry *>> rect_entry_map;
 
     public:
         std::string action_bound_to_key( char key ) const;
