@@ -7262,10 +7262,11 @@
     "id": "ANIME_PROTAGONIST",
     "name": { "str": "Anime Protagonist" },
     "points": -3,
-    "description": "You come alive when the situation turns desperate, and feel oddly flat when things are going fine.  Injury focuses you; comfort leaves you restless.",
+    "description": "You come alive when the situation turns desperate, and feel oddly flat when things are going fine.  Injury focuses you; comfort leaves you restless.  You eat like a battle is always imminent, yell attack names in combat, announce yourself to every stranger, and occasionally shrug off a knockout when the plot demands it.",
     "starting_trait": true,
     "valid": false,
-    "purifiable": false
+    "purifiable": false,
+    "metabolism_modifier": 0.33
   },
   {
     "type": "mutation",

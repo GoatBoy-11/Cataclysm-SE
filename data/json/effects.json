@@ -2662,5 +2662,15 @@
     "max_duration": "10 m",
     "base_mods": { "pain_amount": [ 0 ], "pain_max": [ 1 ], "pain_max_val": [ 10 ] },
     "scaling_mods": { "pain_min": [ 1 ], "pain_max": [ 1 ], "pain_chance": [ 10 ], "pain_max_val": [ 10 ] }
+  },
+  {
+    "type": "effect_type",
+    "id": "effect_anime_flashback",
+    "name": [ "Flashback Surge" ],
+    "desc": [ "A rush of determination floods back in." ],
+    "rating": "good",
+    "max_duration": "30 m",
+    "base_mods": { "speed_mod": [ 10 ], "dex_mod": [ 1 ] },
+    "base_enchantments": [ { "values": [ { "value": "MELEE_HIT", "multiply": 0.15 } ] } ]
   }
 ]

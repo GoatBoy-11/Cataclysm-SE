@@ -22,6 +22,11 @@ local seen_clutter = false
 local seen_hemophobia = false
 local seen_outgunned = false
 local cowards_sprint_alert = false
+local trait_storage = nil
+local anime_flashback_armed = true
+local anime_refuse_down_open = true
+
+local ANIME_COOLDOWN_TURNS = TimeDuration.from_hours(24):to_turns()
 
 local plush_item_ids = {
   ItypeId.new("teddy"),
@@ -48,6 +53,10 @@ local morale_minimalist = MoraleTypeDataId.new("morale_minimalist")
 local morale_outgunned = MoraleTypeDataId.new("morale_outgunned")
 local morale_comfort_zone = MoraleTypeDataId.new("morale_comfort_zone")
 local morale_lone_wolf = MoraleTypeDataId.new("morale_lone_wolf")
+local morale_anime_nakama = MoraleTypeDataId.new("morale_anime_nakama")
+local morale_anime_nakama_bored = MoraleTypeDataId.new("morale_anime_nakama_bored")
+local morale_anime_flashback = MoraleTypeDataId.new("morale_anime_flashback")
+local effect_anime_flashback = EffectTypeId.new("effect_anime_flashback")
 local blood_field_ids = {
   FieldTypeId.new("fd_blood"):int_id(),
   FieldTypeId.new("fd_blood_veggy"):int_id(),
@@ -98,6 +107,38 @@ local small_talk_lines = {
   locale.gettext("\"Lovely weather,\" you say, to the room."),
   locale.gettext("You nod at a stranger who may or may not be there."),
   locale.gettext("\"Howdy,\" you announce, unprompted."),
+}
+
+local anime_confidence_lines = {
+  locale.gettext("I can still win!"),
+  locale.gettext("My friends are counting on me!"),
+  locale.gettext("This is where the comeback starts!"),
+  locale.gettext("You're not taking me down here!"),
+  locale.gettext("I refuse to lose on a trash heap like this!"),
+}
+
+local anime_technique_names = {
+  "Firefist Attack",
+  "Burning Blade",
+  "Devil Sphere",
+  "Meteor Rush",
+  "Final Chapter Strike",
+  "Heroic Uppercut",
+  "Soul Edge Flash",
+}
+
+local anime_dialogue_yells = {
+  locale.gettext("GOOD TO SEE YOU!"),
+  locale.gettext("I HAVE A LOT TO SAY!"),
+  locale.gettext("LISTEN UP!"),
+  locale.gettext("WE NEED TO TALK!"),
+  locale.gettext("HEY! OVER HERE!"),
+}
+
+local anime_flashback_lines = {
+  locale.gettext("You remember a promise you made before everything fell apart."),
+  locale.gettext("A half-forgotten voice tells you to get back up."),
+  locale.gettext("For one heartbeat the world slows, and you remember why you keep going."),
 }
 
 local in_darkness_alert = false
@@ -240,6 +281,46 @@ local function count_hostiles_in_range(who, range)
     for _ in pairs(hostiles) do count = count + 1 end
   end
   return count
+end
+
+---@param key string
+---@return integer
+local function turns_since_stored(key)
+  if not trait_storage then return math.huge end
+  local last = trait_storage[key]
+  if not last then return math.huge end
+  return gapi.current_turn():to_turn() - last
+end
+
+---@param key string
+local function store_turn(key)
+  if trait_storage then trait_storage[key] = gapi.current_turn():to_turn() end
+end
+
+---@param key string
+---@return boolean
+local function anime_cooldown_ready(key)
+  return turns_since_stored(key) >= ANIME_COOLDOWN_TURNS
+end
+
+---@param ratio number
+---@return integer
+local function anime_technique_roll_threshold(ratio)
+  if ratio > 0.75 then return 0 end
+  local chance = 0.05 + (1.0 - ratio) * 0.10
+  return math.floor(chance * 100)
+end
+
+---@param here Map
+---@param center TripointBubMs
+---@param radius integer
+---@return boolean
+local function has_follower_nearby(here, center, radius)
+  for _, pt in ipairs(here:points_in_radius(center, radius, 0)) do
+    local npc = gapi.get_npc_at(pt)
+    if npc and npc:is_following() then return true end
+  end
+  return false
 end
 
 ---@param who Character
@@ -476,19 +557,78 @@ local function tick_cse_traits_fast()
   end
 
   if you:has_trait(trait_anime_protagonist) then
-    local max_hp = you:get_hp_max()
-    if max_hp > 0 then
-      local ratio = you:get_hp() / max_hp
-      if ratio < 0.75 then
-        apply_bonus(you, morale_anime_protagonist, math.floor((0.75 - ratio) * 24))
-      elseif ratio >= 0.95 then
-        apply_penalty(you, morale_anime_protagonist, math.floor((ratio - 0.9) * 40))
-      else
-        you:rem_morale(morale_anime_protagonist)
-      end
-    end
+    tick_anime_protagonist(you)
   else
     you:rem_morale(morale_anime_protagonist)
+    you:rem_morale(morale_anime_nakama)
+    you:rem_morale(morale_anime_nakama_bored)
+    you:rem_morale(morale_anime_flashback)
+  end
+end
+
+---@param you Avatar
+local function tick_anime_protagonist(you)
+  local max_hp = you:get_hp_max()
+  if max_hp <= 0 then return end
+
+  local ratio = you:get_hp() / max_hp
+  local here = gapi.get_map()
+  local pos = you:get_pos_ms()
+
+  if ratio < 0.75 then
+    apply_bonus(you, morale_anime_protagonist, math.floor((0.75 - ratio) * 24))
+  elseif ratio >= 0.95 then
+    apply_penalty(you, morale_anime_protagonist, math.floor((ratio - 0.9) * 40))
+  else
+    you:rem_morale(morale_anime_protagonist)
+  end
+
+  if ratio >= 0.3 then
+    anime_flashback_armed = true
+  elseif ratio < 0.3 and anime_flashback_armed and anime_cooldown_ready("anime_flashback_turn") then
+    anime_flashback_armed = false
+    store_turn("anime_flashback_turn")
+    local line = random_entry(anime_flashback_lines)
+    if line and you:is_avatar() then
+      gapi.add_msg(MsgType.good, line)
+      gapi.add_msg(MsgType.good, locale.gettext("The memory hits like a power-up."))
+    end
+    apply_bonus(you, morale_anime_flashback, 15)
+    you:add_effect(effect_anime_flashback, TimeDuration.from_minutes(10))
+    you:mod_stamina(math.min(you:get_stamina_max() - you:get_stamina(), 2000))
+  end
+
+  if not you:has_effect(effect_downed) then
+    anime_refuse_down_open = true
+  elseif you:has_effect(effect_downed) and anime_refuse_down_open and ratio < 0.25
+      and anime_cooldown_ready("anime_refuse_down_turn") and gapi.rng(1, 4) == 1 then
+    anime_refuse_down_open = false
+    store_turn("anime_refuse_down_turn")
+    you:remove_effect(effect_downed)
+    if you:is_avatar() then
+      gapi.add_msg(MsgType.good, locale.gettext("You refuse to stay down!"))
+    end
+  end
+
+  if ratio < 0.5 and count_hostiles_in_range(you, 12) > 0 and gapi.rng(1, 400) == 1 then
+    local line = random_entry(anime_confidence_lines)
+    if line and you:is_avatar() then gapi.add_msg(MsgType.good, line) end
+  end
+
+  if has_follower_nearby(here, pos, 6) then
+    if ratio < 0.5 then
+      apply_bonus(you, morale_anime_nakama, 12)
+      you:rem_morale(morale_anime_nakama_bored)
+    elseif ratio > 0.8 then
+      apply_penalty(you, morale_anime_nakama_bored, 8)
+      you:rem_morale(morale_anime_nakama)
+    else
+      you:rem_morale(morale_anime_nakama)
+      you:rem_morale(morale_anime_nakama_bored)
+    end
+  else
+    you:rem_morale(morale_anime_nakama)
+    you:rem_morale(morale_anime_nakama_bored)
   end
 end
 
@@ -506,6 +646,9 @@ local function tick_cse_traits_slow()
     you:rem_morale(morale_outgunned)
     you:rem_morale(morale_comfort_zone)
     you:rem_morale(morale_lone_wolf)
+    you:rem_morale(morale_anime_nakama)
+    you:rem_morale(morale_anime_nakama_bored)
+    you:rem_morale(morale_anime_flashback)
     return
   end
 
@@ -637,6 +780,36 @@ local function tick_cse_traits_slow()
   end
 end
 
+---@param params OnCreatureMeleeAttackedParams
+local function on_creature_melee_attacked(params)
+  ---@type Character
+  local char = params.char
+  if not char or not char:is_avatar() then return end
+  if not char:has_trait(trait_anime_protagonist) then return end
+  if not params.success then return end
+  if char:get_effect_int(effect_depressants) > 3 then return end
+
+  local max_hp = char:get_hp_max()
+  if max_hp <= 0 then return end
+
+  local ratio = char:get_hp() / max_hp
+  local threshold = anime_technique_roll_threshold(ratio)
+  if threshold <= 0 or gapi.rng(1, 100) > threshold then return end
+
+  local name = random_entry(anime_technique_names)
+  if name then char:shout(name .. "!", false) end
+end
+
+---@param params OnDialogueStartParams
+local function on_dialogue_start(params)
+  local you = gapi.get_avatar()
+  if not you or not you:has_trait(trait_anime_protagonist) then return end
+  if you:get_effect_int(effect_depressants) > 3 then return end
+
+  local line = random_entry(anime_dialogue_yells)
+  if line then you:shout(line, false) end
+end
+
 ---@param params OnCraftFailureParams
 local function on_craft_failure(params)
   local crafter = params.crafter
@@ -747,6 +920,7 @@ end
 
 ---@param mod table
 function lua_traits.register(mod)
+  trait_storage = mod.storage
   mod.on_character_try_move = on_character_try_move_with_auto_mop
   mod.on_nyctophobia_tick = tick_nyctophobia
   mod.on_morale_traits_tick = tick_morale_traits
@@ -754,6 +928,8 @@ function lua_traits.register(mod)
   mod.on_cse_traits_fast_tick = tick_cse_traits_fast
   mod.on_cse_traits_slow_tick = tick_cse_traits_slow
   mod.on_craft_failure = on_craft_failure
+  mod.on_creature_melee_attacked = on_creature_melee_attacked
+  mod.on_dialogue_start = on_dialogue_start
 end
 
 return lua_traits

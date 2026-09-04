@@ -524,5 +524,23 @@
     "type": "morale_type",
     "text": "On your own",
     "permanent": true
+  },
+  {
+    "id": "morale_anime_nakama",
+    "type": "morale_type",
+    "text": "Nakama power",
+    "permanent": true
+  },
+  {
+    "id": "morale_anime_nakama_bored",
+    "type": "morale_type",
+    "text": "No dramatic tension",
+    "permanent": true
+  },
+  {
+    "id": "morale_anime_flashback",
+    "type": "morale_type",
+    "text": "Flashback surge",
+    "permanent": true
   }
 ]

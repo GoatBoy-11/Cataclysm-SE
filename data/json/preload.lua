@@ -27,6 +27,8 @@ end)
 
 game.add_hook("on_character_try_move", function(...) return mod.on_character_try_move(...) end)
 game.add_hook("on_craft_failure", function(...) return mod.on_craft_failure(...) end)
+game.add_hook("on_creature_melee_attacked", function(...) return mod.on_creature_melee_attacked(...) end)
+game.add_hook("on_dialogue_start", function(...) return mod.on_dialogue_start(...) end)
 game.add_hook("on_elevator_try_use", function(...) return mod.robofac.on_elevator_try_use(...) end)
 game.add_hook("on_dialogue_end", function(...) return mod.robofac.authorize_hub01_after_dialogue(...) end)
 game.add_hook("on_mission_end", function(...) return mod.robofac.authorize_hub01_after_mission(...) end)
