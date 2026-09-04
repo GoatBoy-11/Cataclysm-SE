@@ -1950,7 +1950,7 @@ TEST_CASE( "classic_mode_still_stashes_to_the_flat_inventory", "[pocket][routing
     CHECK( g->u.worn.front()->contents.empty() );
 }
 
-// Reproducing Oliver's playtest: real clothing, default settings, no priorities
+// Reproducing the user's playtest: real clothing, default settings, no priorities
 // touched. Routing must work out of the box or the feature is invisible.
 TEST_CASE( "default_settings_route_into_real_clothing", "[pocket][routing][repro]" )
 {
@@ -1973,7 +1973,7 @@ TEST_CASE( "default_settings_route_into_real_clothing", "[pocket][routing][repro
     CHECK( in_pockets == 1 );
 }
 
-// Oliver's playtest: routing filled the pockets, but capacity was still measured
+// The user's playtest: routing filled the pockets, but capacity was still measured
 // by the legacy `storage` field - jeans declare 500 ml and carry 4,660 ml of
 // pockets - so a character went "full" almost immediately and pickup refused
 // everything. Capacity and contents must be measured against the same thing.
@@ -2056,7 +2056,7 @@ TEST_CASE( "a_vessel_still_takes_the_name_of_what_is_in_it", "[pocket][naming]" 
     CHECK( name.find( "water" ) != std::string::npos );
 }
 
-// Report 3 from Oliver's playtest: an item routed into a pair of jeans could not
+// Report 3 from the user's playtest: an item routed into a pair of jeans could not
 // be got at again. Unload already empties containers, but a garment is not a
 // container, a bandolier or a holster, so it refused to fire at all.
 TEST_CASE( "unloading_a_garment_empties_its_pockets", "[pocket][unload]" )
@@ -2075,7 +2075,7 @@ TEST_CASE( "unloading_a_garment_empties_its_pockets", "[pocket][unload]" )
     CHECK( u.amount_of( itype_id( "withered" ) ) == 1 );
 }
 
-// Oliver's playtest: routing looked intermittent. BN groups a pickup into a
+// The user's playtest: routing looked intermittent. BN groups a pickup into a
 // parent and its children, and the children were added straight to the flat
 // inventory, so a batched pickup routed the first item and no others.
 TEST_CASE( "children_of_a_pickup_route_like_their_parent", "[pocket][routing][enforce]" )

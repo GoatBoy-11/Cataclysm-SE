@@ -19,7 +19,7 @@ It works and is no longer harmful, but it is not yet the CDDA experience.
 **Not working yet, and the next job:** you cannot see what a pocket holds in
 the inventory, and cannot take out a single item without emptying the garment.
 That is the nested inventory display —
-`docs/superpowers/plans/2026-08-31-pocket-nested-inventory.md`. Oliver's
+`docs/superpowers/plans/2026-08-31-pocket-nested-inventory.md`. the user's
 hierarchical mockup is the target. **This was mis-called "cosmetic" earlier in
 the day; it is not.** Routing items into pockets no screen can open takes them
 away from the player.
@@ -45,8 +45,8 @@ away from the player.
 
 ## Open, in the order worth doing
 
-1. **Nested inventory display** (plan written). Oliver's reports 3 and 4.
-2. **Gunmod rejections.** Oliver's `pocket_audit.txt` shows `m7` refusing
+1. **Nested inventory display** (plan written). the user's reports 3 and 4.
+2. **Gunmod rejections.** the user's `pocket_audit.txt` shows `m7` refusing
    `holo_sight`, `acog_scope`, `muzzle_brake` - 18 insertions - though it has
    two MOD pockets. Harmless now (the audit is a dry run and mod installation
    does not take the enforced path), but wrong, and it would bite if
@@ -57,7 +57,7 @@ away from the player.
    in fields the import did not translate.
 4. **Routing coverage.** Only pickup routes. Hauling, AIM transfers, crafting
    returns and unload still call `i_add` directly. Safe (nothing is lost),
-   deliberately inconsistent. If Oliver reports intermittent routing again,
+   deliberately inconsistent. If the user reports intermittent routing again,
    these are the first suspects.
 5. **Item info still prints legacy `storage`** in `armor_layers.cpp:301` and
    `game_inventory.cpp:336`, so a garment can advertise 500 ml while holding
@@ -65,7 +65,7 @@ away from the player.
 
 ## Two things that decided today's design
 
-- **Capacity comes from pockets** (Oliver chose this over capping to BN's old
+- **Capacity comes from pockets** (the user chose this over capping to BN's old
   numbers). Volume roughly doubles on the 131 item types with imported pockets,
   so weight now binds first. If it plays too loose, tune the pocket volumes in
   JSON - content, not code.

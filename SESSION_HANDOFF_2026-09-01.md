@@ -209,7 +209,7 @@ four `vision_*` failures environmental. Working tree clean.
 
 ## Another model is working in this repo
 
-Oliver has a second model porting CDDA's mouse system. Its work is
+The user has a second model porting CDDA's mouse system. Its work is
 `e1b3ada5b0`, and its own handoff is untracked at
 `docs/superpowers/plans/2026-09-01-mouse-enable-port-HANDOFF.md`. **Read that
 before touching `src/`.**

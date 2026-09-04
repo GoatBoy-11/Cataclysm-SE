@@ -9,7 +9,7 @@ pocket can be taken, eaten, wielded or dropped like any other.
 
 **Why this is not cosmetic.** Pickup routes items into worn pockets. No
 inventory screen renders pockets, so a routed item is invisible and
-unreachable: the feature currently takes things away from the player. Oliver
+unreachable: the feature currently takes things away from the player. The user
 found this in minutes of play (reports 3 and 4). Emptying a garment wholesale
 via `unload` is the stopgap that landed first; this is the fix.
 
@@ -65,7 +65,7 @@ So an entry can carry a parent pointer without inventing an ownership type.
 - [x] Ordering.
 - [x] Full suite green (four `vision_*` CPU-backend failures stay
   environmental).
-- [ ] In-game (Oliver, outstanding): pick items up, open inventory, see them nested under the
+- [ ] In-game (the user, outstanding): pick items up, open inventory, see them nested under the
   garment; act on one directly; classic world unchanged.
 
 ## Out of scope
