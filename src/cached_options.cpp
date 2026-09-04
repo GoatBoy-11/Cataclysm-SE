@@ -14,6 +14,7 @@ bool log_from_top;
 int message_ttl;
 int message_cooldown;
 bool mouse_enabled = true;
+bool mouse_cursor_show = true;
 bool mouse_hide_kb = false;
 bool display_mod_source;
 bool display_object_ids;

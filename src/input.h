@@ -650,6 +650,9 @@ class input_context
          */
         std::optional<tripoint_bub_ms> get_coordinates( const catacurses::window &capture_win_ );
 
+        /// Return the last mouse position in cells relative to `capture_win`.
+        auto get_mouse_cell( const catacurses::window &capture_win ) const -> std::optional<point>;
+
         // Below here are shortcuts for registering common key combinations.
         void register_directions();
         void register_updown();

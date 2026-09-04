@@ -1053,7 +1053,8 @@ int inventory_column::reassign_custom_invlets( const player &p, int min_invlet, 
     return cur_invlet;
 }
 
-void inventory_column::draw( const catacurses::window &win, point pos ) const
+void inventory_column::draw( const catacurses::window &win, point pos,
+                             std::vector<std::pair<inclusive_rectangle<point>, inventory_entry *>> *rect_entry_map ) const
 {
     if( !visible() ) {
         return;
@@ -1079,6 +1080,17 @@ void inventory_column::draw( const catacurses::window &win, point pos ) const
         int x1 = pos.x + get_entry_indent( entry );
         int x2 = pos.x + std::max( static_cast<int>( reserved_width - get_cells_width() ), 0 );
         int yy = pos.y + line;
+
+        if( rect_entry_map ) {
+            const int hx_max = pos.x + get_width();
+            rect_entry_map->emplace_back(
+                inclusive_rectangle<point> {
+                    point( x1, yy ),
+                    point( hx_max - 1, yy )
+                },
+                const_cast<inventory_entry *>( &entry )
+            );
+        }
 
         const bool selected = active && is_selected( entry );
         // The cursor is on one copy of this item; the other copy gets a quieter
@@ -1987,6 +1999,7 @@ bool inventory_selector::wear( inventory_entry &entry )
 
 void inventory_selector::draw_columns( const catacurses::window &w ) const
 {
+    rect_entry_map.clear();
     const auto columns = get_visible_columns();
 
     const int screen_width = getmaxx( w ) - 2 * ( border + 1 );
@@ -2023,7 +2036,7 @@ void inventory_selector::draw_columns( const catacurses::window &w ) const
         }
 
         if( !is_active_column( *elem ) ) {
-            elem->draw( w, point( x, y ) );
+            elem->draw( w, point( x, y ), &rect_entry_map );
         } else {
             active_x = x;
         }
@@ -2031,7 +2044,7 @@ void inventory_selector::draw_columns( const catacurses::window &w ) const
         x += elem->get_width() + gap;
     }
 
-    get_active_column().draw( w, point( active_x, y ) );
+    get_active_column().draw( w, point( active_x, y ), &rect_entry_map );
     if( empty() ) {
         center_print( w, getmaxy( w ) / 2, c_dark_gray, _( "Your inventory is empty." ) );
     }
@@ -2120,6 +2133,8 @@ inventory_selector::inventory_selector( player &u, const inventory_selector_pres
     ctxt.register_action( "WIELD" );
     ctxt.register_action( "WEAR" );
     ctxt.register_action( "ANY_INPUT" ); // For invlets
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SELECT" );
 
 
     append_column( own_inv_column );
@@ -2141,12 +2156,33 @@ bool inventory_selector::has_available_choices() const
     } );
 }
 
+inventory_entry *inventory_selector::find_entry_by_coordinate( point coordinate ) const
+{
+    for( const auto &[rect, entry] : rect_entry_map ) {
+        if( rect.contains( coordinate ) ) {
+            return entry;
+        }
+    }
+    return nullptr;
+}
+
 inventory_input inventory_selector::get_input()
 {
     inventory_input res;
 
     res.action = ctxt.handle_input();
     res.ch = ctxt.get_raw_input().get_first_input();
+
+    if( res.action == "MOUSE_MOVE" || res.action == "SELECT" ) {
+        if( const auto cell = ctxt.get_mouse_cell( w_inv ) ) {
+            res.entry = find_entry_by_coordinate( *cell );
+            if( res.entry != nullptr && res.entry->is_selectable() ) {
+                return res;
+            }
+            res.entry = nullptr;
+        }
+    }
+
     res.entry = find_entry_by_invlet( res.ch );
 
     if( res.entry != nullptr && !res.entry->is_selectable() ) {
@@ -2355,6 +2391,12 @@ item *inventory_pick_selector::execute()
         const inventory_input input = get_input();
 
         if( input.entry != nullptr ) {
+            if( input.action == "MOUSE_MOVE" ) {
+                if( select( input.entry->any_item() ) ) {
+                    ui_manager::redraw();
+                }
+                continue;
+            }
             if( select( input.entry->any_item() ) ) {
                 ui_manager::redraw();
             }
@@ -2465,6 +2507,12 @@ std::pair<const item *, const item *> inventory_compare_selector::execute()
         inventory_entry *just_selected = nullptr;
 
         if( input.entry != nullptr ) {
+            if( input.action == "MOUSE_MOVE" ) {
+                if( select( input.entry->any_item() ) ) {
+                    ui_manager::redraw();
+                }
+                continue;
+            }
             select( input.entry->any_item() );
             toggle_entry( input.entry );
             just_selected = input.entry;
@@ -2542,6 +2590,12 @@ std::vector<iuse_location> inventory_iuse_selector::execute()
             count *= 10;
             count += input.ch - '0';
         } else if( input.entry != nullptr ) {
+            if( input.action == "MOUSE_MOVE" ) {
+                if( select( input.entry->any_item() ) ) {
+                    ui_manager::redraw();
+                }
+                continue;
+            }
             select( input.entry->any_item() );
             if( count == 0 && input.entry->chosen_count == 0 ) {
                 count = max_chosen_count;
@@ -2708,6 +2762,12 @@ drop_locations inventory_drop_selector::execute()
 
             count = 0;
         } else if( input.entry != nullptr ) {
+            if( input.action == "MOUSE_MOVE" ) {
+                if( select( input.entry->any_item() ) ) {
+                    ui_manager::redraw();
+                }
+                continue;
+            }
             select( input.entry->any_item() );
             if( count == 0 && input.entry->chosen_count == 0 ) {
                 count = max_chosen_count;
@@ -2834,6 +2894,12 @@ std::vector<pickup::pick_drop_selection> inventory_pickup_selector::execute()
                 set_chosen_count( *elem, count );
             }
         } else if( input.entry != nullptr ) {
+            if( input.action == "MOUSE_MOVE" ) {
+                if( select( input.entry->any_item() ) ) {
+                    ui_manager::redraw();
+                }
+                continue;
+            }
             select( input.entry->any_item() );
             if( input.entry->chosen_count == 0 ) {
                 set_chosen_count( *input.entry, max_chosen_count );

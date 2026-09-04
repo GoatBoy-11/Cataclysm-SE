@@ -53,6 +53,7 @@
 #include "translations.h"
 #include "ui.h"
 #include "ui_manager.h"
+#include "ui_mouse.h"
 #include "units.h"
 #include "units_utility.h"
 #include "value_ptr.h"
@@ -276,6 +277,8 @@ veh_interact::veh_interact( vehicle &veh, tripoint_mnt_veh p )
     main_context.register_action( "ZOOM_IN" );
     main_context.register_action( "ZOOM_OUT" );
     main_context.register_action( "ANY_INPUT" );
+    main_context.register_action( "MOUSE_MOVE" );
+    main_context.register_action( "SELECT" );
 
     count_durability();
     cache_tool_availability();
@@ -1130,8 +1133,56 @@ void veh_interact::do_install()
 
         ui_manager::redraw();
 
-        const std::string action = main_context.handle_input();
+        std::string action = main_context.handle_input();
         msg.reset();
+
+        if( action == "MOUSE_MOVE" || action == "SELECT" ) {
+            bool mouse_handled = false;
+            if( const auto cell = main_context.get_mouse_cell( w_list ) ) {
+                int tab_x = 0;
+                for( size_t i = 0; i < tab_list.size(); ++i ) {
+                    const std::string tab_name = ( tab == i ) ? tab_list[i] : install_info->tab_list_short[i];
+                    tab_x += ( tab == i );
+                    const int tab_width = 1 + utf8_width( tab_name ) + ( tab == i );
+                    if( cell->y <= 1 && cell->x >= tab_x && cell->x < tab_x + tab_width ) {
+                        mouse_handled = true;
+                        if( action == "SELECT" && tab != i ) {
+                            tab = i;
+                            tab_vparts.clear();
+                            pos = 0;
+                            copy_if( can_mount.begin(), can_mount.end(), back_inserter( tab_vparts ),
+                                     tab_filters[tab] );
+                        }
+                        break;
+                    }
+                    tab_x += tab_width;
+                }
+
+                if( !mouse_handled ) {
+                    const int header = 2;
+                    const int lines_per_page = page_size - header;
+                    const int page = pos / lines_per_page;
+                    if( const auto idx = ui_mouse::hit_test_list( *cell, {
+                            .origin = point( 1, header ),
+                            .width = getmaxx( w_list ),
+                            .entry_height = 1,
+                            .count = static_cast<int>( tab_vparts.size() ),
+                            .offset = page * lines_per_page,
+                            .visible_count = lines_per_page,
+                        } ) ) {
+                        mouse_handled = true;
+                        pos = *idx;
+                        if( action == "SELECT" ) {
+                            action = "CONFIRM";
+                        }
+                    }
+                }
+            }
+            if( mouse_handled && action == "MOUSE_MOVE" ) {
+                continue;
+            }
+        }
+
         if( action == "FILTER" ) {
             string_input_popup()
             .title( _( "Search for part" ) )

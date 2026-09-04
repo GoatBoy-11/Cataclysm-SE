@@ -50,6 +50,8 @@ extern int message_cooldown;
 
 /** Mouse input enabled by the user (ENABLE_MOUSE). */
 extern bool mouse_enabled;
+/** HIDE_CURSOR == "show": cursor always visible. */
+extern bool mouse_cursor_show;
 /** HideKB cursor mode: cursor hidden on keyboard input, shown on mouse movement. */
 extern bool mouse_hide_kb;
 

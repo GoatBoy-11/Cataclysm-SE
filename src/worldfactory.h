@@ -11,6 +11,7 @@
 #include "options.h"
 #include "pimpl.h"
 #include "type_id.h"
+#include "ui_mouse.h"
 #include "world.h"
 
 enum class special_game_type;
@@ -101,7 +102,8 @@ class worldfactory
         static void draw_empty_worldgen_tabs( const catacurses::window &w );
         void draw_mod_list( const catacurses::window &w, int &start, size_t cursor,
                             const std::vector<mod_id> &mods, bool is_active_list, const std::string &text_if_empty,
-                            const catacurses::window &w_shift );
+                            const catacurses::window &w_shift,
+                            std::vector<ui_mouse::indexed_rectangle> *mouse_regions = nullptr );
 
         WORLDINFO *add_world( std::unique_ptr<WORLDINFO> retworld );
 

@@ -54,6 +54,7 @@
 #include "type_id.h"
 #include "ui.h"
 #include "ui_manager.h"
+#include "ui_mouse.h"
 #include "uistate.h"
 
 static const std::string flag_BLIND_NO_EFFECT( "BLIND_NO_EFFECT" );
@@ -669,6 +670,8 @@ static input_context make_crafting_context( bool highlight_unread_recipes )
         ctxt.register_action( "MARK_ALL_RECIPES_READ" );
         ctxt.register_action( "TOGGLE_UNREAD_RECIPES_FIRST" );
     }
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SELECT" );
     return ctxt;
 }
 
@@ -1472,7 +1475,91 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
 
         ui_manager::redraw();
         const int scroll_recipe_info_lines = catacurses::getmaxy( w_iteminfo ) - 4;
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
+
+        if( action == "MOUSE_MOVE" || action == "SELECT" ) {
+            const TAB_MODE mouse_mode = ( batch ) ? BATCH : ( filterstring.empty() ) ? NORMAL : FILTERED;
+            bool mouse_handled = false;
+
+            if( mouse_mode == NORMAL && !batch && filterstring.empty() ) {
+                if( const auto cell = ctxt.get_mouse_cell( w_head ) ) {
+                    std::vector<std::string> cat_labels;
+                    cat_labels.reserve( craft_cat_list.size() );
+                    for( const std::string &cat_val : craft_cat_list ) {
+                        cat_labels.push_back( is_cat_unread[cat_val] ?
+                                              normalized_names[cat_val] + " ⁺" : normalized_names[cat_val] );
+                    }
+                    const auto cat_it = std::ranges::find( craft_cat_list, tab.cur() );
+                    const int current_cat = cat_it == craft_cat_list.end() ? 0 :
+                                            static_cast<int>( std::distance( craft_cat_list.begin(), cat_it ) );
+                    if( const auto cat_idx = ui_mouse::hit_test_tabs(
+                            *cell, cat_labels, {
+                                .origin = point( 2, 0 ),
+                                .current_tab = current_cat,
+                                .max_width = getmaxx( w_head ),
+                            } ) ) {
+                        mouse_handled = true;
+                        if( action == "SELECT" ) {
+                            tab.set_index( *cat_idx );
+                            subtab = list_circularizer<std::string>( craft_subcat_list[tab.cur()] );
+                            recalc = true;
+                        }
+                    }
+                }
+
+                if( !mouse_handled ) {
+                    if( const auto cell = ctxt.get_mouse_cell( w_subhead ) ) {
+                        std::vector<std::string> sub_labels;
+                        for( const std::string &stt : craft_subcat_list[tab.cur()] ) {
+                            sub_labels.push_back( normalized_names[stt] );
+                        }
+                        const auto sub_it = std::ranges::find( craft_subcat_list[tab.cur()], subtab.cur() );
+                        const int current_sub = sub_it == craft_subcat_list[tab.cur()].end() ? 0 :
+                                                static_cast<int>( std::distance( craft_subcat_list[tab.cur()].begin(), sub_it ) );
+                        if( const auto sub_idx = ui_mouse::hit_test_subtabs( *cell, sub_labels,
+                                { .origin = point( 2, 0 ) } ) ) {
+                            const std::string &clicked = craft_subcat_list[tab.cur()][*sub_idx];
+                            if( !shown_recipes.empty_category( tab.cur(),
+                                    clicked != "CSC_ALL" ? clicked : "" ) ) {
+                                mouse_handled = true;
+                                if( action == "SELECT" ) {
+                                    subtab.set_index( *sub_idx );
+                                    recalc = true;
+                                }
+                            }
+                        }
+                        ( void )current_sub;
+                    }
+                }
+            }
+
+            if( !mouse_handled ) {
+                if( const auto cell = ctxt.get_mouse_cell( w_data ) ) {
+                    int scroll_min = 0;
+                    calcStartPos( scroll_min, line, dataLines, static_cast<int>( current.size() ) );
+                    if( const auto recipe_idx = ui_mouse::hit_test_list( *cell, {
+                            .origin = point( 2, 0 ),
+                            .width = getmaxx( w_data ) - 2,
+                            .entry_height = 1,
+                            .count = static_cast<int>( current.size() ),
+                            .offset = scroll_min,
+                            .visible_count = dataLines,
+                        } ) ) {
+                        mouse_handled = true;
+                        line = *recipe_idx;
+                        user_moved_line = highlight_unread_recipes;
+                        if( action == "SELECT" ) {
+                            action = "CONFIRM";
+                        }
+                    }
+                }
+            }
+
+            if( mouse_handled && action == "MOUSE_MOVE" ) {
+                continue;
+            }
+        }
+
         if( action == "SCROLL_RECIPE_INFO_UP" ) {
             recipe_info_scroll -= dataLines;
             item_info_scroll -= dataLines;

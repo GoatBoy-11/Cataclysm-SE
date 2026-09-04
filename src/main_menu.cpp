@@ -676,6 +676,8 @@ bool main_menu::opening_screen()
     ctxt.register_action( "PAGE_DOWN" );
     ctxt.register_action( "CONFIRM" );
     ctxt.register_action( "QUIT" );
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SELECT" );
 
     // for the menu shortcuts
     ctxt.register_action( "ANY_INPUT" );
@@ -712,6 +714,60 @@ bool main_menu::opening_screen()
         const size_t last_world_pos = world_generator->get_world_index( world_generator->last_world_name );
         std::string action = ctxt.handle_input();
         input_event sInput = ctxt.get_raw_input();
+
+        if( action == "MOUSE_MOVE" || action == "SELECT" ) {
+            if( const auto cell = ctxt.get_mouse_cell( w_open ) ) {
+                const point abs_cell = point( catacurses::getbegx( w_open ),
+                                              catacurses::getbegy( w_open ) ) + *cell;
+                bool mouse_handled = false;
+
+                for( const auto &[rec, pair] : main_menu_sub_button_map ) {
+                    if( !rec.contains( abs_cell ) ) {
+                        continue;
+                    }
+                    mouse_handled = true;
+                    if( sel1 != pair.first ) {
+                        sel1 = pair.first;
+                        sel_line = 0;
+                    }
+                    if( sel2 != pair.second ) {
+                        sel2 = pair.second;
+                        on_move();
+                    }
+                    if( action == "SELECT" ) {
+                        action = "CONFIRM";
+                    }
+                    break;
+                }
+
+                if( !mouse_handled ) {
+                    for( const auto &[rec, idx] : main_menu_button_map ) {
+                        if( !rec.contains( abs_cell ) ) {
+                            continue;
+                        }
+                        mouse_handled = true;
+                        if( sel1 != idx ) {
+                            sel1 = idx;
+                            sel2 = idx == getopt( main_menu_opts::LOADCHAR ) ? last_world_pos : 0;
+                            sel_line = 0;
+                            on_move();
+                        }
+                        if( action == "SELECT" ) {
+                            if( idx == getopt( main_menu_opts::HELP ) ) {
+                                action = "CONFIRM";
+                            } else if( idx == getopt( main_menu_opts::QUIT ) ) {
+                                action = "QUIT";
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                if( mouse_handled && action == "MOUSE_MOVE" ) {
+                    continue;
+                }
+            }
+        }
 
         // check automatic menu shortcuts
         for( int i = 0; static_cast<size_t>( i ) < vMenuHotkeys.size(); ++i ) {
