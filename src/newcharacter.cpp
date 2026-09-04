@@ -201,6 +201,17 @@ static int get_max_tabs( const profession_id &prof )
     return max;
 }
 
+enum struct tab_direction {
+    NONE,
+    FORWARD,
+    BACKWARD,
+    // A tab caption was clicked: go straight to that tab rather than a
+    // neighbour.  The destination rides in g_mouse_tab_target, which is set and
+    // consumed in the same pass, so it cannot survive into a later tab.
+    JUMP,
+    QUIT
+};
+
 static int g_mouse_tab_target = -1;
 
 auto take_mouse_tab_target() -> int
@@ -239,7 +250,7 @@ auto register_new_char_mouse( input_context &ctxt ) -> void
 
 auto handle_new_char_tab_mouse( input_context &ctxt, const catacurses::window &w,
                                 const std::string &action, const profession_id &prof,
-                                const std::string &current_tab ) -> bool
+                                const std::string &current_tab, tab_direction &retval ) -> bool
 {
     if( action != "MOUSE_MOVE" && action != "SELECT" ) {
         return false;
@@ -257,8 +268,16 @@ auto handle_new_char_tab_mouse( input_context &ctxt, const catacurses::window &w
                 } ) ) {
             if( action == "SELECT" && *tab_idx != current_idx ) {
                 g_mouse_tab_target = *tab_idx;
+                // Leave this tab through the normal return channel.  The
+                // caller's do/while ends on any non-NONE retval, and create()
+                // applies the jump inside its result switch.  Without this the
+                // click set the target and then fell through every action
+                // branch, so the loop spun and the tab never changed.
+                retval = tab_direction::JUMP;
             }
-            return action == "MOUSE_MOVE";
+            // Consume the event either way: a click on the tab already open is
+            // a no-op, not something the list handlers below should act on.
+            return true;
         }
     }
     return false;
@@ -287,13 +306,6 @@ auto handle_new_char_list_mouse( input_context &ctxt, const catacurses::window &
 } // namespace
 
 static int skill_increment_cost( const Character &u, const skill_id &skill );
-
-enum struct tab_direction {
-    NONE,
-    FORWARD,
-    BACKWARD,
-    QUIT
-};
 
 tab_direction set_points( avatar &u, points_left &points );
 tab_direction set_stats( avatar &u, points_left &points );
@@ -718,6 +730,9 @@ bool avatar::create( character_type type, const std::string &tempname )
     set_body();
     const bool allow_reroll = true;
     tab_direction result = tab_direction::QUIT;
+    // Discard any tab click left over from a creation that was abandoned before
+    // its jump could be consumed.
+    take_mouse_tab_target();
     do {
         if( !interactive ) {
             // no window is created because "Play now"  does not require any configuration
@@ -799,14 +814,24 @@ bool avatar::create( character_type type, const std::string &tempname )
             case tab_direction::BACKWARD:
                 tab--;
                 break;
+            case tab_direction::JUMP: {
+                // Applied inside the switch rather than after it.  The previous
+                // version ran unconditionally on every iteration, so a pending
+                // target overwrote QUIT's tab = -1 and the out-of-range tab that
+                // finishing the last tab produces - the player could not leave
+                // character creation at all.
+                const int target = take_mouse_tab_target();
+                if( target >= 0 ) {
+                    tab = target;
+                }
+                // set_scenario and set_profession read the previous result as
+                // the direction the tab was entered from; JUMP is not one.
+                result = tab_direction::NONE;
+                break;
+            }
             case tab_direction::QUIT:
                 tab = -1;
                 break;
-        }
-
-        if( const int jump = take_mouse_tab_target(); jump >= 0 ) {
-            tab = jump;
-            result = tab_direction::NONE;
         }
 
         if( !( tab >= 0 && tab <= get_max_tabs( prof ) ) ) {
@@ -1071,7 +1096,12 @@ tab_direction set_points( avatar &u, points_left &points )
         }
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "POINTS" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "POINTS" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
         if( handle_new_char_list_mouse( ctxt, w, action, {
@@ -1267,7 +1297,12 @@ tab_direction set_stats( avatar &u, points_left &points )
     do {
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "STATS" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "STATS" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
         if( const auto cell = ctxt.get_mouse_cell( w ) ) {
@@ -1636,7 +1671,12 @@ tab_direction set_traits( avatar &u, points_left &points )
     do {
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "TRAITS" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "TRAITS" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
         if( const auto cell = ctxt.get_mouse_cell( w ) ) {
@@ -2100,7 +2140,12 @@ tab_direction set_bionics( avatar &u, points_left &points )
     do {
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "BIONICS" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "BIONICS" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
         if( const auto cell = ctxt.get_mouse_cell( w ) ) {
@@ -2746,7 +2791,12 @@ tab_direction set_profession( avatar &u, points_left &points,
 
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "PROFESSION" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "PROFESSION" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
         if( handle_new_char_list_mouse( ctxt, w, action, {
@@ -3053,7 +3103,12 @@ tab_direction set_skills( avatar &u, points_left &points )
     do {
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "SKILLS" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "SKILLS" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
         bool skill_mouse_move = false;
@@ -3274,7 +3329,12 @@ tab_direction set_magic( avatar &u, points_left &points )
     do {
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "MAGIC" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "MAGIC" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
         bool spell_mouse_move = false;
@@ -3681,7 +3741,12 @@ tab_direction set_scenario( avatar &u, points_left &points,
 
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "SCENARIO" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, u.prof, _( "SCENARIO" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
         if( handle_new_char_list_mouse( ctxt, w, action, {
@@ -4313,7 +4378,12 @@ tab_direction set_description( avatar &you, const bool allow_reroll,
         you.set_base_age( clamp( you.base_age(), min_allowed_age, max_allowed_age ) );
         ui_manager::redraw();
         std::string action = ctxt.handle_input();
-        if( handle_new_char_tab_mouse( ctxt, w, action, you.prof, _( "OVERVIEW" ) ) ) {
+        tab_direction mouse_jump = tab_direction::NONE;
+        if( handle_new_char_tab_mouse( ctxt, w, action, you.prof, _( "OVERVIEW" ),
+                                       mouse_jump ) ) {
+            if( mouse_jump != tab_direction::NONE ) {
+                return mouse_jump;
+            }
             continue;
         }
 #if defined(TILES)

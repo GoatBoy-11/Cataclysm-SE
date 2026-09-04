@@ -922,6 +922,11 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
     const auto &all_recipes = recipe_subset( {}, all_recipes_flat );
 
     int recipe_scroll_window_min = 0;
+    // Width of the recipe-name column.  Shared with the mouse hit test below:
+    // the detail pane is drawn into the same window on the same rows, starting
+    // just right of this column, so a hit region spanning the whole window
+    // turned clicks on the detail text into clicks on a recipe.
+    const int max_recipe_name_width = 27;
     ui.on_redraw( [&]( ui_adaptor & ui ) {
         int lost_width = 0;
         // Need to do this to get the width
@@ -961,7 +966,6 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
         mvwputch( w_data, point( 0, dataHeight - 1 ), BORDER_COLOR, LINE_XXOO ); // |_
         mvwputch( w_data, point( width - 1, dataHeight - 1 ), BORDER_COLOR, LINE_XOOX ); // _|
 
-        const int max_recipe_name_width = 27;
         int recmax = current.size();
 
         // Draw recipes with scroll list
@@ -1539,7 +1543,11 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
                     calcStartPos( scroll_min, line, dataLines, static_cast<int>( current.size() ) );
                     if( const auto recipe_idx = ui_mouse::hit_test_list( *cell, {
                             .origin = point( 2, 0 ),
-                            .width = getmaxx( w_data ) - 2,
+                            // Only the name column is clickable.  The recipe
+                            // detail pane shares this window and these rows,
+                            // so the full window width made clicking the
+                            // detail text craft whatever recipe shared the row.
+                            .width = max_recipe_name_width,
                             .entry_height = 1,
                             .count = static_cast<int>( current.size() ),
                             .offset = scroll_min,

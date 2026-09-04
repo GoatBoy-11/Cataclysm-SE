@@ -795,12 +795,12 @@ void worldfactory::show_active_world_mods( const std::vector<mod_id> &world_mods
         if( action == "MOUSE_MOVE" || action == "SELECT" ) {
             if( const auto cell = ctxt.get_mouse_cell( w_mods ) ) {
                 if( const auto idx = ui_mouse::hit_test_rectangles( *cell, mod_list_regions ) ) {
+                    // Cursor only.  This dialog is read-only and its CONFIRM is
+                    // the close action, so rewriting SELECT to CONFIRM - as the
+                    // activating lists elsewhere do - dismissed the window on
+                    // the first click on any row.
                     cursor = *idx;
-                    if( action == "SELECT" ) {
-                        action = "CONFIRM";
-                    } else {
-                        continue;
-                    }
+                    continue;
                 }
             }
         }
