@@ -75,6 +75,18 @@ class worldfactory
         void delete_world( const std::string &worldname, bool delete_folder );
 
         static void draw_worldgen_tabs( const catacurses::window &w, size_t current );
+        /** The worldgen tab captions, translated.  Shared by the drawing and the
+         *  mouse hit test so the two cannot drift apart. */
+        static std::vector<std::string> worldgen_tab_labels();
+        /**
+         * Hit-test a click against the worldgen tab bar drawn by
+         * draw_worldgen_tabs().  Returns how far to move from @p current to
+         * reach the clicked tab - the worldgen tabs report movement, not an
+         * absolute index - or nothing when the click missed the bar or landed
+         * on the tab already open.
+         */
+        static std::optional<int> worldgen_tab_click_delta( const catacurses::window &w,
+                const point &cell, size_t current );
         void show_active_world_mods( const std::vector<mod_id> &world_mods );
         void edit_active_world_mods( WORLDINFO *world );
 

@@ -3908,6 +3908,10 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
     ctxt.register_action( "PREV_TAB" );
     ctxt.register_action( "CONFIRM" );
     ctxt.register_action( "HELP_KEYBINDINGS" );
+    // Only meaningful in worldgen mode, where this page is a tab and the strip
+    // above it should be clickable like the other worldgen tabs.
+    ctxt.register_action( "SELECT" );
+    ctxt.register_action( "MOUSE_MOVE" );
 
     const int iWorldOffset = world_options_only ? 2 : 0;
     int iMinScreenWidth = 0;
@@ -4139,6 +4143,17 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
         if( world_options_only && ( action == "NEXT_TAB" || action == "PREV_TAB" ||
                                     ( action == "QUIT" && ( !on_quit || on_quit() ) ) ) ) {
             return action;
+        }
+
+        if( world_options_only && action == "SELECT" ) {
+            if( const auto cell = ctxt.get_mouse_cell( w_options_border ) ) {
+                // This page is worldgen tab 1, so both of its neighbours are one
+                // step away and expressible as the tab actions show() reports.
+                if( const auto delta =
+                        worldfactory::worldgen_tab_click_delta( w_options_border, *cell, 1 ) ) {
+                    return *delta < 0 ? "PREV_TAB" : "NEXT_TAB";
+                }
+            }
         }
 
         const PageItem &curr_item = page_items[iCurrentLine];
