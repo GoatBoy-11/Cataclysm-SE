@@ -51369,6 +51369,1200 @@
           "fg": 30632
         }
       ]
+    },
+    {
+      "file": "civilian_variety_normal.png",
+      "//": "range 30648 to 30903 - civilian_variety sheet, imported from the mod of the same name; indices are absolute across the whole tileset",
+      "sprite_width": 32,
+      "sprite_height": 32,
+      "sprite_offset_x": 0,
+      "sprite_offset_y": 0,
+      "tiles": [
+        {
+          "id": "mon_cv_bystander",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30649
+            },
+            {
+              "weight": 1,
+              "sprite": 30650
+            },
+            {
+              "weight": 1,
+              "sprite": 30651
+            },
+            {
+              "weight": 1,
+              "sprite": 30652
+            },
+            {
+              "weight": 1,
+              "sprite": 30653
+            },
+            {
+              "weight": 1,
+              "sprite": 30654
+            },
+            {
+              "weight": 1,
+              "sprite": 30655
+            },
+            {
+              "weight": 1,
+              "sprite": 30656
+            },
+            {
+              "weight": 1,
+              "sprite": 30657
+            },
+            {
+              "weight": 1,
+              "sprite": 30658
+            },
+            {
+              "weight": 1,
+              "sprite": 30659
+            },
+            {
+              "weight": 1,
+              "sprite": 30660
+            },
+            {
+              "weight": 1,
+              "sprite": 30661
+            },
+            {
+              "weight": 1,
+              "sprite": 30662
+            },
+            {
+              "weight": 1,
+              "sprite": 30663
+            },
+            {
+              "weight": 1,
+              "sprite": 30664
+            },
+            {
+              "weight": 1,
+              "sprite": 30665
+            },
+            {
+              "weight": 1,
+              "sprite": 30666
+            },
+            {
+              "weight": 1,
+              "sprite": 30667
+            },
+            {
+              "weight": 1,
+              "sprite": 30668
+            },
+            {
+              "weight": 1,
+              "sprite": 30669
+            },
+            {
+              "weight": 1,
+              "sprite": 30670
+            },
+            {
+              "weight": 1,
+              "sprite": 30671
+            },
+            {
+              "weight": 1,
+              "sprite": 30672
+            },
+            {
+              "weight": 1,
+              "sprite": 30673
+            },
+            {
+              "weight": 1,
+              "sprite": 30674
+            },
+            {
+              "weight": 1,
+              "sprite": 30675
+            },
+            {
+              "weight": 1,
+              "sprite": 30676
+            },
+            {
+              "weight": 1,
+              "sprite": 30677
+            },
+            {
+              "weight": 1,
+              "sprite": 30678
+            },
+            {
+              "weight": 1,
+              "sprite": 30679
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_mechanic",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30680
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_construction_worker",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30681
+            },
+            {
+              "weight": 1,
+              "sprite": 30682
+            },
+            {
+              "weight": 1,
+              "sprite": 30683
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_sex_worker",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30684
+            },
+            {
+              "weight": 1,
+              "sprite": 30685
+            },
+            {
+              "weight": 1,
+              "sprite": 30686
+            },
+            {
+              "weight": 1,
+              "sprite": 30687
+            },
+            {
+              "weight": 1,
+              "sprite": 30688
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_firefighter",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30689
+            },
+            {
+              "weight": 1,
+              "sprite": 30690
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_businessman",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30691
+            },
+            {
+              "weight": 1,
+              "sprite": 30692
+            },
+            {
+              "weight": 1,
+              "sprite": 30693
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_businesswoman",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30694
+            },
+            {
+              "weight": 1,
+              "sprite": 30695
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_doctor",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30696
+            },
+            {
+              "weight": 1,
+              "sprite": 30697
+            },
+            {
+              "weight": 1,
+              "sprite": 30698
+            },
+            {
+              "weight": 1,
+              "sprite": 30699
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_doctor_f",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30700
+            },
+            {
+              "weight": 1,
+              "sprite": 30701
+            },
+            {
+              "weight": 1,
+              "sprite": 30702
+            },
+            {
+              "weight": 1,
+              "sprite": 30703
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_nurse",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30704
+            },
+            {
+              "weight": 1,
+              "sprite": 30705
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_office_worker",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30706
+            },
+            {
+              "weight": 1,
+              "sprite": 30707
+            },
+            {
+              "weight": 1,
+              "sprite": 30708
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_office_worker_f",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30709
+            },
+            {
+              "weight": 1,
+              "sprite": 30710
+            },
+            {
+              "weight": 1,
+              "sprite": 30711
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_bystander_fat",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30712
+            },
+            {
+              "weight": 1,
+              "sprite": 30713
+            },
+            {
+              "weight": 1,
+              "sprite": 30714
+            },
+            {
+              "weight": 1,
+              "sprite": 30715
+            },
+            {
+              "weight": 1,
+              "sprite": 30716
+            },
+            {
+              "weight": 1,
+              "sprite": 30717
+            },
+            {
+              "weight": 1,
+              "sprite": 30718
+            },
+            {
+              "weight": 1,
+              "sprite": 30719
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_bystander_fat_f",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30720
+            },
+            {
+              "weight": 1,
+              "sprite": 30721
+            },
+            {
+              "weight": 1,
+              "sprite": 30722
+            },
+            {
+              "weight": 1,
+              "sprite": 30723
+            },
+            {
+              "weight": 1,
+              "sprite": 30724
+            },
+            {
+              "weight": 1,
+              "sprite": 30725
+            },
+            {
+              "weight": 1,
+              "sprite": 30726
+            },
+            {
+              "weight": 1,
+              "sprite": 30727
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_geek",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30728
+            },
+            {
+              "weight": 1,
+              "sprite": 30729
+            },
+            {
+              "weight": 1,
+              "sprite": 30730
+            },
+            {
+              "weight": 1,
+              "sprite": 30731
+            },
+            {
+              "weight": 1,
+              "sprite": 30732
+            },
+            {
+              "weight": 1,
+              "sprite": 30733
+            },
+            {
+              "weight": 1,
+              "sprite": 30734
+            },
+            {
+              "weight": 1,
+              "sprite": 30735
+            },
+            {
+              "weight": 1,
+              "sprite": 30736
+            },
+            {
+              "weight": 1,
+              "sprite": 30737
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_farmer",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30738
+            },
+            {
+              "weight": 1,
+              "sprite": 30739
+            },
+            {
+              "weight": 1,
+              "sprite": 30740
+            },
+            {
+              "weight": 1,
+              "sprite": 30741
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_farmer_f",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30742
+            },
+            {
+              "weight": 1,
+              "sprite": 30743
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_biker_knife",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30744
+            },
+            {
+              "weight": 1,
+              "sprite": 30745
+            },
+            {
+              "weight": 1,
+              "sprite": 30746
+            },
+            {
+              "weight": 1,
+              "sprite": 30747
+            },
+            {
+              "weight": 1,
+              "sprite": 30748
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_swat",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30749
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_police",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30750
+            },
+            {
+              "weight": 1,
+              "sprite": 30751
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_clown",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30752
+            },
+            {
+              "weight": 1,
+              "sprite": 30753
+            },
+            {
+              "weight": 1,
+              "sprite": 30754
+            },
+            {
+              "weight": 1,
+              "sprite": 30755
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_clown",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30756
+            },
+            {
+              "weight": 1,
+              "sprite": 30757
+            },
+            {
+              "weight": 1,
+              "sprite": 30758
+            },
+            {
+              "weight": 1,
+              "sprite": 30759
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "cv_photo",
+          "fg": 30776,
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_nerd",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30760
+            },
+            {
+              "weight": 1,
+              "sprite": 30761
+            },
+            {
+              "weight": 1,
+              "sprite": 30762
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_bystander_panicked",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30763
+            },
+            {
+              "weight": 1,
+              "sprite": 30764
+            },
+            {
+              "weight": 1,
+              "sprite": 30765
+            },
+            {
+              "weight": 1,
+              "sprite": 30766
+            },
+            {
+              "weight": 1,
+              "sprite": 30767
+            },
+            {
+              "weight": 1,
+              "sprite": 30768
+            },
+            {
+              "weight": 1,
+              "sprite": 30769
+            },
+            {
+              "weight": 1,
+              "sprite": 30770
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "cv_manga_adult",
+          "fg": 30777,
+          "rotates": false
+        },
+        {
+          "id": "cv_manga_slice",
+          "fg": 30778,
+          "rotates": false
+        },
+        {
+          "id": "cv_manga_shojo",
+          "fg": 30779,
+          "rotates": false
+        },
+        {
+          "id": "cv_manga_shonen",
+          "fg": 30780,
+          "rotates": false
+        },
+        {
+          "id": "cv_mag_alien",
+          "fg": 30781,
+          "rotates": false
+        },
+        {
+          "id": "cv_comic_hero",
+          "fg": 30782,
+          "rotates": false
+        },
+        {
+          "id": "cv_figure_boxed",
+          "fg": 30783,
+          "rotates": false
+        },
+        {
+          "id": "cv_figure_wolfgirl",
+          "fg": 30784,
+          "rotates": false
+        },
+        {
+          "id": "cv_pillow_singer",
+          "fg": 30785,
+          "rotates": false
+        },
+        {
+          "id": "cv_mag_shonen_weekly",
+          "fg": 30787,
+          "rotates": false
+        },
+        {
+          "id": "cv_figure_mecha",
+          "fg": 30788,
+          "rotates": false
+        },
+        {
+          "id": "cv_pillow_anime",
+          "fg": 30789,
+          "rotates": false
+        },
+        {
+          "id": "cv_doll_mariner",
+          "fg": 30791,
+          "rotates": false
+        },
+        {
+          "id": "overlay_wielded_cv_pillow_singer",
+          "fg": 30786,
+          "rotates": false
+        },
+        {
+          "id": "overlay_wielded_cv_pillow_anime",
+          "fg": 30790,
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_elderly",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30771
+            },
+            {
+              "weight": 1,
+              "sprite": 30772
+            },
+            {
+              "weight": 1,
+              "sprite": 30773
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_elderly_f",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30774
+            },
+            {
+              "weight": 1,
+              "sprite": 30775
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_priest",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30792
+            },
+            {
+              "weight": 1,
+              "sprite": 30793
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_nun",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30794
+            },
+            {
+              "weight": 1,
+              "sprite": 30795
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_priest",
+          "fg": 30796,
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_nun",
+          "fg": 30797,
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_shopkeeper",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30798
+            },
+            {
+              "weight": 1,
+              "sprite": 30799
+            },
+            {
+              "weight": 1,
+              "sprite": 30800
+            },
+            {
+              "weight": 1,
+              "sprite": 30801
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "cv_body_stripped",
+          "fg": 30802,
+          "rotates": false
+        },
+        {
+          "id": "cv_body_plain",
+          "fg": 30803,
+          "rotates": false
+        },
+        {
+          "id": "cv_body_bloodied",
+          "fg": 30804,
+          "rotates": false
+        },
+        {
+          "id": "cv_body_bloodied_alt",
+          "fg": 30805,
+          "rotates": false
+        },
+        {
+          "id": "cv_body_eaten",
+          "fg": 30806,
+          "rotates": false
+        },
+        {
+          "id": "cv_body_halved",
+          "fg": 30807,
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_retail",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30808
+            },
+            {
+              "weight": 1,
+              "sprite": 30809
+            },
+            {
+              "weight": 1,
+              "sprite": 30810
+            },
+            {
+              "weight": 1,
+              "sprite": 30811
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_retail_f",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30812
+            },
+            {
+              "weight": 1,
+              "sprite": 30813
+            },
+            {
+              "weight": 1,
+              "sprite": 30814
+            },
+            {
+              "weight": 1,
+              "sprite": 30815
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_retail",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30816
+            },
+            {
+              "weight": 1,
+              "sprite": 30817
+            },
+            {
+              "weight": 1,
+              "sprite": 30818
+            },
+            {
+              "weight": 1,
+              "sprite": 30819
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_mallcop",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30820
+            },
+            {
+              "weight": 1,
+              "sprite": 30821
+            },
+            {
+              "weight": 1,
+              "sprite": 30822
+            },
+            {
+              "weight": 1,
+              "sprite": 30823
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "cv_shirt_security",
+          "fg": 30824,
+          "rotates": false
+        },
+        {
+          "id": "overlay_female_worn_cv_shirt_security",
+          "fg": 30825,
+          "rotates": false
+        },
+        {
+          "id": "overlay_male_worn_cv_shirt_security",
+          "fg": 30826,
+          "rotates": false
+        },
+        {
+          "id": "cv_scrubs",
+          "fg": 30827,
+          "rotates": false
+        },
+        {
+          "id": "overlay_worn_cv_scrubs",
+          "fg": 30828,
+          "rotates": false
+        },
+        {
+          "id": "cv_shirt_retail",
+          "fg": 30829,
+          "rotates": false
+        },
+        {
+          "id": "overlay_female_worn_cv_shirt_retail",
+          "fg": 30830,
+          "rotates": false
+        },
+        {
+          "id": "overlay_male_worn_cv_shirt_retail",
+          "fg": 30831,
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_mallcop",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30832
+            },
+            {
+              "weight": 1,
+              "sprite": 30833
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_doctor",
+          "fg": 30834,
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_butler",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30835
+            },
+            {
+              "weight": 1,
+              "sprite": 30836
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_maid",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30837
+            },
+            {
+              "weight": 1,
+              "sprite": 30838
+            },
+            {
+              "weight": 1,
+              "sprite": 30839
+            },
+            {
+              "weight": 1,
+              "sprite": 30840
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_butler",
+          "fg": 30841,
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_zombie_maid",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30842
+            },
+            {
+              "weight": 1,
+              "sprite": 30843
+            }
+          ],
+          "rotates": false
+        }
+      ]
+    },
+    {
+      "file": "civilian_variety_biker_handgun.png",
+      "//": "range 30904 to 30909 - civilian_variety sheet, imported from the mod of the same name; indices are absolute across the whole tileset",
+      "sprite_width": 32,
+      "sprite_height": 48,
+      "sprite_offset_x": 0,
+      "sprite_offset_y": -16,
+      "tiles": [
+        {
+          "id": "mon_cv_biker_pistol",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30904
+            },
+            {
+              "weight": 1,
+              "sprite": 30905
+            },
+            {
+              "weight": 1,
+              "sprite": 30906
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_biker_pistol_f",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30907
+            },
+            {
+              "weight": 1,
+              "sprite": 30908
+            },
+            {
+              "weight": 1,
+              "sprite": 30909
+            }
+          ],
+          "rotates": false
+        }
+      ]
+    },
+    {
+      "file": "civilian_variety_biker_shotgun.png",
+      "//": "range 30910 to 30915 - civilian_variety sheet, imported from the mod of the same name; indices are absolute across the whole tileset",
+      "sprite_width": 32,
+      "sprite_height": 48,
+      "sprite_offset_x": 0,
+      "sprite_offset_y": -16,
+      "tiles": [
+        {
+          "id": "mon_cv_biker_shotgun",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30910
+            },
+            {
+              "weight": 1,
+              "sprite": 30911
+            },
+            {
+              "weight": 1,
+              "sprite": 30912
+            },
+            {
+              "weight": 1,
+              "sprite": 30913
+            },
+            {
+              "weight": 1,
+              "sprite": 30914
+            },
+            {
+              "weight": 1,
+              "sprite": 30915
+            }
+          ],
+          "rotates": false
+        },
+        {
+          "id": "mon_cv_biker_rifle",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30910
+            },
+            {
+              "weight": 1,
+              "sprite": 30911
+            },
+            {
+              "weight": 1,
+              "sprite": 30912
+            },
+            {
+              "weight": 1,
+              "sprite": 30913
+            },
+            {
+              "weight": 1,
+              "sprite": 30914
+            },
+            {
+              "weight": 1,
+              "sprite": 30915
+            }
+          ],
+          "rotates": false
+        }
+      ]
+    },
+    {
+      "file": "civilian_variety_cop_handgun.png",
+      "//": "range 30916 to 30921 - civilian_variety sheet, imported from the mod of the same name; indices are absolute across the whole tileset",
+      "sprite_width": 32,
+      "sprite_height": 48,
+      "sprite_offset_x": 0,
+      "sprite_offset_y": -16,
+      "tiles": [
+        {
+          "id": "mon_cv_cop_pistol",
+          "fg": [
+            {
+              "weight": 1,
+              "sprite": 30916
+            },
+            {
+              "weight": 1,
+              "sprite": 30917
+            },
+            {
+              "weight": 1,
+              "sprite": 30918
+            },
+            {
+              "weight": 1,
+              "sprite": 30919
+            }
+          ],
+          "rotates": false
+        }
+      ]
     }
   ]
 }
