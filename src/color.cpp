@@ -2,6 +2,7 @@
 
 #include <algorithm> // for std::count
 #include <cstdlib>
+#include <optional>
 #include <iterator>
 #include <map>
 #include <vector>
@@ -21,6 +22,7 @@
 #include "translations.h"
 #include "ui.h"
 #include "ui_manager.h"
+#include "ui_mouse.h"
 
 void nc_color::serialize( JsonOut &jsout ) const
 {
@@ -793,6 +795,10 @@ void color_manager::show_gui()
     ctxt.register_action( "REMOVE_CUSTOM" );
     ctxt.register_action( "LOAD_TEMPLATE" );
     ctxt.register_action( "HELP_KEYBINDINGS" );
+    ctxt.register_action( "SELECT" );
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SCROLL_UP" );
+    ctxt.register_action( "SCROLL_DOWN" );
 
     std::map<std::string, color_struct> name_color_map;
 
@@ -876,12 +882,30 @@ void color_manager::show_gui()
 
         if( action == "QUIT" ) {
             break;
-        } else if( action == "UP" ) {
+        } else if( action == "SELECT" ) {
+            // A cell is a row and a column, so a click sets both. Confirm still
+            // opens the picker; the click only points at what it will open.
+            if( const std::optional<point> cell = ctxt.get_mouse_cell( w_colors ) ) {
+                const std::optional<int> row = ui_mouse::hit_test_list( *cell, ui_mouse::list_options{
+                    .origin = point_zero,
+                    .width = getmaxx( w_colors ),
+                    .entry_height = 1,
+                    .count = iMaxColors,
+                    .offset = iStartPos,
+                    .visible_count = iContentHeight,
+                } );
+                const std::optional<int> col = ui_mouse::hit_test_columns( cell->x, vLines );
+                if( row && col ) {
+                    iCurrentLine = *row;
+                    iCurrentCol = *col;
+                }
+            }
+        } else if( action == "UP" || action == "SCROLL_UP" ) {
             iCurrentLine--;
             if( iCurrentLine < 0 ) {
                 iCurrentLine = iMaxColors - 1;
             }
-        } else if( action == "DOWN" ) {
+        } else if( action == "DOWN" || action == "SCROLL_DOWN" ) {
             iCurrentLine++;
             if( iCurrentLine >= static_cast<int>( iMaxColors ) ) {
                 iCurrentLine = 0;

@@ -70,4 +70,25 @@ auto subtab_rectangles( const std::vector<std::string> &labels,
 auto hit_test_subtabs( point cell, const std::vector<std::string> &labels,
                        const subtab_options &opts ) -> std::optional<int>;
 
+struct positioned_label {
+    std::string text;
+    point pos;
+};
+
+/// Build hit regions for single-line labels already positioned by their owner,
+/// such as the option buttons cached by `query_popup`. `origin` is added to
+/// every position, so callers can pass content-relative positions plus the
+/// window border offset. Color tags are markup rather than screen cells and
+/// are not counted towards a label's width.
+auto label_rectangles( std::span<const positioned_label> labels, point origin ) ->
+std::vector<indexed_rectangle>;
+
+auto hit_test_labels( point cell, std::span<const positioned_label> labels,
+                      point origin ) -> std::optional<int>;
+
+/// One-based column index for `x`, given the separator positions a table draws
+/// between its columns: column i covers x in ( separators[i-1], separators[i] ].
+/// Returns nullopt for an x left of the first column.
+auto hit_test_columns( int x, std::span<const int> separators ) -> std::optional<int>;
+
 } // namespace ui_mouse

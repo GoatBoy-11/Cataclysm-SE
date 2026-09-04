@@ -307,14 +307,14 @@
     "id": "SCROLL_UP",
     "category": "PICKUP",
     "name": "Scroll item info up",
-    "bindings": [ { "input_method": "keyboard", "key": "PPAGE" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "PPAGE" }, { "input_method": "mouse", "key": "SCROLL_UP" } ]
   },
   {
     "type": "keybinding",
     "id": "SCROLL_DOWN",
     "category": "PICKUP",
     "name": "Scroll item info down",
-    "bindings": [ { "input_method": "keyboard", "key": "NPAGE" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "NPAGE" }, { "input_method": "mouse", "key": "SCROLL_DOWN" } ]
   },
   {
     "type": "keybinding",

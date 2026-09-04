@@ -3406,8 +3406,17 @@ static void CheckMessages()
                         SDL_ShowCursor();
                     }
 
-                    // Only monitor motion when cursor is visible
-                    last_input = input_event( MOUSE_MOVE, input_event_t::mouse );
+                    // Only monitor motion when cursor is visible, and only when
+                    // nothing better has been captured yet. This loop drains the
+                    // whole event queue into a single `last_input`, so a motion
+                    // event arriving after a keypress would destroy it, and a
+                    // moving mouse produces motion events continuously -- keys
+                    // would be dropped for as long as the mouse kept moving.
+                    // Motion carries no position of its own, since `mouse_pos` is
+                    // read from SDL after this loop, so dropping one costs nothing.
+                    if( last_input.type == input_event_t::error ) {
+                        last_input = input_event( MOUSE_MOVE, input_event_t::mouse );
+                    }
                 }
                 break;
 
@@ -4022,6 +4031,11 @@ input_event input_manager::get_input_event()
         SDL_GetMouseState( &mx, &my );
         last_input.mouse_pos.x = static_cast<int>( mx );
         last_input.mouse_pos.y = static_cast<int>( my );
+        // Read alongside the position, and for the same reason: the event itself
+        // carries neither, and callers that want them want the state as of now.
+        const SDL_Keymod mods = SDL_GetModState();
+        last_input.mouse_ctrl = ( mods & SDL_KMOD_CTRL ) != 0;
+        last_input.mouse_shift = ( mods & SDL_KMOD_SHIFT ) != 0;
     } else if( last_input.type == input_event_t::keyboard ) {
         previously_pressed_key = last_input.get_first_input();
 #if defined(__ANDROID__)

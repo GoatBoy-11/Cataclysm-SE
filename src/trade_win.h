@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "cursesdef.h"
@@ -50,6 +51,12 @@ class trading_window
         size_t you_category_cursor = 0;
         std::vector<size_t> them_filtered;
         std::vector<size_t> you_filtered;
+        // Pairs of (screen row, index into the matching filtered list), recorded
+        // while drawing. Category headings occupy rows of their own, so a click
+        // cannot be resolved as offset + row; recording the mapping during the
+        // draw keeps a click on exactly the entry that was displayed.
+        std::vector<std::pair<int, size_t>> them_row_entries;
+        std::vector<std::pair<int, size_t>> you_row_entries;
         std::string them_filter;
         std::string you_filter;
         bool filter_edit = false;

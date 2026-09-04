@@ -41,6 +41,7 @@
 #include "title_screen.h"
 #include "translations.h"
 #include "ui_manager.h"
+#include "ui_mouse.h"
 #include "worldfactory.h"
 
 #if defined(TILES)
@@ -3893,6 +3894,13 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
     int iCurrentPage = world_options_only ? iWorldOptPage : 0;
     int iCurrentLine = 0;
     int iStartPos = 0;
+    // Screen row -> index into the current page's items, recorded while drawing.
+    // Group headers and collapsed groups mean a row is not iStartPos + row, and
+    // getting that wrong would silently edit a different option than the one
+    // clicked, so the mapping is taken from the draw rather than recomputed.
+    std::vector<int> row_items;
+    // Tab labels as drawn, for hit testing the page strip.
+    std::vector<std::string> tab_labels;
 
     std::unordered_map<std::string, bool> groups_state;
     groups_state.emplace( "", true ); // Non-existent group
@@ -3912,6 +3920,8 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
     // above it should be clickable like the other worldgen tabs.
     ctxt.register_action( "SELECT" );
     ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SCROLL_UP" );
+    ctxt.register_action( "SCROLL_DOWN" );
 
     const int iWorldOffset = world_options_only ? 2 : 0;
     int iMinScreenWidth = 0;
@@ -4068,11 +4078,13 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
         const size_t name_width = value_col - name_col - 2 - 3;
         const size_t value_width = getmaxx( w_options ) - value_col;
         // Draw options
+        row_items.clear();
         for( int i = iStartPos;
              i < iStartPos + ( iContentHeight > static_cast<int>( visible_items.size() ) ?
                                static_cast<int>( visible_items.size() ) : iContentHeight ); i++ ) {
 
             int line_pos = i - iStartPos; // Current line position in window.
+            row_items.push_back( visible_items[i] );
 
             mvwprintz( w_options, point( 1, line_pos ), c_white, "%d", visible_items[i] + 1 );
 
@@ -4099,12 +4111,15 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
         //Draw Tabs
         if( !world_options_only ) {
             mvwprintz( w_options_header, point( 7, 0 ), c_white, "" );
+            tab_labels.clear();
             for( int i = 0; i < static_cast<int>( pages_.size() ); i++ ) {
                 wprintz( w_options_header, c_white, "[" );
                 if( ingame && i == iWorldOptPage ) {
+                    tab_labels.emplace_back( _( "Current world" ) );
                     wprintz( w_options_header, iCurrentPage == i ? hilite( c_light_green ) : c_light_green,
                              _( "Current world" ) );
                 } else {
+                    tab_labels.emplace_back( pages_[i].name_.translated() );
                     wprintz( w_options_header, iCurrentPage == i ? hilite( c_light_green ) : c_light_green,
                              "%s", pages_[i].name_ );
                 }
@@ -4138,7 +4153,7 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
         auto &cOPTIONS = ( ingame || world_options_only ) && iCurrentPage == iWorldOptPage ?
                          ACTIVE_WORLD_OPTIONS : OPTIONS;
 
-        const std::string action = ctxt.handle_input();
+        std::string action = ctxt.handle_input();
 
         if( world_options_only && ( action == "NEXT_TAB" || action == "PREV_TAB" ||
                                     ( action == "QUIT" && ( !on_quit || on_quit() ) ) ) ) {
@@ -4153,6 +4168,56 @@ std::string options_manager::show( bool ingame, const bool world_options_only,
                         worldfactory::worldgen_tab_click_delta( w_options_border, *cell, 1 ) ) {
                     return *delta < 0 ? "PREV_TAB" : "NEXT_TAB";
                 }
+            }
+        }
+
+        // Resolve a click before `curr_item` is bound below, so that clicking a
+        // row and acting on it happen against the row that was clicked. The
+        // wheel is mapped onto UP/DOWN so it inherits their skipping of blank
+        // lines and collapsed groups.
+        if( action == "SCROLL_UP" ) {
+            action = "UP";
+        } else if( action == "SCROLL_DOWN" ) {
+            action = "DOWN";
+        } else if( action == "SELECT" ) {
+            bool consumed = false;
+            // The page tab strip is only drawn outside worldgen; the worldgen tab
+            // click above has already had its chance at this event.
+            if( const auto cell = !world_options_only
+                                  ? ctxt.get_mouse_cell( w_options_header )
+                                  : std::nullopt ) {
+                // Tabs are drawn as "[name]" from x 7, each followed by a single
+                // separator column.
+                if( const auto tab = ui_mouse::hit_test_bracket_tabs( *cell, tab_labels,
+                        ui_mouse::bracket_tab_options{ .origin = point( 7, 0 ), .separator_width = 1 } ) ) {
+                    if( *tab != iCurrentPage ) {
+                        iCurrentPage = *tab;
+                        iCurrentLine = 0;
+                        iStartPos = 0;
+                        sfx::play_variant_sound( "menu_move", "default", 100 );
+                    }
+                    consumed = true;
+                }
+            }
+            if( !consumed ) {
+                if( const auto cell = ctxt.get_mouse_cell( w_options ) ) {
+                    const int row = cell->y;
+                    if( row >= 0 && row < static_cast<int>( row_items.size() ) ) {
+                        iCurrentLine = row_items[row];
+                        // Clicking the value column operates the value; clicking
+                        // the name only points at it. `value_col` in the drawing
+                        // code is where the value column starts.
+                        if( cell->x >= 62 ) {
+                            action = "CONFIRM";
+                        } else {
+                            action.clear();
+                        }
+                        consumed = true;
+                    }
+                }
+            }
+            if( consumed && action == "SELECT" ) {
+                action.clear();
             }
         }
 

@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <fstream>
+#include <optional>
 #include <string>
 
 #include "cata_utility.h"
@@ -15,6 +16,7 @@
 #include "translations.h"
 #include "ui.h"
 #include "ui_manager.h"
+#include "ui_mouse.h"
 #include "uistate.h"
 #include "fstream_utils.h"
 
@@ -102,6 +104,10 @@ void distraction_manager_gui::show()
     ctx.register_action( "QUIT" );
     ctx.register_action( "HELP_KEYBINDINGS" );
     ctx.register_action( "CONFIRM" );
+    ctx.register_action( "SELECT" );
+    ctx.register_action( "MOUSE_MOVE" );
+    ctx.register_action( "SCROLL_UP" );
+    ctx.register_action( "SCROLL_DOWN" );
 
     ui.on_redraw( [&]( const ui_adaptor & ) {
         // Draw border
@@ -185,9 +191,33 @@ void distraction_manager_gui::show()
         } else if( currentAction == "DOWN" ) {
             currentLine = modulo( currentLine + 1, num_distractions );
             cur_distraction = distractions_status[currentLine];
+        } else if( currentAction == "SCROLL_UP" ) {
+            currentLine = modulo( currentLine - 1, num_distractions );
+            cur_distraction = distractions_status[currentLine];
+        } else if( currentAction == "SCROLL_DOWN" ) {
+            currentLine = modulo( currentLine + 1, num_distractions );
+            cur_distraction = distractions_status[currentLine];
         } else if( currentAction == "CONFIRM" ) {
             // This will change status color and status text
             distractions[cur_distraction] = !distractions[cur_distraction];
+        } else if( currentAction == "SELECT" ) {
+            const std::optional<point> cell = ctx.get_mouse_cell( w );
+            const std::optional<int> row = cell
+                                           ? ui_mouse::hit_test_list( *cell, ui_mouse::list_options{
+                .origin = point_zero,
+                .width = getmaxx( w ),
+                .entry_height = 1,
+                .count = num_distractions,
+                .offset = startPosition,
+                .visible_count = iContentHeight,
+            } )
+            : std::nullopt;
+            if( row ) {
+                // The whole row is the toggle, so clicking it selects and flips.
+                currentLine = *row;
+                cur_distraction = distractions_status[currentLine];
+                distractions[cur_distraction] = !distractions[cur_distraction];
+            }
         }
     }
 }

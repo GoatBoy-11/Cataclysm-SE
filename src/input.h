@@ -121,6 +121,13 @@ struct input_event {
 
     point mouse_pos;       // Mouse click co-ordinates, if applicable
 
+    // Modifier keys held when a mouse event was generated. Deliberately NOT
+    // compared in operator==, so a modified click still matches its plain
+    // binding: putting these in `modifiers` instead would make every click
+    // match no action at all while ctrl or shift was held down.
+    bool mouse_ctrl = false;
+    bool mouse_shift = false;
+
     // Actually entered text (if any), UTF-8 encoded, might be empty if
     // the input is not UTF-8 or not even text.
     std::string text;
@@ -159,6 +166,8 @@ struct input_event {
         modifiers = other.modifiers;
         sequence = other.sequence;
         mouse_pos = other.mouse_pos;
+        mouse_ctrl = other.mouse_ctrl;
+        mouse_shift = other.mouse_shift;
         text = other.text;
         shortcut_last_used_action_counter = other.shortcut_last_used_action_counter;
         return *this;

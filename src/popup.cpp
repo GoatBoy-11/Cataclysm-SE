@@ -11,6 +11,7 @@
 #include "output.h"
 #include "sdl_wrappers.h"
 #include "ui_manager.h"
+#include "ui_mouse.h"
 
 query_popup::query_popup()
     : cur( 0 ), default_text_color( c_white ), anykey( false ), cancel( false ), ontop( false ),
@@ -239,6 +240,28 @@ void query_popup::show() const
     wnoutrefresh( win );
 }
 
+std::optional<size_t> query_popup::button_at( const std::optional<point> &cell ) const
+{
+    if( !cell || !win || buttons.empty() ) {
+        return std::nullopt;
+    }
+
+    // `buttons` is parallel to `options`, and `show` draws each button offset
+    // from the window content by the border, so hit test the same geometry.
+    std::vector<ui_mouse::positioned_label> labels;
+    labels.reserve( buttons.size() );
+    for( const auto &btn : buttons ) {
+        labels.push_back( { btn.text, btn.pos } );
+    }
+
+    const std::optional<int> hit = ui_mouse::hit_test_labels(
+                                       *cell, labels, point( border_width, border_width ) );
+    if( !hit || *hit < 0 || static_cast<size_t>( *hit ) >= options.size() ) {
+        return std::nullopt;
+    }
+    return static_cast<size_t>( *hit );
+}
+
 std::shared_ptr<ui_adaptor> query_popup::create_or_get_adaptor( bool disable_below )
 {
     std::shared_ptr<ui_adaptor> ui = adaptor.lock();
@@ -282,6 +305,8 @@ query_popup::result query_popup::query_once()
         ctxt.register_action( "LEFT" );
         ctxt.register_action( "RIGHT" );
         ctxt.register_action( "CONFIRM" );
+        ctxt.register_action( "MOUSE_MOVE" );
+        ctxt.register_action( "SELECT" );
         for( const auto &opt : options ) {
             ctxt.register_action( opt.action );
         }
@@ -293,16 +318,56 @@ query_popup::result query_popup::query_once()
     }
     if( cancel ) {
         ctxt.register_action( "QUIT" );
+        ctxt.register_action( "SEC_SELECT" );
     }
 
     result res;
     // Assign outside construction of `res` to ensure execution order
+
+    // Handle hovering and clicking the option buttons. Rewrites `res.action` into
+    // an action the branches below already handle, rather than adding branches of
+    // its own. Returns true when the event was consumed and input should be polled
+    // again, so that mouse movement never escapes the loop on its own.
+    const auto handle_mouse = [this, &ctxt, &res]() -> bool {
+        if( cancel && res.action == "SEC_SELECT" ) {
+            // Let the cancel branch below do the work.
+            res.action = "QUIT";
+            return false;
+        }
+        if( options.empty() ) {
+            // No buttons to hover or click. Leave any-key popups alone: a click
+            // already dismisses those.
+            return false;
+        }
+        const bool is_click = res.action == "SELECT";
+        if( !is_click && res.action != "MOUSE_MOVE" ) {
+            return false;
+        }
+        const std::optional<size_t> hovered = button_at( ctxt.get_mouse_cell( win ) );
+        if( !hovered ) {
+            // A click on the border or the message text selects nothing.
+            return true;
+        }
+        if( cur != *hovered ) {
+            cur = *hovered;
+            ui_manager::redraw();
+        }
+        if( is_click ) {
+            // Let the confirm branch below resolve this to the option's action.
+            res.action = "CONFIRM";
+            return false;
+        }
+        return true;
+    };
+
     res.wait_input = !anykey;
     do {
         res.action = ctxt.handle_input();
         res.evt = ctxt.get_raw_input();
     } while(
-        // Always ignore mouse movement
+        // Hovering and clicking the buttons, and right-clicking to cancel
+        handle_mouse() ||
+        // Otherwise always ignore mouse movement
         ( res.evt.type == input_event_t::mouse && res.evt.get_first_input() == MOUSE_MOVE ) ||
         // Ignore window losing focus in SDL
         ( res.evt.type == input_event_t::keyboard && res.evt.sequence.empty() )

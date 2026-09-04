@@ -25,6 +25,7 @@
 #include "json.h"
 #include "options.h"
 #include "output.h"
+#include "ui_mouse.h"
 #include "path_info.h"
 #include "popup.h"
 #include "profile.h"
@@ -1109,6 +1110,10 @@ action_id input_context::display_menu( const bool permit_execute_action )
     ctxt.register_action( "DOWN", to_translation( "Scroll down" ) );
     ctxt.register_action( "PAGE_DOWN" );
     ctxt.register_action( "PAGE_UP" );
+    ctxt.register_action( "SCROLL_UP" );
+    ctxt.register_action( "SCROLL_DOWN" );
+    ctxt.register_action( "SELECT" );
+    ctxt.register_action( "MOUSE_MOVE" );
     ctxt.register_action( "REMOVE" );
     ctxt.register_action( "ADD_LOCAL" );
     ctxt.register_action( "ADD_GLOBAL" );
@@ -1292,6 +1297,33 @@ action_id input_context::display_menu( const bool permit_execute_action )
             scroll_offset = 0;
         }
 
+        // A click on a row stands in for typing that row's hotkey, so the branch
+        // below picks it up with no second copy of the add/remove logic. There is
+        // no selection to move while merely browsing, so a click only means
+        // something once a hotkey is actually being offered.
+        if( action == "SELECT" && status != s_show && !filtered_registered_actions.empty() ) {
+            if( const std::optional<point> cell = ctxt.get_mouse_cell( w_help ) ) {
+                // Rows are drawn from y = 10 down, one per entry.
+                const std::optional<int> hit = ui_mouse::hit_test_list( *cell, ui_mouse::list_options{
+                    .origin = point( 0, 10 ),
+                    .width = width - 2,
+                    .entry_height = 1,
+                    .count = static_cast<int>( filtered_registered_actions.size() ),
+                    .offset = static_cast<int>( scroll_offset ),
+                    .visible_count = static_cast<int>( display_height ),
+                } );
+                if( hit ) {
+                    const size_t row = static_cast<size_t>( *hit ) - scroll_offset;
+                    if( row < hotkeys.size() ) {
+                        raw_input_char = hotkeys[row];
+                        // Cleared so the chain falls through to the hotkey branch,
+                        // the same way a fallback key is handled above.
+                        action.clear();
+                    }
+                }
+            }
+        }
+
         // In addition to the modifiable hotkeys, we also check for hardcoded
         // keys, e.g. '+', '-', '=', '.' in order to prevent the user from
         // entering an unrecoverable state.
@@ -1316,13 +1348,13 @@ action_id input_context::display_menu( const bool permit_execute_action )
             if( !filtered_registered_actions.empty() ) {
                 status = s_execute;
             }
-        } else if( action == "DOWN" ) {
+        } else if( action == "DOWN" || action == "SCROLL_DOWN" ) {
             if( !filtered_registered_actions.empty()
                 && filtered_registered_actions.size() > display_height
                 && scroll_offset < filtered_registered_actions.size() - display_height ) {
                 scroll_offset++;
             }
-        } else if( action == "UP" ) {
+        } else if( action == "UP" || action == "SCROLL_UP" ) {
             if( !filtered_registered_actions.empty()
                 && scroll_offset > 0 ) {
                 scroll_offset--;

@@ -141,6 +141,11 @@ auto register_trade_actions( input_context &ctxt, bool include_any_input ) -> vo
     ctxt.register_action( "AUTOBALANCE" );
     ctxt.register_action( "INCREASE_COUNT", to_translation( "Trade one more" ) );
     ctxt.register_action( "DECREASE_COUNT", to_translation( "Trade one fewer" ) );
+    ctxt.register_action( "SELECT" );
+    ctxt.register_action( "SEC_SELECT" );
+    ctxt.register_action( "MOUSE_MOVE" );
+    ctxt.register_action( "SCROLL_UP" );
+    ctxt.register_action( "SCROLL_DOWN" );
     ctxt.register_action( "TOGGLE_ITEM_INFO" );
     ctxt.register_action( "CONFIRM" );
     ctxt.register_action( "QUIT" );
@@ -519,6 +524,8 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
             continue;
         }
         auto last_category = std::optional<item_category_id> {};
+        auto &row_entries = they ? them_row_entries : you_row_entries;
+        row_entries.clear();
         const auto is_focused_pane = ( they && focus_them ) || ( !they && !focus_them );
         const auto category_ranges = build_category_ranges( list, filtered );
         auto active_category_id = std::optional<item_category_id> {};
@@ -548,6 +555,8 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
             const auto is_cursor = ( they && focus_them && i == them_cursor ) ||
                                    ( !they && !focus_them && i == you_cursor );
             const auto row_y = static_cast<int>( row + 1 + trade_total_header_rows );
+            // Recorded here, where the row and the entry it shows are both known.
+            row_entries.emplace_back( static_cast<int>( row ), i );
             const auto &owner_sells = they ? ip.u_has : ip.npc_has;
             const auto &owner_sells_charge = they ? ip.u_charges : ip.npc_charges;
             auto itname = it->display_name();
@@ -1108,6 +1117,160 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             return std::abs( lhs - current_amount ) > std::abs( rhs - current_amount );
         } );
     };
+    // Step the quantity on the highlighted line, instead of reopening the
+    // "how many?" popup to retype a number. Shared by the keyboard count actions
+    // and by the modified clicks, so both clamp the same way.
+    const auto adjust_traded_count = [&]( const int delta ) {
+        auto &list = focus_them ? state.theirs : state.yours;
+        const auto &filtered_now = focus_them ? them_filtered : you_filtered;
+        const auto cursor_now = focus_them ? them_cursor : you_cursor;
+        if( category_mode || cursor_now >= filtered_now.size() ) {
+            return;
+        }
+        auto &ip = list[filtered_now[cursor_now]];
+        auto &owner_sells = focus_them ? ip.u_has : ip.npc_has;
+        auto &owner_sells_charge = focus_them ? ip.u_charges : ip.npc_charges;
+        const int total = ip.charges > 0 ? ip.charges : std::max( ip.count, 1 );
+        int &qty = ip.charges > 0 ? owner_sells_charge : owner_sells;
+
+        const int before = qty;
+        // Clamping is what makes a step of five trade the rest of a stack of
+        // three, and clear the line when fewer than five are on it.
+        const int wanted = std::max( 0, std::min( before + delta, total ) );
+        if( wanted == before ) {
+            return;
+        }
+        qty = wanted;
+        ip.selected = wanted > 0;
+        // Their column is what you buy and yours is what you sell, so the same
+        // step moves the balance opposite ways.
+        const int change_amount = ( wanted - before ) * ( focus_them ? 1 : -1 );
+        if( !np.will_exchange_items_freely() ) {
+            state.your_balance -= static_cast<int>( ip.price * change_amount );
+        }
+        if( affects_npc_capacity( *ip.locs.front() ) ) {
+            state.volume_left += ip.vol * change_amount;
+            state.weight_left += ip.weight * change_amount;
+        }
+    };
+
+    // Which pane and entry the mouse is over, using the row map recorded while
+    // drawing so a click cannot disagree with what is on screen.
+    struct clicked_entry {
+        bool they;
+        size_t index;
+    };
+    const auto entry_under_mouse = [&]( input_context & c ) -> std::optional<clicked_entry> {
+        for( const bool they : {
+                 true, false
+             } )
+        {
+            const std::optional<point> cell = c.get_mouse_cell( they ? w_them : w_you );
+            if( !cell ) {
+                continue;
+            }
+            const int row = cell->y - ( 1 + trade_total_header_rows );
+            const auto &rows = they ? them_row_entries : you_row_entries;
+            for( const auto & [entry_row, entry_index] : rows ) {
+                if( entry_row == row ) {
+                    return clicked_entry{ they, entry_index };
+                }
+            }
+        }
+        return std::nullopt;
+    };
+
+    // Toggle the whole stack on one line, the way the item hotkeys always have.
+    // Extracted so a plain left click drives exactly this code rather than a
+    // second copy of the trade bookkeeping.
+    const auto toggle_whole_stack = [&]( const size_t index ) {
+        auto &target_list = focus_them ? state.theirs : state.yours;
+        auto &filtered = focus_them ? them_filtered : you_filtered;
+        auto &offset = focus_them ? them_off : you_off;
+        auto &cursor = focus_them ? them_cursor : you_cursor;
+        auto &category_cursor = focus_them ? them_category_cursor : you_category_cursor;
+        const auto category_ranges = build_category_ranges( target_list, filtered );
+        if( index >= filtered.size() ) {
+            return;
+        }
+
+        cursor = index;
+        clamp_cursor_to_list( clamp_cursor_options{
+            .list = target_list,
+            .filtered = filtered,
+            .cursor = cursor,
+            .offset = offset
+        } );
+        if( category_mode && !category_ranges.empty() ) {
+            const auto cursor_category = target_list[filtered[cursor]]
+                                         .locs.front()->get_category().get_id();
+            const auto match = std::ranges::find_if( category_ranges,
+            [&]( const category_range & entry ) {
+                return entry.id == cursor_category;
+            } );
+            if( match != category_ranges.end() ) {
+                category_cursor = static_cast<size_t>(
+                                      std::distance( category_ranges.begin(), match ) );
+            }
+        }
+        auto &ip = target_list[filtered[index]];
+        auto change_amount = 1;
+        auto &owner_sells = focus_them ? ip.u_has : ip.npc_has;
+        auto &owner_sells_charge = focus_them ? ip.u_charges : ip.npc_charges;
+
+        const auto calc_amount_hint = [&]() -> int {
+            if( ip.price > 0 )
+            {
+                if( focus_them && state.your_balance > 0 ) {
+                    return state.your_balance / ip.price;
+                } else if( !focus_them && state.your_balance < 0 ) {
+                    const auto amt = state.your_balance / ip.price;
+                    const auto rem = ( std::fmod( state.your_balance, ip.price ) == 0 ) ? 0 : 1;
+                    return amt - rem;
+                }
+            }
+            return 0;
+        };
+
+        if( ip.selected ) {
+            if( owner_sells_charge > 0 ) {
+                change_amount = owner_sells_charge;
+                owner_sells_charge = 0;
+            } else if( owner_sells > 0 ) {
+                change_amount = owner_sells;
+                owner_sells = 0;
+            }
+        } else if( ip.charges > 0 ) {
+            const auto hint = calc_amount_hint();
+            change_amount = get_var_trade( *ip.locs.front(), ip.charges, hint );
+            if( change_amount < 1 ) {
+                return;
+            }
+            owner_sells_charge = change_amount;
+        } else {
+            if( ip.count > 1 ) {
+                const auto hint = calc_amount_hint();
+                change_amount = get_var_trade( *ip.locs.front(), ip.count, hint );
+                if( change_amount < 1 ) {
+                    return;
+                }
+            }
+            owner_sells = change_amount;
+        }
+        ip.selected = !ip.selected;
+        if( ip.selected != focus_them ) {
+            change_amount *= -1;
+        }
+        const auto delta_price = static_cast<int>( ip.price * change_amount );
+        if( !np.will_exchange_items_freely() ) {
+            state.your_balance -= delta_price;
+        }
+        if( affects_npc_capacity( *ip.locs.front() ) ) {
+            state.volume_left += ip.vol * change_amount;
+            state.weight_left += ip.weight * change_amount;
+        }
+    };
+
     while( !exit ) {
         auto &target_list = focus_them ? state.theirs : state.yours;
         auto &filtered = focus_them ? them_filtered : you_filtered;
@@ -1378,37 +1541,34 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             exit = true;
             confirm = false;
         } else if( action == "INCREASE_COUNT" || action == "DECREASE_COUNT" ) {
-            // Nudge the quantity of the highlighted line by one, instead of
-            // reopening the "how many?" popup to retype a number.
-            auto &target_list = focus_them ? state.theirs : state.yours;
-            const auto &filtered = focus_them ? them_filtered : you_filtered;
-            const auto cursor = focus_them ? them_cursor : you_cursor;
-            if( !category_mode && cursor < filtered.size() ) {
-                auto &ip = target_list[filtered[cursor]];
-                auto &owner_sells = focus_them ? ip.u_has : ip.npc_has;
-                auto &owner_sells_charge = focus_them ? ip.u_charges : ip.npc_charges;
-                const int total = ip.charges > 0 ? ip.charges : std::max( ip.count, 1 );
-                int &qty = ip.charges > 0 ? owner_sells_charge : owner_sells;
-
-                const int before = qty;
-                int wanted = before + ( action == "INCREASE_COUNT" ? 1 : -1 );
-                wanted = std::max( 0, std::min( wanted, total ) );
-                if( wanted != before ) {
-                    qty = wanted;
-                    ip.selected = wanted > 0;
-                    // Their column is what you buy and yours is what you sell,
-                    // so the same step moves the balance opposite ways. This is
-                    // the sign the whole-stack toggle below works out too.
-                    const int change_amount = ( wanted - before ) * ( focus_them ? 1 : -1 );
-                    if( !np.will_exchange_items_freely() ) {
-                        state.your_balance -= static_cast<int>( ip.price * change_amount );
-                    }
-                    if( affects_npc_capacity( *ip.locs.front() ) ) {
-                        state.volume_left += ip.vol * change_amount;
-                        state.weight_left += ip.weight * change_amount;
-                    }
+            adjust_traded_count( action == "INCREASE_COUNT" ? 1 : -1 );
+        } else if( action == "SELECT" || action == "SEC_SELECT" ) {
+            if( const auto hit = entry_under_mouse( ctxt ) ) {
+                // Clicking the other pane moves the focus to it first, so the
+                // step and the toggle both act on the list that was clicked.
+                focus_them = hit->they;
+                ( focus_them ? them_cursor : you_cursor ) = hit->index;
+                const input_event &evt = ctxt.get_raw_input();
+                if( evt.mouse_ctrl || evt.mouse_shift ) {
+                    const int step = evt.mouse_shift ? 5 : 1;
+                    adjust_traded_count( action == "SELECT" ? step : -step );
+                } else if( action == "SELECT" ) {
+                    toggle_whole_stack( hit->index );
                 }
             }
+        } else if( action == "SCROLL_UP" || action == "SCROLL_DOWN" ) {
+            // The wheel scrolls the focused list, and nothing else.
+            const auto &filtered_now = focus_them ? them_filtered : you_filtered;
+            auto &cursor_now = focus_them ? them_cursor : you_cursor;
+            if( !filtered_now.empty() ) {
+                if( action == "SCROLL_UP" ) {
+                    cursor_now = cursor_now == 0 ? filtered_now.size() - 1 : cursor_now - 1;
+                } else {
+                    cursor_now = cursor_now + 1 >= filtered_now.size() ? 0 : cursor_now + 1;
+                }
+            }
+        } else if( action == "MOUSE_MOVE" ) {
+            // Consume it, so it cannot reach the ANY_INPUT hotkey lookup below.
         } else if( action == "ANY_INPUT" ) {
             const auto evt = ctxt.get_raw_input();
             if( evt.type != input_event_t::keyboard || evt.sequence.empty() ) {
@@ -1433,81 +1593,7 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             auto ch_index = static_cast<size_t>( hotkey_pos );
             ch_index += offset;
             if( ch_index < filtered.size() ) {
-                cursor = ch_index;
-                clamp_cursor_to_list( clamp_cursor_options{
-                    .list = target_list,
-                    .filtered = filtered,
-                    .cursor = cursor,
-                    .offset = offset
-                } );
-                if( category_mode && !category_ranges.empty() ) {
-                    const auto cursor_category = target_list[filtered[cursor]]
-                                                 .locs.front()->get_category().get_id();
-                    const auto match = std::ranges::find_if( category_ranges,
-                    [&]( const category_range & entry ) {
-                        return entry.id == cursor_category;
-                    } );
-                    if( match != category_ranges.end() ) {
-                        category_cursor = static_cast<size_t>(
-                                              std::distance( category_ranges.begin(), match ) );
-                    }
-                }
-                auto &ip = target_list[filtered[ch_index]];
-                auto change_amount = 1;
-                auto &owner_sells = focus_them ? ip.u_has : ip.npc_has;
-                auto &owner_sells_charge = focus_them ? ip.u_charges : ip.npc_charges;
-
-                const auto calc_amount_hint = [&]() -> int {
-                    if( ip.price > 0 )
-                    {
-                        if( focus_them && state.your_balance > 0 ) {
-                            return state.your_balance / ip.price;
-                        } else if( !focus_them && state.your_balance < 0 ) {
-                            const auto amt = state.your_balance / ip.price;
-                            const auto rem = ( std::fmod( state.your_balance, ip.price ) == 0 ) ? 0 : 1;
-                            return amt - rem;
-                        }
-                    }
-                    return 0;
-                };
-
-                if( ip.selected ) {
-                    if( owner_sells_charge > 0 ) {
-                        change_amount = owner_sells_charge;
-                        owner_sells_charge = 0;
-                    } else if( owner_sells > 0 ) {
-                        change_amount = owner_sells;
-                        owner_sells = 0;
-                    }
-                } else if( ip.charges > 0 ) {
-                    const auto hint = calc_amount_hint();
-                    change_amount = get_var_trade( *ip.locs.front(), ip.charges, hint );
-                    if( change_amount < 1 ) {
-                        continue;
-                    }
-                    owner_sells_charge = change_amount;
-                } else {
-                    if( ip.count > 1 ) {
-                        const auto hint = calc_amount_hint();
-                        change_amount = get_var_trade( *ip.locs.front(), ip.count, hint );
-                        if( change_amount < 1 ) {
-                            continue;
-                        }
-                    }
-                    owner_sells = change_amount;
-                }
-                ip.selected = !ip.selected;
-                if( ip.selected != focus_them ) {
-                    change_amount *= -1;
-                }
-                const auto delta_price = static_cast<int>( ip.price * change_amount );
-                if( !np.will_exchange_items_freely() ) {
-                    state.your_balance -= delta_price;
-                }
-                if( affects_npc_capacity( *ip.locs.front() ) ) {
-                    state.volume_left += ip.vol * change_amount;
-                    state.weight_left += ip.weight * change_amount;
-                }
+                toggle_whole_stack( ch_index );
             }
         }
     }

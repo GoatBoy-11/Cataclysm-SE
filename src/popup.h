@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -236,6 +237,13 @@ class query_popup
                     int max_width, int horz_padding );
         void invalidate_ui() const;
         void init() const;
+        /**
+         * Index of the option button drawn under `cell`, which is a window-relative
+         * position as returned by `input_context::get_mouse_cell`. Returns nullopt
+         * for a missing position, for a position over no button, and before the
+         * window has been laid out.
+         */
+        std::optional<size_t> button_at( const std::optional<point> &cell ) const;
 
         template <typename ...Args>
         static void assert_format( const std::string &, Args &&... ) {

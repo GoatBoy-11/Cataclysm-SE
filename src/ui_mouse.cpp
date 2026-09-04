@@ -156,4 +156,41 @@ auto hit_test_subtabs( point cell, const std::vector<std::string> &labels,
     return hit_test_rectangles( cell, regions );
 }
 
+auto label_rectangles( std::span<const positioned_label> labels, point origin ) ->
+std::vector<indexed_rectangle>
+{
+    std::vector<indexed_rectangle> result;
+    for( size_t i = 0; i < labels.size(); ++i ) {
+        // Measure the drawn width: color tags take up no screen cells.
+        const int width = utf8_width( labels[i].text, true );
+        if( width <= 0 ) {
+            continue;
+        }
+        const point p_min = origin + labels[i].pos;
+        result.push_back( {
+            inclusive_rectangle<point> { p_min, p_min + point( width - 1, 0 ) },
+            static_cast<int>( i )
+        } );
+    }
+    return result;
+}
+
+auto hit_test_labels( point cell, std::span<const positioned_label> labels,
+                      point origin ) -> std::optional<int>
+{
+    const auto regions = label_rectangles( labels, origin );
+    return hit_test_rectangles( cell, regions );
+}
+
+auto hit_test_columns( int x, std::span<const int> separators ) -> std::optional<int>
+{
+    int result = 0;
+    for( size_t i = 0; i < separators.size(); ++i ) {
+        if( x > separators[i] ) {
+            result = static_cast<int>( i ) + 1;
+        }
+    }
+    return result > 0 ? std::optional<int>( result ) : std::nullopt;
+}
+
 } // namespace ui_mouse

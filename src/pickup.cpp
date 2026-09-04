@@ -29,6 +29,7 @@
 #include "faction.h"
 #include "game.h"
 #include "input.h"
+#include "ui_mouse.h"
 #include "int_id.h"
 #include "item.h"
 #include "item_contents.h"
@@ -780,6 +781,9 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
         ctxt.register_action( "SELECT_ALL" );
         ctxt.register_action( "INCREASE_COUNT", to_translation( "Take one more" ) );
         ctxt.register_action( "DECREASE_COUNT", to_translation( "Take one fewer" ) );
+        ctxt.register_action( "SELECT" );
+        ctxt.register_action( "SEC_SELECT" );
+        ctxt.register_action( "MOUSE_MOVE" );
         ctxt.register_action( "QUIT", to_translation( "Cancel" ) );
         ctxt.register_action( "ANY_INPUT" );
         ctxt.register_action( "HELP_KEYBINDINGS" );
@@ -961,6 +965,99 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
             wnoutrefresh( w_pickup );
         } );
 
+        // Step how much of the highlighted stack is marked. The list draws "-"
+        // for none, "#" for part and "+" for all, so a step is visible as it
+        // happens rather than being a pending number. Shared by the keyboard
+        // count actions and by the modified clicks.
+        const auto adjust_marked_count = [&]( const int delta ) {
+            if( selected < 0 || selected >= static_cast<int>( matches.size() ) ) {
+                return;
+            }
+            const size_t true_idx = matches[selected];
+            pickup_count &stack = getitem[true_idx];
+            const item &temp = **stacked_here[true_idx].front();
+            const int amount_available = temp.count_by_charges()
+                                         ? temp.charges
+                                         : static_cast<int>( stacked_here[true_idx].size() );
+            // A marked stack with no count means the whole thing, so stepping
+            // down starts from the full amount.
+            const int marked = stack.pick
+                               ? ( stack.count ? *stack.count : amount_available )
+                               : 0;
+            // Clamping is what makes a step of five take the rest of a stack of
+            // three, and unmark the lot when fewer than five are marked.
+            const int wanted = std::max( 0, std::min( marked + delta, amount_available ) );
+
+            stack.pick = wanted > 0;
+            if( wanted <= 0 || wanted >= amount_available ) {
+                // No count is how both "none" and "all" are expressed;
+                // pick is what separates them.
+                stack.count.reset();
+            } else {
+                stack.count = wanted;
+            }
+
+            // Same bookkeeping a normal mark does, so nested stacks do not
+            // disagree with their container about being taken.
+            stack.all_children_picked = stack.pick;
+            for( size_t child_index : stack.children ) {
+                pickup_count &child_stack = getitem[child_index];
+                child_stack.pick = stack.pick;
+                child_stack.count.reset();
+            }
+            if( stack.parent ) {
+                pickup_count &parent_stack = getitem[*stack.parent];
+                parent_stack.all_children_picked = stack.pick &&
+                std::ranges::all_of( parent_stack.children, [&]( size_t child_index ) {
+                    return getitem[child_index].pick;
+                } );
+            }
+            update = true;
+        };
+
+        // Move the highlight, paging the list to follow it. Shared by the arrow
+        // keys and by the mouse wheel.
+        const auto move_selection = [&]( const int delta ) {
+            if( matches.empty() || maxitems <= 0 ) {
+                return;
+            }
+            iScrollPos = 0;
+            selected += delta;
+            if( selected < 0 ) {
+                selected = static_cast<int>( matches.size() ) - 1;
+                start = static_cast<int>( matches.size() / maxitems ) * maxitems;
+                if( start >= static_cast<int>( matches.size() ) ) {
+                    start -= maxitems;
+                }
+            } else if( selected >= static_cast<int>( matches.size() ) ) {
+                selected = 0;
+                start = 0;
+            } else if( selected < start ) {
+                start -= maxitems;
+            } else if( selected >= start + maxitems ) {
+                start += maxitems;
+            }
+        };
+
+        // Which list row the mouse is over, if any.
+        const auto row_under_mouse = [&]() -> std::optional<int> {
+            const std::optional<point> cell = ctxt.get_mouse_cell( w_pickup );
+            if( !cell )
+            {
+                return std::nullopt;
+            }
+            // Rows are drawn at y = 1 + ( cur_it % maxitems ), and `start` is
+            // page-aligned, so row r on screen is entry start + r.
+            return ui_mouse::hit_test_list( *cell, ui_mouse::list_options{
+                .origin = point( 0, 1 ),
+                .width = pickupW,
+                .entry_height = 1,
+                .count = static_cast<int>( matches.size() ),
+                .offset = start,
+                .visible_count = maxitems,
+            } );
+        };
+
         // Now print the two lists; those on the ground and about to be added to inv
         // Continue until we hit return or space
         do {
@@ -982,54 +1079,37 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                     itemcount.reset();
                 }
             } else if( action == "INCREASE_COUNT" || action == "DECREASE_COUNT" ) {
-                // Step how much of the highlighted stack is marked. The list
-                // draws "-" for none, "#" for part and "+" for all, so this is
-                // visible as it changes rather than a pending number.
-                if( selected >= 0 && selected < static_cast<int>( matches.size() ) ) {
-                    const size_t true_idx = matches[selected];
-                    pickup_count &stack = getitem[true_idx];
-                    const item &temp = **stacked_here[true_idx].front();
-                    const int amount_available = temp.count_by_charges()
-                                                 ? temp.charges
-                                                 : static_cast<int>( stacked_here[true_idx].size() );
-                    // A marked stack with no count means the whole thing, so
-                    // stepping down starts from the full amount.
-                    const int marked = stack.pick
-                                       ? ( stack.count ? *stack.count : amount_available )
-                                       : 0;
-                    int wanted = marked + ( action == "INCREASE_COUNT" ? 1 : -1 );
-                    wanted = std::max( 0, std::min( wanted, amount_available ) );
-
-                    stack.pick = wanted > 0;
-                    if( wanted <= 0 || wanted >= amount_available ) {
-                        // No count is how both "none" and "all" are expressed;
-                        // pick is what separates them.
-                        stack.count.reset();
-                    } else {
-                        stack.count = wanted;
+                adjust_marked_count( action == "INCREASE_COUNT" ? 1 : -1 );
+            } else if( action == "SELECT" || action == "SEC_SELECT" ) {
+                if( const std::optional<int> row = row_under_mouse() ) {
+                    const input_event &evt = ctxt.get_raw_input();
+                    if( evt.mouse_ctrl || evt.mouse_shift ) {
+                        // A modified click steps the amount on the row clicked,
+                        // so point at that row first: the step applies to
+                        // whatever is highlighted.
+                        selected = *row;
+                        start = ( *row / maxitems ) * maxitems;
+                        iScrollPos = 0;
+                        const int step = evt.mouse_shift ? 5 : 1;
+                        adjust_marked_count( action == "SELECT" ? step : -step );
+                    } else if( action == "SELECT" ) {
+                        // A plain left click marks or unmarks the whole stack,
+                        // through the same path the keyboard mark uses.
+                        idx = *row;
                     }
-
-                    // Same bookkeeping a normal mark does, so nested stacks do
-                    // not disagree with their container about being taken.
-                    stack.all_children_picked = stack.pick;
-                    for( size_t child_index : stack.children ) {
-                        pickup_count &child_stack = getitem[child_index];
-                        child_stack.pick = stack.pick;
-                        child_stack.count.reset();
-                    }
-                    if( stack.parent ) {
-                        pickup_count &parent_stack = getitem[*stack.parent];
-                        parent_stack.all_children_picked = stack.pick &&
-                        std::ranges::all_of( parent_stack.children, [&]( size_t child_index ) {
-                            return getitem[child_index].pick;
-                        } );
-                    }
-                    update = true;
                 }
-            } else if( action == "SCROLL_UP" ) {
-                iScrollPos--;
-            } else if( action == "SCROLL_DOWN" ) {
-                iScrollPos++;
+            } else if( action == "MOUSE_MOVE" ) {
+                // Consume it, so it cannot fall through to the ANY_INPUT hotkey
+                // lookup below and be read as a letter.
+            } else if( action == "SCROLL_UP" || action == "SCROLL_DOWN" ) {
+                const int dir = action == "SCROLL_UP" ? -1 : 1;
+                if( ctxt.get_raw_input().type == input_event_t::mouse ) {
+                    // The wheel scrolls the item list; PPAGE/NPAGE keep scrolling
+                    // the item info pane, which is what this action means on a key.
+                    move_selection( dir );
+                } else {
+                    iScrollPos += dir;
+                }
             } else if( action == "PREV_TAB" ) {
                 if( start > 0 ) {
                     start -= maxitems;
@@ -1046,26 +1126,9 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                 iScrollPos = 0;
                 selected = start;
             } else if( action == "UP" ) {
-                selected--;
-                iScrollPos = 0;
-                if( selected < 0 ) {
-                    selected = matches.size() - 1;
-                    start = static_cast<int>( matches.size() / maxitems ) * maxitems;
-                    if( start >= static_cast<int>( matches.size() ) ) {
-                        start -= maxitems;
-                    }
-                } else if( selected < start ) {
-                    start -= maxitems;
-                }
+                move_selection( -1 );
             } else if( action == "DOWN" ) {
-                selected++;
-                iScrollPos = 0;
-                if( selected >= static_cast<int>( matches.size() ) ) {
-                    selected = 0;
-                    start = 0;
-                } else if( selected >= start + maxitems ) {
-                    start += maxitems;
-                }
+                move_selection( 1 );
             } else if( selected >= 0 && selected < static_cast<int>( matches.size() ) &&
                        ( ( action == "RIGHT" && !getitem[matches[selected]].pick ) ||
                          ( action == "LEFT" && getitem[matches[selected]].pick ) ) ) {
