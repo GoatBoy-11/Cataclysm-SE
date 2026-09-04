@@ -626,6 +626,69 @@ TEST_CASE("pocket destinations skip the excluded container",
     }
 }
 
+TEST_CASE("pocket destinations reach a container nested in a worn pocket",
+          "[inventory][pocket][destination][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+
+    // A wallet carried in the vest's large pocket, which is how a player has
+    // one: not worn, not wielded, just sitting in a pocket. Its sleeves are
+    // still somewhere an item can go, so the pocket manager must offer them.
+    REQUIRE(!vest->put_in(item::spawn("wallet")));
+    item* wallet = vest->contents.all_items_top().front();
+    REQUIRE(wallet->typeId() == itype_id("wallet"));
+
+    auto coin = item::spawn("coin_quarter");
+    bool offered = false;
+    for (const pocket_destination& dest : dummy.pocket_destinations(*coin)) {
+        if (dest.container == wallet) {
+            offered = true;
+        }
+    }
+    CHECK(offered);
+}
+
+TEST_CASE("pocket destinations never offer a pocket inside the item being moved",
+          "[inventory][pocket][destination][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+
+    REQUIRE(!vest->put_in(item::spawn("wallet")));
+    item* wallet = vest->contents.all_items_top().front();
+
+    // Moving the wallet into its own sleeve would detach it from the world.
+    for (const pocket_destination& dest : dummy.pocket_destinations(*wallet, wallet)) {
+        CHECK(dest.container != wallet);
+    }
+}
+
+TEST_CASE("pocket destinations exclude the whole subtree of the item being moved",
+          "[inventory][pocket][destination][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+
+    // vest -> bag -> wallet. Moving the bag must not offer the wallet either:
+    // the exclusion is a subtree, not a single item.
+    auto bag = item::spawn("bag_plastic");
+    REQUIRE(!bag->put_in(item::spawn("wallet")));
+    REQUIRE(!vest->put_in(std::move(bag)));
+    item* outer = vest->contents.all_items_top().front();
+    REQUIRE(outer->typeId() == itype_id("bag_plastic"));
+    item* inner = outer->contents.all_items_top().front();
+    REQUIRE(inner->typeId() == itype_id("wallet"));
+
+    for (const pocket_destination& dest : dummy.pocket_destinations(*outer, outer)) {
+        CHECK(dest.container != outer);
+        CHECK(dest.container != inner);
+    }
+}
+
 TEST_CASE("classic mode offers no pocket destinations",
           "[inventory][pocket][destination][classic]") {
     override_option classic("POCKET_SYSTEM", "classic");

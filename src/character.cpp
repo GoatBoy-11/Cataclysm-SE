@@ -2699,6 +2699,46 @@ int Character::amount_worn( const itype_id &id ) const
     }
     return amount;
 }
+
+namespace
+{
+/**
+ * Collect every CONTAINER pocket at or below @p container that would take @p it.
+ *
+ * Recursive because a container carried in a pocket is a destination in its own
+ * right: a wallet in a trouser pocket still has sleeves to fill. Listing only
+ * what was worn meant nothing nested could ever be chosen, so the pocket
+ * manager silently refused to show a wallet the player was carrying.
+ *
+ * Descent stops at @p exclude, which prunes that item and everything beneath
+ * it. Pruning the subtree and not just the item matters: moving a bag into a
+ * wallet that is inside that same bag would detach both from the world.
+ *
+ * Ancestor capacity is deliberately not re-checked. As the caller's comment
+ * says, this is a listing rather than the routing path, and a pocket that ends
+ * up over its limit is a state the game already handles.
+ */
+void collect_pocket_destinations( item &container, const item &it, const item *exclude,
+                                  std::vector<pocket_destination> &out )
+{
+    const std::vector<item_pocket> &pockets = container.contents.get_pockets();
+    for( size_t i = 0; i < pockets.size(); i++ ) {
+        if( pockets[i].definition().type != pocket_type::CONTAINER ) {
+            continue;
+        }
+        if( pockets[i].can_contain( it ).success() ) {
+            out.push_back( pocket_destination{ &container, i } );
+        }
+        for( item * const inner : pockets[i].all_items_top() ) {
+            if( inner == exclude ) {
+                continue;
+            }
+            collect_pocket_destinations( *inner, it, exclude, out );
+        }
+    }
+}
+} // namespace
+
 std::vector<pocket_destination> Character::pocket_destinations(
     const item &it, const item *exclude ) const
 {
@@ -2718,16 +2758,7 @@ std::vector<pocket_destination> Character::pocket_destinations(
         if( garment == exclude ) {
             continue;
         }
-        const std::vector<item_pocket> &pockets = garment->contents.get_pockets();
-        for( size_t i = 0; i < pockets.size(); i++ ) {
-            if( pockets[i].definition().type != pocket_type::CONTAINER ) {
-                continue;
-            }
-            if( !pockets[i].can_contain( it ).success() ) {
-                continue;
-            }
-            destinations.push_back( pocket_destination{ garment, i } );
-        }
+        collect_pocket_destinations( *garment, it, exclude, destinations );
     }
 
     std::ranges::stable_sort( destinations,
