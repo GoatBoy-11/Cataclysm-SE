@@ -506,5 +506,23 @@
     "type": "morale_type",
     "text": "Traveling light",
     "permanent": true
+  },
+  {
+    "id": "morale_outgunned",
+    "type": "morale_type",
+    "text": "Overwhelmed",
+    "permanent": true
+  },
+  {
+    "id": "morale_comfort_zone",
+    "type": "morale_type",
+    "text": "Safe indoors",
+    "permanent": true
+  },
+  {
+    "id": "morale_lone_wolf",
+    "type": "morale_type",
+    "text": "On your own",
+    "permanent": true
   }
 ]

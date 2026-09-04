@@ -7318,5 +7318,45 @@
     "valid": false,
     "purifiable": false,
     "cancels": [ "HOARDER" ]
+  },
+  {
+    "type": "mutation",
+    "id": "COWARDS_SPRINT",
+    "name": { "str": "Coward's Sprint" },
+    "points": 2,
+    "description": "Nothing clears a path like panic.  When badly hurt, you can move much faster than usual.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "OUTGUNNED",
+    "name": { "str": "Outgunned" },
+    "points": -2,
+    "description": "Being surrounded rattles you.  Facing several hostile creatures at once steadily drains your morale and focus.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "COMFORT_ZONE",
+    "name": { "str": "Comfort Zone" },
+    "points": 1,
+    "description": "You relax when the walls are close and you still have your health.  Indoors, while unwounded, you feel steadier.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "LONE_WOLF",
+    "name": { "str": "Lone Wolf" },
+    "points": 1,
+    "description": "Company is overrated.  You feel better on your own, away from other people and immediate threats.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
   }
 ]

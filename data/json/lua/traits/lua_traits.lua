@@ -14,8 +14,14 @@ local trait_hemophobia = MutationBranchId.new("HEMOPHOBIA")
 local trait_decidophobia = MutationBranchId.new("DECIDOPHOBIA")
 local trait_atelphobia = MutationBranchId.new("ATELPHOBIA")
 local trait_minimalist = MutationBranchId.new("MINIMALIST")
+local trait_cowards_sprint = MutationBranchId.new("COWARDS_SPRINT")
+local trait_outgunned = MutationBranchId.new("OUTGUNNED")
+local trait_comfort_zone = MutationBranchId.new("COMFORT_ZONE")
+local trait_lone_wolf = MutationBranchId.new("LONE_WOLF")
 local seen_clutter = false
 local seen_hemophobia = false
+local seen_outgunned = false
+local cowards_sprint_alert = false
 
 local plush_item_ids = {
   ItypeId.new("teddy"),
@@ -39,6 +45,9 @@ local morale_hemophobia = MoraleTypeDataId.new("morale_hemophobia")
 local morale_decidophobia = MoraleTypeDataId.new("morale_decidophobia")
 local morale_atelphobia = MoraleTypeDataId.new("morale_atelphobia")
 local morale_minimalist = MoraleTypeDataId.new("morale_minimalist")
+local morale_outgunned = MoraleTypeDataId.new("morale_outgunned")
+local morale_comfort_zone = MoraleTypeDataId.new("morale_comfort_zone")
+local morale_lone_wolf = MoraleTypeDataId.new("morale_lone_wolf")
 local blood_field_ids = {
   FieldTypeId.new("fd_blood"):int_id(),
   FieldTypeId.new("fd_blood_veggy"):int_id(),
@@ -219,6 +228,18 @@ local function count_fields_near(here, center, radius, field_ids)
     end
   end
   return total
+end
+
+---@param who Character
+---@param range integer
+---@return integer
+local function count_hostiles_in_range(who, range)
+  local hostiles = who:get_hostile_creatures(range)
+  local count = 0
+  if hostiles then
+    for _ in pairs(hostiles) do count = count + 1 end
+  end
+  return count
 end
 
 ---@param who Character
@@ -482,6 +503,9 @@ local function tick_cse_traits_slow()
     you:rem_morale(morale_hemophobia)
     you:rem_morale(morale_decidophobia)
     you:rem_morale(morale_minimalist)
+    you:rem_morale(morale_outgunned)
+    you:rem_morale(morale_comfort_zone)
+    you:rem_morale(morale_lone_wolf)
     return
   end
 
@@ -572,6 +596,45 @@ local function tick_cse_traits_slow()
       gapi.play_variant_sound("shout", "default", 8, true)
     end
   end
+
+  if you:has_trait(trait_outgunned) then
+    local hostile_count = count_hostiles_in_range(you, 10)
+    if hostile_count >= 3 then
+      apply_penalty(you, morale_outgunned, math.min((hostile_count - 2) * 4, max_penalty))
+      if not seen_outgunned and you:is_avatar() then
+        gapi.add_msg(MsgType.bad, locale.gettext("There are too many of them..."))
+        seen_outgunned = true
+      end
+      if gapi.rng(1, 12) == 1 then drain_focus(you, 1, 20) end
+    else
+      you:rem_morale(morale_outgunned)
+      seen_outgunned = false
+    end
+  else
+    you:rem_morale(morale_outgunned)
+    seen_outgunned = false
+  end
+
+  if you:has_trait(trait_comfort_zone) then
+    local max_hp = you:get_hp_max()
+    if max_hp > 0 and here:has_flag_at("INDOORS", pos) and you:get_hp() / max_hp >= 0.75 then
+      apply_bonus(you, morale_comfort_zone, 10)
+    else
+      you:rem_morale(morale_comfort_zone)
+    end
+  else
+    you:rem_morale(morale_comfort_zone)
+  end
+
+  if you:has_trait(trait_lone_wolf) then
+    if not has_npc_nearby(here, pos, 10) and count_hostiles_in_range(you, 8) == 0 then
+      apply_bonus(you, morale_lone_wolf, 8)
+    else
+      you:rem_morale(morale_lone_wolf)
+    end
+  else
+    you:rem_morale(morale_lone_wolf)
+  end
 end
 
 ---@param params OnCraftFailureParams
@@ -588,6 +651,29 @@ local function on_craft_failure(params)
       locale.gettext("Your hands won't cooperate.  The ruined work feels like a verdict on you.")
     )
   end
+end
+
+---@param params OnCharacterTryMoveParams
+local function apply_cowards_sprint_move_bonus(params)
+  ---@type Character
+  local ch = params.char
+  if not ch or not ch:has_trait(trait_cowards_sprint) then return end
+
+  local max_hp = ch:get_hp_max()
+  if max_hp <= 0 then return end
+
+  local ratio = ch:get_hp() / max_hp
+  if ratio >= 0.3 then
+    cowards_sprint_alert = false
+    return
+  end
+
+  if ch:is_avatar() and not cowards_sprint_alert then
+    gapi.add_msg(MsgType.good, locale.gettext("Fear puts springs in your step."))
+    cowards_sprint_alert = true
+  end
+
+  ch:mod_moves(math.floor((0.3 - ratio) * 120))
 end
 
 ---@param params OnCharacterTryMoveParams
@@ -642,6 +728,7 @@ local function on_character_try_move_with_auto_mop(params)
   if not allowed then return false end
 
   apply_trail_blazer_move_cost(params)
+  apply_cowards_sprint_move_bonus(params)
 
   ---@type Character
   local ch = params.char
