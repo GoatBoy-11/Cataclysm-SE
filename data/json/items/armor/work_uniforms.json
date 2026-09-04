@@ -1,0 +1,140 @@
+[
+  {
+    "//": "Imported from the civilian_variety mod. Items only - the mod's monsters are not part of this import.",
+    "//2": "Two chest pockets summing to the 500 ml of legacy storage, so the shirt carries the same amount under either POCKET_SYSTEM setting.",
+    "id": "cv_shirt_security",
+    "type": "ARMOR",
+    "name": { "str": "security shirt" },
+    "description": "A tan uniform shirt with epaulettes and a badge loop, cut to look official from across a car park.  Whoever wore it was not a police officer, and the shirt was doing most of the work of suggesting otherwise.",
+    "weight": "200 g",
+    "volume": "850 ml",
+    "price": "25 USD",
+    "price_postapoc": "50 cent",
+    "material": [ "cotton" ],
+    "symbol": "[",
+    "looks_like": "polo_shirt",
+    "color": "brown",
+    "covers": [ "torso" ],
+    "coverage": 90,
+    "encumbrance": 6,
+    "storage": "500 ml",
+    "warmth": 15,
+    "material_thickness": 2,
+    "flags": [ "VARSIZE", "POCKETS" ],
+    "pocket_data": [
+      {
+        "//": "Chest pocket",
+        "pocket_type": "CONTAINER",
+        "rigid": false,
+        "max_contains_volume": "250 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "20 cm",
+        "moves": 100
+      },
+      {
+        "//": "Chest pocket",
+        "pocket_type": "CONTAINER",
+        "rigid": false,
+        "max_contains_volume": "250 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "20 cm",
+        "moves": 100
+      }
+    ]
+  },
+  {
+    "//": "Imported from the civilian_variety mod. Items only - the mod's monsters are not part of this import.",
+    "//2": "A breast pocket and two trouser pockets summing to the 1 L of legacy storage, so the scrubs carry the same under either POCKET_SYSTEM.",
+    "id": "cv_scrubs",
+    "type": "ARMOR",
+    "name": { "str_sp": "medical scrubs" },
+    "description": "Loose teal cotton, short-sleeved top and drawstring trousers.  Comfortable, quick to get out of, and marked with nothing at all - which was the point, since everything that happened in them had to wash out.",
+    "weight": "480 g",
+    "volume": "2 L",
+    "price": "30 USD",
+    "price_postapoc": "50 cent",
+    "material": [ "cotton" ],
+    "symbol": "[",
+    "looks_like": "jumpsuit",
+    "color": "light_cyan",
+    "covers": [ "torso", "legs" ],
+    "coverage": 90,
+    "encumbrance": 4,
+    "storage": "1 L",
+    "warmth": 14,
+    "material_thickness": 1,
+    "flags": [ "VARSIZE", "POCKETS" ],
+    "pocket_data": [
+      {
+        "//": "Breast pocket",
+        "pocket_type": "CONTAINER",
+        "rigid": false,
+        "max_contains_volume": "300 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "20 cm",
+        "moves": 100
+      },
+      {
+        "//": "Trouser pocket",
+        "pocket_type": "CONTAINER",
+        "rigid": false,
+        "max_contains_volume": "350 ml",
+        "max_contains_weight": "1500 g",
+        "max_item_length": "20 cm",
+        "moves": 100
+      },
+      {
+        "//": "Trouser pocket",
+        "pocket_type": "CONTAINER",
+        "rigid": false,
+        "max_contains_volume": "350 ml",
+        "max_contains_weight": "1500 g",
+        "max_item_length": "20 cm",
+        "moves": 100
+      }
+    ]
+  },
+  {
+    "//": "Imported from the civilian_variety mod. Items only - the mod's monsters are not part of this import.",
+    "//2": "Two chest pockets summing to the 500 ml of legacy storage, so the shirt carries the same amount under either POCKET_SYSTEM setting.",
+    "id": "cv_shirt_retail",
+    "type": "ARMOR",
+    "name": { "str": "retail uniform shirt" },
+    "description": "A green work shirt with the store's logo on the breast and a name badge sewn above it.  The name has been scratched out, thoroughly and by hand, at some point after it stopped mattering what anyone was called.",
+    "weight": "190 g",
+    "volume": "800 ml",
+    "price": "20 USD",
+    "price_postapoc": "50 cent",
+    "material": [ "cotton" ],
+    "symbol": "[",
+    "looks_like": "polo_shirt",
+    "color": "green",
+    "covers": [ "torso" ],
+    "coverage": 90,
+    "encumbrance": 6,
+    "storage": "500 ml",
+    "warmth": 15,
+    "material_thickness": 2,
+    "flags": [ "VARSIZE", "POCKETS" ],
+    "pocket_data": [
+      {
+        "//": "Chest pocket",
+        "pocket_type": "CONTAINER",
+        "rigid": false,
+        "max_contains_volume": "250 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "20 cm",
+        "moves": 100
+      },
+      {
+        "//": "Chest pocket",
+        "pocket_type": "CONTAINER",
+        "rigid": false,
+        "max_contains_volume": "250 ml",
+        "max_contains_weight": "1 kg",
+        "max_item_length": "20 cm",
+        "moves": 100
+      }
+    ]
+  }
+]

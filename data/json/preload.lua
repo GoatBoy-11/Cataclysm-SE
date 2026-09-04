@@ -9,6 +9,11 @@ game.iuse_functions["VOLTMETER"] = function(...) return mod.voltmeter.menu(...) 
 game.iuse_functions["sonar_scan"] = function(...) return mod.sonar_scan(...) end
 game.iuse_functions["ARTIFACT_ANALYZER"] = function(...) return mod.artifact_analyzer.menu(...) end
 game.iuse_functions["OBJ_VAR_VIEWER"] = function(...) return mod.item_var_viewer.menu(...) end
+-- Registered here rather than in main.lua because the item factory reads
+-- game.iuse_functions while finalising item definitions, which happens before
+-- main.lua runs. The closure only dereferences mod.comfort_items when called.
+game.iuse_functions["CV_PILLOW_HUG"] = function(...) return mod.comfort_items.pillow_hug(...) end
+game.iuse_functions["CV_DOLL_CHAT"] = function(...) return mod.comfort_items.doll_chat(...) end
 game.examine_functions["PLUMBING_SHOWER_EXAMINE"] = function(...) return mod.plumbing.examine_shower(...) end
 game.examine_functions["PLUMBING_BATHTUB_EXAMINE"] = function(...) return mod.plumbing.examine_bathtub(...) end
 game.activity_functions["PLUMBING_FINISH_WASH"] = function(...) return mod.plumbing.finish_wash(...) end

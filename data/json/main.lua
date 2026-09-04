@@ -14,6 +14,7 @@ local minirose = require("lua/minirose")
 local plumbing = require("lua/plumbing")
 local genome = require("lua/itemgroup_modifiers/genome")
 local wool = require("lua/traits/wool_allergy")
+local comfort_items = require("lua/iuse/comfort_items")
 
 local mod = game.mod_runtime[game.current_mod]
 local storage = game.mod_storage[game.current_mod]
@@ -35,3 +36,4 @@ mod.minirose = minirose
 mod.genome = genome
 mod.cvd_machine = cvd_machine
 mod.wool = wool
+mod.comfort_items = comfort_items

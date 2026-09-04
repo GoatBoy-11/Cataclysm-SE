@@ -1,0 +1,176 @@
+[
+  {
+    "//": "General fiction shelves. Vanilla weights sum to 405, so roughly 1.5% each.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "novels",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "cv_manga_shonen", "prob": 8 },
+      { "item": "cv_manga_shojo", "prob": 8 },
+      { "item": "cv_manga_slice", "prob": 8 },
+      { "item": "cv_comic_hero", "prob": 6 },
+      { "item": "cv_manga_adult", "prob": 4 }
+    ]
+  },
+  {
+    "//": "A household bookcase. A collection, so these are percentages.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "SUS_fiction_bookcase",
+    "subtype": "collection",
+    "entries": [
+      { "item": "cv_manga_shonen", "prob": 6 },
+      { "item": "cv_manga_shojo", "prob": 6 },
+      { "item": "cv_manga_slice", "prob": 5 },
+      { "item": "cv_comic_hero", "prob": 5 }
+    ]
+  },
+  {
+    "//": "Children's shelves - no adult manga here, deliberately. Vanilla sums to 124.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "kids_books",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "cv_manga_shonen", "prob": 8 },
+      { "item": "cv_manga_shojo", "prob": 6 },
+      { "item": "cv_comic_hero", "prob": 6 }
+    ]
+  },
+  {
+    "//": "Magazine racks. Vanilla weights sum to 956, so roughly 1.5% each.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "magazines",
+    "subtype": "distribution",
+    "entries": [ { "item": "cv_mag_alien", "prob": 14 }, { "item": "cv_mag_shonen_weekly", "prob": 14 } ]
+  },
+  {
+    "//": "Where toys already live, so the figures get their best odds here. Vanilla sums to 892.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "toy_box",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "cv_figure_wolfgirl", "prob": 35 },
+      { "item": "cv_figure_mecha", "prob": 35 },
+      { "item": "cv_figure_boxed", "prob": 25 },
+      { "item": "cv_doll_mariner", "prob": 30 }
+    ]
+  },
+  {
+    "//": "A shop that would actually have stocked these. Vanilla declares no subtype, which loads as \"old\" and so as a distribution; its weights sum to 1109.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "toy_store",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "cv_figure_wolfgirl", "prob": 30 },
+      { "item": "cv_figure_mecha", "prob": 30 },
+      { "item": "cv_figure_boxed", "prob": 22 },
+      { "item": "cv_doll_mariner", "prob": 26 },
+      { "item": "cv_manga_shonen", "prob": 16 }
+    ]
+  },
+  {
+    "//": "Somebody's display cabinet - the one place a boxed figure truly belongs. Vanilla sums to 1622.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "home_display_case",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "cv_figure_boxed", "prob": 30 },
+      { "item": "cv_figure_mecha", "prob": 24 },
+      { "item": "cv_figure_wolfgirl", "prob": 20 }
+    ]
+  },
+  {
+    "//": "The pillow slot. Vanilla weights sum to 108, so a bed very occasionally has one of these instead.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "bed",
+    "subtype": "distribution",
+    "entries": [ { "item": "cv_pillow_anime", "prob": 2 }, { "item": "cv_pillow_singer", "prob": 2 } ]
+  },
+  {
+    "//": "Bedrooms. An enormous group - vanilla sums to 3921 - so even 14 is well under half a percent.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "bedroom",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "cv_manga_adult", "prob": 14 },
+      { "item": "cv_manga_shojo", "prob": 10 },
+      { "item": "cv_figure_wolfgirl", "prob": 8 },
+      { "item": "cv_pillow_anime", "prob": 3 },
+      { "item": "cv_pillow_singer", "prob": 3 }
+    ]
+  },
+  {
+    "//": "Hospital lockers. Vanilla weights sum to 210, so scrubs at 25 is about 11% of a locker roll - the obvious place to look for a set, without displacing the drugs anyone goes there for.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "gear_medical",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "cv_scrubs", "prob": 25 },
+      { "item": "cv_shirt_security", "prob": 5 },
+      { "item": "cv_note_medical", "prob": 8 }
+    ]
+  },
+  {
+    "//": "Clothing shops, deliberately very low - vanilla sums to 600, so these are about 1%. The retail shirt is deliberately absent: a store's own uniform is not stock.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "shirts_unisex",
+    "subtype": "distribution",
+    "entries": [ { "item": "cv_shirt_security", "prob": 6 }, { "item": "cv_scrubs", "prob": 5 } ]
+  },
+  {
+    "//": "Somebody's wardrobe, and the only world source for the retail shirt - a store uniform is not shop stock, so it is found where its wearer lived. Vanilla weights sum to 2933.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "dresser",
+    "subtype": "distribution",
+    "entries": [
+      { "item": "cv_shirt_retail", "prob": 15 },
+      { "item": "cv_shirt_security", "prob": 8 },
+      { "item": "cv_scrubs", "prob": 8 },
+      { "item": "cv_photo", "prob": 12 },
+      { "item": "cv_note_personal", "prob": 10 }
+    ]
+  },
+  {
+    "//": "Living rooms. Vanilla weights sum to 3246, so these sit at roughly a quarter of a percent.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "livingroom",
+    "subtype": "distribution",
+    "entries": [ { "item": "cv_note_personal", "prob": 8 }, { "item": "cv_photo", "prob": 8 } ]
+  },
+  {
+    "//": "Discarded paper. Vanilla declares no subtype, which loads as a distribution; its weights sum to 960.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "trash",
+    "subtype": "distribution",
+    "entries": [ { "item": "cv_note_personal", "prob": 8 }, { "item": "cv_note_work", "prob": 6 } ]
+  },
+  {
+    "//": "Desk paperwork. A collection, so these are percentage chances.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "office_paper",
+    "subtype": "collection",
+    "entries": [ { "item": "cv_note_work", "prob": 15 }, { "item": "cv_note_medical", "prob": 6 } ]
+  },
+  {
+    "//": "A photograph in the card sleeve - the wallet photo this group's own note said CSE lacked. A collection, so 25 is a 25% chance.",
+    "//2": "Redeclaring a vanilla group appends to it rather than replacing it (Item_factory::load_item_group reuses the existing group; only \"purge\" resets it). Subtype MUST match vanilla's or the loader throws.",
+    "type": "item_group",
+    "id": "wallet_contents",
+    "subtype": "collection",
+    "entries": [ { "item": "cv_photo", "prob": 25 } ]
+  }
+]
