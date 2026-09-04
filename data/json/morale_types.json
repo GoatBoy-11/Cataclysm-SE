@@ -452,5 +452,59 @@
     "type": "morale_type",
     "text": "Debug Morale",
     "permanent": true
+  },
+  {
+    "id": "morale_main_character",
+    "type": "morale_type",
+    "text": "Main character moment",
+    "permanent": true
+  },
+  {
+    "id": "morale_anime_protagonist",
+    "type": "morale_type",
+    "text": "Protagonist energy",
+    "permanent": true
+  },
+  {
+    "id": "morale_suburbanite_wild",
+    "type": "morale_type",
+    "text": "Too much nature",
+    "permanent": true
+  },
+  {
+    "id": "morale_suburbanite_indoors",
+    "type": "morale_type",
+    "text": "Civilized surroundings",
+    "permanent": true
+  },
+  {
+    "id": "morale_chattering_plush",
+    "type": "morale_type",
+    "text": "Plush companion",
+    "permanent": true
+  },
+  {
+    "id": "morale_hemophobia",
+    "type": "morale_type",
+    "text": "Blood nearby",
+    "permanent": true
+  },
+  {
+    "id": "morale_decidophobia",
+    "type": "morale_type",
+    "text": "Too many commitments",
+    "permanent": true
+  },
+  {
+    "id": "morale_atelphobia",
+    "type": "morale_type",
+    "text": "Crafting failure",
+    "permanent": true
+  },
+  {
+    "id": "morale_minimalist",
+    "type": "morale_type",
+    "text": "Traveling light",
+    "permanent": true
   }
 ]

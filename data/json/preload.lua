@@ -17,13 +17,16 @@ game.bionic_functions["bio_minirose"] = { on_activate = function(...) return mod
 gapi.add_on_every_x_hook(TimeDuration.from_turns(1), function(...)
   if mod.on_nyctophobia_tick then mod.on_nyctophobia_tick(...) end
   if mod.on_morale_traits_tick then mod.on_morale_traits_tick(...) end
+  if mod.on_cse_traits_fast_tick then mod.on_cse_traits_fast_tick(...) end
 end)
 
 gapi.add_on_every_x_hook(TimeDuration.from_turns(300), function(...)
   if mod.on_clutter_intolerant_tick then mod.on_clutter_intolerant_tick(...) end
+  if mod.on_cse_traits_slow_tick then mod.on_cse_traits_slow_tick(...) end
 end)
 
 game.add_hook("on_character_try_move", function(...) return mod.on_character_try_move(...) end)
+game.add_hook("on_craft_failure", function(...) return mod.on_craft_failure(...) end)
 game.add_hook("on_elevator_try_use", function(...) return mod.robofac.on_elevator_try_use(...) end)
 game.add_hook("on_dialogue_end", function(...) return mod.robofac.authorize_hub01_after_dialogue(...) end)
 game.add_hook("on_mission_end", function(...) return mod.robofac.authorize_hub01_after_mission(...) end)

@@ -4,7 +4,24 @@ local trait_nyctophobia = MutationBranchId.new("NYCTOPHOBIA")
 local trait_claustrophobia = MutationBranchId.new("CLAUSTROPHOBIA")
 local trait_agoraphobia = MutationBranchId.new("AGORAPHOBIA")
 local trait_clutter_intolerant = MutationBranchId.new("CLUTTER_INTOLERANT")
+local trait_main_character = MutationBranchId.new("MAIN_CHARACTER")
+local trait_small_talk_reflex = MutationBranchId.new("SMALL_TALK_REFLEX")
+local trait_suburbanite = MutationBranchId.new("SUBURBANITE")
+local trait_trail_blazer = MutationBranchId.new("TRAIL_BLAZER")
+local trait_chattering_plush = MutationBranchId.new("CHATTERING_PLUSH")
+local trait_anime_protagonist = MutationBranchId.new("ANIME_PROTAGONIST")
+local trait_hemophobia = MutationBranchId.new("HEMOPHOBIA")
+local trait_decidophobia = MutationBranchId.new("DECIDOPHOBIA")
+local trait_atelphobia = MutationBranchId.new("ATELPHOBIA")
+local trait_minimalist = MutationBranchId.new("MINIMALIST")
 local seen_clutter = false
+local seen_hemophobia = false
+
+local plush_item_ids = {
+  ItypeId.new("teddy"),
+  ItypeId.new("teddy_bear"),
+  ItypeId.new("shark_plush"),
+}
 
 local effect_depressants = EffectTypeId.new("depressants")
 local effect_downed = EffectTypeId.new("downed")
@@ -13,6 +30,25 @@ local effect_shakes = EffectTypeId.new("shakes")
 local morale_indoor_misery = MoraleTypeDataId.new("morale_indoor_misery")
 local morale_outdoor_misery = MoraleTypeDataId.new("morale_outdoor_misery")
 local morale_clutter_intolerant = MoraleTypeDataId.new("morale_clutter_intolerant")
+local morale_main_character = MoraleTypeDataId.new("morale_main_character")
+local morale_anime_protagonist = MoraleTypeDataId.new("morale_anime_protagonist")
+local morale_suburbanite_wild = MoraleTypeDataId.new("morale_suburbanite_wild")
+local morale_suburbanite_indoors = MoraleTypeDataId.new("morale_suburbanite_indoors")
+local morale_chattering_plush = MoraleTypeDataId.new("morale_chattering_plush")
+local morale_hemophobia = MoraleTypeDataId.new("morale_hemophobia")
+local morale_decidophobia = MoraleTypeDataId.new("morale_decidophobia")
+local morale_atelphobia = MoraleTypeDataId.new("morale_atelphobia")
+local morale_minimalist = MoraleTypeDataId.new("morale_minimalist")
+local blood_field_ids = {
+  FieldTypeId.new("fd_blood"):int_id(),
+  FieldTypeId.new("fd_blood_veggy"):int_id(),
+  FieldTypeId.new("fd_blood_insect"):int_id(),
+  FieldTypeId.new("fd_blood_invertebrate"):int_id(),
+  FieldTypeId.new("fd_gibs_flesh"):int_id(),
+  FieldTypeId.new("fd_gibs_veggy"):int_id(),
+  FieldTypeId.new("fd_gibs_insect"):int_id(),
+  FieldTypeId.new("fd_gibs_invertebrate"):int_id(),
+}
 local moppable_field_ids = {
   FieldTypeId.new("fd_blood"):int_id(),
   FieldTypeId.new("fd_blood_veggy"):int_id(),
@@ -31,6 +67,29 @@ local clutter_radius = 8
 local clutter_threshold = 12
 local clutter_step = 5
 local max_penalty = 30
+local max_bonus = 20
+
+local main_character_lines = {
+  locale.gettext("For a moment you feel like this is your story."),
+  locale.gettext("The scene pauses around you.  Probably nothing."),
+  locale.gettext("You strike a pose nobody asked for."),
+  locale.gettext("This would look better with a soundtrack."),
+  locale.gettext("You narrate your next step under your breath."),
+}
+
+local chattering_plush_lines = {
+  locale.gettext("Something in your pack mutters nonsense."),
+  locale.gettext("You hear a faint electronic chirp from your belongings."),
+  locale.gettext("A muffled voice insists you should drink more water."),
+  locale.gettext("Your gear makes a noise that is almost language."),
+}
+
+local small_talk_lines = {
+  locale.gettext("You blurt out a greeting to nobody in particular."),
+  locale.gettext("\"Lovely weather,\" you say, to the room."),
+  locale.gettext("You nod at a stranger who may or may not be there."),
+  locale.gettext("\"Howdy,\" you announce, unprompted."),
+}
 
 local in_darkness_alert = false
 
@@ -112,6 +171,83 @@ local function apply_penalty(who, morale_id, penalty)
     true,
     nil
   )
+end
+
+---@param who Character
+---@param morale_id MoraleTypeDataId
+---@param bonus integer
+local function apply_bonus(who, morale_id, bonus)
+  local magnitude = math.min(math.max(bonus, 0), max_bonus)
+  if magnitude <= 0 then
+    who:rem_morale(morale_id)
+    return
+  end
+
+  who:add_morale(
+    morale_id,
+    magnitude,
+    magnitude,
+    TimeDuration.from_minutes(20),
+    TimeDuration.from_minutes(20),
+    true,
+    nil
+  )
+end
+
+---@param who Character
+---@return boolean
+local function carries_plush(who)
+  for _, plush_id in ipairs(plush_item_ids) do
+    if who:has_item_with_id(plush_id, false) then return true end
+  end
+  return false
+end
+
+---@param here Map
+---@param center TripointBubMs
+---@param radius integer
+---@param field_ids FieldId[]
+---@return integer
+local function count_fields_near(here, center, radius, field_ids)
+  local total = 0
+  for _, pt in ipairs(here:points_in_radius(center, radius, 0)) do
+    for _, field_id in ipairs(field_ids) do
+      if here:has_field_at(pt, field_id) then
+        total = total + 1
+        break
+      end
+    end
+  end
+  return total
+end
+
+---@param who Character
+---@return number
+local function inventory_fill_ratio(who)
+  local capacity = who:volume_capacity():to_milliliter()
+  if capacity <= 0 then return 0 end
+  return who:volume_carried():to_milliliter() / capacity
+end
+
+---@param here Map
+---@param center TripointBubMs
+---@return boolean
+local function is_among_trees(here, center)
+  if here:has_flag_ter("TREE", center) then return true end
+  for _, pt in ipairs(here:points_in_radius(center, 2, 0)) do
+    if here:has_flag_ter("TREE", pt) then return true end
+  end
+  return false
+end
+
+---@param here Map
+---@param center TripointBubMs
+---@return boolean
+local function has_npc_nearby(here, center, radius)
+  for _, pt in ipairs(here:points_in_radius(center, radius, 0)) do
+    if gapi.get_npc_at(pt) then return true end
+  end
+  return false
 end
 
 ---@param who Character
@@ -301,6 +437,176 @@ local function tick_clutter_intolerant()
   end
 end
 
+local function tick_cse_traits_fast()
+  local you = gapi.get_avatar()
+  if not you then return end
+  if you:get_effect_int(effect_depressants) > 3 then return end
+
+  if you:has_trait(trait_main_character) and gapi.rng(1, 1200) == 1 then
+    local line = random_entry(main_character_lines)
+    if line and you:is_avatar() then
+      gapi.add_msg(MsgType.neutral, line)
+    end
+    if gapi.rng(1, 2) == 1 then
+      apply_bonus(you, morale_main_character, gapi.rng(3, 8))
+    else
+      apply_penalty(you, morale_main_character, gapi.rng(2, 6))
+    end
+  end
+
+  if you:has_trait(trait_anime_protagonist) then
+    local max_hp = you:get_hp_max()
+    if max_hp > 0 then
+      local ratio = you:get_hp() / max_hp
+      if ratio < 0.75 then
+        apply_bonus(you, morale_anime_protagonist, math.floor((0.75 - ratio) * 24))
+      elseif ratio >= 0.95 then
+        apply_penalty(you, morale_anime_protagonist, math.floor((ratio - 0.9) * 40))
+      else
+        you:rem_morale(morale_anime_protagonist)
+      end
+    end
+  else
+    you:rem_morale(morale_anime_protagonist)
+  end
+end
+
+local function tick_cse_traits_slow()
+  local you = gapi.get_avatar()
+  if not you then return end
+
+  if you:get_effect_int(effect_depressants) > 3 then
+    you:rem_morale(morale_suburbanite_wild)
+    you:rem_morale(morale_suburbanite_indoors)
+    you:rem_morale(morale_chattering_plush)
+    you:rem_morale(morale_hemophobia)
+    you:rem_morale(morale_decidophobia)
+    you:rem_morale(morale_minimalist)
+    return
+  end
+
+  local here = gapi.get_map()
+  local pos = you:get_pos_ms()
+
+  if you:has_trait(trait_suburbanite) then
+    if is_among_trees(here, pos) then
+      apply_penalty(you, morale_suburbanite_wild, 12)
+    else
+      you:rem_morale(morale_suburbanite_wild)
+    end
+    if here:has_flag_at("INDOORS", pos) then
+      apply_bonus(you, morale_suburbanite_indoors, 8)
+    else
+      you:rem_morale(morale_suburbanite_indoors)
+    end
+  else
+    you:rem_morale(morale_suburbanite_wild)
+    you:rem_morale(morale_suburbanite_indoors)
+  end
+
+  if you:has_trait(trait_chattering_plush) then
+    if carries_plush(you) then
+      apply_bonus(you, morale_chattering_plush, 6)
+    else
+      you:rem_morale(morale_chattering_plush)
+    end
+    if gapi.rng(1, 25) == 1 then
+      local line = random_entry(chattering_plush_lines)
+      if line and you:is_avatar() then gapi.add_msg(MsgType.neutral, line) end
+    end
+  else
+    you:rem_morale(morale_chattering_plush)
+  end
+
+  if you:has_trait(trait_hemophobia) then
+    local blood_tiles = count_fields_near(here, pos, 5, blood_field_ids)
+    local penalty = math.min(blood_tiles * 3, max_penalty)
+    apply_penalty(you, morale_hemophobia, penalty)
+    if penalty > 0 then
+      if not seen_hemophobia and you:is_avatar() then
+        gapi.add_msg(MsgType.bad, locale.gettext("The smell of blood turns your stomach."))
+        seen_hemophobia = true
+      end
+      if gapi.rng(1, 20) == 1 then drain_focus(you, 1, 20) end
+    else
+      seen_hemophobia = false
+    end
+  else
+    you:rem_morale(morale_hemophobia)
+    seen_hemophobia = false
+  end
+
+  if you:has_trait(trait_decidophobia) then
+    local active_missions = you:get_active_missions()
+    local mission_count = 0
+    if active_missions then
+      for _ in pairs(active_missions) do mission_count = mission_count + 1 end
+    end
+    if mission_count > 3 then
+      apply_penalty(you, morale_decidophobia, math.min((mission_count - 3) * 4, max_penalty))
+      if gapi.rng(1, 15) == 1 then drain_focus(you, 1, 20) end
+    else
+      you:rem_morale(morale_decidophobia)
+    end
+  else
+    you:rem_morale(morale_decidophobia)
+  end
+
+  if you:has_trait(trait_minimalist) then
+    local fill_ratio = inventory_fill_ratio(you)
+    if fill_ratio <= 0.5 then
+      apply_bonus(you, morale_minimalist, math.floor((0.5 - fill_ratio) * 20))
+    elseif fill_ratio >= 0.9 then
+      apply_penalty(you, morale_minimalist, math.floor((fill_ratio - 0.9) * 80))
+    else
+      you:rem_morale(morale_minimalist)
+    end
+  else
+    you:rem_morale(morale_minimalist)
+  end
+
+  if you:has_trait(trait_small_talk_reflex) and has_npc_nearby(here, pos, 4) then
+    if gapi.rng(1, 30) == 1 then
+      local line = random_entry(small_talk_lines)
+      if line and you:is_avatar() then gapi.add_msg(MsgType.neutral, line) end
+      gapi.play_variant_sound("shout", "default", 8, true)
+    end
+  end
+end
+
+---@param params OnCraftFailureParams
+local function on_craft_failure(params)
+  local crafter = params.crafter
+  if not crafter or not crafter:has_trait(trait_atelphobia) then return end
+  if crafter:get_effect_int(effect_depressants) > 3 then return end
+
+  apply_penalty(crafter, morale_atelphobia, 8)
+  drain_focus(crafter, 2, 20)
+  if crafter:is_avatar() then
+    gapi.add_msg(
+      MsgType.bad,
+      locale.gettext("Your hands won't cooperate.  The ruined work feels like a verdict on you.")
+    )
+  end
+end
+
+---@param params OnCharacterTryMoveParams
+local function apply_trail_blazer_move_cost(params)
+  ---@type Character
+  local ch = params.char
+  if not ch or not ch:has_trait(trait_trail_blazer) then return end
+
+  local dest = params.to
+  if not dest then return end
+
+  local here = gapi.get_map()
+  if here:has_flag_at("ROAD", dest) then
+    ch:mod_moves(-30)
+  elseif here:is_outside(dest) and not here:has_flag_at("INDOORS", dest) then
+    ch:mod_moves(20)
+  end
+end
+
 ---@param params OnCharacterTryMoveParams
 local function on_character_try_move(params)
   ---@type Character
@@ -335,6 +641,8 @@ local function on_character_try_move_with_auto_mop(params)
   local allowed = on_character_try_move(params)
   if not allowed then return false end
 
+  apply_trail_blazer_move_cost(params)
+
   ---@type Character
   local ch = params.char
   if not ch then return true end
@@ -356,6 +664,9 @@ function lua_traits.register(mod)
   mod.on_nyctophobia_tick = tick_nyctophobia
   mod.on_morale_traits_tick = tick_morale_traits
   mod.on_clutter_intolerant_tick = tick_clutter_intolerant
+  mod.on_cse_traits_fast_tick = tick_cse_traits_fast
+  mod.on_cse_traits_slow_tick = tick_cse_traits_slow
+  mod.on_craft_failure = on_craft_failure
 end
 
 return lua_traits

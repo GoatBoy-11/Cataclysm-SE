@@ -7205,5 +7205,118 @@
       "HYPEROPIC"
     ],
     "mut_enchantments": [ { "flags": [ "BLIND" ] } ]
+  },
+  {
+    "type": "mutation",
+    "id": "MAIN_CHARACTER",
+    "name": { "str": "Main Character" },
+    "points": -2,
+    "description": "You experience life as though it might be narrated.  Your mood swings with the drama of the moment, and you occasionally find yourself struck by how cinematic everything feels.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "SMALL_TALK_REFLEX",
+    "name": { "str": "Small Talk Reflex" },
+    "points": -1,
+    "description": "You greet people on instinct, even when nobody asked.  Around other survivors this tends to make a little more noise than you meant.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "SUBURBANITE",
+    "name": { "str": "Suburbanite" },
+    "points": -1,
+    "description": "Sidewalks and drywall feel right; untamed woods do not.  You are uneasy among trees, but steadier inside buildings.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "TRAIL_BLAZER",
+    "name": { "str": "Trail Blazer" },
+    "points": 1,
+    "description": "Pavement bores you and asphalt slows you down.  You move more easily across rough ground, but civilized roads feel like they stick to your boots.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false,
+    "movecost_obstacle_modifier": 0.9
+  },
+  {
+    "type": "mutation",
+    "id": "CHATTERING_PLUSH",
+    "name": { "str": "Chattering Plush" },
+    "points": -1,
+    "description": "Battery-powered toys unsettle you in a familiar way.  You sometimes hear nonsense from your pack, and keeping a plush companion nearby steadies your nerves.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "ANIME_PROTAGONIST",
+    "name": { "str": "Anime Protagonist" },
+    "points": -3,
+    "description": "You come alive when the situation turns desperate, and feel oddly flat when things are going fine.  Injury focuses you; comfort leaves you restless.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "SLOP_TOLERANT",
+    "name": { "str": "Slop Tolerant" },
+    "points": 1,
+    "description": "Questionable food does not faze you the way it fazes most people.  You can stomach spoiled meals with less complaint, if not quite full nutrition.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false,
+    "mut_enchantments": [ { "flags": [ "EAT_ROTTEN", "EAT_ROTTEN_MORALE" ] } ]
+  },
+  {
+    "type": "mutation",
+    "id": "HEMOPHOBIA",
+    "name": { "str": "Hemophobia" },
+    "points": -2,
+    "description": "Blood makes your skin crawl.  Being near fresh gore drains your focus and morale.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "DECIDOPHOBIA",
+    "name": { "str": "Decidophobia" },
+    "points": -2,
+    "description": "Too many open commitments paralyze you.  Juggling more than a few active tasks at once steadily wears you down.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "ATELPHOBIA",
+    "name": { "str": "Atelophobia" },
+    "points": -1,
+    "description": "Failed crafts feel like personal verdicts.  Every ruined project leaves you shaken and self-conscious.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false
+  },
+  {
+    "type": "mutation",
+    "id": "MINIMALIST",
+    "name": { "str": "Minimalist" },
+    "points": 2,
+    "description": "Traveling light clears your head.  You feel better with room to spare in your pack, and cramped, overstuffed pockets make you miserable.",
+    "starting_trait": true,
+    "valid": false,
+    "purifiable": false,
+    "cancels": [ "HOARDER" ]
   }
 ]

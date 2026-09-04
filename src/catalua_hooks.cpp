@@ -20,6 +20,7 @@ constexpr auto hook_names = std::array
     "on_character_item_wear",
     "on_control_npc",
     "on_craft_result",
+    "on_craft_failure",
     "on_creature_attacked_by_character",
     "on_creature_blocked",
     "on_creature_do_turn",

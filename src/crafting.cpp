@@ -1019,6 +1019,12 @@ bool item::handle_craft_failure( Character &crafter )
         return false;
     }
 
+    cata::run_hooks( "on_craft_failure", [&]( auto & params ) {
+        params["crafter"] = &crafter;
+        params["craft"] = this;
+        params["recipe"] = &get_making();
+    } );
+
     const double success_roll = crafter.crafting_success_roll( get_making() );
     const int starting_components = this->components.size();
     // Destroy at most 75% of the components, always a chance of losing 1 though
