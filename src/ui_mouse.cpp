@@ -82,7 +82,9 @@ std::vector<indexed_rectangle>
     for( size_t i = start_i; i < labels.size(); ++i ) {
         const int tab_width = utf8_width( labels[i] ) + 1;
         const int newx = x + utf8_width( labels[i] ) + tab_step;
-        if( newx <= max_tab_width + opts.origin.x ) {
+        // `draw_tabs` clips at exactly this, with its x also starting at the
+        // origin. Adding the origin here created regions for tabs never drawn.
+        if( newx <= max_tab_width ) {
             result.push_back( {
                 inclusive_rectangle<point> {
                     point( x - 1, opts.origin.y ),

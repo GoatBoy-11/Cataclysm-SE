@@ -1090,7 +1090,11 @@ void uilist::query( bool loop, int timeout )
                     if( !rect || !rect->contains( *cell ) ) {
                         continue;
                     }
-                    if( fselected != fei || selected != ei ) {
+                    // `scrollby` never lands the keyboard on a disabled entry,
+                    // so the mouse must not either, or hovering would park the
+                    // highlight somewhere the arrow keys can never reach.
+                    if( ( entries[ei].enabled || allow_disabled ) &&
+                        ( fselected != fei || selected != ei ) ) {
                         fselected = fei;
                         selected = ei;
                         if( callback != nullptr ) {

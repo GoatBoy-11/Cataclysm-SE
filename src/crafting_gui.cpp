@@ -927,6 +927,10 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
     // just right of this column, so a hit region spanning the whole window
     // turned clicks on the detail text into clicks on a recipe.
     const int max_recipe_name_width = 27;
+    // Width the category tabs were actually drawn with, recorded by the redraw
+    // below and read by the mouse hit test. Recomputing it during input would
+    // mean calling `draw_hidden_amount`, which draws.
+    int head_tab_width = 0;
     ui.on_redraw( [&]( ui_adaptor & ui ) {
         int lost_width = 0;
         // Need to do this to get the width
@@ -936,8 +940,9 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
         }
 
         const TAB_MODE m = ( batch ) ? BATCH : ( filterstring.empty() ) ? NORMAL : FILTERED;
+        head_tab_width = getmaxx( w_head ) - lost_width;
         draw_recipe_tabs( w_head, tab.cur(), m, is_filtered_unread, is_cat_unread,
-                          getmaxx( w_head ) - lost_width );
+                          head_tab_width );
         const auto &shown_recipes = show_unavailable ? all_recipes : available_recipes;
         draw_recipe_subtabs( w_subhead, tab.cur(), subtab.cur(), shown_recipes, m,
                              is_subcat_unread[tab.cur()] );
@@ -1485,7 +1490,7 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
             const TAB_MODE mouse_mode = ( batch ) ? BATCH : ( filterstring.empty() ) ? NORMAL : FILTERED;
             bool mouse_handled = false;
 
-            if( mouse_mode == NORMAL && !batch && filterstring.empty() ) {
+            if( mouse_mode == NORMAL ) {
                 if( const auto cell = ctxt.get_mouse_cell( w_head ) ) {
                     std::vector<std::string> cat_labels;
                     cat_labels.reserve( craft_cat_list.size() );
@@ -1500,7 +1505,7 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
                             *cell, cat_labels, {
                                 .origin = point( 2, 0 ),
                                 .current_tab = current_cat,
-                                .max_width = getmaxx( w_head ),
+                                .max_width = head_tab_width,
                             } ) ) {
                         mouse_handled = true;
                         if( action == "SELECT" ) {
@@ -1532,7 +1537,6 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
                                 }
                             }
                         }
-                        ( void )current_sub;
                     }
                 }
             }

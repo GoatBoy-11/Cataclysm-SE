@@ -716,9 +716,11 @@ bool main_menu::opening_screen()
         input_event sInput = ctxt.get_raw_input();
 
         if( action == "MOUSE_MOVE" || action == "SELECT" ) {
-            if( const auto cell = ctxt.get_mouse_cell( w_open ) ) {
-                const point abs_cell = point( catacurses::getbegx( w_open ),
-                                              catacurses::getbegy( w_open ) ) + *cell;
+            // Both button maps hold absolute screen rectangles, and some submenu
+            // rows are drawn above w_open's top edge. Gating on w_open made those
+            // rows unclickable, so read the position in screen space instead.
+            if( const auto cell = ctxt.get_mouse_cell( catacurses::stdscr ) ) {
+                const point abs_cell = *cell;
                 bool mouse_handled = false;
 
                 for( const auto &[rec, pair] : main_menu_sub_button_map ) {

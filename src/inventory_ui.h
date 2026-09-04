@@ -700,6 +700,13 @@ class inventory_selector
 
         bool is_empty = true;
         bool display_stats = true;
+        // Rebuilt from scratch by `draw_columns` on every redraw, and read only by
+        // `find_entry_by_coordinate` from `get_input`. Every execute() loop calls
+        // ui_manager::redraw() immediately before get_input(), and that always
+        // re-runs the draw, so these pointers cannot outlive the entries they
+        // point into. An input loop that read input without redrawing first, or
+        // that mutated entries between the redraw and get_input, would break that
+        // and leave dangling pointers here.
         mutable std::vector<std::pair<inclusive_rectangle<point>, inventory_entry *>> rect_entry_map;
 
     public:

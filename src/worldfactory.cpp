@@ -472,8 +472,13 @@ WORLDINFO *worldfactory::pick_world( bool show_prompt, bool empty_only )
                     if( const auto tab_idx = ui_mouse::hit_test_bracket_tabs(
                             abs_cell - header_origin, page_labels, { .origin = point( 7, 0 ) } ) ) {
                         mouse_handled = true;
-                        selpage = page_indices[*tab_idx];
-                        sel = 0;
+                        // Only a click changes page. Acting on plain movement meant
+                        // sweeping the mouse across the header silently switched
+                        // page and threw away the selection.
+                        if( action == "SELECT" ) {
+                            selpage = page_indices[*tab_idx];
+                            sel = 0;
+                        }
                     }
                 }
 

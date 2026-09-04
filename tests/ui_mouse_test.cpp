@@ -113,3 +113,40 @@ TEST_CASE( "ui_mouse column hit testing splits on separators", "[ui_mouse]" )
     CHECK( !ui_mouse::hit_test_columns( -1, separators ).has_value() );
     CHECK( !ui_mouse::hit_test_columns( 0, {} ).has_value() );
 }
+
+TEST_CASE( "ui_mouse tab regions stop where draw_tabs stops drawing", "[ui_mouse]" )
+{
+    // draw_tabs lays tabs out from opts.origin.x and draws one only while
+    // x + width + 3 <= max_width. A region for a tab that was clipped away
+    // would take clicks for a tab the player cannot see.
+    //
+    // Single-character labels put a tab boundary exactly in the gap between the
+    // correct limit and an off-by-origin one: laid out from x 2 each tab ends at
+    // 6, 10, 14 and 18, so a limit of 16 draws three tabs, while a limit that
+    // wrongly added the origin would reach 18 and admit the fourth.
+    //
+    // Their total width, 16, also equals the limit, so calcStartPos takes its
+    // "everything fits" branch and the strip does not scroll -- which keeps this
+    // independent of the MENU_SCROLL option.
+    const std::vector<std::string> tabs { "A", "B", "C", "D" };
+    const int origin_x = 2;
+
+    const auto clipped = ui_mouse::tab_rectangles( tabs, {
+        .origin = point( origin_x, 0 ),
+        .current_tab = 0,
+        .max_width = 16,
+    } );
+    REQUIRE( clipped.size() == 3 );
+    CHECK( clipped.back().index == 2 );
+
+    // With room for everything, every tab is clickable, in order.
+    const auto roomy = ui_mouse::tab_rectangles( tabs, {
+        .origin = point( origin_x, 0 ),
+        .current_tab = 0,
+        .max_width = 200,
+    } );
+    REQUIRE( roomy.size() == tabs.size() );
+    for( size_t i = 0; i < roomy.size(); ++i ) {
+        CHECK( roomy[i].index == static_cast<int>( i ) );
+    }
+}
