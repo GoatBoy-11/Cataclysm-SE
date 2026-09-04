@@ -8,6 +8,7 @@
 #include "catalua_luna_doc.h"
 
 #include <algorithm>
+#include <optional>
 #include <ranges>
 #include <stdexcept>
 #include <vector>
@@ -17,6 +18,7 @@
 #include "distribution_grid.h"
 #include "init.h"
 #include "game.h"
+#include "image_viewer.h"
 #include "iexamine.h"
 #include "lightmap.h"
 #include "map.h"
@@ -26,6 +28,7 @@
 #include "monster.h"
 #include "overmapbuffer.h"
 #include "sol/forward.hpp"
+#include "translations.h"
 #include "weather.h"
 #include "line.h"
 #include "lua_action_menu.h"
@@ -300,6 +303,44 @@ void cata::detail::reg_game_api( sol::state &lua )
             }
             return res.get<bool>();
         }, title, radius, failure );
+    } );
+
+    DOC( "Show a PNG overlay. Argument is a filename under gfx/images or a mod's images/ folder, or a table { image, caption?, mode?, scale? }. mode is native, fullscreen, or scale. Returns false if the image cannot be found. Dismiss with Escape or another key." );
+    luna::set_fx( lib, "show_image", []( const sol::object & arg ) -> bool {
+        auto opts = show_image_options{};
+        if( arg.is<std::string>() )
+        {
+            opts.image = arg.as<std::string>();
+        } else if( arg.is<sol::table>() )
+        {
+            const auto table = arg.as<sol::table>();
+            opts.image = table.get_or<std::string>( "image", "" );
+            if( const auto caption = table.get<sol::optional<std::string>>( "caption" ) ) {
+                opts.caption = to_translation( *caption );
+            }
+            if( const auto mode = table.get<sol::optional<std::string>>( "mode" ) ) {
+                const auto parsed = image_display_mode_from_string( *mode );
+                if( !parsed ) {
+                    throw std::runtime_error(
+                        "show_image mode must be \"native\", \"fullscreen\", or \"scale\"" );
+                }
+                opts.mode = *parsed;
+            }
+            if( const auto scale = table.get<sol::optional<double>>( "scale" ) ) {
+                opts.scale = *scale;
+                if( !table.get<sol::optional<std::string>>( "mode" ) ) {
+                    opts.mode = image_display_mode::scale;
+                }
+            }
+        } else
+        {
+            throw std::runtime_error( "show_image expects a filename or a table" );
+        }
+        return show_image( opts );
+    } );
+    DOC( "Resolve an image filename to a full path under gfx/images or a loaded mod's images/ folder. Returns nil if not found." );
+    luna::set_fx( lib, "resolve_image_path", []( const std::string & image ) -> std::optional<std::string> {
+        return resolve_image_path( image );
     } );
 
     reg_game_api_creature_queries( lib );

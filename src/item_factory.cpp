@@ -40,6 +40,7 @@
 #include "item.h"
 #include "item_contents.h"
 #include "item_group.h"
+#include "image_viewer.h"
 #include "iuse_actor.h"
 #include "json.h"
 #include "sounds.h"
@@ -1463,6 +1464,7 @@ void Item_factory::init()
     add_actor( std::make_unique<learn_spell_actor>() );
     add_actor( std::make_unique<cast_spell_actor>() );
     add_actor( std::make_unique<weigh_self_actor>() );
+    add_actor( std::make_unique<show_image_actor>() );
     add_actor( std::make_unique<gps_device_actor>() );
     add_actor( std::make_unique<sew_advanced_actor>() );
     add_actor( std::make_unique<multicooker_iuse>() );

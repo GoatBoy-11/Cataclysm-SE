@@ -1,0 +1,23 @@
+[
+  {
+    "id": "demo_photograph",
+    "type": "GENERIC",
+    "category": "other",
+    "name": { "str": "faded photograph" },
+    "description": "A small print, edges worn soft.  Activate it to look at the picture.",
+    "looks_like": "photo_album",
+    "symbol": ",",
+    "color": "light_cyan",
+    "material": [ "paper" ],
+    "weight": "3 g",
+    "volume": "5 ml",
+    "price": "0 cent",
+    "price_postapoc": "0 cent",
+    "use_action": {
+      "type": "show_image",
+      "image": "demo_photo.png",
+      "caption": "The colors have gone a little yellow.",
+      "menu_text": "Look at"
+    }
+  }
+]

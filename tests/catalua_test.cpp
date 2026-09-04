@@ -109,6 +109,14 @@ TEST_CASE("lua_global_functions", "[lua]") {
     REQUIRE(lua_npc_avatar_name == "nil");
 }
 
+TEST_CASE("lua_show_image_resolves_and_skips_modal_in_test_mode", "[lua][show_image]") {
+    sol::state lua = make_lua_state();
+    sol::table test_data = lua.create_table();
+    lua.globals()["test_data"] = test_data;
+    run_lua_test_script(lua, "show_image_test.lua");
+    REQUIRE(test_data["ok"] == true);
+}
+
 TEST_CASE("lua_map_create_item_at_places_without_returning_owned_item", "[lua][map]") {
     clear_all_state();
     auto lua = make_lua_state();

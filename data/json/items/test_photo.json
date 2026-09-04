@@ -1,0 +1,23 @@
+[
+  {
+    "id": "test_photo",
+    "type": "GENERIC",
+    "category": "other",
+    "name": { "str": "test photo" },
+    "description": "A test print for the show_image use action.  Activate it to view the picture.",
+    "looks_like": "photo_album",
+    "symbol": ",",
+    "color": "light_cyan",
+    "material": [ "paper" ],
+    "weight": "3 g",
+    "volume": "5 ml",
+    "price": "0 cent",
+    "price_postapoc": "0 cent",
+    "use_action": {
+      "type": "show_image",
+      "image": "test_photo.png",
+      "caption": "Summer, 1998",
+      "mode": "native"
+    }
+  }
+]

@@ -1001,5 +1001,22 @@
     "material_thickness": 1,
     "storage": "100 ml",
     "pocket_data": [ { "pocket_type": "CONTAINER", "max_contains_volume": "4 L" } ]
+  },
+  {
+    "type": "GENERIC",
+    "id": "test_photograph",
+    "category": "other",
+    "name": "TEST photograph",
+    "description": "A test print used to exercise show_image path resolution from a mod images folder.",
+    "weight": "3 g",
+    "volume": "5 ml",
+    "symbol": ",",
+    "color": "light_cyan",
+    "material": [ "paper" ],
+    "use_action": {
+      "type": "show_image",
+      "image": "test_photo.png",
+      "caption": "TEST caption"
+    }
   }
 ]
