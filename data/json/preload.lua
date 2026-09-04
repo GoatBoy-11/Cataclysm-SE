@@ -31,7 +31,6 @@ gapi.add_on_every_x_hook(TimeDuration.from_turns(300), function(...)
 end)
 
 game.add_hook("on_character_try_move", function(...) return mod.on_character_try_move(...) end)
-game.add_hook("on_craft_failure", function(...) return mod.on_craft_failure(...) end)
 game.add_hook("on_creature_melee_attacked", function(...) return mod.on_creature_melee_attacked(...) end)
 game.add_hook("on_dialogue_start", function(...) return mod.on_dialogue_start(...) end)
 game.add_hook("on_elevator_try_use", function(...) return mod.robofac.on_elevator_try_use(...) end)
