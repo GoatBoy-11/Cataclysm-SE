@@ -202,12 +202,28 @@ bool pocket_favorite_settings::accepts_item( const item &it ) const
 
     // A container is judged by what is inside it, not by itself, unless the
     // container's own type was explicitly listed above.
-    if( it.is_container() && !it.contents.empty() ) {
-        for( const item * const inner : it.contents.all_items_top() ) {
+    //
+    // "Container" here means any item carrying things in CONTAINER pockets, not
+    // item::is_container(), which reads the legacy container slot only. A wallet
+    // is a GENERIC itype whose storage is pockets, so that slot is empty for it
+    // and gating on it let a blacklisted item ride into a pocket inside a wallet
+    // while the same item in a plastic bag was turned away.
+    //
+    // Magazine, gunmod and ammo pockets are deliberately not read: a loaded
+    // magazine is judged as a magazine, not as the cartridges in it.
+    bool judged_by_contents = false;
+    for( const item_pocket &pocket : it.contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER || pocket.empty() ) {
+            continue;
+        }
+        judged_by_contents = true;
+        for( const item * const inner : pocket.all_items_top() ) {
             if( !accepts_item( *inner ) ) {
                 return false;
             }
         }
+    }
+    if( judged_by_contents ) {
         return true;
     }
 

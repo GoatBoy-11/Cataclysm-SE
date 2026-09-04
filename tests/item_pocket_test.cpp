@@ -524,6 +524,57 @@ TEST_CASE( "a_container_is_judged_by_its_contents", "[item][pocket][favorites]" 
     CHECK_FALSE( settings.accepts_item( *bag ) );
 }
 
+TEST_CASE( "a_pocketed_container_is_judged_by_its_contents_too", "[item][pocket][favorites]" )
+{
+    // The rule above must not depend on the legacy container slot. A wallet is
+    // a GENERIC itype whose storage is pockets, so item::is_container() is
+    // false for it, and gating on that let a blacklisted item ride into a
+    // pocket inside one while the same item in a plastic bag was refused.
+    pocket_favorite_settings settings;
+    settings.blacklist_item( itype_id( "coin_quarter" ) );
+
+    detached_ptr<item> wallet = item::spawn( "wallet" );
+    REQUIRE( !wallet->put_in( item::spawn( "coin_quarter" ) ) );
+    REQUIRE_FALSE( wallet->is_container() );
+    REQUIRE_FALSE( wallet->contents.empty() );
+
+    CHECK_FALSE( settings.accepts_item( *wallet ) );
+}
+
+TEST_CASE( "an_empty_pocketed_container_is_still_judged_by_itself",
+           "[item][pocket][favorites]" )
+{
+    // Only a loaded container defers to its contents. An empty one has nothing
+    // to be judged by, so the blacklist on what it usually carries must not
+    // keep the container itself out.
+    pocket_favorite_settings settings;
+    settings.blacklist_item( itype_id( "coin_quarter" ) );
+
+    detached_ptr<item> wallet = item::spawn( "wallet" );
+    REQUIRE( wallet->contents.empty() );
+
+    CHECK( settings.accepts_item( *wallet ) );
+}
+
+TEST_CASE( "a_magazine_is_judged_as_a_magazine_not_as_its_ammo", "[item][pocket][favorites]" )
+{
+    // Contents that are not in a CONTAINER pocket are not what an item "carries"
+    // in the sense the favorites rules mean. Blacklisting a cartridge must not
+    // also blacklist every magazine loaded with it.
+    pocket_favorite_settings settings;
+    settings.blacklist_item( itype_id( "9mm" ) );
+
+    detached_ptr<item> mag = item::spawn( "glockmag" );
+    detached_ptr<item> rounds = item::spawn( "9mm" );
+    // A default 9mm stack is bigger than the magazine holds, so load one round.
+    rounds->charges = 1;
+    REQUIRE( !mag->put_in( std::move( rounds ) ) );
+    REQUIRE_FALSE( mag->contents.empty() );
+    REQUIRE( mag->contents.get_pockets().front().definition().type == pocket_type::MAGAZINE );
+
+    CHECK( settings.accepts_item( *mag ) );
+}
+
 // ---------------------------------------------------------------------------
 // Item length
 // ---------------------------------------------------------------------------
@@ -2778,4 +2829,115 @@ TEST_CASE( "classic mode drops the pocket rules and keeps volume",
     CHECK_FALSE( accepts( "wallet", "test_rock" ) );
     // An ammo box is one pocket, so in classic it is simply a box by volume.
     CHECK( accepts( "9mm_ammo_box_50", "coin_quarter" ) );
+}
+
+// ---------------------------------------------------------------------------
+// Nesting: a container holding items can itself go into a pocket
+//
+// can_contain() asks nothing about whether an item is a container or whether
+// it is empty, so nesting works by omission rather than by design. The only
+// nesting guard anywhere is item::put_in()'s direct self-insert check. These
+// pin the behaviour that omission produces, because a later restriction added
+// to can_contain() would silently take wallets out of trousers.
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "a_filled_container_goes_into_a_pocket_and_keeps_its_contents",
+           "[item][pocket][nesting]" )
+{
+    clear_all_state();
+    detached_ptr<item> held = item::spawn( "wallet" );
+    item *wallet = &*held;
+    REQUIRE( !wallet->put_in( item::spawn( "coin_quarter" ) ) );
+    REQUIRE( wallet->contents.all_items_top().size() == 1 );
+
+    detached_ptr<item> worn = item::spawn( "jeans" );
+    item *jeans = &*worn;
+    REQUIRE( !jeans->put_in( std::move( held ) ) );
+
+    const std::vector<item *> pocketed = jeans->contents.all_items_top();
+    REQUIRE( pocketed.size() == 1 );
+    CHECK( pocketed.front()->typeId() == itype_id( "wallet" ) );
+    // The coin travelled inside the wallet rather than being flattened out of
+    // it on the way in.
+    const std::vector<item *> inner = pocketed.front()->contents.all_items_top();
+    REQUIRE( inner.size() == 1 );
+    CHECK( inner.front()->typeId() == itype_id( "coin_quarter" ) );
+}
+
+TEST_CASE( "nested_contents_count_against_the_outer_pockets_weight_limit",
+           "[item][pocket][nesting]" )
+{
+    clear_all_state();
+    detached_ptr<item> empty = item::spawn( "wallet" );
+    const units::mass empty_weight = empty->weight();
+
+    detached_ptr<item> loaded = item::spawn( "wallet" );
+    for( int i = 0; i < 10; i++ ) {
+        REQUIRE( !loaded->put_in( item::spawn( "coin_quarter" ) ) );
+    }
+    const units::mass loaded_weight = loaded->weight();
+    // item::weight() folds in contents by default, which is the only reason an
+    // outer pocket sees the coins at all.
+    REQUIRE( loaded_weight > empty_weight );
+
+    detached_ptr<item> holder = item::spawn( "backpack" );
+    pocket_data data;
+    data.type = pocket_type::CONTAINER;
+    data.max_contains_volume = 10_liter;
+    // Sized to take the wallet but not the coins in it.
+    data.max_contains_weight = ( empty_weight + loaded_weight ) / 2;
+    item_pocket pocket( holder.get(), &data );
+
+    CHECK( pocket.can_contain( *empty ).success() );
+    const ret_val<item_pocket::contain_code> res = pocket.can_contain( *loaded );
+    CHECK_FALSE( res.success() );
+    CHECK( res.value() == item_pocket::contain_code::ERR_TOO_HEAVY );
+}
+
+TEST_CASE( "only_a_non_rigid_container_shows_its_contents_volume_to_the_outer_pocket",
+           "[item][pocket][nesting]" )
+{
+    clear_all_state();
+    // A plastic bag declares "rigid": false, a small box does not. Both take a
+    // rock, and only the bag reports itself bigger for holding one.
+    detached_ptr<item> bag = item::spawn( "bag_plastic" );
+    const units::volume empty_bag = bag->volume();
+    REQUIRE( !bag->put_in( item::spawn( "test_rock" ) ) );
+    CHECK( bag->volume() > empty_bag );
+
+    detached_ptr<item> box = item::spawn( "box_small" );
+    const units::volume empty_box = box->volume();
+    REQUIRE( !box->put_in( item::spawn( "test_rock" ) ) );
+    // item::volume() adds contents only when the itype is non-rigid, so a
+    // pocket that took the box empty still takes it loaded. Note this is decided
+    // per itype and never by pocket_data::rigid - see item_contents::
+    // item_size_modifier(), which says so and leaves it to a later phase.
+    CHECK( box->volume() == empty_box );
+
+    detached_ptr<item> holder = item::spawn( "backpack" );
+    pocket_data data;
+    data.type = pocket_type::CONTAINER;
+    data.max_contains_volume = empty_box;
+    item_pocket pocket( holder.get(), &data );
+    CHECK( pocket.can_contain( *box ).success() );
+}
+
+TEST_CASE( "a_filled_container_routes_into_a_worn_pocket", "[pocket][routing][nesting]" )
+{
+    clear_all_state();
+    standard_npc dummy( "wearer" );
+    dummy.wear_item( item::spawn( "test_pocket_vest" ) );
+
+    detached_ptr<item> bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "test_rock" ) ) );
+    item &stored = *bag;
+    detached_ptr<item> left = dummy.i_add_to_worn_pockets( std::move( bag ) );
+
+    CHECK( !left );
+    const item *vest = dummy.worn.front();
+    REQUIRE( vest->contents.pocket_containing( stored ) != nullptr );
+    // Pickup routing must not strip a container on the way into a pocket.
+    const std::vector<item *> inner = stored.contents.all_items_top();
+    REQUIRE( inner.size() == 1 );
+    CHECK( inner.front()->typeId() == itype_id( "test_rock" ) );
 }
