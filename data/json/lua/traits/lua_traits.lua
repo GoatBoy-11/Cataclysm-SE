@@ -539,6 +539,12 @@ local function tick_clutter_intolerant()
   end
 end
 
+-- Forward declaration.  tick_cse_traits_fast calls this before the definition
+-- further down is reached, and a `local function` is only in scope from its own
+-- line onwards - without this the call resolved to a nil global and the
+-- every-second hook errored on every tick for anyone carrying the trait.
+local tick_anime_protagonist
+
 local function tick_cse_traits_fast()
   local you = gapi.get_avatar()
   if not you then return end
@@ -567,7 +573,9 @@ local function tick_cse_traits_fast()
 end
 
 ---@param you Avatar
-local function tick_anime_protagonist(you)
+-- Assigns to the local forward-declared above tick_cse_traits_fast; declaring a
+-- fresh `local function` here would shadow it and leave the earlier call nil.
+function tick_anime_protagonist(you)
   local max_hp = you:get_hp_max()
   if max_hp <= 0 then return end
 

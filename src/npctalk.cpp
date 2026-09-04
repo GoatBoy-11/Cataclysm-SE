@@ -1214,9 +1214,16 @@ void npc::talk_to_u( bool radio_contact, bool enforce_first_topic )
     } );
     for( const auto &result : hook_results ) {
         if( !result.second.is<sol::table>() ) { continue; };
-        auto new_topic = result.second.as<sol::table>().get<std::string>( "result" );
-        if( !new_topic.empty() && new_topic != d.topic_stack.back().id ) {
-            d.add_topic( new_topic );
+        // Every hook invocation contributes a table, but run_hooks only sets
+        // "result" when that hook returned a non-nil value - see catalua.cpp.
+        // Returning nothing is legal for this hook, so read the key optionally:
+        // an unguarded get<std::string>() on the missing key raises a Lua error
+        // outside any protected call, which panics and crashes the game the
+        // moment any nil-returning on_dialogue_start hook is registered.
+        const auto new_topic =
+            result.second.as<sol::table>().get<sol::optional<std::string>>( "result" );
+        if( new_topic && !new_topic->empty() && *new_topic != d.topic_stack.back().id ) {
+            d.add_topic( *new_topic );
         }
     }
     if( enforce_first_topic ) { d.add_topic( chatbin.first_topic ); }
