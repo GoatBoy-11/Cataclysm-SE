@@ -33,8 +33,6 @@ test_user_dir*
 /font/
 /graveyard/
 /memorial/
-/mods/*
-!/mods/put-your-third-party-mods-here.txt
 /obj/
 /objwin/
 /save/

@@ -1,0 +1,69 @@
+[
+  {
+    "//": "Redeclaration is safe: monfactions::load_monster_faction uses get_or_add_faction, so this merges with the Civilians mod's identical faction when both are loaded, and stands alone when it is not.",
+    "type": "MONSTER_FACTION",
+    "name": "civilians",
+    "base_faction": "human",
+    "friendly": [
+      "civilians",
+      "player"
+    ],
+    "hate": [
+      "zombie",
+      "nether",
+      "zombie_aquatic",
+      "blob",
+      "leech_plant",
+      "jabberwock",
+      "insect"
+    ],
+    "neutral": [
+      "bot",
+      "cv_shopkeeper"
+    ]
+  },
+  {
+    "//": "Hostility must be DECLARED.  resolve_attitude_map walks up base_faction and, finding no relation, returns MFA_FRIENDLY (src/monfaction.cpp:149-152) - the default is friendly, not hostile.  Omitting player made bikers passive toward the player while still fighting zombies, which were explicitly hated.",
+    "type": "MONSTER_FACTION",
+    "name": "cv_bandit",
+    "base_faction": "human",
+    "friendly": [
+      "cv_bandit"
+    ],
+    "hate": [
+      "player",
+      "human",
+      "civilians",
+      "zombie",
+      "nether",
+      "zombie_aquatic",
+      "blob"
+    ]
+  },
+  {
+    "//": "The store owner alone.  He is territorial rather than hostile, so the player will often end up killing him in self-defence - and while he shared the `civilians` faction that turned every other civilian in sight against them.",
+    "//2": "FRIEND_ATTACKED propagates by exact faction identity, not attitude (src/monster.cpp:4222: `if( critter.faction != this->faction ) continue;`), so separating him is the only thing that actually stops it.",
+    "//3": "base_faction human, exactly like `civilians` and `cv_bandit`: resolve_attitude_map walks the target's base chain (src/monfaction.cpp:136-151), so everything that hates humans still hates him without listing him.",
+    "//4": "player MUST stay friendly.  attitude() returns MATT_FRIEND below anger 10 and only reaches MATT_ATTACK above it - that threshold IS the territorial behaviour.",
+    "type": "MONSTER_FACTION",
+    "name": "cv_shopkeeper",
+    "base_faction": "human",
+    "friendly": [
+      "cv_shopkeeper",
+      "player"
+    ],
+    "hate": [
+      "zombie",
+      "nether",
+      "zombie_aquatic",
+      "blob",
+      "leech_plant",
+      "jabberwock",
+      "insect"
+    ],
+    "neutral": [
+      "civilians",
+      "bot"
+    ]
+  }
+]

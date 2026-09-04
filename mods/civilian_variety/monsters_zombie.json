@@ -1,0 +1,171 @@
+[
+  {
+    "//": "Sprites 108-111.  copy-from mon_zombie inherits species [ZOMBIE, HUMAN], the zombie faction, zombie harvest and the GROUP_ZOMBIE_UPGRADE path - so it behaves as a plain zombie in every respect the player can feel.",
+    "//2": "Slightly faster and tougher than the baseline: speed 80 vs 70, hp 95 vs 80.  It wears the same costume the living version does, which is the whole point of it.",
+    "//3": "upgrades is deliberately untouched.  Setting `into` here would collide with the inherited `into_group` and fail to load - see DESIGN.md 13.4.",
+    "id": "mon_cv_zombie_clown",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie clown"
+    },
+    "description": "The paint has held up better than the face beneath it.  Torn motley, one shoe gone, and a gait that is somehow still a little too bouncy.",
+    "hp": 95,
+    "speed": 80,
+    "death_drops": "cv_zombie_clown_drops"
+  },
+  {
+    "//": "Sprites 112-114.  copy-from mon_zombie inherits species [ZOMBIE, HUMAN], the zombie faction, zombie harvest and the GROUP_ZOMBIE_UPGRADE path, so it plays as a plain zombie in every way the player can feel.",
+    "//2": "Slower and weaker than the baseline: speed 62 vs 70, hp 68 vs 80.  The mirror of the zombie clown, which is faster and tougher.  It was not a physical person alive, and death has not improved that.",
+    "//3": "upgrades is deliberately untouched.  Setting `into` here would collide with the inherited `into_group` and fail to load - see DESIGN.md 13.4.",
+    "id": "mon_cv_zombie_nerd",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie nerd"
+    },
+    "description": "Glasses still on, somehow, though one lens has gone.  The bag is still over the shoulder and still far too heavy, and it has not occurred to them to put it down.",
+    "hp": 68,
+    "speed": 62,
+    "death_drops": "cv_zombie_nerd_drops"
+  },
+  {
+    "//": "Deliberately identical to vanilla mon_zombie_rot in name, description and stats.  It exists only to own a different upgrade path, and the player should never be able to tell one from the other.",
+    "//2": "Vanilla's decayed zombie has `upgrades: { half_life: 23, into: mon_devourer }` - a bare `into`, so every decayed zombie becomes a devourer sooner or later.  This one rolls a weighted group instead, which is what makes the devourer a chance rather than a certainty.  Vanilla is left untouched.",
+    "//3": "No sprite entry: looks_like is inherited from copy-from, so it draws as a decayed zombie with no art needed.",
+    "id": "mon_cv_zombie_rot",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie_rot",
+    "name": {
+      "str": "decayed zombie"
+    },
+    "upgrades": {
+      "half_life": 21,
+      "into": "mon_null",
+      "into_group": "GROUP_CV_ROT_UPGRADE"
+    },
+    "//4": "`into: mon_null` is not decoration - it clears the `into: mon_devourer` inherited from mon_zombie_rot.  An absent key does not clear an inherited one (src/monstergenerator.cpp:1038), and having both set is a hard load error (src/monstergenerator.cpp:1655)."
+  },
+  {
+    "//": "Sprite 148.  copy-from mon_zombie inherits species [ZOMBIE, HUMAN], the zombie faction, zombie harvest and the GROUP_ZOMBIE_UPGRADE path, so it plays as a plain zombie in every way the player can feel.",
+    "//2": "Marginally sturdier and slower than the baseline: hp 84 vs 80, speed 68 vs 70.  A heavy cassock is not armour, but it is something.",
+    "//3": "upgrades is deliberately untouched.  Setting `into` here would collide with the inherited `into_group` and fail to load - see DESIGN.md 13.4.",
+    "id": "mon_cv_zombie_priest",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie priest"
+    },
+    "description": "The collar is still white, which is the worst part of it.  Whatever it was doing when it turned, it was doing it facing the door.",
+    "hp": 84,
+    "speed": 68,
+    "death_drops": "cv_zombie_priest_drops"
+  },
+  {
+    "//": "Sprite 149.  copy-from mon_zombie inherits species [ZOMBIE, HUMAN], the zombie faction, zombie harvest and the GROUP_ZOMBIE_UPGRADE path, so it plays as a plain zombie in every way the player can feel.",
+    "//2": "hp 74, speed 72 - slightly frailer and slightly quicker than the priest, the same small split the living pair do not have.",
+    "//3": "upgrades is deliberately untouched.  Setting `into` here would collide with the inherited `into_group` and fail to load - see DESIGN.md 13.4.",
+    "id": "mon_cv_zombie_nun",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie nun"
+    },
+    "description": "The habit has held together better than the woman in it.  It moves with its hands still folded in front of it, until it doesn't.",
+    "hp": 74,
+    "speed": 72,
+    "death_drops": "cv_zombie_nun_drops"
+  },
+  {
+    "//": "Sprites 168-171.  copy-from mon_zombie inherits species [ZOMBIE, HUMAN], the zombie faction, zombie harvest and the GROUP_ZOMBIE_UPGRADE path, so it plays as a plain zombie in every way the player can feel.",
+    "//2": "Near the baseline on purpose: hp 78 vs 80, speed 72 vs 70.  Nothing about working a till makes a better or worse corpse.  The vest is the whole point of it.",
+    "//3": "upgrades is deliberately untouched.  Setting `into` here would collide with the inherited `into_group` and fail to load - see DESIGN.md 13.4.",
+    "id": "mon_cv_zombie_retail",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie retail worker"
+    },
+    "description": "The vest survived better than the person did.  It is still facing the aisles, and it still moves as though it has been on its feet for nine hours.",
+    "hp": 78,
+    "speed": 72,
+    "death_drops": "cv_zombie_retail_drops"
+  },
+  {
+    "//": "copy-from mon_zombie inherits species [ZOMBIE, HUMAN], the zombie faction, zombie harvest and the GROUP_ZOMBIE_UPGRADE path, so it plays as a plain zombie in every way the player can feel - apart from the tazer.",
+    "//2": "The tazer is fused to the arm, and that is enforced rather than described.  mattack::tazer only honours the disarm check when monster_weapon is set (src/monattack.cpp:3618), so omitting monster_weapon means nothing can ever take the tazer off it.  The living mall cop sets it and CAN be disarmed.",
+    "//3": "TAZER is adjacent-only, costs 200 moves and deals rng(1,5) DT_ELECTRIC after a dodge check (src/monattack.cpp:3616-3662).  It does not stun.  Feeble on purpose - the shock is characterisation, and the bite is what actually threatens you.",
+    "//4": "upgrades is deliberately untouched.  Setting `into` here would collide with the inherited `into_group` and fail to load - see DESIGN.md 13.4.",
+    "//5": "Two sprites, cells 184-185, picked at random per spawn.",
+    "id": "mon_cv_zombie_mallcop",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie mall cop"
+    },
+    "description": "The uniform is still recognisable, and so is the tazer - though it is no longer being held so much as worn, the grip swallowed by a hand that closed around it and never opened again.  It still walks a route.",
+    "hp": 82,
+    "speed": 70,
+    "death_drops": "cv_zombie_mallcop_drops",
+    "extend": {
+      "special_attacks": [
+        [
+          "TAZER",
+          8
+        ]
+      ]
+    },
+    "//6": "`extend` rather than a bare `special_attacks`.  A bare one does not merge with the parent's list, it clears it (src/monstergenerator.cpp:1009-1012), which silently cost this monster mon_zombie's bite - and with it the infection vector - along with GRAB and scratch.  `extend` is the branch at :1016-1020."
+  },
+  {
+    "//": "`extend` keeps mon_zombie's bite, GRAB and scratch and adds the syringe on top.  A bare special_attacks would clear them - see mon_cv_zombie_mallcop above.",
+    "//2": "Rare on purpose, and weak for a zombie: hp 76 against mon_zombie's 80, speed 72 against its 70.  What it adds is an occasional jab, not a harder fight.",
+    "//3": "One sprite, cell 186.",
+    "id": "mon_cv_zombie_doctor",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie doctor"
+    },
+    "description": "The lab coat is still buttoned.  One hand holds a syringe the way a hand holds something it has forgotten it is holding, thumb resting on the plunger, and whatever is left in the barrel stopped being medicine a long time ago.",
+    "hp": 76,
+    "speed": 72,
+    "death_drops": "cv_zombie_doctor_drops",
+    "extend": {
+      "special_attacks": [
+        {
+          "id": "cv_syringe_inject"
+        }
+      ]
+    }
+  },
+  {
+    "//": "Slower and tougher than mon_zombie's 80 hp / 70 speed, as asked: hp 96, speed 62. The heaviest and slowest thing this mod puts in a mansion.",
+    "//2": "No special_attacks key at all, deliberately.  A bare special_attacks does not merge with the parent's list, it CLEARS it (src/monstergenerator.cpp:1009-1012), which would silently cost this monster mon_zombie's bite and with it the infection vector.",
+    "//3": "Sprite 193.",
+    "id": "mon_cv_zombie_butler",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie butler"
+    },
+    "description": "The tailcoat has held together better than the man wearing it.  It still moves at the measured pace of somebody crossing a room they know, and it is still, somehow, unhurried.",
+    "hp": 96,
+    "speed": 62,
+    "death_drops": "cv_zombie_butler_drops"
+  },
+  {
+    "//": "Same hp as mon_zombie at 80, slightly quicker at 78 against its 70, as asked.",
+    "//2": "Sprites 194-195, picked at random per spawn.",
+    "id": "mon_cv_zombie_maid",
+    "type": "MONSTER",
+    "copy-from": "mon_zombie",
+    "name": {
+      "str": "zombie maid"
+    },
+    "description": "The apron is past saving and the cap is long gone.  It still stops at doorways, briefly, as though about to knock.",
+    "hp": 80,
+    "speed": 78,
+    "death_drops": "cv_zombie_maid_drops"
+  }
+]
