@@ -7301,16 +7301,6 @@
   },
   {
     "type": "mutation",
-    "id": "ATELPHOBIA",
-    "name": { "str": "Atelophobia" },
-    "points": -1,
-    "description": "Failed crafts feel like personal verdicts.  Every ruined project leaves you shaken and self-conscious.",
-    "starting_trait": true,
-    "valid": false,
-    "purifiable": false
-  },
-  {
-    "type": "mutation",
     "id": "MINIMALIST",
     "name": { "str": "Minimalist" },
     "points": 2,

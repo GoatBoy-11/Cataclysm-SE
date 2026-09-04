@@ -12,7 +12,6 @@ local trait_chattering_plush = MutationBranchId.new("CHATTERING_PLUSH")
 local trait_anime_protagonist = MutationBranchId.new("ANIME_PROTAGONIST")
 local trait_hemophobia = MutationBranchId.new("HEMOPHOBIA")
 local trait_decidophobia = MutationBranchId.new("DECIDOPHOBIA")
-local trait_atelphobia = MutationBranchId.new("ATELPHOBIA")
 local trait_minimalist = MutationBranchId.new("MINIMALIST")
 local trait_cowards_sprint = MutationBranchId.new("COWARDS_SPRINT")
 local trait_outgunned = MutationBranchId.new("OUTGUNNED")
@@ -48,7 +47,6 @@ local morale_suburbanite_indoors = MoraleTypeDataId.new("morale_suburbanite_indo
 local morale_chattering_plush = MoraleTypeDataId.new("morale_chattering_plush")
 local morale_hemophobia = MoraleTypeDataId.new("morale_hemophobia")
 local morale_decidophobia = MoraleTypeDataId.new("morale_decidophobia")
-local morale_atelphobia = MoraleTypeDataId.new("morale_atelphobia")
 local morale_minimalist = MoraleTypeDataId.new("morale_minimalist")
 local morale_outgunned = MoraleTypeDataId.new("morale_outgunned")
 local morale_comfort_zone = MoraleTypeDataId.new("morale_comfort_zone")
@@ -818,22 +816,6 @@ local function on_dialogue_start(params)
   if line then you:shout(line, false) end
 end
 
----@param params OnCraftFailureParams
-local function on_craft_failure(params)
-  local crafter = params.crafter
-  if not crafter or not crafter:has_trait(trait_atelphobia) then return end
-  if crafter:get_effect_int(effect_depressants) > 3 then return end
-
-  apply_penalty(crafter, morale_atelphobia, 8)
-  drain_focus(crafter, 2, 20)
-  if crafter:is_avatar() then
-    gapi.add_msg(
-      MsgType.bad,
-      locale.gettext("Your hands won't cooperate.  The ruined work feels like a verdict on you.")
-    )
-  end
-end
-
 ---@param params OnCharacterTryMoveParams
 local function apply_cowards_sprint_move_bonus(params)
   ---@type Character
@@ -935,7 +917,6 @@ function lua_traits.register(mod)
   mod.on_clutter_intolerant_tick = tick_clutter_intolerant
   mod.on_cse_traits_fast_tick = tick_cse_traits_fast
   mod.on_cse_traits_slow_tick = tick_cse_traits_slow
-  mod.on_craft_failure = on_craft_failure
   mod.on_creature_melee_attacked = on_creature_melee_attacked
   mod.on_dialogue_start = on_dialogue_start
 end

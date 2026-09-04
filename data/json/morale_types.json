@@ -496,12 +496,6 @@
     "permanent": true
   },
   {
-    "id": "morale_atelphobia",
-    "type": "morale_type",
-    "text": "Crafting failure",
-    "permanent": true
-  },
-  {
     "id": "morale_minimalist",
     "type": "morale_type",
     "text": "Traveling light",
