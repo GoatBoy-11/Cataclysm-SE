@@ -1233,25 +1233,13 @@ int worldfactory::show_modselection_window( const catacurses::window &win,
                 bool mouse_handled = false;
 
                 if( !standalone ) {
-                    static const std::vector<std::string> worldgen_tab_labels = { {
-                            translate_marker( "World Mods" ),
-                            translate_marker( "World Options" ),
-                            translate_marker( "Finalize World" )
-                        }
-                    };
-                    std::vector<std::string> worldgen_tabs( worldgen_tab_labels );
-                    std::ranges::for_each( worldgen_tabs,
-                                           []( std::string & str ) { str = _( str ); } );
-                    if( const auto tab_idx = ui_mouse::hit_test_tabs(
-                            abs_cell - point( catacurses::getbegx( win ), catacurses::getbegy( win ) ),
-                            worldgen_tabs, {
-                                .origin = point( 2, 0 ),
-                                .current_tab = 0,
-                                .max_width = getmaxx( win ),
-                            } ) ) {
+                    // This screen is worldgen tab 0, so the delta doubles as the
+                    // clicked index - but ask for it rather than assuming, so the
+                    // three worldgen tabs all agree on the bar's geometry.
+                    if( const auto delta = worldgen_tab_click_delta( win, *cell, 0 ) ) {
                         mouse_handled = true;
-                        if( *tab_idx > 0 && action == "SELECT" ) {
-                            tab_output = static_cast<int>( *tab_idx );
+                        if( action == "SELECT" ) {
+                            tab_output = *delta;
                         }
                     }
                 }
@@ -1456,6 +1444,11 @@ int worldfactory::show_worldgen_tab_confirm( const catacurses::window &win, WORL
     ctxt.register_action( "PREV_TAB" );
     ctxt.register_action( "PICK_RANDOM_WORLDNAME" );
     ctxt.register_action( "TOGGLE_V2_SAVE_FORMAT" );
+    // So the worldgen tab bar above this dialog can be clicked, as it can be on
+    // the World Mods tab.  Without these the strip is only reachable by keyboard
+    // once you have left the first tab.
+    ctxt.register_action( "SELECT" );
+    ctxt.register_action( "MOUSE_MOVE" );
     // string input popup actions
     ctxt.register_action( "TEXT.LEFT" );
     ctxt.register_action( "TEXT.RIGHT" );
@@ -1543,6 +1536,16 @@ int worldfactory::show_worldgen_tab_confirm( const catacurses::window &win, WORL
 
         worldname = spopup.query_string( false, false, true );
         const std::string action = ctxt.input_to_action( ctxt.get_raw_input() );
+        if( action == "SELECT" ) {
+            if( const auto cell = ctxt.get_mouse_cell( win ) ) {
+                if( const auto delta = worldgen_tab_click_delta( win, *cell, 2 ) ) {
+                    // Keep whatever has been typed, exactly as PREV_TAB does.
+                    world->world_name = worldname;
+                    return *delta;
+                }
+            }
+            continue;
+        }
         if( action == "NEXT_TAB" ) {
             if( worldname.empty() ) {
                 noname = true;
@@ -1656,10 +1659,8 @@ void worldfactory::draw_modselection_borders( const catacurses::window &win,
     wnoutrefresh( win );
 }
 
-void worldfactory::draw_worldgen_tabs( const catacurses::window &w, size_t current )
+std::vector<std::string> worldfactory::worldgen_tab_labels()
 {
-    werase( w );
-
     static const std::vector<std::string> tab_strings = { {
             translate_marker( "World Mods" ),
             translate_marker( "World Options" ),
@@ -1670,8 +1671,32 @@ void worldfactory::draw_worldgen_tabs( const catacurses::window &w, size_t curre
     std::vector<std::string> tab_strings_translated( tab_strings );
     std::ranges::for_each( tab_strings_translated,
                            []( std::string & str )->void { str = _( str ); } );
+    return tab_strings_translated;
+}
 
-    draw_tabs( w, tab_strings_translated, current );
+std::optional<int> worldfactory::worldgen_tab_click_delta( const catacurses::window &w,
+        const point &cell, size_t current )
+{
+    const std::vector<std::string> labels = worldgen_tab_labels();
+    const auto idx = ui_mouse::hit_test_tabs( cell, labels, {
+        .origin = point( 2, 0 ),
+        // Must match what draw_worldgen_tabs hands draw_tabs, or the strip's
+        // scroll offset - and with it every hit rectangle - is computed from a
+        // different current tab than the bar the player is looking at.
+        .current_tab = static_cast<int>( current ),
+        .max_width = getmaxx( w ),
+    } );
+    if( !idx || *idx == static_cast<int>( current ) ) {
+        return std::nullopt;
+    }
+    // These tabs are driven by movement, not by an absolute index.
+    return *idx - static_cast<int>( current );
+}
+
+void worldfactory::draw_worldgen_tabs( const catacurses::window &w, size_t current )
+{
+    werase( w );
+    draw_tabs( w, worldgen_tab_labels(), current );
     draw_border_below_tabs( w );
 }
 
