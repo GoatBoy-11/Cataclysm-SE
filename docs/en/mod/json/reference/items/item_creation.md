@@ -1168,7 +1168,24 @@ All object defined use actions support the following two types.
 "use_action": {
     "type": "paint_stuff_cfg",  // Configures how it paints using paint stuff
     "color_swap": true          // Allow the color to be swapped to any other named color
+},
+"use_action": {
+    "type": "show_image",           // Show a PNG overlay until the player dismisses it (Escape or another key).
+    "image": "family.png",          // File under gfx/images/ or a loaded mod's images/ (or gfx/images/) folder. `.png` is assumed if omitted.
+    "caption": "Summer, 1998",      // Optional caption drawn under the image.
+    "mode": "native",               // Optional. `native` (default, 1:1 pixels, centered), `fullscreen` (letterbox to fit), or `scale`.
+    "scale": 2.0                    // Optional. Size multiplier used when `mode` is `scale`. If `scale` is set without `mode`, `scale` mode is inferred.
 }
+```
+
+Images are resolved in this order: each loaded mod's `images/` folder, then that mod's `gfx/images/` folder (later mods override earlier ones), then the core `gfx/images/` folder. Path traversal (`..`) is rejected.
+
+Lua can show the same overlay without an item:
+
+```lua
+local ui = require("lib.ui")
+ui.show_image("family.png")
+ui.show_image({ image = "family.png", caption = "Summer, 1998", mode = "native" })
 ```
 
 ### Random Descriptions
