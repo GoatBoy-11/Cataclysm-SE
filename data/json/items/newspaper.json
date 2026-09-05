@@ -11,7 +11,7 @@
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "material": "paper",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ],
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ],
     "weight": "3 g",
     "volume": "5 ml"
   },
