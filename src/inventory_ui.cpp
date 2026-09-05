@@ -887,12 +887,29 @@ void inventory_column::add_entry( const inventory_entry &entry )
 
 void inventory_column::move_entries_to( inventory_column &dest )
 {
-    for( const auto &elem : entries ) {
-        if( elem.is_item() &&
-            // this column already has this entry, no need to try to add it again
-            std::find( dest.entries.begin(), dest.entries.end(), elem ) == dest.entries.end() ) {
+    const auto already_there = [&dest]( const inventory_entry & elem ) {
+        return std::find( dest.entries.begin(), dest.entries.end(), elem ) != dest.entries.end() ||
+               std::find( dest.entries_hidden.begin(), dest.entries_hidden.end(),
+                          elem ) != dest.entries_hidden.end();
+    };
+    const auto move_one = [&dest, &already_there]( const inventory_entry & elem ) {
+        // this column already has this entry, no need to try to add it again
+        if( elem.is_item() && !already_there( elem ) ) {
             dest.add_entry( elem );
         }
+    };
+
+    for( const inventory_entry &elem : entries ) {
+        move_one( elem );
+    }
+    // Hidden entries move too. They are the rows a collapsed container is
+    // holding back, and clear() below does not empty that list - so collapsing
+    // a container and *then* merging the columns used to strand its contents in
+    // a column that is no longer drawn, where uncollapsing could never reach
+    // them again. dest.prepare_paging() re-hides whatever is still collapsed,
+    // because the collapse state lives on the item, not on the entry.
+    for( const inventory_entry &elem : entries_hidden ) {
+        move_one( elem );
     }
     dest.prepare_paging();
     clear();
@@ -1056,6 +1073,11 @@ void inventory_column::prepare_paging( const std::string &filter )
 void inventory_column::clear()
 {
     entries.clear();
+    // Hidden entries are part of the column's contents, not a cache of them.
+    // Leaving them behind stranded a collapsed container's rows after a merge,
+    // and would resurrect them - with stale item pointers - if the column were
+    // ever refilled.
+    entries_hidden.clear();
     entries_cell_cache.clear();
     paging_is_valid = false;
 }
@@ -1522,18 +1544,36 @@ void inventory_selector::add_contained_items( inventory_column &tree_column,
         int depth,
         inventory_column *category_column )
 {
+    // Gather the whole container before drawing any of it, so identical items
+    // become one row. Adding them one at a time is what put twenty separate
+    // "protein ration" lines on the screen; the flat inventory has always
+    // restacked, and a pocket is no reason to stop.
+    //
+    // Restacking spans the container's pockets rather than each pocket alone:
+    // which of your shorts' two pockets a ration sits in is not something the
+    // player is reading this list to find out.
+    std::vector<item *> stored;
     for( const item_pocket &pocket : container->contents.get_pockets() ) {
         if( pocket.definition().type != pocket_type::CONTAINER ) {
             continue;
         }
-        for( item *stored : pocket.all_items_top() ) {
-            add_item( tree_column, stored, tree_category, topmost_parent, depth );
-            if( category_column != nullptr ) {
-                add_item( *category_column, stored, nullptr, topmost_parent, 0 );
-            }
-            add_contained_items( tree_column, stored, tree_category, topmost_parent,
-                                 depth + 1, category_column );
+        const std::vector<item *> &top = pocket.all_items_top();
+        stored.insert( stored.end(), top.begin(), top.end() );
+    }
+
+    for( const std::list<item *> &stack : restack_items( stored.begin(), stored.end(),
+            preset.get_checking_components() ) ) {
+        add_entry( tree_column, std::vector<item *>( stack.begin(), stack.end() ),
+                   tree_category, topmost_parent, depth );
+        if( category_column != nullptr ) {
+            add_entry( *category_column, std::vector<item *>( stack.begin(), stack.end() ),
+                       nullptr, topmost_parent, 0 );
         }
+        // One parent per stack, as the flat inventory does: a row is drawn once,
+        // so its head is the item the reorder pass looks for, and enumerating
+        // every identical bag would draw one set of contents per bag.
+        add_contained_items( tree_column, stack.front(), tree_category, topmost_parent,
+                             depth + 1, category_column );
     }
 }
 

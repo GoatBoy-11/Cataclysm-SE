@@ -1334,3 +1334,117 @@ TEST_CASE("a garment held in a worn pocket can be worn", "[inventory][ui][pocket
     CHECK(dummy.is_worn(*pack));
     CHECK(bag->contents.all_items_top().empty());
 }
+
+// Playtest report, 2026-09-05, with a screenshot: a character carrying twenty
+// protein rations in their shorts got twenty separate rows. Pocket contents
+// were added one item at a time, where the flat inventory has always restacked.
+TEST_CASE("identical items in a pocket are drawn as one stacked row",
+          "[inventory][ui][pocket][stacking]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    // Socks rather than test_rock: rocks merge into a single item object, so
+    // they could never show the defect.
+    for (int i = 0; i < 5; ++i) {
+        REQUIRE(!vest->put_in(item::spawn("socks")));
+    }
+    const size_t held = vest->contents.all_items_top().size();
+    REQUIRE(held == 5);
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto is_socks = [](const inventory_entry& entry) {
+        return entry.is_item() && entry.any_item()->typeId() == itype_id("socks");
+    };
+    const auto rocks = selector.own_gear_column.get_all_entries(is_socks);
+    // One row holding all of them, rather than one row each.
+    REQUIRE(rocks.size() == 1);
+    CHECK(rocks.front()->get_stack_size() == held);
+
+    // And the same on the category side.
+    const auto listed = selector.own_inv_column.get_all_entries(is_socks);
+    REQUIRE(listed.size() == 1);
+    CHECK(listed.front()->get_stack_size() == held);
+}
+
+// A stack of identical containers draws one row, and its contents once - not
+// one set of contents per container in the stack.
+TEST_CASE("a stack of identical containers shows its contents once",
+          "[inventory][ui][pocket][stacking][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    for (int i = 0; i < 3; ++i) {
+        auto bag = item::spawn("bag_plastic");
+        REQUIRE(!bag->put_in(item::spawn("test_rock")));
+        REQUIRE(!vest->put_in(std::move(bag)));
+    }
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto is_bag = [](const inventory_entry& entry) {
+        return entry.is_item() && entry.any_item()->typeId() == itype_id("bag_plastic");
+    };
+    const auto bags = selector.own_gear_column.get_all_entries(is_bag);
+    REQUIRE(bags.size() == 1);
+    CHECK(bags.front()->get_stack_size() == 3);
+
+    const auto rocks = selector.own_gear_column.get_all_entries(is_test_rock);
+    CHECK(rocks.size() == 1);
+}
+
+// Playtest report, 2026-09-05: the collapse bug came back and could not be
+// pinned down. This is the second cause. move_entries_to() carries only the
+// visible entries to the destination and then calls clear(), which does not
+// touch entries_hidden - so anything collapsed *before* the columns merge is
+// stranded in a column that is no longer drawn, and uncollapsing cannot bring
+// it back. It needs a collapse followed by a merge, which is why it depends on
+// window size and how full the inventory is.
+TEST_CASE("collapsed rows survive a column merge", "[inventory][ui][pocket][collapse]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    item* rock = bag->contents.all_items_top().front();
+
+    const auto set_collapsed = [bag](bool collapsed) {
+        for (item_pocket& pocket : bag->contents.get_pockets()) {
+            if (pocket.definition().type == pocket_type::CONTAINER
+                && !pocket.all_items_top().empty()) {
+                pocket.get_settings().set_collapse(collapsed);
+            }
+        }
+    };
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    // Collapse first, and page, so the rock lands in entries_hidden.
+    set_collapsed(true);
+    selector.own_gear_column.invalidate_paging();
+    selector.own_gear_column.prepare_paging();
+
+    // Then merge, as rearrange_columns() does on a narrow screen.
+    selector.own_gear_column.move_entries_to(selector.own_inv_column);
+
+    // Now uncollapse. The rock must come back.
+    set_collapsed(false);
+    selector.own_inv_column.invalidate_paging();
+    selector.own_inv_column.prepare_paging();
+
+    // The nested row specifically. The category list keeps a flat copy of every
+    // pocketed item at indent 0, and that copy is never hidden, so asking only
+    // "is the rock listed somewhere" passes even when the tree row is gone.
+    const auto is_item = [](const inventory_entry& entry) { return entry.is_item(); };
+    const auto entries = selector.own_inv_column.get_entries(is_item);
+    CHECK(std::ranges::any_of(entries, [rock](const inventory_entry* e) {
+        return e->any_item() == rock && e->indent > 0;
+    }));
+    // And the bag still says it has something to show, so the row is missing
+    // rather than the contents having genuinely gone.
+    CHECK_FALSE(bag->contents.all_items_top().empty());
+}
