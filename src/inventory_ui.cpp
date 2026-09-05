@@ -1478,9 +1478,39 @@ void inventory_selector::add_character_items( Character &character )
     } );
     // Visitable interface does not support stacks so it has to be here
     for( const auto &elem : character.inv_const_slice() ) {
+        const std::vector<std::list<item *>> stacks =
+                    restack_items( ( *elem ).begin(), ( *elem ).end(), preset.get_checking_components() );
         add_items( own_inv_column, []( item * it ) {
             return it;
-        }, restack_items( ( *elem ).begin(), ( *elem ).end(), preset.get_checking_components() ) );
+        }, stacks );
+
+        // A carried container needs its contents listed for the same reason a
+        // worn one does. Only worn garments got this, so a container held in
+        // the inventory drew a row that said how much was inside and had
+        // nothing beneath it to open - the items in it could not be reached at
+        // all. That is exactly where a garment taken off with full pockets
+        // lands. Classic mode pools storage and nests nothing.
+        //
+        // One parent per stack, not per item: a stack is drawn as a single row,
+        // so its head is the item the reorder pass in prepare_paging() looks
+        // for when it lifts children back under their container.
+        if( pockets_are_classic() ) {
+            continue;
+        }
+        for( const std::list<item *> &stack : stacks ) {
+            if( stack.empty() ) {
+                continue;
+            }
+            item *carried = stack.front();
+            for( const item_pocket &pocket : carried->contents.get_pockets() ) {
+                if( pocket.definition().type != pocket_type::CONTAINER ) {
+                    continue;
+                }
+                for( item *stored : pocket.all_items_top() ) {
+                    add_item( own_inv_column, stored, nullptr, carried, 1 );
+                }
+            }
+        }
     }
 }
 

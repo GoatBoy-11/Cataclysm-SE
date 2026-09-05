@@ -12,8 +12,15 @@ std::optional<pocket_destination> ask_pocket_destination( Character &who, const 
         const item *exclude )
 {
     const std::vector<pocket_destination> destinations = who.pocket_destinations( it, exclude );
-    if( destinations.size() < 2 ) {
+    if( destinations.empty() ) {
         return std::nullopt;
+    }
+    // One destination is not a choice, but it is still an answer. The callers
+    // offer the move whenever any pocket would take the item, so declining here
+    // left the menu entry visible and doing nothing at all. Hand the single
+    // destination back rather than asking the player to pick from a list of one.
+    if( destinations.size() == 1 ) {
+        return destinations.front();
     }
 
     uilist menu;

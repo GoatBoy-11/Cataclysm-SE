@@ -347,6 +347,48 @@ TEST_CASE("an empty worn pocket nests nothing", "[inventory][ui][pocket]") {
 // their garment's category, so the sort pulls children away from the container
 // they belong to ("TEST pocket vest" sorts before "TEST rock", so both rocks
 // would end up below both garments). A post-sort pass lifts them back.
+// A container carried rather than worn is where a taken-off garment lands, and
+// its contents were listed nowhere: the entry showed a count with nothing to
+// open under it, so the items inside were held but unreachable.
+TEST_CASE("a carried container's contents appear nested under it", "[inventory][ui][pocket]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    auto jeans = item::spawn("jeans");
+    REQUIRE(!jeans->put_in(item::spawn("test_rock")));
+    item& carried = dummy.i_add(std::move(jeans));
+    REQUIRE(carried.typeId() == itype_id("jeans"));
+    REQUIRE(carried.contents.all_items_top().size() == 1);
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto is_rock = [](const inventory_entry& entry) {
+        return entry.is_item() && entry.any_item()->typeId() == itype_id("test_rock");
+    };
+    const auto entries = selector.own_inv_column.get_all_entries(is_rock);
+    REQUIRE(entries.size() == 1);
+    CHECK(entries.front()->topmost_parent == &carried);
+    CHECK(entries.front()->indent == 1);
+}
+
+TEST_CASE("classic mode nests nothing in a carried container",
+          "[inventory][ui][pocket][classic]") {
+    override_option classic("POCKET_SYSTEM", "classic");
+    clear_avatar();
+    auto& dummy = get_avatar();
+    auto jeans = item::spawn("jeans");
+    REQUIRE(!jeans->put_in(item::spawn("test_rock")));
+    dummy.i_add(std::move(jeans));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto is_nested = [](const inventory_entry& entry) {
+        return entry.is_item() && entry.indent > 0;
+    };
+    CHECK(selector.own_inv_column.get_all_entries(is_nested).empty());
+}
+
 TEST_CASE("nested entries stay under their own container", "[inventory][ui][pocket]") {
     clear_avatar();
     auto& dummy = get_avatar();
@@ -687,6 +729,24 @@ TEST_CASE("pocket destinations exclude the whole subtree of the item being moved
         CHECK(dest.container != outer);
         CHECK(dest.container != inner);
     }
+}
+
+TEST_CASE("a single pocket destination needs no menu",
+          "[inventory][pocket][destination]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+
+    // The vest's small pocket is 100 ml and the rock is 250 ml, so exactly one
+    // pocket takes it. The move menu is offered whenever any pocket would, so
+    // declining here left the entry doing nothing at all.
+    auto rock = item::spawn("test_rock");
+    REQUIRE(dummy.pocket_destinations(*rock).size() == 1);
+
+    const auto dest = ask_pocket_destination(dummy, *rock);
+    REQUIRE(dest.has_value());
+    CHECK(dest->container == dummy.worn.front());
+    CHECK(dest->pocket_index == 1);
 }
 
 TEST_CASE("classic mode offers no pocket destinations",

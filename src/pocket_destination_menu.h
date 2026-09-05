@@ -12,9 +12,10 @@ class item;
  *
  * Query only: never touches @p it or the world, so it is safe to call before
  * the caller has committed to moving the item anywhere. Returns the chosen
- * destination, or std::nullopt when the player escaped the menu or there
- * were fewer than two destinations to choose between - in which case there
- * is nothing to ask.
+ * destination, or std::nullopt when the player escaped the menu or no pocket
+ * would take the item at all. A lone destination is returned without asking:
+ * a list of one is not a choice, and refusing it left the callers offering a
+ * move that then did nothing.
  */
 std::optional<pocket_destination> ask_pocket_destination( Character &who, const item &it,
         const item *exclude = nullptr );
