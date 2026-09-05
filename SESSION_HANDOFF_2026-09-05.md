@@ -370,3 +370,48 @@ other way round. The classic-mode requirement the owner set - classic keeps the
 BN inventory - is satisfied by making the pocket check skip when
 `pockets_are_classic()`, which the reverted patch already did correctly; that
 part was sound and can be lifted from `git show` of this session if useful.
+
+## Takeoff routing: what the invlet blocker actually is — 2026-09-05
+
+Re-reported from playtest: taking a garment off puts it loose in the inventory
+"inside no pocket", while every other acquisition path routes. The one-line fix
+was rebuilt and **reverted again**. This section records what the 116 failures
+actually mean, because the earlier note was too vague to act on.
+
+The routing itself is trivial and works - `i_add_routed()` in place of
+`inv.add_item()` in `Character::takeoff()` (`character.cpp`, the `res == nullptr`
+branch). A test wearing a backpack and socks, taking off the socks and asserting
+they land in the backpack, passes immediately.
+
+**The 116 `invlet_test.cpp` failures are duplicate inventory letters, not a
+cosmetic test artifact.** The failure reads:
+
+```
+expect 1st item to have none invlet
+1st item actually has cached invlet
+```
+
+The suite assigns the *second* item's letter **after** the move. Letter hygiene
+runs on entry to the flat inventory, so unrouted the first item is stripped and
+ends with none. Routed, it sits in a pocket where that reconciliation never
+reaches it, and both items end up answering to the same key.
+
+Two fixes were tried and **neither worked**:
+
+1. Reconciling on the routing path - calling `inv.update_invlet( stored, false )`
+   from `Character::note_pocketed_pickup()`. Wrong side: the conflict is created
+   later, when the *other* item is granted the letter.
+2. Making `Character::invlet_to_item()` descend (`VisitResponse::NEXT` instead of
+   `SKIP`). Still 116. Worth knowing that its comment's first justification -
+   "UIs don't support nested items" - **is now false**, since the nesting work
+   this session; but changing it alone does not close this.
+
+So the reconciliation lives somewhere in the assignment path that neither of
+those touches, and finding it is the actual keystone task. Budget it properly
+rather than as a one-liner. The patch for both attempts plus the routing change
+is in the session scratchpad as `takeoff-experiment.patch`.
+
+**Until then the current behaviour is not a bug to re-report:** a garment comes
+off into the flat inventory, and is offered as a drop when it does not fit. What
+the owner saw - a backpack forced to the ground, jeans going to the inventory -
+is that capacity check working, not two different code paths.
