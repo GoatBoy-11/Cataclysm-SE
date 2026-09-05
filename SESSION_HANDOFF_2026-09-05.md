@@ -234,3 +234,92 @@ playtest behind it. That call was left to the owner rather than made while AFK.
 
 1 (the invlet keystone), 5 (rigid volume) and 6 (above). 5 and 6 want each other,
 and 6 wants the owner's decision on whether to start refusing.
+
+## Pocket system review — 2026-09-05
+
+A sweep of the whole pocket surface, prompted by the owner. Two defect *classes*
+came out of it, thirteen bugs between them, all now fixed. Both classes have the
+same root: code that predates pockets asks "where is this item" in a way that
+cannot express "inside another item".
+
+### Class one: hand-walking the flat inventory (`0565afdf09`)
+
+The grep this file already recommended - `inv_const_slice()` and `worn` walked by
+hand - found five more systems, on top of the five fixed earlier today:
+
+| System | Symptom |
+|---|---|
+| `npctrade::init_selling` | a shopkeeper who had put their wares away had **nothing to sell** |
+| `npctrade::init_buying` | one level only, so a bag in a pocket hid its contents from trade |
+| `npc::mug_player` | a mugger found nothing worth taking and fled |
+| `memorial_logger` | the death memorial listed almost nothing |
+| `advanced_inv_area::get_container` | a jar in a pocket could not be the AIM container |
+
+Rather than a sixth hand-walk, these now share **`Character::items_in_pockets()`**
+(`character.cpp`): worn pockets and inventory containers, recursive, excluding the
+garments and top-level items every caller already has from `worn` and
+`inv_const_slice()`. `advanced_inv_pane`'s local recursion was folded into it.
+
+`character_oracle` deliberately keeps its own predicate walk: it short-circuits and
+runs per NPC per turn, where building a vector would not pay.
+
+### Class two: `get_item_position()` names the container (`26414b8121`)
+
+This one is nastier than the `INT_MIN` case and was not on any list. It finds an
+item's owner with `has_item()`, which **descends into contents**, so an item in a
+pocket answers with the index of *the garment holding it*. Not `INT_MIN`, and
+nothing that names the item - so callers acted on the wrong thing silently.
+
+| Site | Symptom |
+|---|---|
+| `repair_item_actor`, `iuse_actor.cpp` | destroying a pocketed item removed **the garment** and spilled everything else in it |
+| clothing mod actor | same |
+| `monexamine` mech battery | `items_with()` offers a battery in a pocket, then `i_rem()` fitted **the backpack** into the mech |
+| `inventory_column::set_stack_favorite` | see below |
+| tent (`iuse.cpp`) | a tent in a pocket could not be folded - "take it off first" |
+| stimpack (`iuse.cpp`) | activated from inside a backpack without being worn |
+| instrument (`iuse_actor.cpp`) | playable from inside a bag |
+
+The favourite case was **mis-diagnosed twice before the test caught it**. It looked
+like "favourites the garment"; it is actually that a pocketed item reports
+`item_location_type::container`, which matched none of the three branches, so
+favouriting one was a **silent no-op**. That matters beyond tidiness: a favourite
+is what keeps an item out of the overflow drop.
+
+`get_item_position()` now carries a comment saying it cannot address a pocketed
+item and naming the alternatives (`item::detach()`, the pointer, `is_worn()`).
+
+**Nesting made this class reachable.** Pocketed items were barely selectable before
+today; now they are selectable from every screen, so each of these was one keypress
+away.
+
+### Checked and found sound
+
+- **Activities that store an item index.** `assign_activity(..., get_item_position(...))`
+  appears seven times and looked like the same trap. It is not: only one handler
+  dereferences a stored index (`activity_handlers.cpp:2820`, repair), and that line
+  is dead - `repair_item_actor` puts the tool in `act->targets` and the handler
+  resolves the pointer first. The other six pass the index into a field nothing
+  reads.
+- **`VisitResponse::NEXT` consumers.** Anything using `visit_items()`, `items_with()`
+  or `has_item()` already sees pocketed items. That is *why* class two bites -
+  the search finds the item, and only the addressing is wrong.
+
+### Not fixed, and why
+
+- **The overflow drop** (`activity_item_handling.cpp:631`) picks what to shed from
+  the flat inventory only, so a character over capacity with everything in pockets
+  has nothing it will drop. Guarded against walking off an empty inventory
+  (`test_overfull_pocket_vest`), so it is not a crash - but it cannot relieve the
+  overflow either. Changing what the drop takes decides which of the player's
+  things hit the floor, which wants the owner's say-so.
+- Findings 1, 5 and 6 stand as recorded above.
+
+### Verification note
+
+Three of the fixes here have no suite coverage and are inspection-verified only:
+the two destroy paths and the mech battery all sit behind a `uilist` or an rng
+critical failure. What *is* pinned is the trap itself -
+`get_item_position answers with the container for a pocketed item` in
+`inventory_ui_test.cpp` - so the root cause cannot change quietly. The favourite
+and stimpack fixes have tests, both watched failing first.
