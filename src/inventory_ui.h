@@ -528,6 +528,17 @@ class inventory_selector
                        const item_category *custom_category = nullptr,
                        item *topmost_parent = nullptr,
                        int indent = 0 );
+        /**
+         * Draw everything a container holds beneath it, to any depth.
+         * @see inventory_selector::add_contained_items in the .cpp for what
+         * each parameter carries.
+         */
+        void add_contained_items( inventory_column &tree_column,
+                                  item *container,
+                                  const item_category *tree_category,
+                                  item *topmost_parent,
+                                  int depth,
+                                  inventory_column *category_column );
 
         void remove_item( item *location );
 

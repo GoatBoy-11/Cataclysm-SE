@@ -323,6 +323,18 @@ static bool contents_are_collapsed( const item &container )
     return any;
 }
 
+/**
+ * Whether an entry is a node of the container tree rather than the flat copy
+ * the category list keeps. Only a tree node is drawn under its container, so
+ * only a tree node may carry a collapse marker or answer the collapse key.
+ * The copy has no indent to nest with and names its container in its caption
+ * instead.
+ */
+static bool is_tree_node( const inventory_entry &entry )
+{
+    return entry.indent > 0 || entry.topmost_parent == nullptr;
+}
+
 std::string inventory_selector_preset::get_caption( const inventory_entry &entry ) const
 {
     const size_t count = entry.get_stack_size();
@@ -345,7 +357,10 @@ std::string inventory_selector_preset::get_caption( const inventory_entry &entry
 
     // A collapsed container looks exactly like an empty one without this, so
     // say which it is. Only containers that have something to show are marked.
-    if( entry.topmost_parent == nullptr && entry.indent == 0 ) {
+    // A container nested in a pocket is marked too: it is drawn as a tree node
+    // like any other, and without a marker a bag inside a garment reads as an
+    // ordinary item with nothing in it.
+    if( is_tree_node( entry ) ) {
         if( contents_are_collapsed( *entry.any_item() ) ) {
             disp_name += _( " [+]" );
         } else if( holds_shown_contents( *entry.any_item() ) ) {
@@ -895,9 +910,24 @@ void inventory_column::prepare_paging( const std::string &filter )
     // without a second notion of an invisible entry. It MUST agree with the
     // erase below: an entry that is hidden but not removed is held in both
     // lists, and the next paging pass adds it back a second time.
+    // Any container between this entry and its outermost one being collapsed
+    // hides it, not just the outermost. Asking only topmost_parent made
+    // collapsing a bag inside a garment do nothing at all: the bag's contents
+    // kept drawing until the garment itself was shut.
     const auto under_collapsed_parent = []( const inventory_entry & entry ) {
-        return entry.indent > 0 && entry.topmost_parent != nullptr &&
-               contents_are_collapsed( *entry.topmost_parent );
+        if( entry.indent <= 0 || entry.topmost_parent == nullptr ) {
+            return false;
+        }
+        for( item *ancestor = entry.any_item()->parent_item(); ancestor != nullptr;
+             ancestor = ancestor->parent_item() ) {
+            if( contents_are_collapsed( *ancestor ) ) {
+                return true;
+            }
+            if( ancestor == entry.topmost_parent ) {
+                break;
+            }
+        }
+        return false;
     };
 
     entries_hidden.clear();
@@ -938,17 +968,25 @@ void inventory_column::prepare_paging( const std::string &filter )
     } ) ) {
         std::vector<inventory_entry> reordered;
         reordered.reserve( entries.size() );
+        // Depth first, keyed on the item's own container rather than its
+        // outermost one, so a bag's contents follow the bag instead of being
+        // flattened in beside it. Every level rescans `entries` in sorted
+        // order, which is what keeps siblings sorted.
+        std::function<void( const item * )> emit_children =
+        [&emit_children, &reordered, this]( const item * parent ) {
+            for( const inventory_entry &child : entries ) {
+                if( child.indent > 0 && child.any_item()->parent_item() == parent ) {
+                    reordered.push_back( child );
+                    emit_children( child.any_item() );
+                }
+            }
+        };
         for( const inventory_entry &entry : entries ) {
             if( entry.indent > 0 ) {
                 continue;
             }
             reordered.push_back( entry );
-            for( const inventory_entry &child : entries ) {
-                if( child.indent > 0 &&
-                    child.topmost_parent == entry.any_item() ) {
-                    reordered.push_back( child );
-                }
-            }
+            emit_children( entry.any_item() );
         }
         // An orphan would otherwise vanish from the list, which would lose the
         // player an item they can see. Keep anything the pass did not place.
@@ -1441,6 +1479,44 @@ void inventory_selector::remove_item( item *location )
 }
 
 
+/**
+ * Draw everything @p container holds beneath it, to any depth.
+ *
+ * Only CONTAINER pockets nest: a worn gun's magazine and mods are part of the
+ * gun, not loose kit. Recursion is the whole point - the UIs nested exactly one
+ * level, so coins in a wallet in your jeans were carried and invisible.
+ *
+ * @p topmost_parent stays the outermost container all the way down. It is what
+ * the category-list copy names in its caption, and what bounds the walk up the
+ * chain that decides whether a collapsed container hides this entry.
+ *
+ * @p category_column, when given, receives a flat copy of each stored item in
+ * the category the item itself declares, so a player hunting for a knife finds
+ * it under WEAPONS instead of having to remember which garment swallowed it.
+ * Those copies keep indent 0 and are not drawn as tree nodes.
+ */
+void inventory_selector::add_contained_items( inventory_column &tree_column,
+        item *container,
+        const item_category *tree_category,
+        item *topmost_parent,
+        int depth,
+        inventory_column *category_column )
+{
+    for( const item_pocket &pocket : container->contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER ) {
+            continue;
+        }
+        for( item *stored : pocket.all_items_top() ) {
+            add_item( tree_column, stored, tree_category, topmost_parent, depth );
+            if( category_column != nullptr ) {
+                add_item( *category_column, stored, nullptr, topmost_parent, 0 );
+            }
+            add_contained_items( tree_column, stored, tree_category, topmost_parent,
+                                 depth + 1, category_column );
+        }
+    }
+}
+
 void inventory_selector::add_character_items( Character &character )
 {
     character.visit_items( [ this, &character ]( item * it ) {
@@ -1455,23 +1531,9 @@ void inventory_selector::add_character_items( Character &character )
             // unreachable. Classic mode pools storage and must look like stock
             // BN, so it nests nothing.
             if( !pockets_are_classic() ) {
-                for( const item_pocket &pocket : it->contents.get_pockets() ) {
-                    if( pocket.definition().type != pocket_type::CONTAINER ) {
-                        continue;
-                    }
-                    for( item *stored : pocket.all_items_top() ) {
-                        add_item( own_gear_column, stored,
-                                  &item_category_id( "ITEMS_WORN" ).obj(), it, 1 );
-                        // The same item belongs in its own category on the left
-                        // too, so a player hunting for a knife finds it under
-                        // WEAPONS instead of having to remember which garment
-                        // swallowed it. No custom category, so it lands in the
-                        // one the item itself declares; indent 0 keeps it a
-                        // top-level entry, and the parent pointer is there only
-                        // to name where it lives.
-                        add_item( own_inv_column, stored, nullptr, it, 0 );
-                    }
-                }
+                add_contained_items( own_gear_column, it,
+                                     &item_category_id( "ITEMS_WORN" ).obj(), it, 1,
+                                     &own_inv_column );
             }
         }
         return VisitResponse::NEXT;
@@ -1502,14 +1564,7 @@ void inventory_selector::add_character_items( Character &character )
                 continue;
             }
             item *carried = stack.front();
-            for( const item_pocket &pocket : carried->contents.get_pockets() ) {
-                if( pocket.definition().type != pocket_type::CONTAINER ) {
-                    continue;
-                }
-                for( item *stored : pocket.all_items_top() ) {
-                    add_item( own_inv_column, stored, nullptr, carried, 1 );
-                }
-            }
+            add_contained_items( own_inv_column, carried, nullptr, carried, 1, nullptr );
         }
     }
 }
@@ -2244,8 +2299,7 @@ void inventory_selector::on_input( const inventory_input &input )
         auto &entry = const_cast<inventory_entry &>( get_selected() );
         // Only a container drawn with contents beneath it can be collapsed;
         // anything else would toggle a marker the player cannot see.
-        if( entry.is_item() && entry.indent == 0 &&
-            entry.topmost_parent == nullptr &&
+        if( entry.is_item() && is_tree_node( entry ) &&
             holds_shown_contents( *entry.any_item() ) ) {
             const bool collapse = !contents_are_collapsed( *entry.any_item() );
             for( item_pocket &pocket : entry.any_item()->contents.get_pockets() ) {

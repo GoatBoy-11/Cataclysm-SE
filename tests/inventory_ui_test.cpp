@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <climits>
+#include <string>
 #include <vector>
 
 #include "advanced_inv_area.h"
@@ -6,6 +8,7 @@
 #include "advanced_inv_pane.h"
 #include "avatar.h"
 #include "catch/catch.hpp"
+#include "detached_ptr.h"
 #include "inventory_ui.h"
 #include "item.h"
 #include "item_contents.h"
@@ -922,3 +925,197 @@ TEST_CASE("AIM's inventory pane leaves an empty garment out",
     CHECK(vest->contents.all_items_top().empty());
 }
 
+
+// ---------------------------------------------------------------------------
+// Containers nested more than one level deep
+// ---------------------------------------------------------------------------
+
+// Every inventory screen nested exactly one level: a garment showed what was in
+// its pockets, but a bag in one of those pockets showed nothing. Coins in a
+// wallet in your jeans were carried and completely invisible.
+
+// Wear a vest holding a plastic bag, and put a rock in the bag. Returns the bag.
+static item* wear_vest_with_bagged_rock(avatar& dummy) {
+    if (dummy.wear_item(item::spawn("test_pocket_vest"))) {
+        return nullptr;
+    }
+    item* vest = dummy.worn.front();
+    if (vest->put_in(item::spawn("bag_plastic"))) {
+        return nullptr;
+    }
+    item* bag = vest->contents.all_items_top().front();
+    if (bag->put_in(item::spawn("test_rock"))) {
+        return nullptr;
+    }
+    return bag;
+}
+
+TEST_CASE("a container nested in a worn pocket shows its own contents",
+          "[inventory][ui][pocket][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    item* vest = dummy.worn.front();
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto entries = selector.own_gear_column.get_all_entries(is_test_rock);
+    REQUIRE(entries.size() == 1);
+    // One indent per container between the rock and the garment.
+    CHECK(entries.front()->indent == 2);
+    // topmost_parent stays the outermost container, which is what names the
+    // garment to hunt through in the category list.
+    CHECK(entries.front()->topmost_parent == vest);
+}
+
+TEST_CASE("a nested child is drawn under its own container, not its garment",
+          "[inventory][ui][pocket][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    // A second, shallower item in the same garment gives the sort something to
+    // interleave: without a depth-first pass the rock can land beside the ear
+    // plugs instead of under the bag.
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_ear_plugs")));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+    // select_item_type() triggers prepare_paging(), which is what sorts.
+    REQUIRE(selector.select_item_type(itype_id("test_rock")));
+
+    const auto is_item = [](const inventory_entry& entry) { return entry.is_item(); };
+    const auto entries = selector.own_gear_column.get_entries(is_item);
+
+    const auto index_of = [&entries](const item* target) {
+        for (size_t i = 0; i < entries.size(); ++i) {
+            if (entries[i]->any_item() == target) {
+                return static_cast<int>(i);
+            }
+        }
+        return -1;
+    };
+    item* rock = bag->contents.all_items_top().front();
+    const int bag_at = index_of(bag);
+    const int rock_at = index_of(rock);
+    REQUIRE(bag_at >= 0);
+    REQUIRE(rock_at >= 0);
+    // The rock sits immediately below the bag that holds it.
+    CHECK(rock_at == bag_at + 1);
+    CHECK(index_of(vest) < bag_at);
+}
+
+TEST_CASE("collapsing an inner container hides only what it holds",
+          "[inventory][ui][pocket][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    item* rock = bag->contents.all_items_top().front();
+
+    const auto is_item = [](const inventory_entry& entry) { return entry.is_item(); };
+    const auto shows = [&is_item](inventory_selector& sel, const item* target) {
+        const auto entries = sel.own_gear_column.get_entries(is_item);
+        return std::ranges::any_of(entries, [target](const inventory_entry* e) {
+            return e->any_item() == target;
+        });
+    };
+
+    // Open first. Without this the test passes on code that never draws the
+    // rock at all, which is exactly the state the fix is meant to end.
+    auto open_selector = inventory_selector(dummy);
+    open_selector.add_character_items(dummy);
+    REQUIRE(open_selector.select_item_type(itype_id("bag_plastic")));
+    REQUIRE(shows(open_selector, bag));
+    REQUIRE(shows(open_selector, rock));
+
+    for (item_pocket& pocket : bag->contents.get_pockets()) {
+        if (pocket.definition().type == pocket_type::CONTAINER
+            && !pocket.all_items_top().empty()) {
+            pocket.get_settings().set_collapse(true);
+        }
+    }
+
+    auto shut_selector = inventory_selector(dummy);
+    shut_selector.add_character_items(dummy);
+    REQUIRE(shut_selector.select_item_type(itype_id("bag_plastic")));
+
+    // The bag stays visible; only its contents fold away. Collapsing an inner
+    // container used to do nothing at all, because hiding asked the outermost
+    // container whether it was collapsed.
+    CHECK(shows(shut_selector, bag));
+    CHECK_FALSE(shows(shut_selector, rock));
+    // The garment above it is untouched by shutting the bag.
+    CHECK(shows(shut_selector, dummy.worn.front()));
+}
+
+TEST_CASE("a container nested in a pocket is marked collapsible",
+          "[inventory][ui][pocket][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+
+    const auto is_bag = [bag](const inventory_entry& entry) {
+        return entry.is_item() && entry.any_item() == bag && entry.indent > 0;
+    };
+    const auto entries = selector.own_gear_column.get_all_entries(is_bag);
+    REQUIRE(entries.size() == 1);
+
+    // The marker says whether a container is open or shut, and only top-level
+    // containers ever carried one, so a nested bag looked like an ordinary item.
+    caption_probe probe;
+    const std::string caption = probe.get_caption(*entries.front());
+    CHECK(caption.find("[-]") != std::string::npos);
+}
+
+TEST_CASE("AIM's inventory pane lists an item two containers deep",
+          "[inventory][ui][pocket][aim][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    item* rock = bag->contents.all_items_top().front();
+    REQUIRE(dummy.inv_size() == 0);
+
+    advanced_inv_area square = aim_inventory_square();
+    const std::vector<advanced_inv_listitem> entries = aim_inventory_entries(square);
+
+    const auto holds = [&entries](const item* target) {
+        return std::ranges::any_of(entries, [target](const advanced_inv_listitem& entry) {
+            return entry.is_item_entry() && entry.items.front() == target;
+        });
+    };
+    CHECK(holds(bag));
+    CHECK(holds(rock));
+}
+
+TEST_CASE("AIM's inventory pane lists the contents of a carried container",
+          "[inventory][ui][pocket][aim][nesting]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    detached_ptr<item> det = item::spawn("bag_plastic");
+    item& bag = *det;
+    REQUIRE(!bag.put_in(item::spawn("test_rock")));
+    dummy.i_add(std::move(det));
+    // The bag really is in the flat inventory; the rock in it is not.
+    REQUIRE(dummy.inv_position_by_item(&bag) != INT_MIN);
+    item* rock = bag.contents.all_items_top().front();
+
+    advanced_inv_area square = aim_inventory_square();
+    const std::vector<advanced_inv_listitem> entries = aim_inventory_entries(square);
+
+    const auto holds = [&entries](const item* target) {
+        return std::ranges::any_of(entries, [target](const advanced_inv_listitem& entry) {
+            return entry.is_item_entry() && entry.items.front() == target;
+        });
+    };
+    CHECK(holds(&bag));
+    CHECK(holds(rock));
+}
