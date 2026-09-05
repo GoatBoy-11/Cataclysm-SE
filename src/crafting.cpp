@@ -525,6 +525,34 @@ static bool is_container_eligible_for_crafting( const item &cont, bool allow_buc
     return false;
 }
 
+/**
+ * Add every eligible container held in @p parent's CONTAINER pockets.
+ *
+ * Routing puts the player's jars and bottles inside worn pockets, so scanning
+ * only worn garments and the flat inventory stopped finding them: crafting
+ * announced there was nothing to store a liquid in while the backpack was full
+ * of jars. Recursive, because a jar in a bag in a backpack is still a jar.
+ *
+ * allow_bucket stays false throughout. An open bucket inside a pocket is no
+ * more pourable than one in a rucksack, which is why the worn and inventory
+ * scans pass false as well.
+ */
+static void add_pocketed_crafting_containers( const item &parent,
+        std::vector<const item *> &conts )
+{
+    for( const item_pocket &pocket : parent.contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER ) {
+            continue;
+        }
+        for( const item *stored : pocket.all_items_top() ) {
+            if( is_container_eligible_for_crafting( *stored, false ) ) {
+                conts.push_back( stored );
+            }
+            add_pocketed_crafting_containers( *stored, conts );
+        }
+    }
+}
+
 std::vector<const item *> Character::get_eligible_containers_for_crafting() const
 {
     std::vector<const item *> conts;
@@ -533,17 +561,20 @@ std::vector<const item *> Character::get_eligible_containers_for_crafting() cons
         if( is_container_eligible_for_crafting( *it, true ) ) {
             conts.push_back( it );
         }
+        add_pocketed_crafting_containers( *it, conts );
     }
     for( const auto &it : worn ) {
         if( is_container_eligible_for_crafting( *it, false ) ) {
             conts.push_back( it );
         }
+        add_pocketed_crafting_containers( *it, conts );
     }
     for( size_t i = 0; i < inv.size(); i++ ) {
         for( const auto &it : inv.const_stack( i ) ) {
             if( is_container_eligible_for_crafting( *it, false ) ) {
                 conts.push_back( it );
             }
+            add_pocketed_crafting_containers( *it, conts );
         }
     }
 

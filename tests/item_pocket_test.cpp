@@ -2941,3 +2941,59 @@ TEST_CASE( "a_filled_container_routes_into_a_worn_pocket", "[pocket][routing][ne
     REQUIRE( inner.size() == 1 );
     CHECK( inner.front()->typeId() == itype_id( "test_rock" ) );
 }
+
+// ---------------------------------------------------------------------------
+// Consumers that still read the flat inventory
+//
+// Routing moved items out of inv and into worn pockets. Anything that walks
+// worn garments and inv but not what those garments hold now looks past the
+// player's actual kit.
+// ---------------------------------------------------------------------------
+
+static bool holds_type( const std::vector<const item *> &items, const std::string &id )
+{
+    for( const item *it : items ) {
+        if( it->typeId() == itype_id( id ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+TEST_CASE( "crafting sees a container carried in a worn pocket", "[pocket][routing][crafting]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+    item *pack = u.worn.front();
+    REQUIRE( !pack->put_in( item::spawn( "jar_glass" ) ) );
+
+    // A jar in the backpack is a jar the player has. Before pockets it sat in
+    // the flat inventory and crafting found it there.
+    CHECK( holds_type( u.get_eligible_containers_for_crafting(), "jar_glass" ) );
+}
+
+TEST_CASE( "crafting sees a container nested deeper still", "[pocket][routing][crafting]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+    item *pack = u.worn.front();
+    auto bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "jar_glass" ) ) );
+    REQUIRE( !pack->put_in( std::move( bag ) ) );
+
+    CHECK( holds_type( u.get_eligible_containers_for_crafting(), "jar_glass" ) );
+}
+
+TEST_CASE( "crafting sees a container inside a carried container",
+           "[pocket][routing][crafting]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    auto bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "jar_glass" ) ) );
+    u.i_add( std::move( bag ) );
+
+    CHECK( holds_type( u.get_eligible_containers_for_crafting(), "jar_glass" ) );
+}
