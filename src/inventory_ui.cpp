@@ -997,7 +997,16 @@ void inventory_column::prepare_paging( const std::string &filter )
                 continue;
             }
             reordered.push_back( entry );
-            emit_children( entry.any_item() );
+            // Only a tree node adopts children. The category list keeps a flat
+            // copy of every pocketed item, and a copy has indent 0 and the same
+            // item pointer as its tree node - so letting one adopt would emit
+            // the whole subtree a second time. That cannot happen while the
+            // columns are separate, because the copies live in the category
+            // column and the tree in the gear column, but rearrange_columns()
+            // merges the two on a narrow screen and puts them side by side.
+            if( is_tree_node( entry ) ) {
+                emit_children( entry.any_item() );
+            }
         }
         // An orphan would otherwise vanish from the list, which would lose the
         // player an item they can see. Keep anything the pass did not place.

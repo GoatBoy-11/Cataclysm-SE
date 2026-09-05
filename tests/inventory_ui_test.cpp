@@ -1166,3 +1166,140 @@ TEST_CASE("favouriting a pocketed item marks that item, not its garment",
     CHECK(rock->is_favorite);
     CHECK_FALSE(vest->is_favorite);
 }
+
+// Playtest report, 2026-09-05: uncollapsing a container nested inside another
+// container empties the left column until the inventory is closed and reopened.
+TEST_CASE("uncollapsing a doubly nested container keeps the category column",
+          "[inventory][ui][pocket][nesting][collapse]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    // Something of the character's own in the flat inventory, so the left
+    // column has content that does not come from a pocket at all.
+    dummy.i_add(item::spawn("test_ear_plugs"));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+    REQUIRE(selector.select_item_type(itype_id("test_rock")));
+
+    const auto is_item = [](const inventory_entry& entry) { return entry.is_item(); };
+    const size_t before = selector.own_inv_column.get_entries(is_item).size();
+    REQUIRE(before > 0);
+
+    const auto set_collapsed = [bag](bool collapsed) {
+        for (item_pocket& pocket : bag->contents.get_pockets()) {
+            if (pocket.definition().type == pocket_type::CONTAINER
+                && !pocket.all_items_top().empty()) {
+                pocket.get_settings().set_collapse(collapsed);
+            }
+        }
+    };
+
+    set_collapsed(true);
+    selector.own_inv_column.invalidate_paging();
+    selector.own_gear_column.invalidate_paging();
+    selector.own_inv_column.prepare_paging();
+    selector.own_gear_column.prepare_paging();
+    const size_t collapsed_count = selector.own_inv_column.get_entries(is_item).size();
+
+    set_collapsed(false);
+    selector.own_inv_column.invalidate_paging();
+    selector.own_gear_column.invalidate_paging();
+    selector.own_inv_column.prepare_paging();
+    selector.own_gear_column.prepare_paging();
+    const size_t after = selector.own_inv_column.get_entries(is_item).size();
+
+    INFO("before " << before << ", collapsed " << collapsed_count << ", after " << after);
+    CHECK(after == before);
+}
+
+// The merge that rearrange_columns() performs on a narrow screen moves the gear
+// column's entries into the inventory column. That is the state the playtest
+// report describes, and it is one-way - the FIXME on rearrange_columns() says
+// the columns are never split again, which is why reopening the inventory
+// clears the symptom.
+TEST_CASE("merging columns on a narrow screen keeps every entry exactly once",
+          "[inventory][ui][pocket][nesting][collapse]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    item* rock = bag->contents.all_items_top().front();
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+    // This is what rearrange_columns() does on a narrow screen.
+    selector.own_gear_column.move_entries_to(selector.own_inv_column);
+
+    const auto is_item = [](const inventory_entry& entry) { return entry.is_item(); };
+    const auto entries = selector.own_inv_column.get_entries(is_item);
+
+    const size_t rock_rows = std::ranges::count_if(entries, [rock](const inventory_entry* e) {
+        return e->any_item() == rock;
+    });
+    INFO("rows for the doubly nested rock: " << rock_rows);
+    // One row as the tree node under its bag, one as the category-list copy.
+    // A third means the depth-first pass emitted the subtree under the copy as
+    // well as under the garment, which is what a merged column makes possible.
+    CHECK(rock_rows == 2);
+
+    // And no entry at all may be drawn twice at the same depth: a duplicate row
+    // is what breaks the column, not the rock specifically.
+    for (size_t i = 0; i < entries.size(); ++i) {
+        for (size_t j = i + 1; j < entries.size(); ++j) {
+            const bool same_row = entries[i]->any_item() == entries[j]->any_item()
+                && entries[i]->indent == entries[j]->indent
+                && entries[i]->topmost_parent == entries[j]->topmost_parent;
+            INFO("duplicate row for " << entries[i]->any_item()->typeId().str()
+                 << " at indent " << entries[i]->indent);
+            CHECK_FALSE(same_row);
+        }
+    }
+}
+
+// The reported symptom: uncollapse, and the category column goes empty until
+// the inventory is closed and reopened. Duplicated rows are the defect; losing
+// rows is what the player sees, because the next paging pass restores the
+// hidden entries on top of the duplicates already in the list.
+TEST_CASE("a merged column survives a collapse and uncollapse cycle",
+          "[inventory][ui][pocket][nesting][collapse]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    dummy.i_add(item::spawn("test_ear_plugs"));
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+    selector.own_gear_column.move_entries_to(selector.own_inv_column);
+
+    const auto is_item = [](const inventory_entry& entry) { return entry.is_item(); };
+    const size_t before = selector.own_inv_column.get_entries(is_item).size();
+    REQUIRE(before > 0);
+
+    const auto set_collapsed = [bag](bool collapsed) {
+        for (item_pocket& pocket : bag->contents.get_pockets()) {
+            if (pocket.definition().type == pocket_type::CONTAINER
+                && !pocket.all_items_top().empty()) {
+                pocket.get_settings().set_collapse(collapsed);
+            }
+        }
+    };
+
+    set_collapsed(true);
+    selector.own_inv_column.invalidate_paging();
+    selector.own_inv_column.prepare_paging();
+    set_collapsed(false);
+    selector.own_inv_column.invalidate_paging();
+    selector.own_inv_column.prepare_paging();
+
+    const auto after = selector.own_inv_column.get_entries(is_item);
+    INFO("before " << before << ", after " << after.size());
+    CHECK(after.size() == before);
+    // The character's own inventory item has nothing to do with pockets and
+    // must never fall out of the list.
+    CHECK(std::ranges::any_of(after, [](const inventory_entry* e) {
+        return e->any_item()->typeId() == itype_id("test_ear_plugs");
+    }));
+}
