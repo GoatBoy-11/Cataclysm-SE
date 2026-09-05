@@ -275,6 +275,22 @@ item *advanced_inv_area::get_container( bool in_vehicle )
                     }
                 }
             }
+
+            // A jar routed into a worn pocket is carried like any other, so it
+            // may be the container target too. Indices past the flat inventory
+            // name a pocketed item, which is the convention the inventory pane
+            // already uses; the saved index is only a hint, and a stale one
+            // falls through to this scan and finds the jar again.
+            if( container == nullptr ) {
+                const std::vector<item *> pocketed = g->u.items_in_pockets();
+                for( size_t x = 0; x < pocketed.size(); ++x ) {
+                    if( is_container_valid( pocketed[x] ) ) {
+                        container = pocketed[x];
+                        uistate.adv_inv_container_index = stacks.size() + x;
+                        break;
+                    }
+                }
+            }
         } else if( uistate.adv_inv_container_location == AIM_WORN ) {
             auto &worn = g->u.worn;
             size_t idx = static_cast<size_t>( uistate.adv_inv_container_index );

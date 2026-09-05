@@ -1883,6 +1883,19 @@ class Character : public Creature, public location_visitable<Character>
          */
         std::vector<item *> all_items( bool need_charges = false ) const;
 
+        /**
+         * Every item held in a pocket, at any depth: the contents of worn
+         * garments and of containers in the flat inventory.
+         *
+         * Neither the garments nor the inventory's own top-level items are
+         * included - every caller already has those from `worn` and
+         * `inv_const_slice()`, and this is the piece they were all missing.
+         * Routing gives worn pockets first refusal on anything the character
+         * acquires, so code that walks only the flat inventory stopped seeing
+         * most of what is carried.
+         */
+        std::vector<item *> items_in_pockets() const;
+
 
         bool has_charges( const itype_id &it, int quantity,
                           const std::function<bool( const item & )> &filter = return_true<item> ) const;

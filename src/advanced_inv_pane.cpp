@@ -81,27 +81,6 @@ bool advanced_inventory_pane::is_filtered( const item &it ) const
     return !filtercache[str]( it );
 }
 
-/**
- * Collect everything @p parent holds in its CONTAINER pockets, at any depth.
- *
- * The pane is a flat list, so a nested item simply becomes another row; what
- * matters is that it becomes one at all. Magazine and gunmod pockets are left
- * out on purpose: a worn gun's magazine is part of the gun, not loose kit, and
- * listing it here would offer to move it out as if it were.
- */
-static void collect_pocketed_items( const item &parent, std::vector<item *> &out )
-{
-    for( const item_pocket &pocket : parent.contents.get_pockets() ) {
-        if( pocket.definition().type != pocket_type::CONTAINER ) {
-            continue;
-        }
-        for( item *stored : pocket.all_items_top() ) {
-            out.push_back( stored );
-            collect_pocketed_items( *stored, out );
-        }
-    }
-}
-
 void advanced_inventory_pane::add_items_from_area( advanced_inv_area &square,
         bool vehicle_override )
 {
@@ -135,19 +114,11 @@ void advanced_inventory_pane::add_items_from_area( advanced_inv_area &square,
         // Only CONTAINER pockets: a worn gun's magazine and mods are part of
         // the gun, not loose kit, and listing them here would offer to move
         // them out as if they were.
-        // Recursive: the pane nested one level, so a jar in a bag in a
-        // backpack was carried and listed nowhere. Containers in the flat
-        // inventory are walked for the same reason - the stack loop above
+        // The pane is a flat list, so a pocketed item simply becomes another
+        // row; what matters is that it becomes one at all. Recursive, and it
+        // covers containers in the flat inventory too - the stack loop above
         // lists the bag but never what is in it.
-        std::vector<item *> pocketed;
-        for( item * const &garment : u.worn ) {
-            collect_pocketed_items( *garment, pocketed );
-        }
-        for( const auto &stack : stacks ) {
-            for( item * const &carried : *stack ) {
-                collect_pocketed_items( *carried, pocketed );
-            }
-        }
+        const std::vector<item *> pocketed = u.items_in_pockets();
         const advanced_inv_area::itemstack pocket_stacks = square.i_stacked( pocketed );
         for( size_t x = 0; x < pocket_stacks.size(); ++x ) {
             advanced_inv_listitem it( pocket_stacks[x], stacks.size() + x, square.id, false );

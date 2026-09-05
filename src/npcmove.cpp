@@ -4407,15 +4407,23 @@ void npc::mug_player( Character &mark )
     }
     double best_value = minimum_item_value() * value_mod;
     item *to_steal = nullptr;
+    const auto consider = [&]( item & candidate ) {
+        if( value( candidate ) >= best_value &&
+            can_pick_volume( candidate ) &&
+            can_pick_weight( candidate, true ) ) {
+            best_value = value( candidate );
+            to_steal = &candidate;
+        }
+    };
     const_invslice slice = mark.inv_const_slice();
     for( const std::vector<item *> *stack : slice ) {
-        item &front_stack = *stack->front();
-        if( value( front_stack ) >= best_value &&
-            can_pick_volume( front_stack ) &&
-            can_pick_weight( front_stack, true ) ) {
-            best_value = value( front_stack );
-            to_steal = &front_stack;
-        }
+        consider( *stack->front() );
+    }
+    // A mugger that reads only the flat inventory finds nothing worth taking
+    // from anyone who put their things away, gives up and flees. Everything
+    // routed into a worn pocket is just as stealable.
+    for( item *pocketed : mark.items_in_pockets() ) {
+        consider( *pocketed );
     }
     if( to_steal == nullptr ) { // Didn't find anything worthwhile!
         set_attitude( NPCATT_FLEE_TEMP );

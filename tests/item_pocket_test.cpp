@@ -3031,3 +3031,49 @@ TEST_CASE( "a pocketed item has no inventory position but can still be detached"
     CHECK( &*removed == &jar );
     CHECK( u.all_items_with_id( itype_id( "jar_glass" ) ).empty() );
 }
+
+// Character::items_in_pockets() is the seam the trade window, the mugging AI,
+// the advanced inventory pane, the memorial and the AIM container target all
+// read. Each of them used to hand-walk the flat inventory and miss everything
+// routing had put away, so the contract is pinned here once rather than in
+// each of them.
+TEST_CASE( "items_in_pockets finds what is carried and nothing else",
+           "[pocket][routing][nesting]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+    item *pack = u.worn.front();
+
+    auto bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "jar_glass" ) ) );
+    REQUIRE( !pack->put_in( std::move( bag ) ) );
+
+    auto carried = item::spawn( "bag_plastic" );
+    REQUIRE( !carried->put_in( item::spawn( "test_rock" ) ) );
+    u.i_add( std::move( carried ) );
+
+    const std::vector<item *> found = u.items_in_pockets();
+    const auto holds = [&found]( const std::string & type ) {
+        return std::ranges::any_of( found, [&type]( const item * it ) {
+            return it->typeId() == itype_id( type );
+        } );
+    };
+
+    // Nested in a worn pocket, at both depths.
+    CHECK( holds( "bag_plastic" ) );
+    CHECK( holds( "jar_glass" ) );
+    // And inside a container held in the flat inventory.
+    CHECK( holds( "test_rock" ) );
+    // The garment itself is not carried *in* a pocket, and every caller
+    // already has it from worn; including it here would have them offer to
+    // trade away or steal the backpack off the character's back.
+    CHECK_FALSE( std::ranges::any_of( found, [pack]( const item * it ) {
+        return it == pack;
+    } ) );
+    // Nor is the flat inventory's own top-level item, which callers already
+    // have from inv_const_slice() and would otherwise list twice.
+    CHECK( std::ranges::count_if( found, []( const item * it ) {
+        return it->typeId() == itype_id( "bag_plastic" );
+    } ) == 1 );
+}

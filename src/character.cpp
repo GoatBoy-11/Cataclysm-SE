@@ -3071,6 +3071,40 @@ const std::vector<item *> &Character::inv_const_stack( int position ) const
     return inv.const_stack( position );
 }
 
+/**
+ * Add everything @p parent holds in its CONTAINER pockets, at any depth.
+ *
+ * Magazine and gunmod pockets are left unread: a round in a magazine is part of
+ * the magazine, not something carried separately, and the same reasoning governs
+ * item::accepts_item().
+ */
+static void collect_pocket_contents( const item &parent, std::vector<item *> &out )
+{
+    for( const item_pocket &pocket : parent.contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER ) {
+            continue;
+        }
+        for( item *stored : pocket.all_items_top() ) {
+            out.push_back( stored );
+            collect_pocket_contents( *stored, out );
+        }
+    }
+}
+
+std::vector<item *> Character::items_in_pockets() const
+{
+    std::vector<item *> found;
+    for( const item * const &garment : worn ) {
+        collect_pocket_contents( *garment, found );
+    }
+    for( const std::vector<item *> *stack : inv_const_slice() ) {
+        for( const item * const &carried : *stack ) {
+            collect_pocket_contents( *carried, found );
+        }
+    }
+    return found;
+}
+
 const_invslice Character::inv_const_slice() const
 {
     return inv.const_slice();

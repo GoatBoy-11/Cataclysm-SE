@@ -336,12 +336,23 @@ void memorial_logger::write( std::ostream &file, const std::string &epitaph ) co
     file << _( "Inventory:" ) << eol;
     u.inv_restack( );
     const_invslice slice = u.inv_const_slice();
-    for( const std::vector<item *> *elem : slice ) {
-        const item &next_item = *elem->front();
-        file << indent << next_item.invlet << " - " <<
-             next_item.tname( static_cast<unsigned>( elem->size() ), false );
-        if( elem->size() > 1 ) {
-            file << " [" << elem->size() << "]";
+    // Anything routed into a pocket is carried but absent from the flat
+    // inventory, so a character who had put their things away died with a
+    // memorial listing almost nothing. Each pocketed item gets its own line:
+    // the letter system does not descend into pockets, so there is nothing to
+    // restack them by and no letter to print - write a space instead, or the
+    // invlet of 0 goes into the file as a NUL byte.
+    const auto write_line = [&]( const item & next_item, size_t count, char letter,
+                                 bool lettered ) {
+        file << indent;
+        if( lettered ) {
+            file << letter << " - ";
+        } else {
+            file << "  - ";
+        }
+        file << next_item.tname( static_cast<unsigned>( count ), false );
+        if( count > 1 ) {
+            file << " [" << count << "]";
         }
         if( next_item.charges > 0 ) {
             file << " (" << next_item.charges << ")";
@@ -349,6 +360,14 @@ void memorial_logger::write( std::ostream &file, const std::string &epitaph ) co
             file << " (" << next_item.contents.front().charges << ")";
         }
         file << eol;
+    };
+
+    for( const std::vector<item *> *elem : slice ) {
+        const item &next_item = *elem->front();
+        write_line( next_item, elem->size(), next_item.invlet, true );
+    }
+    for( const item *pocketed : u.items_in_pockets() ) {
+        write_line( *pocketed, 1, ' ', false );
     }
     file << eol;
 

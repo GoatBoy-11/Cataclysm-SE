@@ -64,6 +64,31 @@ std::vector<item_pricing> npc_trading::init_selling( npc &np )
         }
     } );
 
+    // Routing puts an NPC's goods in worn pockets, so the flat inventory above
+    // is not the whole stock: without this a shopkeeper who put their wares
+    // away properly had nothing at all to sell. Group what stacks, so twenty
+    // pills read as one line rather than twenty.
+    std::vector<std::vector<item *>> pocketed;
+    for( item *stored : np.items_in_pockets() ) {
+        auto match = std::ranges::find_if( pocketed,
+        [stored]( const std::vector<item *> &stack ) {
+            return stack.front()->stacks_with( *stored );
+        } );
+        if( match == pocketed.end() ) {
+            pocketed.push_back( { stored } );
+        } else {
+            match->push_back( stored );
+        }
+    }
+    for( const std::vector<item *> &stack : pocketed ) {
+        const item &it = *stack.front();
+        const auto price = it.price( true );
+        auto val = np.value( it );
+        if( np.wants_to_sell( it, val, price ) ) {
+            result.emplace_back( stack, val, static_cast<int>( stack.size() ) );
+        }
+    }
+
     if( np.will_exchange_items_freely() ) {
         std::ranges::for_each( np.wielded_items(), [&]( auto * weapon ) {
             if( !weapon->has_flag( json_flag_NO_UNWIELD ) ) {
@@ -147,23 +172,19 @@ std::vector<item_pricing> npc_trading::init_buying( Character &buyer, Character 
     // above is no longer the whole picture: without this the trade window shows
     // an empty column for anyone whose things were put away properly. Group
     // what stacks, so twenty pills read as one line and not twenty.
+    // Recursive, and it reaches containers in the flat inventory too: the walk
+    // this replaced read one level of worn pockets only, so the contents of a
+    // bag in a pocket could not be traded at all.
     std::vector<std::vector<item *>> pocketed;
-    for( item * const &garment : seller.worn ) {
-        for( const item_pocket &pocket : garment->contents.get_pockets() ) {
-            if( pocket.definition().type != pocket_type::CONTAINER ) {
-                continue;
-            }
-            for( item *stored : pocket.all_items_top() ) {
-                auto match = std::ranges::find_if( pocketed,
-                [stored]( const std::vector<item *> &stack ) {
-                    return stack.front()->stacks_with( *stored );
-                } );
-                if( match == pocketed.end() ) {
-                    pocketed.push_back( { stored } );
-                } else {
-                    match->push_back( stored );
-                }
-            }
+    for( item *stored : seller.items_in_pockets() ) {
+        auto match = std::ranges::find_if( pocketed,
+        [stored]( const std::vector<item *> &stack ) {
+            return stack.front()->stacks_with( *stored );
+        } );
+        if( match == pocketed.end() ) {
+            pocketed.push_back( { stored } );
+        } else {
+            match->push_back( stored );
         }
     }
     for( const std::vector<item *> &stack : pocketed ) {

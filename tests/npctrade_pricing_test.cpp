@@ -95,3 +95,58 @@ TEST_CASE( "pocketed items are offered for trade", "[npc][trade][pocket]" )
     INFO( "entries offered: " << offered.size() );
     CHECK( sugar_offered );
 }
+
+// init_selling() walked only the NPC's flat inventory, so a shopkeeper who had
+// put their wares away had nothing to sell at all. And init_buying()'s pocket
+// walk read one level, so a bag inside a pocket hid whatever was in it.
+TEST_CASE( "an NPC sells what is in its pockets", "[npc][trade][pocket][nesting]" )
+{
+    clear_all_state();
+    standard_npc merchant( "merchant" );
+    REQUIRE( !merchant.wear_item( item::spawn( "backpack" ) ) );
+    item *pack = merchant.worn.front();
+    REQUIRE( !pack->put_in( item::spawn( "sugar" ) ) );
+    // The precondition the bug turned on, asserted rather than assumed.
+    REQUIRE( merchant.inv_const_slice().empty() );
+
+    const std::vector<item_pricing> offered = npc_trading::init_selling( merchant );
+
+    const bool sugar_offered = std::ranges::any_of( offered,
+    []( const item_pricing & ip ) {
+        return !ip.locs.empty() && ip.locs.front()->typeId() == itype_id( "sugar" );
+    } );
+    INFO( "entries offered: " << offered.size() );
+    CHECK( sugar_offered );
+}
+
+TEST_CASE( "a container inside a pocket does not hide its contents from trade",
+           "[npc][trade][pocket][nesting]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    const character_id previous_id = u.getID();
+    u.setID( character_id( 1 ), true );
+    const auto restore_id = on_out_of_scope( [&u, previous_id]() {
+        u.setID( previous_id, true );
+    } );
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+    item *pack = u.worn.front();
+
+    auto bag = item::spawn( "bag_plastic" );
+    REQUIRE( !bag->put_in( item::spawn( "sugar" ) ) );
+    REQUIRE( !pack->put_in( std::move( bag ) ) );
+    item *stored = pack->contents.all_items_top().front()->contents.all_items_top().front();
+    REQUIRE( stored->typeId() == itype_id( "sugar" ) );
+    stored->set_owner( u );
+
+    standard_npc merchant( "merchant" );
+    const std::vector<item_pricing> offered =
+        npc_trading::init_buying( merchant, u, false );
+
+    const bool sugar_offered = std::ranges::any_of( offered,
+    []( const item_pricing & ip ) {
+        return !ip.locs.empty() && ip.locs.front()->typeId() == itype_id( "sugar" );
+    } );
+    INFO( "entries offered: " << offered.size() );
+    CHECK( sugar_offered );
+}
