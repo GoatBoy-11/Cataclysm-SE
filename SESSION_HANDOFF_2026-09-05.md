@@ -123,3 +123,55 @@ mean "holds things". Grep for it before trusting any call.
 `items_with()` already sees pocketed items. The gaps are all in code that walks
 `worn` and `inv_const_slice()` by hand. That grep is the cheapest way to find the
 next one.
+
+## Addendum — second sitting, 2026-09-05
+
+Two more open findings closed. `main` now carries seven pocket fixes; the repo-root
+playtest exe is the 03:59 build and `cataclysm-bn-tiles_old.exe` is the 01:28 one.
+
+- **Finding 7 was already fixed** and the list above is wrong about it.
+  `ask_pocket_destination()` returns the single destination rather than declining,
+  at `pocket_destination_menu.cpp:22`. Nothing to do.
+- **Finding 3, the NPC oracle** (`6a70a056bd`). `can_wear_warmer_clothes()` and
+  `can_make_fire()` now search the inventory recursively and the contents of worn
+  items recursively. Worn garments themselves stay unread on purpose: that is the
+  behaviour they always had, and a coat already on the character is neither a coat
+  it could put on nor fuel it ought to burn. Three sections in `behavior_test.cpp`,
+  each watched failing first, and each asserting `inv_position_by_item() == INT_MIN`
+  so the test cannot quietly stop testing pocketed items.
+- **Finding 4, the cloning vat** (`85fd08a533`). Removal now goes through
+  `item::detach()`, which is location-agnostic.
+
+  The fix uncovered a **latent use-after-free** that the broken removal was hiding.
+  `selected_syringe` is read for its specimen vars all the way down the block, and
+  the matched item is normally `selected_syringe` itself; the `detached_ptr` was
+  scoped to the `if` branch, so in the flat-inventory case the item was freed and
+  then read. It never fired only because the pocketed case removed nothing. The
+  detached sample is now held in the enclosing scope.
+
+  The vat is reachable only through a `uilist`, so the added test characterises the
+  two properties the fix turns on rather than driving the vat. It passes against the
+  unfixed code and says so in its comment.
+
+Full suite after both: **1,131 cases, 1,127 passed, 4 failed** — the four documented
+vision tests, unchanged.
+
+### Tooling notes
+
+- **Neither formatter is installed.** `astyle` is absent entirely, and
+  `build-scripts/format-cpp.sh` only finds `clang-format` if
+  `C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/Llvm/x64/bin`
+  is on PATH. Both src files here were written to astyle style by hand.
+- **Do not run the formatter over `tests/`.** `format-cpp.sh` sends `tests/` to
+  clang-format, but the test files are not clang-format-clean:
+  `item_pocket_test.cpp` came back with 3,116 lines of churn. Format the file you
+  touched, read the diff, and revert if it reformats anything you did not write.
+- **`vcvars64.bat` prints `'vswhere.exe' is not recognized`** and then initialises
+  x64 correctly anyway. Harmless. `Enter-VsDevShell` does not work here because
+  `vswhere.exe` is not at the path the module expects, so the batch file via
+  `cmd /c` is the working route.
+
+### What is left
+
+Findings 1, 2, 5 and 6 stand as written above. Ranked as before, the invlet
+keystone (1) still gates the most.
