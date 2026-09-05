@@ -175,3 +175,62 @@ vision tests, unchanged.
 
 Findings 1, 2, 5 and 6 stand as written above. Ranked as before, the invlet
 keystone (1) still gates the most.
+
+## Addendum — third sitting, 2026-09-05
+
+Finding 2 closed: every inventory screen now nests to any depth.
+
+- **`inventory_ui.cpp`.** A new `add_contained_items()` recurses through CONTAINER
+  pockets and replaces both one-level loops, the worn one and the carried one added
+  earlier today. `topmost_parent` deliberately keeps meaning *outermost* container:
+  it is what the category-list copy names in its caption, and what bounds the walk
+  up the chain. Depth is carried by `indent` instead.
+- **Collapse now asks the whole chain.** `under_collapsed_parent` walks
+  `item::parent_item()` from the entry up to `topmost_parent`. Asking only
+  `topmost_parent` meant collapsing a bag *inside* a garment did nothing at all -
+  its contents kept drawing until the garment itself was shut.
+- **The reorder pass is depth-first**, keyed on the item's own container rather
+  than its outermost one, so a bag's contents follow the bag instead of being
+  flattened in beside it. Each level rescans `entries` in sorted order, which is
+  what keeps siblings sorted.
+- **Nested containers are collapsible.** The `[+]`/`[-]` marker and the collapse
+  key both now test `is_tree_node()`, one shared predicate, so the marker and the
+  key cannot disagree about what can be folded.
+- **`advanced_inv_pane.cpp`.** `collect_pocketed_items()` recurses. It also walks
+  containers held in the flat inventory, whose contents the pane never listed at
+  all - the stack loop lists the bag but never what is in it.
+
+Six tests in `inventory_ui_test.cpp`. Five fail on a full revert of the three source
+files. The collapse test needed a second pass: it first passed against the unfixed
+code, because the rock was never drawn at all, so `CHECK_FALSE` was trivially true.
+It now asserts the rock is visible while the bag is open and gone once it is shut,
+and was re-verified against a build with the enumeration fixed but *only* the
+ancestor walk reverted, where it fails on the collapse assertion itself.
+
+### Finding 6 is bigger than it looks
+
+Read before attempting it. Insertion *is* gated at the direct pocket -
+`item_contents::insert_item_impl()` refuses when `best_pocket()` returns null,
+unless forced - so finding 6 is not "add a missing check", it is "extend refusal to
+the ancestor chain", which starts failing insertions that succeed today.
+
+Two things make that more than a small edit:
+
+- **There is no `remaining_weight()`.** `item_pocket` exposes `remaining_volume()`
+  and nothing equivalent for mass; `max_contains_weight` is only read inside
+  `can_contain()`.
+- **It is entangled with finding 5.** Volume does not propagate out of a rigid
+  container today, so an ancestor volume check would be nearly a no-op and the
+  weight check would carry the whole behaviour. Finding 5 changes exactly that.
+
+`item_pocket.h` also documents a **dry-run enforcement audit** from phase 1 -
+`record_pocket_audit_miss()` / `pocket_audit_report()` - whose stated purpose is
+that "an empty report after exercising the game is the evidence that enforcement
+can be enabled". Extending that ledger to ancestor over-capacity is the additive,
+zero-gameplay-change move; turning refusal on is a gameplay change and wants a
+playtest behind it. That call was left to the owner rather than made while AFK.
+
+### Still open
+
+1 (the invlet keystone), 5 (rigid volume) and 6 (above). 5 and 6 want each other,
+and 6 wants the owner's decision on whether to start refusing.
