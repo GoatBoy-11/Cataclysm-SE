@@ -1356,7 +1356,8 @@
     "contains": "3750 ml",
     "watertight": true,
     "seals": true,
-    "properties": [ [ "burst_when_filled", "75" ] ]
+    "properties": [ [ "burst_when_filled", "75" ] ],
+    "flags": [ "CREDIT_CARD_SHAPED" ]
   },
   {
     "id": "balloon",
@@ -1366,7 +1367,9 @@
     "name": { "str": "balloon" },
     "description": "A child's balloon.  This could be used as a makeshift water container.",
     "copy-from": "condom",
-    "weight": "10 g"
+    "weight": "10 g",
+    "//": "A condom rides in a wallet's card sleeve; a balloon does not, so drop the shape it would otherwise inherit.",
+    "delete": { "flags": [ "CREDIT_CARD_SHAPED" ] }
   },
   {
     "id": "can_food_big",

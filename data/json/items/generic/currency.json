@@ -13,7 +13,8 @@
     "to_hit": -3,
     "color": "white",
     "symbol": "$",
-    "material": [ "paper" ]
+    "material": [ "paper" ],
+    "flags": [ "BANK_NOTE_SHAPED" ]
   },
   {
     "type": "GENERIC",
@@ -30,7 +31,8 @@
     "color": "brown",
     "symbol": "$",
     "material": [ "gold" ],
-    "volume": "2 ml"
+    "volume": "2 ml",
+    "flags": [ "COIN_SHAPED" ]
   },
   {
     "type": "GENERIC",
@@ -45,7 +47,8 @@
     "to_hit": -3,
     "color": "brown",
     "symbol": "$",
-    "material": [ "copper" ]
+    "material": [ "copper" ],
+    "flags": [ "COIN_SHAPED" ]
   },
   {
     "type": "GENERIC",
@@ -60,7 +63,8 @@
     "to_hit": -3,
     "color": "white",
     "symbol": "$",
-    "material": [ "paper" ]
+    "material": [ "paper" ],
+    "flags": [ "BANK_NOTE_SHAPED" ]
   },
   {
     "type": "GENERIC",
@@ -75,6 +79,7 @@
     "to_hit": -3,
     "color": "white",
     "symbol": "$",
-    "material": [ "paper" ]
+    "material": [ "paper" ],
+    "flags": [ "CREDIT_CARD_SHAPED" ]
   }
 ]

@@ -15,7 +15,7 @@
     "volume": "5 ml",
     "price": "0 cent",
     "price_postapoc": "0 cent",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ],
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ],
     "//2": "TRADER_AVOID keeps it out of trade stock. SNIPPET_NEEDS_LITERACY matches vanilla notes."
   },
   {
@@ -34,7 +34,7 @@
     "volume": "5 ml",
     "price": "0 cent",
     "price_postapoc": "0 cent",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ],
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ],
     "//2": "TRADER_AVOID keeps it out of trade stock. SNIPPET_NEEDS_LITERACY matches vanilla notes."
   },
   {
@@ -53,7 +53,7 @@
     "volume": "5 ml",
     "price": "0 cent",
     "price_postapoc": "0 cent",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ],
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ],
     "//2": "TRADER_AVOID keeps it out of trade stock. SNIPPET_NEEDS_LITERACY matches vanilla notes."
   },
   {

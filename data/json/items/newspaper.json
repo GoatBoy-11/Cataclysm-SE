@@ -11,7 +11,7 @@
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "material": "paper",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ],
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ],
     "weight": "3 g",
     "volume": "5 ml"
   },
@@ -27,7 +27,7 @@
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "material": "paper",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ],
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ],
     "weight": "3 g",
     "volume": "1 ml"
   },
@@ -156,7 +156,7 @@
     "price": "0 cent",
     "price_postapoc": "0 cent",
     "material": "paper",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ],
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ],
     "weight": "1 g",
     "volume": "1 ml"
   },
@@ -173,7 +173,7 @@
     "price_postapoc": "0 cent",
     "looks_like": "survnote",
     "material": "paper",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ],
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ],
     "weight": "3 g",
     "volume": "10 ml"
   },
@@ -195,7 +195,7 @@
     "looks_like": "newest_newspaper",
     "color": "white",
     "symbol": "?",
-    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY" ]
+    "flags": [ "TRADER_AVOID", "SNIPPET_NEEDS_LITERACY", "BANK_NOTE_SHAPED" ]
   },
   {
     "type": "GENERIC",

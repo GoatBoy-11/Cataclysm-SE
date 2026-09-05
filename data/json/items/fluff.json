@@ -12,7 +12,8 @@
     "material": [ "paper" ],
     "symbol": "?",
     "looks_like": "mag_glam",
-    "color": "light_cyan"
+    "color": "light_cyan",
+    "flags": [ "BANK_NOTE_SHAPED" ]
   },
   {
     "id": "trade_writ_scrap",
@@ -27,7 +28,8 @@
     "material": [ "paper" ],
     "symbol": "?",
     "looks_like": "mag_glam",
-    "color": "light_cyan"
+    "color": "light_cyan",
+    "flags": [ "BANK_NOTE_SHAPED" ]
   },
   {
     "id": "trade_writ_lumberyard",
@@ -42,7 +44,8 @@
     "material": [ "paper" ],
     "symbol": "?",
     "looks_like": "mag_glam",
-    "color": "light_cyan"
+    "color": "light_cyan",
+    "flags": [ "BANK_NOTE_SHAPED" ]
   },
   {
     "id": "magic_8_ball",
@@ -108,7 +111,7 @@
     "material": [ "paper" ],
     "symbol": "*",
     "color": "light_gray",
-    "flags": [ "MISSION_ITEM" ]
+    "flags": [ "MISSION_ITEM", "CREDIT_CARD_SHAPED" ]
   },
   {
     "id": "chess",
