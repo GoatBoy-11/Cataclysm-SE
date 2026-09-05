@@ -323,3 +323,50 @@ critical failure. What *is* pinned is the trap itself -
 `get_item_position answers with the container for a pocketed item` in
 `inventory_ui_test.cpp` - so the root cause cannot change quietly. The favourite
 and stimpack fixes have tests, both watched failing first.
+
+## Per-pocket `rigid` is not the change it looks like — 2026-09-05
+
+The owner cleared this to be applied. It was built, measured, and **reverted**,
+because applying it alone does nothing at all. Read this before trying again.
+
+`item::volume()` gates the whole contents sum on the *itype*:
+
+```cpp
+// Non-rigid items add the volume of the content
+if( !type->rigid ) {
+    ret += contents.item_size_modifier();
+}
+```
+
+**`itype::rigid` defaults to `true`** (`itype.h:1096`). So for almost every item
+the sum never runs, and a per-pocket check inside `item_size_modifier()` is
+never reached. A version of that check was written, tested against
+`22lr_ammo_box_100`, and its two tests turned out to be measuring the outer gate
+rather than the new code - the "rigid pocket does not bulge" test passed because
+`type->rigid` already blocked it, and the classic-mode test failed for the same
+reason.
+
+**CDDA has no itype gate.** `item::volume()` there is simply
+`ret += contents.item_size_modifier();` (CDDA `item.cpp:2302`), and rigidity is
+decided entirely per pocket. So the real port is *removing* the itype gate, not
+adding a pocket one beside it.
+
+That is where the danger is, and it is the opposite of what this file said
+earlier. The two defaults disagree:
+
+| | default | count in `data/json` |
+|---|---|---|
+| `itype::rigid` | **true** | - |
+| `pocket_data::rigid` | **false** | 28 pockets declare `true`, 69 declare `false`, ~388 declare nothing |
+
+Drop the itype gate today and every one of those ~457 non-rigid-by-default
+pockets starts swelling its container. That is the game-wide volume change the
+original finding 5 warned about, and it lands on clothing, not just on the 28
+ammo boxes that actually want it.
+
+**So the order of work is:** author `"rigid": true` across the pockets that
+should not bulge *first*, then remove the itype gate, then playtest. Not the
+other way round. The classic-mode requirement the owner set - classic keeps the
+BN inventory - is satisfied by making the pocket check skip when
+`pockets_are_classic()`, which the reverted patch already did correctly; that
+part was sound and can be lifted from `git show` of this session if useful.
