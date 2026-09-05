@@ -1,4 +1,5 @@
 #include <array>
+#include <functional>
 #include <list>
 #include <memory>
 #include <string>
@@ -9,6 +10,8 @@
 #include "character_oracle.h"
 #include "inventory.h"
 #include "item.h"
+#include "item_contents.h"
+#include "item_pocket.h"
 #include "itype.h"
 #include "player.h"
 #include "make_static.h"
@@ -49,40 +52,86 @@ status_t character_oracle_t::needs_food_badly() const
     return success;
 }
 
+/**
+ * Does anything held in @p parent's CONTAINER pockets, at any depth, satisfy
+ * @p filter?
+ *
+ * Magazine and gunmod pockets are left unread on purpose: a round in a
+ * magazine is part of the magazine, not something the character is carrying
+ * separately, and the same reasoning already governs item::accepts_item().
+ */
+static bool pocketed_item_matches( const item &parent,
+                                   const std::function<bool( const item & )> &filter )
+{
+    for( const item_pocket &pocket : parent.contents.get_pockets() ) {
+        if( pocket.definition().type != pocket_type::CONTAINER ) {
+            continue;
+        }
+        for( const item *stored : pocket.all_items_top() ) {
+            if( filter( *stored ) || pocketed_item_matches( *stored, filter ) ) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Does @p who carry anything satisfying @p filter?
+ *
+ * The predicates below used to walk inv_const_slice() and look at front() of
+ * each stack - the flat inventory, top level only. Routing gives worn pockets
+ * first refusal on everything the character acquires, so that is no longer
+ * where a picked-up lighter lives, and an NPC would sit in the cold beside its
+ * own firestarter.
+ *
+ * Worn garments themselves are deliberately not offered to the filter, which
+ * matches the behaviour these predicates have always had: a coat already on the
+ * character is neither a coat it could put on nor fuel it ought to burn. Their
+ * pockets are a different matter, and are searched.
+ */
+static bool carries_item_matching( const Character &who,
+                                   const std::function<bool( const item & )> &filter )
+{
+    for( const auto &i : who.inv_const_slice() ) {
+        const item &candidate = *i->front();
+        if( filter( candidate ) || pocketed_item_matches( candidate, filter ) ) {
+            return true;
+        }
+    }
+    for( const item * const &worn_item : who.worn ) {
+        if( pocketed_item_matches( *worn_item, filter ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
 status_t character_oracle_t::can_wear_warmer_clothes() const
 {
     const player *p = dynamic_cast<const player *>( subject );
-    // Check inventory for wearable warmer clothes, greedily.
+    // Check what is carried for wearable warmer clothes, greedily.
     // Don't consider swapping clothes yet, just evaluate adding clothes.
-    for( const auto &i : subject->inv_const_slice() ) {
-        const item *const &candidate = i->front();
-        if( candidate->get_warmth() > 0 || p->can_wear( *candidate ).success() ) {
-            return running;
-        }
-    }
-    return failure;
+    const bool found = carries_item_matching( *subject, [p]( const item & candidate ) {
+        return candidate.get_warmth() > 0 || p->can_wear( candidate ).success();
+    } );
+    return found ? running : failure;
 }
 
 status_t character_oracle_t::can_make_fire() const
 {
-    // Check inventory for firemaking tools and fuel
+    // Check what is carried for firemaking tools and fuel
     bool tool = false;
     bool fuel = false;
-    for( const auto &i : subject->inv_const_slice() ) {
-        const item *const &candidate = i->front();
-        if( candidate->has_flag( STATIC( flag_id( "FIRESTARTER" ) ) ) ) {
+    const bool ready = carries_item_matching( *subject, [&tool, &fuel]( const item & candidate ) {
+        if( candidate.has_flag( STATIC( flag_id( "FIRESTARTER" ) ) ) ) {
             tool = true;
-            if( fuel ) {
-                return running;
-            }
-        } else if( candidate->flammable() ) {
+        } else if( candidate.flammable() ) {
             fuel = true;
-            if( tool ) {
-                return running;
-            }
         }
-    }
-    return success;
+        return tool && fuel;
+    } );
+    return ready ? running : success;
 }
 
 status_t character_oracle_t::can_take_shelter() const

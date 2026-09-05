@@ -15,6 +15,7 @@
 #include "string_id.h"
 #include "weather.h"
 
+#include <climits>
 #include <memory>
 #include <string>
 #include <vector>
@@ -199,5 +200,62 @@ TEST_CASE("check_monster_behavior_tree", "[monster][behavior]") {
         CHECK(monster_goals.tick(&oracle) == "do_special");
         test_monster.set_special("bite", 1);
         CHECK(monster_goals.tick(&oracle) == "idle");
+    }
+}
+
+// The oracle predicates below walked Character::inv_const_slice() and looked at
+// front() of each stack: the flat inventory, top level only. Since routing gives
+// worn pockets first refusal on anything the character acquires, that is no
+// longer where a picked-up lighter lives, and an NPC would sit in the cold next
+// to its own firestarter. See SESSION_HANDOFF_2026-09-05.md, open finding 3.
+TEST_CASE("npc_behavior_reads_items_held_in_pockets", "[npc][behavior][pocket]") {
+    clear_all_state();
+    npc& test_npc = spawn_npc({50, 50, 0}, "test_talker");
+    clear_character(test_npc);
+    behavior::character_oracle_t oracle(&test_npc);
+
+    // A backpack worn on the back is the ordinary destination routing picks.
+    test_npc.wear_item(item::spawn(itype_id("backpack")));
+
+    SECTION("firestarter and fuel routed into a worn pocket") {
+        REQUIRE(oracle.can_make_fire() == behavior::status_t::success);
+
+        detached_ptr<item> lighter = item::spawn(itype_id("lighter"));
+        item& lighter_ref = *lighter;
+        detached_ptr<item> fuel = item::spawn(itype_id("2x4"));
+        item& fuel_ref = *fuel;
+        // quiet, and no prompt: this is the non-interactive routing path.
+        REQUIRE(!test_npc.i_add_to_worn_pockets(std::move(lighter), nullptr, true, false));
+        REQUIRE(!test_npc.i_add_to_worn_pockets(std::move(fuel), nullptr, true, false));
+
+        // Assert the precondition rather than trusting it: both items must have
+        // gone into a pocket, not into the flat inventory, or the test proves
+        // nothing about pocketed items.
+        REQUIRE(test_npc.inv_position_by_item(&lighter_ref) == INT_MIN);
+        REQUIRE(test_npc.inv_position_by_item(&fuel_ref) == INT_MIN);
+
+        CHECK(oracle.can_make_fire() == behavior::status_t::running);
+    }
+
+    SECTION("warmer clothes routed into a worn pocket") {
+        REQUIRE(oracle.can_wear_warmer_clothes() == behavior::status_t::failure);
+
+        detached_ptr<item> sweater = item::spawn(itype_id("sweater"));
+        item& sweater_ref = *sweater;
+        REQUIRE(!test_npc.i_add_to_worn_pockets(std::move(sweater), nullptr, true, false));
+        REQUIRE(test_npc.inv_position_by_item(&sweater_ref) == INT_MIN);
+
+        CHECK(oracle.can_wear_warmer_clothes() == behavior::status_t::running);
+    }
+
+    SECTION("a firestarter nested two containers deep is still found") {
+        detached_ptr<item> bag = item::spawn(itype_id("bag_plastic"));
+        item& bag_ref = *bag;
+        REQUIRE(!bag_ref.put_in(item::spawn(itype_id("lighter"))));
+        REQUIRE(!bag_ref.put_in(item::spawn(itype_id("rag"))));
+        REQUIRE(!test_npc.i_add_to_worn_pockets(std::move(bag), nullptr, true, false));
+        REQUIRE(test_npc.inv_position_by_item(&bag_ref) == INT_MIN);
+
+        CHECK(oracle.can_make_fire() == behavior::status_t::running);
     }
 }
