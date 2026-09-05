@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <array>
+#include <climits>
 #include <cstdlib>
 #include <memory>
 #include <optional>
@@ -1640,7 +1641,15 @@ void Character::consume( item &target )
                 add_msg( _( "You drop the empty %s." ), target.tname() );
                 put_into_vehicle_or_drop( *this, item_drop_reason::deliberate, target.detach() );
             } else {
-                int quantity = inv.const_stack( inv.position_by_item( &target ) ).size();
+                // A container carried in a worn pocket is not in the flat
+                // inventory at all, so position_by_item() answers INT_MIN and
+                // const_stack() would debugmsg on it. The count only exists to
+                // say "2 empty bottles"; one is the honest answer when the
+                // inventory holds no stack to count.
+                const int position = inv.position_by_item( &target );
+                const int quantity = position == INT_MIN
+                                     ? 1
+                                     : static_cast<int>( inv.const_stack( position ).size() );
                 char letter = target.invlet ? target.invlet : ' ';
                 add_msg( m_info, _( "%c - %d empty %s" ), letter, quantity, target.tname( quantity ) );
             }
