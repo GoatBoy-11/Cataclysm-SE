@@ -3853,23 +3853,43 @@ bool Character::wear_possessed( item &to_wear, bool interactive,
         return false;
     }
 
-    bool was_weapon;
+    // Where it came from decides how to take it and how to put it back.
+    // inv.remove_item() only reaches the flat inventory: for a garment held in
+    // a pocket it debugmsgs "Tried to remove a item not in inventory", hands
+    // back nothing, and that null used to travel all the way into wear_item(),
+    // which then reported "Wearing none would be tricky".
+    enum class wear_source { weapon, inventory, pocket };
+    wear_source source;
     detached_ptr<item> det;
     if( &to_wear == &primary_weapon() ) {
         det = remove_primary_weapon();
-        was_weapon = true;
-    } else {
+        source = wear_source::weapon;
+    } else if( inv.position_by_item( &to_wear ) != INT_MIN ) {
         det = inv.remove_item( &to_wear );
         inv.restack( *this->as_player() );
-        was_weapon = false;
+        source = wear_source::inventory;
+    } else {
+        // Detach through the item's own location, which is where a pocketed
+        // garment actually lives.
+        det = to_wear.detach();
+        source = wear_source::pocket;
     }
 
     auto result = wear_item( std::move( det ), interactive, std::move( position ) );
     if( result ) {
-        if( was_weapon ) {
-            set_primary_weapon( std::move( result ) );
-        } else {
-            inv.add_item( std::move( result ), true );
+        switch( source ) {
+            case wear_source::weapon:
+                set_primary_weapon( std::move( result ) );
+                break;
+            case wear_source::inventory:
+                inv.add_item( std::move( result ), true );
+                break;
+            case wear_source::pocket:
+                // Back the way it came: worn pockets get first refusal and the
+                // flat inventory backs them up, so a refused wear cannot drop
+                // the garment on the floor or lose it outright.
+                i_add_routed( std::move( result ) );
+                break;
         }
         return false;
     }

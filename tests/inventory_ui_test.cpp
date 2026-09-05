@@ -1303,3 +1303,34 @@ TEST_CASE("a merged column survives a collapse and uncollapse cycle",
         return e->any_item()->typeId() == itype_id("test_ear_plugs");
     }));
 }
+
+// ---------------------------------------------------------------------------
+// Wearing something out of a pocket
+// ---------------------------------------------------------------------------
+
+// Playtest report, 2026-09-05: wearing a plastic bag with a backpack inside it,
+// examining the backpack and choosing Wear gave "Tried to remove a item not in
+// inventory", then "Wearing none would be tricky". wear_possessed() removed the
+// garment with inv.remove_item(), which only reaches the flat inventory; for an
+// item in a pocket it debugmsgs, hands back nothing, and the null travelled all
+// the way into wear_item(). Nesting is what made the backpack examinable.
+TEST_CASE("a garment held in a worn pocket can be worn", "[inventory][ui][pocket][wear]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* bag = dummy.worn.front();
+    REQUIRE(!bag->put_in(item::spawn("socks")));
+    item* pack = bag->contents.all_items_top().front();
+    REQUIRE(pack->typeId() == itype_id("socks"));
+
+    // The precondition the bug turned on, asserted rather than assumed: the
+    // backpack is carried, but the flat inventory does not hold it.
+    REQUIRE(dummy.inv_position_by_item(pack) == INT_MIN);
+    REQUIRE_FALSE(dummy.is_worn(*pack));
+
+    CHECK(dummy.wear_possessed(*pack, false));
+
+    // It is worn now, and gone from the bag that held it.
+    CHECK(dummy.is_worn(*pack));
+    CHECK(bag->contents.all_items_top().empty());
+}
