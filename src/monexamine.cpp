@@ -901,10 +901,11 @@ void monexamine::insert_battery( monster &z )
         return;
     }
     item *bat_item = bat_inv[index - 1];
-    int item_pos = you.get_item_position( bat_item );
-    if( item_pos != INT_MIN ) {
-        z.set_battery_item( you.i_rem( item_pos ) );
-    }
+    // items_with() above descends into pockets, so the menu offers a battery
+    // held in one - but get_item_position() answers for such an item with the
+    // index of the garment holding it, and i_rem() then fitted the character's
+    // backpack into the mech. Detach through the item's own location instead.
+    z.set_battery_item( bat_item->detach() );
 }
 
 bool monexamine::mech_hack( monster &z )

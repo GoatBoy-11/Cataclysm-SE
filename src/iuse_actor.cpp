@@ -2574,8 +2574,10 @@ int musical_instrument_actor::use( player &p, item &it, bool t, const tripoint_b
 
     // Check for worn or wielded - no "floating"/bionic instruments for now
     // TODO: Distinguish instruments played with hands and with mouth, consider encumbrance
-    const int inv_pos = p.get_item_position( &it );
-    if( inv_pos >= 0 || inv_pos == INT_MIN ) {
+    // Ask whether it is actually held, not where its index falls: an
+    // instrument in a backpack used to answer with the backpack's worn index
+    // and so counted as worn, letting the character play it from inside a bag.
+    if( !p.is_worn( it ) && !p.is_wielding( it ) ) {
         p.add_msg_player_or_npc( m_bad,
                                  _( "You need to hold or wear %s to play it" ),
                                  _( "<npcname> needs to hold or wear %s to play it" ),
@@ -3642,7 +3644,11 @@ static bool damage_item( player &pl, item *fix )
 
         pl.add_msg_if_player( m_bad, _( "You destroy it!" ) );
         if( fix->where() == item_location_type::character ) {
-            pl.i_rem_keep_contents( pl.get_item_position( fix ) );
+            // Detach through the item's own location. get_item_position()
+            // answers with the index of the garment holding a pocketed item, so
+            // this used to destroy the backpack the ruined item was in and spill
+            // everything else onto the floor. Contents are already spilled above.
+            fix->detach();
         } else {
             for( detached_ptr<item> &it : fix->contents.clear_items() ) {
                 put_into_vehicle_or_drop( pl, item_drop_reason::deliberate, std::move( it ),
@@ -5448,7 +5454,11 @@ int sew_advanced_actor::use( player &p, item &it, bool, const tripoint_bub_ms & 
                              mod.tname( 1, false ), startdurability, resultdurability );
         if( destroyed ) {
             p.add_msg_if_player( m_bad, _( "You destroy it!" ) );
-            p.i_rem_keep_contents( p.get_item_position( &mod ) );
+            // As in the repair actor: an index from get_item_position() names
+            // the garment when the item is in a pocket, so removing by index
+            // destroyed the wrong thing entirely.
+            detached_ptr<item> destroyed_mod = mod.detach();
+            destroyed_mod->spill_contents( p.bub_pos() );
         }
         return thread_needed / 2;
     } else if( rn <= 10 ) {

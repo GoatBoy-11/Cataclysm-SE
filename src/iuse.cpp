@@ -1998,8 +1998,10 @@ int iuse::pack_item( player *p, item *it, bool t, const tripoint_bub_ms & )
         return 0;
     }
     if( t ) { // Normal use
-        // Numbers below -1 are reserved for worn items
-    } else if( p->get_item_position( it ) < -1 ) {
+        // Ask whether it is worn, not where its index falls: an index below -1
+        // also describes anything held in a worn garment's pocket, so this
+        // refused to let the character fold a tent carried in their backpack.
+    } else if( p->is_worn( *it ) ) {
         p->add_msg_if_player( m_info, _( "You can't pack your %s until you take it off." ),
                               it->tname() );
         return 0;
@@ -5428,7 +5430,7 @@ int iuse::jet_injector( player *p, item *it, bool, const tripoint_bub_ms & )
 
 int iuse::stimpack( player *p, item *it, bool, const tripoint_bub_ms & )
 {
-    if( p->get_item_position( it ) >= -1 ) {
+    if( !p->is_worn( *it ) ) {
         p->add_msg_if_player( m_info,
                               _( "You must wear the stimulant delivery system before you can activate it." ) );
         return 0;

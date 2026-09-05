@@ -9,6 +9,7 @@
 #include "game.h"
 #include "item.h"
 #include "itype.h"
+#include "iuse.h"
 #include "map.h"
 #include "map_helpers.h"
 #include "morale_types.h"
@@ -1189,4 +1190,29 @@ TEST_CASE("xanax", "[iuse][xanax]") {
         dummy.invoke_item(&xanax);
         CHECK(dummy.has_effect(efftype_id("took_xanax")));
     }
+}
+
+// get_item_position() answers for an item in a pocket with the index of the
+// garment holding it, which is below -1 - the range that means "worn". Every
+// check written as a comparison against that index therefore read a pocketed
+// item as worn, in both directions: the stimpack activated from inside a
+// backpack, and a tent in one could not be folded because the game insisted
+// the character take it off first. See SESSION_HANDOFF_2026-09-05.md.
+TEST_CASE( "a stimpack in a pocket is not treated as worn", "[iuse][pocket][position]" )
+{
+    clear_avatar();
+    avatar &dummy = get_avatar();
+    REQUIRE( !dummy.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = dummy.worn.front();
+    REQUIRE( !vest->put_in( item::spawn( "rx11_stimpack" ) ) );
+    item *pack = vest->contents.all_items_top().front();
+
+    // The trap, asserted rather than assumed: the pocketed stimpack reports the
+    // vest's index, which is in the range that used to mean "worn".
+    REQUIRE( dummy.get_item_position( pack ) == dummy.get_item_position( vest ) );
+    REQUIRE( dummy.get_item_position( pack ) < -1 );
+    REQUIRE_FALSE( dummy.is_worn( *pack ) );
+
+    // Refused, because it is carried rather than worn.
+    CHECK( iuse::stimpack( &dummy, pack, false, dummy.bub_pos() ) == 0 );
 }

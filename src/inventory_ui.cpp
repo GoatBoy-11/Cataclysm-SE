@@ -775,7 +775,18 @@ void inventory_column::set_stack_favorite( const item *location, bool favorite )
     const item *selected_item = location;
     std::list<item *> to_favorite;
 
-    if( location->where() == item_location_type::character ) {
+    if( location->where() == item_location_type::container ) {
+        // An item in a pocket reports item_location_type::container, which
+        // matched none of the branches below, so favouriting one was a silent
+        // no-op - and favourites are what protect an item from the overflow
+        // drop. It cannot go through get_item_position() either: that answers
+        // for a pocketed item with the index of the garment holding it, so the
+        // flag would land on the garment. Set it on the item itself.
+        // const_cast to match this function's own const-incorrect signature;
+        // every other branch mutates through a non-const handle it fetched
+        // separately.
+        const_cast<item *>( selected_item )->set_favorite( !selected_item->is_favorite );
+    } else if( location->where() == item_location_type::character ) {
         int position = g->u.get_item_position( selected_item );
 
         if( position < 0 ) {

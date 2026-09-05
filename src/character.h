@@ -1296,6 +1296,19 @@ class Character : public Creature, public location_visitable<Character>
          * same when the given item points to the container and when it points to the item inside
          * the container. All items that are part of the same stack have the same item position.
          */
+        /**
+         * Index of @p it among the wielded, worn and flat-inventory items.
+         *
+         * **This cannot address an item held in a pocket.** It finds the owner
+         * by `has_item()`, which descends into contents, so a pocketed item
+         * answers with the index of the *garment holding it* - not INT_MIN, and
+         * not anything that names the item. Passing that index to `i_rem()`,
+         * `i_at()` or an activity therefore acts on the container instead, which
+         * has cost players a backpack more than once.
+         *
+         * Use `item::detach()` to remove, the item pointer itself to act, and
+         * `is_worn()` to ask whether something is worn.
+         */
         int get_item_position( const item *it ) const;
 
         const std::vector<item *> &inv_const_stack( int position ) const;

@@ -1119,3 +1119,50 @@ TEST_CASE("AIM's inventory pane lists the contents of a carried container",
     CHECK(holds(&bag));
     CHECK(holds(rock));
 }
+
+// ---------------------------------------------------------------------------
+// get_item_position() names the container, not the item
+// ---------------------------------------------------------------------------
+
+// get_item_position() finds an item's owner with has_item(), which descends
+// into contents, so a pocketed item answers with the index of the garment
+// holding it. Callers that then used that index acted on the garment. Nesting
+// made pocketed items selectable from every inventory screen, which is what
+// made these reachable.
+TEST_CASE("get_item_position answers with the container for a pocketed item",
+          "[inventory][ui][pocket][position]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+    item* rock = vest->contents.all_items_top().front();
+
+    // This is the trap itself, pinned so it cannot change quietly: the rock
+    // reports the vest's index, and i_at() on it hands back the vest.
+    const int position = dummy.get_item_position(rock);
+    REQUIRE(position == dummy.get_item_position(vest));
+    REQUIRE(&dummy.i_at(position) == vest);
+    REQUIRE(&dummy.i_at(position) != rock);
+}
+
+TEST_CASE("favouriting a pocketed item marks that item, not its garment",
+          "[inventory][ui][pocket][position]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    REQUIRE(!dummy.wear_item(item::spawn("test_pocket_vest")));
+    item* vest = dummy.worn.front();
+    REQUIRE(!vest->put_in(item::spawn("test_rock")));
+    item* rock = vest->contents.all_items_top().front();
+    REQUIRE_FALSE(rock->is_favorite);
+    REQUIRE_FALSE(vest->is_favorite);
+
+    inventory_column column;
+    column.set_stack_favorite(rock, true);
+
+    // The bug: a pocketed item reports item_location_type::container, which
+    // matched no branch, so this did nothing at all and the item stayed
+    // unfavourited - and favourites are what keep it out of the overflow drop.
+    CHECK(rock->is_favorite);
+    CHECK_FALSE(vest->is_favorite);
+}
