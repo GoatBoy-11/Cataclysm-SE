@@ -21,7 +21,8 @@
       { "distribution": [ { "group": "infantry_officer_gear" }, { "group": "infantry_medical_gear" } ], "prob": 40 },
       {
         "distribution": [
-          { "item": "cash_card", "prob": 80, "charges": [ 0, 50000 ] },
+          { "item": "cash_card", "prob": 32, "charges": [ 0, 50000 ] },
+          { "group": "wallets", "prob": 48 },
           { "item": "money_bundle", "prob": 20, "count": [ 1, 2 ] }
         ],
         "prob": 10
@@ -50,7 +51,8 @@
       { "distribution": [ { "group": "infantry_officer_gear" }, { "group": "infantry_medical_gear" } ], "prob": 20 },
       {
         "distribution": [
-          { "item": "cash_card", "prob": 80, "charges": [ 0, 50000 ] },
+          { "item": "cash_card", "prob": 32, "charges": [ 0, 50000 ] },
+          { "group": "wallets", "prob": 48 },
           { "item": "money_bundle", "prob": 20, "count": [ 1, 2 ] }
         ],
         "prob": 10
@@ -88,7 +90,8 @@
       },
       {
         "distribution": [
-          { "item": "cash_card", "prob": 80, "charges": [ 0, 50000 ] },
+          { "item": "cash_card", "prob": 32, "charges": [ 0, 50000 ] },
+          { "group": "wallets", "prob": 48 },
           { "item": "money_bundle", "prob": 20, "count": [ 1, 2 ] }
         ],
         "prob": 10

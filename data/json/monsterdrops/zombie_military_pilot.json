@@ -15,7 +15,8 @@
       { "group": "military_patrol_food", "prob": 30 },
       {
         "distribution": [
-          { "item": "cash_card", "prob": 80, "charges": [ 0, 50000 ] },
+          { "item": "cash_card", "prob": 32, "charges": [ 0, 50000 ] },
+          { "group": "wallets", "prob": 48 },
           { "item": "money_bundle", "prob": 20, "count": [ 1, 2 ] }
         ],
         "prob": 10

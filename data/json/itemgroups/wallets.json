@@ -47,6 +47,7 @@
     ]
   },
   {
+    "//": "Spawned wherever a person would be carrying a cash card, at 1.5x the loose card's weight: each of those entries had its probability split 60/40 into wallets/cash_card, so the table's overall chance of money is unchanged. Cash cards with a deliberately non-standard charge range (survivor, lab admin, lab security) were left alone, since wallet_contents only carries the standard 0-50000 card.",
     "type": "item_group",
     "id": "wallets",
     "subtype": "distribution",

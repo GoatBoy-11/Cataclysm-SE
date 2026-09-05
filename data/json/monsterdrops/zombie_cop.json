@@ -30,7 +30,8 @@
       },
       {
         "distribution": [
-          { "item": "cash_card", "prob": 80, "charges": [ 0, 50000 ] },
+          { "item": "cash_card", "prob": 32, "charges": [ 0, 50000 ] },
+          { "group": "wallets", "prob": 48 },
           { "item": "money_bundle", "prob": 20, "count": [ 1, 2 ] }
         ]
       }
@@ -162,7 +163,8 @@
         ],
         "prob": 15
       },
-      { "item": "cash_card", "charges-min": 0, "charges-max": 50000, "prob": 50 },
+      { "item": "cash_card", "charges-min": 0, "charges-max": 50000, "prob": 20 },
+      { "group": "wallets", "prob": 30 },
       {
         "distribution": [
           { "item": "shield_riot", "prob": 60, "damage": [ 1, 4 ] },
