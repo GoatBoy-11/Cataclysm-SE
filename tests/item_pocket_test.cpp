@@ -1,5 +1,7 @@
 #include "catch/catch.hpp"
 
+#include <algorithm>
+#include <climits>
 #include <sstream>
 #include <utility>
 
@@ -2996,4 +2998,36 @@ TEST_CASE( "crafting sees a container inside a carried container",
     u.i_add( std::move( bag ) );
 
     CHECK( holds_type( u.get_eligible_containers_for_crafting(), "jar_glass" ) );
+}
+
+// iexamine's cloning vat found its DNA vial with all_items_with_id(), which
+// descends into pockets, then removed it with i_rem( inv_position_by_item() ),
+// which does not. For a vial in a pocket the position is INT_MIN, the removal
+// missed, and the vat ran without consuming the sample. The fix detaches the
+// item through its own location instead, so this pins the two properties that
+// made the old call wrong and the new one right. It is a characterisation test:
+// the vat itself is only reachable through a uilist, so it cannot be driven
+// here, and this passes against the unfixed code as well.
+// See SESSION_HANDOFF_2026-09-05.md, open finding 4.
+TEST_CASE( "a pocketed item has no inventory position but can still be detached",
+           "[pocket][routing][removal]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+
+    detached_ptr<item> det = item::spawn( "jar_glass" );
+    item &jar = *det;
+    REQUIRE( !u.i_add_to_worn_pockets( std::move( det ), nullptr, true, false ) );
+
+    // Found by the visiting search the caller used...
+    const std::vector<item *> found = u.all_items_with_id( itype_id( "jar_glass" ) );
+    REQUIRE( std::count( found.begin(), found.end(), &jar ) == 1 );
+    // ...but invisible to the flat-inventory position lookup it removed with.
+    REQUIRE( u.inv_position_by_item( &jar ) == INT_MIN );
+
+    detached_ptr<item> removed = jar.detach();
+    REQUIRE( removed );
+    CHECK( &*removed == &jar );
+    CHECK( u.all_items_with_id( itype_id( "jar_glass" ) ).empty() );
 }

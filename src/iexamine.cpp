@@ -6840,12 +6840,22 @@ static void cloning_vat_activate( player &p, const tripoint_bub_ms &examp )
     detached_ptr<item> weapon = p.remove_primary_weapon();
 
     // search for DNA and begin process
+    // The consumed sample is held here rather than in the loop body because the
+    // matched item is very often selected_syringe itself, which is read for its
+    // specimen vars all the way down. Letting the detached_ptr die at the end of
+    // the branch would free the item out from under those reads.
+    detached_ptr<item> consumed_sample;
     std::vector<item *> items = p.all_items_with_id( itype_dna );
     for( size_t x = 0; x < items.size(); x++ ) {
         if( selected_syringe->get_var( "specimen_sample" ) == items[x]->get_var( "specimen_sample" ) ) {
             if( items[x]->units_remaining( p ) <= 1 ) {
                 // this consumes the container. need to figure that out
-                detached_ptr<item> garbage = p.i_rem( p.inv_position_by_item( items[x] ) );
+                // Detach through the item's own location rather than by inventory
+                // position: all_items_with_id() above descends into pockets, and a
+                // vial in one has no flat-inventory position, so the old
+                // i_rem( inv_position_by_item() ) silently removed nothing and the
+                // vat incubated for free.
+                consumed_sample = items[x]->detach();
             } else {
                 items[x]->mod_charges( -1 );
             }
