@@ -21,6 +21,7 @@
 #include "avatar.h"
 #include "bodypart.h"
 #include "calendar.h"
+#include "catalua.h"
 #include "catalua_hooks.h"
 #include "catalua_sol.h"
 #include "cata_utility.h"
@@ -1208,22 +1209,28 @@ void npc::talk_to_u( bool radio_contact, bool enforce_first_topic )
 
     decide_needs();
 
-    const auto hook_results = cata::run_hooks( "on_dialogue_start", [ &, this]( auto & params ) {
-        params["npc"] = this;
-        params["next_topic"] = d.topic_stack.back().id;
-    } );
-    for( const auto &result : hook_results ) {
-        if( !result.second.is<sol::table>() ) { continue; };
-        // Every hook invocation contributes a table, but run_hooks only sets
-        // "result" when that hook returned a non-nil value - see catalua.cpp.
-        // Returning nothing is legal for this hook, so read the key optionally:
-        // an unguarded get<std::string>() on the missing key raises a Lua error
-        // outside any protected call, which panics and crashes the game the
-        // moment any nil-returning on_dialogue_start hook is registered.
-        const auto new_topic =
-            result.second.as<sol::table>().get<sol::optional<std::string>>( "result" );
-        if( new_topic && !new_topic->empty() && *new_topic != d.topic_stack.back().id ) {
-            d.add_topic( *new_topic );
+    {
+        // Upstream's lock, with CSE's optional read of "result" kept inside it.
+        // Both are needed: the lock guards concurrent Lua access, and the
+        // optional read is what stops a nil-returning hook crashing the game.
+        std::unique_lock lock( cata::lua_lock );
+        const auto hook_results = cata::run_hooks( "on_dialogue_start", [ &, this]( auto & params ) {
+            params["npc"] = this;
+            params["next_topic"] = d.topic_stack.back().id;
+        } );
+        for( const auto &result : hook_results ) {
+            if( !result.second.is<sol::table>() ) { continue; };
+            // Every hook invocation contributes a table, but run_hooks only sets
+            // "result" when that hook returned a non-nil value - see catalua.cpp.
+            // Returning nothing is legal for this hook, so read the key optionally:
+            // an unguarded get<std::string>() on the missing key raises a Lua error
+            // outside any protected call, which panics and crashes the game the
+            // moment any nil-returning on_dialogue_start hook is registered.
+            const auto new_topic =
+                result.second.as<sol::table>().get<sol::optional<std::string>>( "result" );
+            if( new_topic && !new_topic->empty() && *new_topic != d.topic_stack.back().id ) {
+                d.add_topic( *new_topic );
+            }
         }
     }
     if( enforce_first_topic ) { d.add_topic( chatbin.first_topic ); }
@@ -1247,17 +1254,20 @@ void npc::talk_to_u( bool radio_contact, bool enforce_first_topic )
         }
         talk_topic next = d.opt( d_win, name, d.topic_stack.back() );
 
-        const auto hook_results = cata::run_hooks( "on_dialogue_option", [ &, this]( auto & params ) {
-            params["npc"] = this;
-            params["next_topic"] = next.id;
-        } );
         auto final_result = d.topic_stack.back().id;
-        for( const auto &result : hook_results ) {
-            if( !result.second.is<sol::table>() ) { continue; };
-            final_result = result.second.as<sol::table>().get_or<std::string>( "result", final_result );
-            // Allow higher priority topics to veto, but still trigger subsequent calls?
-            // auto allowed = result.second.as<sol::table>().get<sol::object>( "allowed" );
-            // if ( allowed.is<bool>() && !allowed.as<bool>() ) { break; };
+        {
+            std::unique_lock lock( cata::lua_lock );
+            const auto hook_results = cata::run_hooks( "on_dialogue_option", [ &, this]( auto & params ) {
+                params["npc"] = this;
+                params["next_topic"] = next.id;
+            } );
+            for( const auto &result : hook_results ) {
+                if( !result.second.is<sol::table>() ) { continue; };
+                final_result = result.second.as<sol::table>().get_or<std::string>( "result", final_result );
+                // Allow higher priority topics to veto, but still trigger subsequent calls?
+                // auto allowed = result.second.as<sol::table>().get<sol::object>( "allowed" );
+                // if ( allowed.is<bool>() && !allowed.as<bool>() ) { break; };
+            }
         }
         if( !final_result.empty() && final_result != d.topic_stack.back().id ) {
             next = talk_topic( final_result );
