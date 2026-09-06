@@ -621,9 +621,16 @@ feature, not a bug" now has a written plan:
 
 **`docs/superpowers/plans/2026-09-06-pickup-menu-pocket-nesting.md`**
 
-It carries the owner's spec verbatim, seven numbered requirements, a three-step
-build order, and five open questions that must go back to the owner rather than
-be guessed at.
+It carries the owner's spec verbatim, six numbered requirements, a three-step
+build order, and a phase 2 for the trade menu. **Every design question is
+answered** - the owner settled all five on 2026-09-06 - so it needs no input
+before someone starts.
+
+It is deliberately written for a cheaper or non-Claude agent: the two
+"this already exists" findings are hoisted into a STOP section at the top, the
+judgement calls are stated as instructions rather than considerations, and the
+verification step is a hard gate with exact commands rather than a principle.
+The owner may hand this to Cursor's Composer 2.5.
 
 The finding worth knowing before opening that file: **the pickup menu already
 has parent/child rows** - `pickup_count::parent`, `::children`,
