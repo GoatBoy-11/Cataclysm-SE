@@ -3873,13 +3873,16 @@ bool Character::wear_possessed( item &to_wear, bool interactive,
     if( &to_wear == &primary_weapon() ) {
         det = remove_primary_weapon();
         source = wear_source::weapon;
-    } else if( inv.position_by_item( &to_wear ) != INT_MIN ) {
+    } else if( to_wear.parent_item() == nullptr ) {
         det = inv.remove_item( &to_wear );
         inv.restack( *this->as_player() );
         source = wear_source::inventory;
     } else {
-        // Detach through the item's own location, which is where a pocketed
-        // garment actually lives.
+        // Ask the item where it lives rather than looking it up by position.
+        // inventory::position_by_item() finds the owner with has_item(), which
+        // descends into contents, so a garment inside a container that is
+        // itself in the flat inventory answers with that container's index -
+        // and inv.remove_item() then cannot find the garment at top level.
         det = to_wear.detach();
         source = wear_source::pocket;
     }
@@ -3976,7 +3979,10 @@ bool Character::takeoff( item &it, std::vector<detached_ptr<item>> *res )
         ( *iter )->on_takeoff( *this );
         detached_ptr<item> det;
         worn.erase( iter, &det );
-        inv.add_item( std::move( det ), true );
+        // Every other acquisition path gives worn pockets first refusal; this
+        // one went straight to the flat inventory, so a garment came off and
+        // sat loose with nothing holding it while a backpack had room.
+        i_add_routed( std::move( det ) );
     } else {
         ( *iter )->on_takeoff( *this );
         detached_ptr<item> det;

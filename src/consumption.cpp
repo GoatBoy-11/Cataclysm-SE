@@ -1646,6 +1646,10 @@ void Character::consume( item &target )
                 // const_stack() would debugmsg on it. The count only exists to
                 // say "2 empty bottles"; one is the honest answer when the
                 // inventory holds no stack to count.
+                // Note position_by_item() descends into contents, so a
+                // container inside another one *in* the inventory answers with
+                // the outer container's index instead. The count is then that
+                // stack's size, which is only ever a cosmetic overcount here.
                 const int position = inv.position_by_item( &target );
                 const int quantity = position == INT_MIN
                                      ? 1

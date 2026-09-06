@@ -3077,3 +3077,56 @@ TEST_CASE( "items_in_pockets finds what is carried and nothing else",
         return it->typeId() == itype_id( "bag_plastic" );
     } ) == 1 );
 }
+
+// Playtest report, 2026-09-05: taking off a garment leaves it loose in the
+// inventory even when a worn container has room. takeoff() was the one
+// acquisition path that never offered worn pockets.
+TEST_CASE( "taking off a garment routes it into a worn pocket",
+           "[pocket][routing][takeoff]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+    REQUIRE( !u.wear_item( item::spawn( "socks" ) ) );
+
+    item *pack = nullptr;
+    item *socks = nullptr;
+    for( item *worn : u.worn ) {
+        ( worn->typeId() == itype_id( "backpack" ) ? pack : socks ) = worn;
+    }
+    REQUIRE( pack != nullptr );
+    REQUIRE( socks != nullptr );
+    REQUIRE( pack->contents.all_items_top().empty() );
+
+    REQUIRE( u.takeoff( *socks ) );
+
+    // The backpack has room, so that is where they belong - not loose with
+    // nothing holding them.
+    CHECK( socks->parent_item() == pack );
+    CHECK( !pack->contents.all_items_top().empty() );
+}
+
+// The garment must still be reachable afterwards. get_item_position() and
+// position_by_item() both descend into contents, so each answers for a pocketed
+// garment with its container - which is how routing broke wear_possessed().
+TEST_CASE( "a garment routed out of the worn list can be worn again",
+           "[pocket][routing][takeoff]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "backpack" ) ) );
+    REQUIRE( !u.wear_item( item::spawn( "socks" ) ) );
+
+    item *socks = nullptr;
+    for( item *worn : u.worn ) {
+        if( worn->typeId() == itype_id( "socks" ) ) {
+            socks = worn;
+        }
+    }
+    REQUIRE( socks != nullptr );
+    REQUIRE( u.takeoff( *socks ) );
+    REQUIRE( socks->parent_item() != nullptr );
+
+    CHECK( u.wear_possessed( *socks, false ) );
+    CHECK( u.is_worn( *socks ) );
+}

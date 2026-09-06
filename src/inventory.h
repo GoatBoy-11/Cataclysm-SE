@@ -165,6 +165,9 @@ class inventory : public temp_visitable<inventory>
          * Note that this may lose some information, for example the returned position is the
          * same when the given item points to the container and when it points to the item inside
          * the container. All items that are part of the same stack have the same item position.
+         * So a non-INT_MIN answer does NOT mean the item is loose in the inventory - to ask that,
+         * test `it->parent_item() == nullptr` instead. Removing by this index would take the
+         * container.
          */
         int position_by_item( const item *it ) const;
         int position_by_type( const itype_id &type ) const;
@@ -321,6 +324,9 @@ class location_inventory : public location_visitable<location_inventory>
          * Note that this may lose some information, for example the returned position is the
          * same when the given item points to the container and when it points to the item inside
          * the container. All items that are part of the same stack have the same item position.
+         * So a non-INT_MIN answer does NOT mean the item is loose in the inventory - to ask that,
+         * test `it->parent_item() == nullptr` instead. Removing by this index would take the
+         * container.
          */
         int position_by_item( const item *it ) const;
         int position_by_type( const itype_id &type ) const;
