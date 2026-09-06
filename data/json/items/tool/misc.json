@@ -467,7 +467,7 @@
     "material": "paper",
     "symbol": ";",
     "color": "white",
-    "flags": [ "MISSION_ITEM" ]
+    "flags": [ "MISSION_ITEM", "BANK_NOTE_SHAPED" ]
   },
   {
     "id": "labpass",
@@ -484,7 +484,7 @@
     "material": "paper",
     "symbol": ";",
     "color": "white",
-    "flags": [ "TRADER_AVOID" ],
+    "flags": [ "TRADER_AVOID", "BANK_NOTE_SHAPED" ],
     "looks_like": "survnote"
   },
   {

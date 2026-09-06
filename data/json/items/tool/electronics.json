@@ -1099,6 +1099,6 @@
     "material": [ "plastic", "steel" ],
     "symbol": ";",
     "color": "cyan",
-    "flags": [ "BELT_CLIP" ]
+    "flags": [ "BELT_CLIP", "CREDIT_CARD_SHAPED" ]
   }
 ]

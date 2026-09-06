@@ -24,7 +24,9 @@
         ]
       },
       { "item": "id_science", "prob": 5 },
-      { "item": "cash_card", "charges-min": 0, "charges-max": 50000 }
+      {
+        "distribution": [ { "group": "wallets", "prob": 60 }, { "item": "cash_card", "prob": 40, "charges-min": 0, "charges-max": 50000 } ]
+      }
     ]
   },
   {

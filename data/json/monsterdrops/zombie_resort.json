@@ -16,7 +16,8 @@
       { "group": "underwear_mens", "damage": [ 1, 4 ] },
       {
         "distribution": [
-          { "item": "cash_card", "prob": 75, "charges": [ 0, 50000 ] },
+          { "item": "cash_card", "prob": 30, "charges": [ 0, 50000 ] },
+          { "group": "wallets", "prob": 45 },
           {
             "collection": [ { "item": "money_bundle", "count": [ 1, 2 ] }, { "item": "coin_quarter", "prob": 50, "count": [ 1, 10 ] } ],
             "prob": 25

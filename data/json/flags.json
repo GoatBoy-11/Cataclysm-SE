@@ -2683,7 +2683,7 @@
   {
     "id": "CREDIT_CARD_SHAPED",
     "type": "json_flag",
-    "context": [ "GENERIC", "TOOL" ]
+    "context": [ "GENERIC", "TOOL", "CONTAINER" ]
   },
   {
     "id": "COIN_SHAPED",

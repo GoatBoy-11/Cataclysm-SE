@@ -633,7 +633,8 @@
     "weight": "18 g",
     "volume": "1 ml",
     "to_hit": -3,
-    "category": "valuables"
+    "category": "valuables",
+    "flags": [ "CREDIT_CARD_SHAPED" ]
   },
   {
     "type": "GENERIC",
