@@ -1346,8 +1346,13 @@ void avatar_action::plthrow( avatar &you, item *loc,
     [&you]( int acc, const item * it ) {
         return acc + ( it->is_two_handed( you ) ? 2 : 1 );
     } );
+    // A worn item is wielded first whatever the hand count, or it would be
+    // thrown straight off the character's body without ever coming off: nothing
+    // would fire on_takeoff(), and morale kept crediting a thrown FANCY garment
+    // ("Morale \"Stylish\" is inconsistent"). can_takeoff() is already checked
+    // above, so the intent to take it off was always there.
     if( !you.is_wielding( *loc ) &&
-        ( you.get_working_arm_count() < required_arms ) ) {
+        ( you.is_worn( *loc ) || you.get_working_arm_count() < required_arms ) ) {
         if( !you.wield( *loc ) ) {
             add_msg( m_info, _( "You do not have enough free hands to throw %s without wielding it." ),
                      loc->tname() );
