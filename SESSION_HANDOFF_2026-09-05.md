@@ -611,3 +611,24 @@ that both the menu and a test can call.
 
 The `disposed` refactor is covered by the existing pickup tests only in the sense
 that they still pass; they do not exercise the new arms.
+
+---
+
+## Addendum, 2026-09-06 (4) - the pickup nesting feature is now scoped
+
+The one outstanding item from the 2026-09-06 playtest that was deferred as "a
+feature, not a bug" now has a written plan:
+
+**`docs/superpowers/plans/2026-09-06-pickup-menu-pocket-nesting.md`**
+
+It carries the owner's spec verbatim, seven numbered requirements, a three-step
+build order, and five open questions that must go back to the owner rather than
+be guessed at.
+
+The finding worth knowing before opening that file: **the pickup menu already
+has parent/child rows** - `pickup_count::parent`, `::children`,
+`::all_children_picked`, a child marker in the renderer, and selection that
+already cascades from parent to children. All of it is keyed on `item_drop_token`
+("these landed here together") rather than on live pocket containment. The work
+is to give that existing machine a second source of children, not to build a new
+tree beside it.
