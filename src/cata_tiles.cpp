@@ -5937,7 +5937,7 @@ bool cata_tiles::draw_critter_at( const tripoint_bub_ms &p, lit_level ll, int &h
                 const auto ent_name = m->type->id;
                 std::string chosen_id = ent_name.str();
                 if( m->has_effect( effect_ridden ) ) {
-                    int pl_under_height = 6;
+                    int pl_under_height = m->type->mountable_pixels_up;
                     if( m->mounted_player ) {
                         draw_entity_with_overlays( *m->mounted_player, p, ll, pl_under_height );
                     }
