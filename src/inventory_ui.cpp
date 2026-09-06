@@ -1867,6 +1867,14 @@ void inventory_selector::prepare_layout()
     resize_window( win_width, win_height );
 }
 
+void inventory_selector::refresh_collapse_paging()
+{
+    for( inventory_column *elem : columns ) {
+        elem->prepare_paging( filter );
+    }
+    refresh_active_column();
+}
+
 shared_ptr_fast<ui_adaptor> inventory_selector::create_or_get_ui_adaptor()
 {
     shared_ptr_fast<ui_adaptor> current_ui = ui.lock();
@@ -2369,10 +2377,14 @@ void inventory_selector::on_input( const inventory_input &input )
                 }
             }
             // Hiding happens in prepare_paging, so the pages must be rebuilt.
+            // Do not call prepare_layout() here: its rearrange_columns() pass is
+            // one-way and can fold the gear column into the category column on a
+            // screen that was wide enough to show both, which is the playtest
+            // report of the whole ITEM WORN pane vanishing until reopen.
             for( inventory_column *elem : columns ) {
                 elem->invalidate_paging();
             }
-            prepare_layout();
+            refresh_collapse_paging();
         }
     } else if( input.action == "WIELD" ) {
         auto &entry = const_cast<inventory_entry &>( get_selected() );

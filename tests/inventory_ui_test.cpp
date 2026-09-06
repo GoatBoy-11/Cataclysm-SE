@@ -1008,6 +1008,53 @@ TEST_CASE("a nested child is drawn under its own container, not its garment",
     CHECK(index_of(vest) < bag_at);
 }
 
+// Playtest report, 2026-09-06: pressing collapse on a doubly nested container
+// made the whole ITEM WORN column vanish until the inventory was reopened.
+// SHOW_HIDE_CONTENTS used to call prepare_layout(), whose rearrange_columns()
+// pass can fold the gear column into the category column even on a screen that
+// had both columns a moment earlier.
+TEST_CASE("collapsing a nested container keeps the gear column visible",
+          "[inventory][ui][pocket][nesting][collapse]") {
+    clear_avatar();
+    auto& dummy = get_avatar();
+    item* bag = wear_vest_with_bagged_rock(dummy);
+    REQUIRE(bag != nullptr);
+    item* rock = bag->contents.all_items_top().front();
+
+    const auto is_item = [](const inventory_entry& entry) { return entry.is_item(); };
+    const auto shows = [&is_item](inventory_selector& sel, const item* target) {
+        const auto entries = sel.own_gear_column.get_entries(is_item);
+        return std::ranges::any_of(entries, [target](const inventory_entry* e) {
+            return e->any_item() == target;
+        });
+    };
+
+    auto selector = inventory_selector(dummy);
+    selector.add_character_items(dummy);
+    REQUIRE(selector.select_item_type(itype_id("bag_plastic")));
+    REQUIRE(selector.own_gear_column.visible());
+    REQUIRE(shows(selector, bag));
+    REQUIRE(shows(selector, rock));
+
+    for (item_pocket& pocket : bag->contents.get_pockets()) {
+        if (pocket.definition().type == pocket_type::CONTAINER
+            && !pocket.all_items_top().empty()) {
+            pocket.get_settings().set_collapse(true);
+        }
+    }
+
+    for (inventory_column* elem : { &selector.own_inv_column, &selector.own_gear_column,
+                                    &selector.map_column }) {
+        elem->invalidate_paging();
+        elem->prepare_paging();
+    }
+
+    CHECK(selector.own_gear_column.visible());
+    CHECK(shows(selector, bag));
+    CHECK_FALSE(shows(selector, rock));
+    CHECK(shows(selector, dummy.worn.front()));
+}
+
 TEST_CASE("collapsing an inner container hides only what it holds",
           "[inventory][ui][pocket][nesting]") {
     clear_avatar();

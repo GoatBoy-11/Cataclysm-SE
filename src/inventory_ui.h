@@ -613,6 +613,8 @@ class inventory_selector
         // and should not be made protected or public.
         void prepare_layout( size_t client_width, size_t client_height );
         void prepare_layout();
+        /** Re-page after a collapse toggle without merging columns. */
+        void refresh_collapse_paging();
 
         void resize_window( int width, int height );
         void refresh_window() const;

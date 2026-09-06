@@ -47,6 +47,7 @@
 #include "output.h"
 #include "overmapbuffer.h"
 #include "panels.h"
+#include "pickup_pocket_ui.h"
 #include "pickup_token.h"
 #include "player.h"
 #include "player_activity.h"
@@ -86,6 +87,8 @@ struct pickup_count {
     std::optional<size_t> parent;
     std::vector<size_t> children;
     bool all_children_picked = false;
+    bool collapsed = false;
+    int indent = 0;
 };
 
 static bool select_autopickup_items( const std::vector<std::list<item_stack::iterator>> &here,
@@ -566,7 +569,7 @@ bool do_pickup( std::vector<pick_drop_selection> &targets, bool autopickup )
     return !problem;
 }
 
-static std::vector<std::optional<size_t>> calculate_parents(
+std::vector<std::optional<size_t>> calculate_parents(
         const std::vector<std::list<item_stack::iterator>> &stacked_here )
 {
     std::vector<std::optional<size_t>> parents( stacked_here.size() );
@@ -717,22 +720,60 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
     const auto stacked_here_new = pickup::stack_for_pickup_ui( here );
     // To avoid having to rewrite things.
     // TODO: Remove flattening
-    const auto stacked_here = pickup::flatten( stacked_here_new );
-    auto getitem = std::vector<pickup_count>( stacked_here.size() );
-    const auto parents = pickup::calculate_parents( stacked_here );
+    const auto ground_stacked = pickup::flatten( stacked_here_new );
+
+    std::vector<pickup_pocket_ui::pickup_stack_entry> pickup_entries;
+    pickup_entries.reserve( ground_stacked.size() );
+    for( const std::list<item_stack::iterator> &stack : ground_stacked ) {
+        pickup_entries.push_back( { stack, {} } );
+    }
+
+    auto getitem = std::vector<pickup_count>( ground_stacked.size() );
+    const auto token_parents = pickup::calculate_parents( ground_stacked );
     for( size_t i = 0; i < getitem.size(); i++ ) {
-        getitem[i].parent = parents[i];
-        if( parents[i] ) {
-            getitem[*parents[i]].children.push_back( i );
+        getitem[i].parent = token_parents[i];
+        if( token_parents[i] ) {
+            getitem[*token_parents[i]].children.push_back( i );
         }
     }
 
+    const auto rebuild_getitem_from_expansion = [&]( const std::vector<std::optional<size_t>> &parents,
+            const std::vector<std::vector<size_t>> &children,
+            const std::vector<int> &indents ) {
+        getitem.assign( pickup_entries.size(), pickup_count{} );
+        for( size_t i = 0; i < parents.size(); i++ ) {
+            getitem[i].parent = parents[i];
+            getitem[i].indent = indents[i];
+            if( i < children.size() ) {
+                getitem[i].children = children[i];
+            }
+        }
+        std::vector<bool> collapsed;
+        pickup_pocket_ui::apply_initial_collapse( collapsed, children );
+        for( size_t i = 0; i < collapsed.size(); i++ ) {
+            getitem[i].collapsed = collapsed[i];
+        }
+    };
+
+    const auto pickup_front_item = []( const pickup_pocket_ui::pickup_stack_entry & entry ) -> item * {
+        return entry.front_item();
+    };
+
     if( min == -1 ) { //Auto Pickup, select matching items
-        if( !select_autopickup_items( stacked_here, getitem ) ) {
+        if( !select_autopickup_items( ground_stacked, getitem ) ) {
             // If we didn't find anything, bail out now.
             return;
         }
     } else {
+        if( !pockets_are_classic() ) {
+            std::vector<std::optional<size_t>> pocket_parents;
+            std::vector<std::vector<size_t>> pocket_children;
+            std::vector<int> indents;
+            pickup_pocket_ui::expand_with_pocket_contents( pickup_entries, pocket_parents,
+                    pocket_children, indents, token_parents );
+            rebuild_getitem_from_expansion( pocket_parents, pocket_children, indents );
+        }
+
         g->temp_exit_fullscreen();
 
         int start = 0;
@@ -754,15 +795,19 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
             const int minleftover = itemsH + pickupBorderRows;
             const int maxmaxitems = TERMY - minleftover;
             const int minmaxitems = 9;
-            maxitems = clamp<int>( stacked_here.size(), minmaxitems, maxmaxitems );
+            maxitems = clamp<int>( pickup_entries.size(), minmaxitems, maxmaxitems );
 
             start = selected - selected % maxitems;
 
             pickupH = maxitems + pickupBorderRows;
 
             //find max length of item name and resize pickup window width
-            for( const std::list<item_stack::iterator> &cur_list : stacked_here ) {
-                const item &this_item = **cur_list.front();
+            for( const pickup_pocket_ui::pickup_stack_entry &cur_entry : pickup_entries ) {
+                item *const this_item_ptr = pickup_front_item( cur_entry );
+                if( this_item_ptr == nullptr ) {
+                    continue;
+                }
+                const item &this_item = *this_item_ptr;
                 const int item_len = utf8_width( remove_color_tags( this_item.display_name() ) ) + 10;
                 if( item_len > pickupW && item_len < TERMX ) {
                     pickupW = item_len;
@@ -815,6 +860,8 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
         ctxt.register_action( "FILTER" );
         ctxt.register_action( "WEAR", to_translation( "Wear" ) );
         ctxt.register_action( "WIELD", to_translation( "Wield" ) );
+        ctxt.register_action( "SHOW_HIDE_CONTENTS", to_translation( "Collapse or expand contents" ) );
+        ctxt.register_action( "PICKUP_WITHOUT_CONTENTS", to_translation( "Pick up without contents" ) );
 #if defined(__ANDROID__)
         ctxt.allow_text_entry = true; // allow user to specify pickup amount
 #endif
@@ -834,19 +881,28 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
         const std::string all_pickup_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:;";
 
         ui.on_redraw( [&]( const ui_adaptor & ) {
-            const item &selected_item = **stacked_here[matches[selected]].front();
+            item *const selected_ptr = pickup_front_item( pickup_entries[matches[selected]] );
+            if( selected_ptr == nullptr ) {
+                werase( w_item_info );
+                wnoutrefresh( w_item_info );
+                wnoutrefresh( w_pickup );
+                return;
+            }
+            const item &selected_item = *selected_ptr;
 
-            if( selected >= 0 && selected <= static_cast<int>( stacked_here.size() ) - 1 ) {
-                item *loc = *stacked_here[matches[selected]].front();
-                temperature_flag temperature = rot::temp::for_location( get_map(), *loc );
+            if( selected >= 0 && selected <= static_cast<int>( pickup_entries.size() ) - 1 ) {
+                item *loc = pickup_entries[matches[selected]].front_item();
+                if( loc != nullptr ) {
+                    temperature_flag temperature = rot::temp::for_location( get_map(), *loc );
 
-                std::vector<iteminfo> this_item = selected_item.info( temperature );
+                    std::vector<iteminfo> this_item = selected_item.info( temperature );
 
-                item_info_data dummy( {}, {}, this_item, {}, iScrollPos );
-                dummy.without_getch = true;
-                dummy.without_border = true;
+                    item_info_data dummy( {}, {}, this_item, {}, iScrollPos );
+                    dummy.without_getch = true;
+                    dummy.without_border = true;
 
-                draw_item_info( w_item_info, dummy );
+                    draw_item_info( w_item_info, dummy );
+                }
             } else {
                 werase( w_item_info );
                 wnoutrefresh( w_item_info );
@@ -866,7 +922,11 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
             for( int cur_it = start; cur_it < start + maxitems; cur_it++ ) {
                 if( cur_it < static_cast<int>( matches.size() ) ) {
                     int true_it = matches[cur_it];
-                    const item &this_item = **stacked_here[true_it].front();
+                    item *const this_item_ptr = pickup_front_item( pickup_entries[true_it] );
+                    if( this_item_ptr == nullptr ) {
+                        continue;
+                    }
+                    const item &this_item = *this_item_ptr;
                     nc_color icolor = this_item.color_in_inventory();
                     if( cur_it == selected ) {
                         icolor = hilite( c_white );
@@ -885,6 +945,9 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                                    static_cast<char>( pickup_chars[p1] ), static_cast<char>( pickup_chars[p2] ) );
                     } else {
                         mvwputch( w_pickup, point( 0, 1 + ( cur_it % maxitems ) ), icolor, ' ' );
+                    }
+                    for( int depth = 0; depth < getitem[true_it].indent; depth++ ) {
+                        wprintw( w_pickup, " " );
                     }
                     if( getitem[true_it].parent ) {
                         const pickup_count &parent = getitem[*getitem[true_it].parent];
@@ -906,33 +969,34 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                         wprintw( w_pickup, "- " );
                     }
                     std::string item_name;
-                    if( ( *stacked_here[true_it].front() )->is_money() ) {
+                    const pickup_pocket_ui::pickup_stack_entry &row = pickup_entries[true_it];
+                    if( this_item.is_money() && !row.is_pocket_row() ) {
                         //Count charges
                         // TODO: transition to the item_location system used for the inventory
                         unsigned int charges_total = 0;
-                        for( const item_stack::iterator &it : stacked_here[true_it] ) {
+                        for( const item_stack::iterator &it : row.ground_iters ) {
                             charges_total += ( *it )->charges;
                         }
                         //Picking up none or all the cards in a stack
                         if( !getitem[true_it].pick || !getitem[true_it].count ) {
-                            item_name = ( *stacked_here[true_it].front() )->display_money( stacked_here[true_it].size(),
+                            item_name = ( *row.ground_iters.front() )->display_money( row.ground_iters.size(),
                                         charges_total );
                         } else {
                             unsigned int charges = 0;
                             int item_count = getitem[true_it].count ? *getitem[true_it].count : 0;
                             int c = item_count;
-                            for( std::list<item_stack::iterator>::const_iterator it = stacked_here[true_it].begin();
-                                 it != stacked_here[true_it].end() && c > 0; ++it, --c ) {
+                            for( std::list<item_stack::iterator>::const_iterator it = row.ground_iters.begin();
+                                 it != row.ground_iters.end() && c > 0; ++it, --c ) {
                                 charges += ( **it )->charges;
                             }
 
-                            item_name = ( *stacked_here[true_it].front() )->display_money( item_count, charges_total, charges );
+                            item_name = ( *row.ground_iters.front() )->display_money( item_count, charges_total, charges );
                         }
                     } else {
-                        item_name = this_item.display_name( stacked_here[true_it].size() );
+                        item_name = this_item.display_name( row.stack_size() );
                     }
-                    if( stacked_here[true_it].size() > 1 ) {
-                        item_name = string_format( "%d %s", stacked_here[true_it].size(), item_name );
+                    if( row.stack_size() > 1 ) {
+                        item_name = string_format( "%d %s", row.stack_size(), item_name );
                     }
                     // Say how many of the stack are marked. Only a partial count
                     // is worth showing: "+" already means the whole stack.
@@ -947,6 +1011,14 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                     // if the item does not belong to your fraction then add the stolen symbol
                     if( !this_item.is_owned_by( g->u, true ) ) {
                         item_name = string_format( "<color_light_red>!</color> %s", item_name );
+                    }
+
+                    if( !getitem[true_it].children.empty() ) {
+                        if( getitem[true_it].collapsed ) {
+                            item_name += _( " [+]" );
+                        } else {
+                            item_name += _( " [-]" );
+                        }
                     }
 
                     trim_and_print( w_pickup, point( 6, 1 + ( cur_it % maxitems ) ), pickupW - 4, icolor,
@@ -1000,10 +1072,14 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
             }
             const size_t true_idx = matches[selected];
             pickup_count &stack = getitem[true_idx];
-            const item &temp = **stacked_here[true_idx].front();
+            item *const temp_ptr = pickup_front_item( pickup_entries[true_idx] );
+            if( temp_ptr == nullptr ) {
+                return;
+            }
+            const item &temp = *temp_ptr;
             const int amount_available = temp.count_by_charges()
                                          ? temp.charges
-                                         : static_cast<int>( stacked_here[true_idx].size() );
+                                         : static_cast<int>( pickup_entries[true_idx].stack_size() );
             // A marked stack with no count means the whole thing, so stepping
             // down starts from the full amount.
             const int marked = stack.pick
@@ -1169,9 +1245,54 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                     filter_changed = true;
                 }
             } else if( selected >= 0 && selected < static_cast<int>( matches.size() ) &&
+                       action == "SHOW_HIDE_CONTENTS" ) {
+                const size_t true_idx = matches[selected];
+                if( !getitem[true_idx].children.empty() ) {
+                    getitem[true_idx].collapsed = !getitem[true_idx].collapsed;
+                    filter_changed = true;
+                    update = true;
+                }
+            } else if( selected >= 0 && selected < static_cast<int>( matches.size() ) &&
+                       action == "PICKUP_WITHOUT_CONTENTS" ) {
+                const size_t true_idx = matches[selected];
+                item *const target = pickup_entries[true_idx].front_item();
+                if( target != nullptr && !target->contents.empty() && starting_pos ) {
+                    pickup_pocket_ui::spill_container_pockets_onto_tile( *target, *starting_pos );
+                    auto direct_locations = std::vector<item *> {};
+                    auto direct_quantities = std::vector<int> {};
+                    direct_locations.push_back( target );
+                    direct_quantities.push_back( 0 );
+                    auto direct_targets = pickup::optimize_pickup( direct_locations, direct_quantities );
+                    if( !direct_targets.empty() ) {
+                        auto direct_got_water = false;
+                        auto direct_offered_swap = false;
+                        auto direct_map_pickup = pickup_map{};
+                        const auto handled = pick_one_up( pick_one_up_options{ .selection = direct_targets.front(),
+                                                          .got_water = direct_got_water,
+                                                          .offered_swap = direct_offered_swap,
+                                                          .map_pickup = direct_map_pickup,
+                                                          .autopickup = false,
+                                                          .preferred_option = STASH } );
+                        if( !direct_map_pickup.empty() ) {
+                            show_pickup_message( direct_map_pickup );
+                        }
+                        if( direct_got_water ) {
+                            add_msg( m_info, _( "You can't pick up a liquid!" ) );
+                        }
+                        if( handled ) {
+                            g->reenter_fullscreen();
+                            return;
+                        }
+                    }
+                }
+            } else if( selected >= 0 && selected < static_cast<int>( matches.size() ) &&
                        ( action == "WEAR" || action == "WIELD" ) ) {
                 const auto true_idx = matches[selected];
-                const auto &selected_item = **stacked_here[true_idx].front();
+                item *const selected_item_ptr = pickup_front_item( pickup_entries[true_idx] );
+                if( selected_item_ptr == nullptr ) {
+                    continue;
+                }
+                const item &selected_item = *selected_item_ptr;
                 const auto preferred_option = action == "WEAR" ? WEAR : WIELD;
                 const auto can_handle = preferred_option == WEAR ? g->u.can_wear( selected_item ) :
                                         g->u.can_wield( selected_item );
@@ -1180,10 +1301,10 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                 } else {
                     auto direct_locations = std::vector<item *> {};
                     auto direct_quantities = std::vector<int> {};
-                    direct_locations.push_back( *stacked_here[true_idx].front() );
+                    direct_locations.push_back( pickup_entries[true_idx].front_item() );
                     direct_quantities.push_back( 0 );
                     for( const auto child_index : getitem[true_idx].children ) {
-                        direct_locations.push_back( *stacked_here[child_index].front() );
+                        direct_locations.push_back( pickup_entries[child_index].front_item() );
                         direct_quantities.push_back( 0 );
                     }
 
@@ -1238,8 +1359,8 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                     // TODO: What about containers with children?
                     // TODO: Recalc all_children_picked
                 }
-                if( count == static_cast<int>( stacked_here.size() ) ) {
-                    for( size_t i = 0; i < stacked_here.size(); i++ ) {
+                if( count == static_cast<int>( pickup_entries.size() ) ) {
+                    for( size_t i = 0; i < pickup_entries.size(); i++ ) {
                         getitem[i].pick = false;
                         getitem[i].all_children_picked = false;
                     }
@@ -1251,8 +1372,13 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                 size_t true_idx = matches[idx];
                 pickup_count &selected_stack = getitem[true_idx];
                 if( itemcount || selected_stack.count ) {
-                    const item &temp = **stacked_here[true_idx].front();
-                    int amount_available = temp.count_by_charges() ? temp.charges : stacked_here[true_idx].size();
+                    item *const temp_ptr = pickup_front_item( pickup_entries[true_idx] );
+            if( temp_ptr == nullptr ) {
+                return;
+            }
+            const item &temp = *temp_ptr;
+                    int amount_available = temp.count_by_charges() ? temp.charges :
+                                           static_cast<int>( pickup_entries[true_idx].stack_size() );
                     if( itemcount && *itemcount >= amount_available ) {
                         itemcount.reset();
                     }
@@ -1295,10 +1421,28 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
             }
             if( filter_changed ) {
                 matches.clear();
+                std::vector<std::optional<size_t>> parent_links;
+                parent_links.reserve( getitem.size() );
+                for( const pickup_count &row : getitem ) {
+                    parent_links.push_back( row.parent );
+                }
+                std::vector<bool> collapsed;
+                collapsed.reserve( getitem.size() );
+                for( const pickup_count &row : getitem ) {
+                    collapsed.push_back( row.collapsed );
+                }
                 while( matches.empty() ) {
                     auto filter_func = item_filter_from_string( new_filter );
-                    for( size_t index = 0; index < stacked_here.size(); index++ ) {
-                        if( filter_func( **stacked_here[index].front() ) ) {
+                    for( size_t index = 0; index < pickup_entries.size(); index++ ) {
+                        if( pickup_pocket_ui::hidden_by_collapsed_ancestor( index, parent_links,
+                                collapsed ) ) {
+                            continue;
+                        }
+                        item *const front = pickup_front_item( pickup_entries[index] );
+                        if( front == nullptr ) {
+                            continue;
+                        }
+                        if( filter_func( *front ) ) {
                             matches.push_back( index );
                         }
                     }
@@ -1331,18 +1475,38 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
                 update = false;
                 units::mass weight_picked_up = 0_gram;
                 units::volume volume_picked_up = 0_ml;
+                std::vector<std::optional<size_t>> parent_links;
+                parent_links.reserve( getitem.size() );
+                for( const pickup_count &row : getitem ) {
+                    parent_links.push_back( row.parent );
+                }
+                std::vector<bool> picked;
+                picked.reserve( getitem.size() );
+                for( const pickup_count &row : getitem ) {
+                    picked.push_back( row.pick );
+                }
                 for( size_t i = 0; i < getitem.size(); i++ ) {
-                    if( getitem[i].pick ) {
-                        // Make a copy for calculating weight/volume
-                        item &temp = *item::spawn_temporary( **stacked_here[i].front() );
-                        if( temp.count_by_charges() && getitem[i].count && *getitem[i].count < temp.charges ) {
-                            temp.charges = *getitem[i].count;
-                        }
-                        int num_picked = std::min( stacked_here[i].size(),
-                                                   getitem[i].count ? *getitem[i].count : stacked_here[i].size() );
-                        weight_picked_up += temp.weight() * num_picked;
-                        volume_picked_up += temp.volume() * num_picked;
+                    if( !getitem[i].pick ) {
+                        continue;
                     }
+                    if( pickup_entries[i].is_pocket_row() &&
+                        pickup_pocket_ui::skip_because_parent_picked( i, parent_links, picked ) ) {
+                        continue;
+                    }
+                    item *const front = pickup_front_item( pickup_entries[i] );
+                    if( front == nullptr ) {
+                        continue;
+                    }
+                    // Make a copy for calculating weight/volume
+                    item &temp = *item::spawn_temporary( *front );
+                    if( temp.count_by_charges() && getitem[i].count && *getitem[i].count < temp.charges ) {
+                        temp.charges = *getitem[i].count;
+                    }
+                    int num_picked = std::min( static_cast<int>( pickup_entries[i].stack_size() ),
+                                               getitem[i].count ? *getitem[i].count :
+                                               static_cast<int>( pickup_entries[i].stack_size() ) );
+                    weight_picked_up += temp.weight() * num_picked;
+                    volume_picked_up += temp.volume() * num_picked;
                 }
 
                 weight_predict = g->u.weight_carried() + weight_picked_up;
@@ -1370,40 +1534,71 @@ auto pick_up_from_items( const std::vector<item_stack::iterator> &here, const in
     }
 
     // At this point we've selected our items, register an activity to pick them up.
-    std::vector<std::pair<item_stack::iterator, int>> pick_values;
-    for( size_t i = 0; i < stacked_here.size(); i++ ) {
-        const pickup_count &selection = getitem[i];
-        if( !selection.pick ) {
-            continue;
-        }
-
-        const std::list<item_stack::iterator> &stack = stacked_here[i];
-        // Note: items can be both charged and stacked
-        // For robustness, let's assume they can be both in the same stack
-        int count = selection.count ? *selection.count : 0;
-        for( const item_stack::iterator &it : stack ) {
-            if( selection.count && count == 0 ) {
-                break;
-            }
-
-            if( ( *it )->count_by_charges() ) {
-                int num_picked = std::min( ( *it )->charges, count );
-                pick_values.emplace_back( it, num_picked );
-                count -= num_picked;
-            } else {
-                pick_values.emplace_back( it, 0 );
-                --count;
-            }
-        }
+    std::vector<std::optional<size_t>> parent_links;
+    parent_links.reserve( getitem.size() );
+    for( const pickup_count &row : getitem ) {
+        parent_links.push_back( row.parent );
+    }
+    std::vector<bool> picked_flags;
+    picked_flags.reserve( getitem.size() );
+    for( const pickup_count &row : getitem ) {
+        picked_flags.push_back( row.pick );
     }
 
     std::vector<item *> locations;
     std::vector<int> quantities;
 
-    for( std::pair<item_stack::iterator, int> &iter_qty : pick_values ) {
-        item *loc = *iter_qty.first;
-        locations.push_back( loc );
-        quantities.push_back( iter_qty.second );
+    for( size_t i = 0; i < getitem.size(); i++ ) {
+        const pickup_count &selection = getitem[i];
+        if( !selection.pick ) {
+            continue;
+        }
+
+        const pickup_pocket_ui::pickup_stack_entry &row = pickup_entries[i];
+        if( row.is_pocket_row() ) {
+            if( pickup_pocket_ui::skip_because_parent_picked( i, parent_links, picked_flags ) ) {
+                continue;
+            }
+            int count = selection.count ? *selection.count : 0;
+            for( item *const pocket_item : row.pocket_items ) {
+                if( selection.count && count == 0 ) {
+                    break;
+                }
+                if( pocket_item->count_by_charges() ) {
+                    const int num_picked = std::min( pocket_item->charges, count );
+                    locations.push_back( pocket_item );
+                    quantities.push_back( num_picked );
+                    count -= num_picked;
+                } else {
+                    locations.push_back( pocket_item );
+                    quantities.push_back( 0 );
+                    if( selection.count ) {
+                        --count;
+                    }
+                }
+            }
+            continue;
+        }
+
+        int count = selection.count ? *selection.count : 0;
+        for( const item_stack::iterator &it : row.ground_iters ) {
+            if( selection.count && count == 0 ) {
+                break;
+            }
+
+            if( ( *it )->count_by_charges() ) {
+                const int num_picked = std::min( ( *it )->charges, count );
+                locations.push_back( *it );
+                quantities.push_back( num_picked );
+                count -= num_picked;
+            } else {
+                locations.push_back( *it );
+                quantities.push_back( 0 );
+                if( selection.count ) {
+                    --count;
+                }
+            }
+        }
     }
 
     std::vector<pickup::pick_drop_selection> targets = pickup::optimize_pickup( locations, quantities );

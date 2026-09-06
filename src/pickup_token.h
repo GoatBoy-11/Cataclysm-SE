@@ -57,6 +57,10 @@ std::vector<stacked_items> stack_for_pickup_ui( const
 // TODO: This probably shouldn't return raw iterators
 std::vector<std::list<item_stack::iterator>> flatten( const std::vector<stacked_items> &stacked );
 
+/** Parent indices from drop-token relationships between ground stacks. */
+std::vector<std::optional<size_t>> calculate_parents(
+    const std::vector<std::list<item_stack::iterator>> &stacked_here );
+
 } // namespace pickup
 
 

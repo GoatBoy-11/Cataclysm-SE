@@ -380,6 +380,20 @@
   },
   {
     "type": "keybinding",
+    "id": "SHOW_HIDE_CONTENTS",
+    "category": "PICKUP",
+    "name": "Collapse or expand contents",
+    "bindings": [ { "input_method": "keyboard", "key": "c" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "PICKUP_WITHOUT_CONTENTS",
+    "category": "PICKUP",
+    "name": "Pick up without contents",
+    "bindings": [ { "input_method": "keyboard", "key": "e" } ]
+  },
+  {
+    "type": "keybinding",
     "id": "EXAMINE",
     "category": "INVENTORY",
     "name": "Examine item",
