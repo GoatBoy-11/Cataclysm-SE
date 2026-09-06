@@ -1501,6 +1501,14 @@ bool avatar::wield( item &target )
     add_msg( m_debug, "wielding took %d moves", mv );
     moves -= mv;
 
+    if( worn ) {
+        // Detaching pulls the item straight out of the worn list, so nothing
+        // else tells the character it came off. Morale kept crediting a worn
+        // FANCY garment after it was wielded - throwing a suit reported
+        // "Morale \"Stylish\" is inconsistent" - and a sided item kept its side.
+        target.on_takeoff( *this );
+    }
+
     set_primary_weapon( target.detach() );
 
     last_item = target.typeId();

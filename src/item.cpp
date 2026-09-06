@@ -4905,6 +4905,26 @@ const std::string &item::symbol() const
     return type->sym;
 }
 
+/**
+ * The food whose edibility should colour this item's inventory line.
+ *
+ * get_food() descends through contents, which was harmless when only a jar or
+ * a can could hold food. Pockets made every garment a food container: eat too
+ * much and your trousers turned pink along with the rations in them. Colour by
+ * contents only where the container exists to hold them - the legacy container
+ * slot - and otherwise let an item be judged as itself.
+ */
+const item *item::colouring_food() const
+{
+    if( is_food() ) {
+        return this;
+    }
+    if( type->container ) {
+        return get_food();
+    }
+    return nullptr;
+}
+
 nc_color item::color_in_inventory() const
 {
     return item::color_in_inventory( get_avatar() );
@@ -4952,7 +4972,7 @@ nc_color item::color_in_inventory( const player &p ) const
     } else if( is_corpse() && ( can_revive() || corpse->zombify_into ) && !has_flag( flag_PULPED ) ) {
         // Only reviving corpses are yellow
         ret = c_yellow;
-    } else if( const item *food = get_food() ) {
+    } else if( const item *food = colouring_food() ) {
         const bool preserves = type->container && type->container->preserves;
 
         // Give color priority to allergy (allergy > inedible by freeze or other conditions)

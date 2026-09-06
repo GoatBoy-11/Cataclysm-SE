@@ -482,6 +482,8 @@ class item : public location_visitable<item>, public game_object<item>
          * This should only be used for displaying data, it should not affect game play.
          */
         nc_color color_in_inventory() const;
+        /** @see item.cpp - the food that should colour this item's line, if any. */
+        const item *colouring_food() const;
         /**
          * Returns the color of the item depending on usefulness for the passed player,
          * e.g. differently if it its an unread book or a spoiling food item etc.

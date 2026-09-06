@@ -40,12 +40,10 @@ int get_remaining_charges(const std::string& tool_id) {
 }
 
 bool player_has_item_of_type(const std::string& type) {
-
-    std::vector<item*> inv_items = g->u.inv_dump();
-
-    return std::any_of(inv_items.begin(), inv_items.end(), [&](const item* const& i) {
-        return i->type->get_id() == itype_id(type);
-    });
+    // all_items_with_id() rather than inv_dump(): the latter is the flat
+    // inventory only, and acquisition paths route into worn pockets, so a
+    // crafted item now lands in a backpack and the dump cannot see it.
+    return !g->u.all_items_with_id(itype_id(type)).empty();
 }
 
 void clear_character(player& dummy, bool debug_storage) {

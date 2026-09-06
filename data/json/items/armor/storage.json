@@ -928,6 +928,9 @@
     "encumbrance": 5,
     "max_encumbrance": 15,
     "storage": "10 L",
+    "pocket_data": [
+      { "pocket_type": "CONTAINER", "max_contains_volume": "10 L", "max_item_length": "150 cm", "rigid": false }
+    ],
     "warmth": 10,
     "material_thickness": 1,
     "flags": [ "OVERSIZE", "BELTED", "WATER_FRIENDLY" ]

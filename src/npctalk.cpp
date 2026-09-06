@@ -2579,11 +2579,13 @@ void talk_effect_fun_t::set_u_sell_item( const itype_id &item_name, int cost, in
         player &u = *d.alpha;
         if( item::count_by_charges( item_name ) && u.has_charges( item_name, count ) ) {
             for( detached_ptr<item> &it : u.use_charges( item_name, count ) ) {
-                p.i_add( std::move( it ) );
+                // NPCs have pockets too, and trade reads them, so goods they
+                // take put themselves away like anyone else's.
+                p.i_add_routed( std::move( it ) );
             }
         } else if( u.has_amount( item_name, count ) ) {
             for( detached_ptr<item> &it : u.use_amount( item_name, count ) ) {
-                p.i_add( std::move( it ) );
+                p.i_add_routed( std::move( it ) );
             }
         } else {
             //~ %1$s is a translated item name

@@ -814,7 +814,10 @@ static void set_item_inventory( Character &who, detached_ptr<item> &&newit )
         who.can_pick_weight( *newit, !get_option<bool>( "DANGEROUS_PICKUPS" ) ) ) {
         add_msg( m_info, "%c - %s", newit->invlet == 0 ? ' ' : newit->invlet,
                  newit->tname() );
-        who.i_add( std::move( newit ) );
+        // Worn pockets get first refusal, as on every other acquisition path.
+        // Crafting handed the result straight to the flat inventory, so a
+        // finished item sat loose while a backpack had room for it.
+        who.i_add_routed( std::move( newit ) );
         return;
     }
 

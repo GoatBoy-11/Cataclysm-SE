@@ -3130,3 +3130,50 @@ TEST_CASE( "a garment routed out of the worn list can be worn again",
     CHECK( u.wear_possessed( *socks, false ) );
     CHECK( u.is_worn( *socks ) );
 }
+
+// Playtest report, 2026-09-06: throwing a worn suit reported
+// 'Morale "Stylish" is inconsistent: lhs 9 != rhs 1'. Throwing a worn item
+// wields it first, and avatar::wield() pulled it straight out of the worn list
+// with detach(), so nothing told the character it had come off. Not a pocket
+// bug, despite what it looked like.
+TEST_CASE( "wielding a worn garment tells the character it came off",
+           "[morale][wear][takeoff]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    // FANCY, so morale has a Stylish contribution to lose track of.
+    REQUIRE( !u.wear_item( item::spawn( "blazer" ) ) );
+    item *blazer = u.worn.front();
+    REQUIRE( u.check_and_recover_morale() );
+
+    REQUIRE( u.wield( *blazer ) );
+    REQUIRE( u.is_wielding( *blazer ) );
+    REQUIRE( u.worn.empty() );
+
+    // The cached morale must still agree with what the character is wearing.
+    CHECK( u.check_and_recover_morale() );
+}
+
+// Playtest report, 2026-09-06: eating to engorged turned the trousers pink
+// along with the rations in their pockets. get_food() descends into contents,
+// which was harmless when only a jar could hold food; pockets made every
+// garment a food container.
+TEST_CASE( "a garment is not coloured by the food in its pockets",
+           "[pocket][ui][color]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+    REQUIRE( !vest->put_in( item::spawn( "test_rock" ) ) );
+    const nc_color plain = vest->color_in_inventory( u );
+
+    // A garment holding food must look the same as one holding a rock: the
+    // food's own line carries the warning, not its container's.
+    detached_ptr<item> det = item::spawn( "sandwich_cheese" );
+    REQUIRE( det->is_food() );
+    REQUIRE( !vest->put_in( std::move( det ) ) );
+    REQUIRE( vest->get_food() != nullptr );
+
+    CHECK( vest->color_in_inventory( u ) == plain );
+}
