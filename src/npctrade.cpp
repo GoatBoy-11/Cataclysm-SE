@@ -17,6 +17,7 @@
 #include "skill.h"
 #include "string_utils.h"
 #include "pocket_overflow.h"
+#include "trade_pocket_ui.h"
 #include "trade_win.h"
 #include "type_id.h"
 #include "vehicle_selector.h"
@@ -35,6 +36,10 @@ void npc_trading::transfer_items( std::vector<item_pricing> &stuff, Character &,
         }
 
         auto &gift = *ip.locs.front();
+        if( trade_pocket_ui::skip_because_container_traded( gift, stuff, npc_gives ) ) {
+            return;
+        }
+
         const auto charges = npc_gives ? ip.u_charges : ip.npc_charges;
 
         if( ip.charges ) {

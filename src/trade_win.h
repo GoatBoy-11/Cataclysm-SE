@@ -8,6 +8,7 @@
 
 #include "cursesdef.h"
 #include "npctrade.h"
+#include "trade_pocket_ui.h"
 
 class item;
 class npc;
@@ -31,8 +32,16 @@ class trading_window
             move_down
         };
         auto show_item_data( size_t index, bool target_is_theirs ) -> info_popup_result;
+        auto show_item_data( const item &itm, bool target_is_theirs ) -> info_popup_result;
         auto build_filtered_indices( const std::vector<item_pricing> &list,
                                      const std::string &filter ) const -> std::vector<size_t>;
+        auto build_filtered_indices( const trade_pocket_ui::trade_display_tree &tree,
+                                     const std::vector<item_pricing> &list,
+                                     const std::string &filter ) const -> std::vector<size_t>;
+        auto rebuild_display_trees() -> void;
+        auto pricing_index_at( const trade_pocket_ui::trade_display_tree &tree,
+                               const std::vector<size_t> &visible,
+                               size_t visible_index ) const -> size_t;
         auto get_var_trade( const item &it, int total_count, int amount_hint ) -> int;
 
         npc_trading::trade_state &state;
@@ -51,6 +60,8 @@ class trading_window
         size_t you_category_cursor = 0;
         std::vector<size_t> them_filtered;
         std::vector<size_t> you_filtered;
+        trade_pocket_ui::trade_display_tree them_tree;
+        trade_pocket_ui::trade_display_tree you_tree;
         // Pairs of (screen row, index into the matching filtered list), recorded
         // while drawing. Category headings occupy rows of their own, so a click
         // cannot be resolved as offset + row; recording the mapping during the

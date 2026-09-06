@@ -28,6 +28,7 @@
 #include "string_formatter.h"
 #include "string_input_popup.h"
 #include "string_utils.h"
+#include "trade_pocket_ui.h"
 #include "translations.h"
 #include "ui_manager.h"
 #include "units_utility.h"
@@ -48,6 +49,7 @@ struct category_range {
 
 auto build_page_starts( const std::vector<item_pricing> &list,
                         const std::vector<size_t> &filtered,
+                        const trade_pocket_ui::trade_display_tree &tree,
                         size_t rows_per_page ) -> std::vector<size_t>
 {
     auto starts = std::vector<size_t> {};
@@ -69,8 +71,12 @@ auto build_page_starts( const std::vector<item_pricing> &list,
         auto row = size_t{0};
         auto last_category = std::optional<item_category_id> {};
         while( index < filtered.size() ) {
-            const auto &ip = list[filtered[index]];
-            const auto category_id = ip.locs.front()->get_category().get_id();
+            item *const it = trade_pocket_ui::item_for_row( tree, list, filtered[index] );
+            if( it == nullptr ) {
+                index++;
+                continue;
+            }
+            const auto category_id = it->get_category().get_id();
             if( !last_category || *last_category != category_id ) {
                 if( row + 2 > rows_per_page && row > 0 ) {
                     break;
@@ -105,14 +111,18 @@ auto page_index_for_offset( const std::vector<size_t> &page_starts,
 }
 
 auto build_category_ranges( const std::vector<item_pricing> &list,
-                            const std::vector<size_t> &filtered ) -> std::vector<category_range>
+                            const std::vector<size_t> &filtered,
+                            const trade_pocket_ui::trade_display_tree &tree )
+    -> std::vector<category_range>
 {
     auto ranges = std::vector<category_range> {};
     std::ranges::for_each( std::views::iota( size_t{0}, filtered.size() ),
     [&]( size_t idx ) {
-        const auto list_index = filtered[idx];
-        const auto &ip = list[list_index];
-        const auto category_id = ip.locs.front()->get_category().get_id();
+        item *const it = trade_pocket_ui::item_for_row( tree, list, filtered[idx] );
+        if( it == nullptr ) {
+            return;
+        }
+        const auto category_id = it->get_category().get_id();
         if( ranges.empty() || ranges.back().id != category_id ) {
             if( !ranges.empty() ) {
                 ranges.back().end = idx;
@@ -147,6 +157,7 @@ auto register_trade_actions( input_context &ctxt, bool include_any_input ) -> vo
     ctxt.register_action( "SCROLL_UP" );
     ctxt.register_action( "SCROLL_DOWN" );
     ctxt.register_action( "TOGGLE_ITEM_INFO" );
+    ctxt.register_action( "SHOW_HIDE_CONTENTS", to_translation( "Collapse or expand contents" ) );
     ctxt.register_action( "CONFIRM" );
     ctxt.register_action( "QUIT" );
     ctxt.register_action( "HELP_KEYBINDINGS" );
@@ -358,8 +369,8 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
     const auto player_free_weight = g->u.weight_capacity() - g->u.weight_carried() +
                                     your_selected.weight - their_selected.weight;
 
-    them_filtered = build_filtered_indices( state.theirs, them_filter );
-    you_filtered = build_filtered_indices( state.yours, you_filter );
+    them_filtered = build_filtered_indices( them_tree, state.theirs, them_filter );
+    you_filtered = build_filtered_indices( you_tree, state.yours, you_filter );
 
     const auto show_filter_help = filter_edit;
     const auto help_on_theirs = !filter_edit_theirs;
@@ -367,7 +378,14 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
     for( size_t whose = 0; whose <= 1; whose++ ) {
         const auto they = whose == 0;
         const auto &list = they ? state.theirs : state.yours;
+        const auto &pane_tree = they ? them_tree : you_tree;
         const auto &filtered = they ? them_filtered : you_filtered;
+        const auto item_at = [&]( const size_t visible_index ) -> item * {
+            return trade_pocket_ui::item_for_row( pane_tree, list, filtered[visible_index] );
+        };
+        const auto pricing_at = [&]( const size_t visible_index ) -> size_t {
+            return pane_tree.rows[filtered[visible_index]].pricing_index;
+        };
         const auto &offset = they ? them_off : you_off;
         const auto &person = they ? static_cast<player &>( np ) :
                              static_cast<player &>( g->u );
@@ -386,27 +404,49 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
         const auto vol_label = _( "vol" );
         const auto price_label = _( "unit price" );
         auto qty_w = max_width( [&]( size_t idx ) -> int {
-            const auto &ip = list[filtered[idx]];
+            const auto &row = pane_tree.rows[filtered[idx]];
+            if( !trade_pocket_ui::row_is_tradeable( row ) ) {
+                return 0;
+            }
+            const auto &ip = list[pricing_at( idx )];
             const auto available_amount = ip.charges > 0 ? ip.charges : ip.count;
             return available_amount > 1 ? utf8_width( string_format( "%d", available_amount ) ) : 0;
         } );
         auto weight_w = max_width( [&]( size_t idx ) -> int {
-            const auto &ip = list[filtered[idx]];
-            const auto available_amount = ip.charges > 0 ? ip.charges : std::max( ip.count, 1 );
+            item *const it = item_at( idx );
+            if( it == nullptr ) {
+                return 0;
+            }
+            const auto &row = pane_tree.rows[filtered[idx]];
+            const auto available_amount = trade_pocket_ui::row_is_tradeable( row ) ?
+                                          ( list[pricing_at( idx )].charges > 0 ?
+                                            list[pricing_at( idx )].charges :
+                                            std::max( list[pricing_at( idx )].count, 1 ) ) : 1;
             const auto weight_str = string_format( "%.2f",
-                                                   convert_weight( ip.weight * available_amount ) );
+                                                   convert_weight( it->weight() * available_amount ) );
             return utf8_width( weight_str );
         } );
         auto vol_w = max_width( [&]( size_t idx ) -> int {
-            const auto &ip = list[filtered[idx]];
-            const auto available_amount = ip.charges > 0 ? ip.charges : std::max( ip.count, 1 );
+            item *const it = item_at( idx );
+            if( it == nullptr ) {
+                return 0;
+            }
+            const auto &row = pane_tree.rows[filtered[idx]];
+            const auto available_amount = trade_pocket_ui::row_is_tradeable( row ) ?
+                                          ( list[pricing_at( idx )].charges > 0 ?
+                                            list[pricing_at( idx )].charges :
+                                            std::max( list[pricing_at( idx )].count, 1 ) ) : 1;
             const auto vol_str = string_format(
                 "%.2f",
-                convert_volume( to_milliliter( ip.vol * available_amount ) ) );
+                convert_volume( to_milliliter( it->volume() * available_amount ) ) );
             return utf8_width( vol_str );
         } );
         auto price_w = max_width( [&]( size_t idx ) -> int {
-            const auto &ip = list[filtered[idx]];
+            const auto &row = pane_tree.rows[filtered[idx]];
+            if( !trade_pocket_ui::row_is_tradeable( row ) ) {
+                return 0;
+            }
+            const auto &ip = list[pricing_at( idx )];
             return utf8_width( format_money( ip.price ) );
         } );
         qty_w = std::max( qty_w, utf8_width( qty_label ) );
@@ -527,7 +567,7 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
         auto &row_entries = they ? them_row_entries : you_row_entries;
         row_entries.clear();
         const auto is_focused_pane = ( they && focus_them ) || ( !they && !focus_them );
-        const auto category_ranges = build_category_ranges( list, filtered );
+        const auto category_ranges = build_category_ranges( list, filtered, pane_tree );
         auto active_category_id = std::optional<item_category_id> {};
         if( category_mode && is_focused_pane && !category_ranges.empty() ) {
             const auto &category_cursor = they ? them_category_cursor : you_category_cursor;
@@ -537,9 +577,16 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
         }
         auto row = size_t{0};
         for( size_t i = offset; i < filtered.size() && row < entries_per_page; i++ ) {
-            const auto list_index = filtered[i];
-            const auto &ip = list[list_index];
-            const auto *it = ip.locs.front();
+            const auto display_index = filtered[i];
+            const auto &display_row = pane_tree.rows[display_index];
+            item *const it = trade_pocket_ui::item_for_row( pane_tree, list, display_index );
+            if( it == nullptr ) {
+                continue;
+            }
+            const auto tradeable = trade_pocket_ui::row_is_tradeable( display_row );
+            const item_pricing *ip = tradeable && display_row.pricing_index < list.size() ?
+                                     &list[display_row.pricing_index] : nullptr;
+            const auto row_indent = display_row.indent;
             const auto category_id = it->get_category().get_id();
             if( !last_category || *last_category != category_id ) {
                 const auto category_label = to_upper_case( it->get_category().name() );
@@ -557,17 +604,24 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
             const auto row_y = static_cast<int>( row + 1 + trade_total_header_rows );
             // Recorded here, where the row and the entry it shows are both known.
             row_entries.emplace_back( static_cast<int>( row ), i );
-            const auto &owner_sells = they ? ip.u_has : ip.npc_has;
-            const auto &owner_sells_charge = they ? ip.u_charges : ip.npc_charges;
+            const auto owner_sells = ip ? ( they ? ip->u_has : ip->npc_has ) : 0;
+            const auto owner_sells_charge = ip ? ( they ? ip->u_charges : ip->npc_charges ) : 0;
             auto itname = it->display_name();
+            if( trade_pocket_ui::row_has_collapsible_children( pane_tree, display_index ) ) {
+                if( pane_tree.collapsed[display_index] ) {
+                    itname += _( " [+]" );
+                } else {
+                    itname += _( " [-]" );
+                }
+            }
 
-            if( np.will_exchange_items_freely() &&
-                ip.locs.front()->where() != item_location_type::character ) {
-                itname = itname + " (" + ip.locs.front()->describe_location( &g->u ) + ")";
+            if( np.will_exchange_items_freely() && tradeable &&
+                ip->locs.front()->where() != item_location_type::character ) {
+                itname = itname + " (" + ip->locs.front()->describe_location( &g->u ) + ")";
                 color = c_light_blue;
             }
 
-            if( ip.selected ) {
+            if( ip && ip->selected ) {
                 color = c_white;
             }
             const auto is_category_selected = active_category_id &&
@@ -580,17 +634,22 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
             }
 
             const auto hotkey_index = i - offset;
-            const auto keychar = hotkey_index < item_hotkeys.size() ?
+            const auto keychar = tradeable && hotkey_index < item_hotkeys.size() ?
                                  item_hotkeys[hotkey_index] : ' ';
-            const auto total_amount = ip.charges > 0 ? ip.charges : std::max( ip.count, 1 );
-            const auto selected_amount = ip.charges > 0 ? owner_sells_charge : owner_sells;
-            auto selection_mark = '-';
-            if( selected_amount >= total_amount && total_amount > 0 ) {
-                selection_mark = '+';
-            } else if( selected_amount > 0 ) {
-                selection_mark = '#';
+            const auto total_amount = ip ? ( ip->charges > 0 ? ip->charges :
+                                             std::max( ip->count, 1 ) ) : 1;
+            const auto selected_amount = ip ? ( ip->charges > 0 ? owner_sells_charge :
+                                                owner_sells ) : 0;
+            auto selection_mark = tradeable ? '-' : ' ';
+            if( tradeable ) {
+                if( selected_amount >= total_amount && total_amount > 0 ) {
+                    selection_mark = '+';
+                } else if( selected_amount > 0 ) {
+                    selection_mark = '#';
+                }
             }
-            trim_and_print( w_whose, point( name_x, row_y ), name_w, line_color, "%c %c %s",
+            trim_and_print( w_whose, point( name_x + row_indent * 2, row_y ), name_w, line_color,
+                            "%c %c %s",
                             keychar, selection_mark, itname );
 #if defined(__ANDROID__)
             if( keychar != ' ' ) {
@@ -598,16 +657,17 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
             }
 #endif
 
-            auto price_str = format_money( ip.price );
-            const auto available_amount = ip.charges > 0 ? ip.charges : ip.count;
-            const auto qty_str = available_amount > 1 ? string_format( "%d", available_amount ) :
-                                 std::string{};
+            auto price_str = ip ? format_money( ip->price ) : std::string{};
+            const auto available_amount = ip ? ( ip->charges > 0 ? ip->charges : ip->count ) : 1;
+            const auto qty_str = tradeable && available_amount > 1 ?
+                                 string_format( "%d", available_amount ) : std::string{};
             const auto weight_str = string_format(
                                         "%.2f",
-                                        convert_weight( ip.weight * available_amount ) );
+                                        convert_weight( it->weight() * std::max( available_amount, 1 ) ) );
             const auto vol_str = string_format(
                                      "%.2f",
-                                     convert_volume( to_milliliter( ip.vol * available_amount ) ) );
+                                     convert_volume( to_milliliter( it->volume() *
+                                             std::max( available_amount, 1 ) ) ) );
             mvwprintz( w_whose, point( qty_x, row_y ), line_color,
                        align_left( qty_str, qty_w ) );
             mvwprintz( w_whose, point( weight_x, row_y ), line_color,
@@ -615,10 +675,10 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
             mvwprintz( w_whose, point( vol_x, row_y ), line_color,
                        align_left( vol_str, vol_w ) );
             auto price_color = c_light_gray;
-            if( !np.will_exchange_items_freely() ) {
+            if( ip && !np.will_exchange_items_freely() ) {
                 const auto base_price = it->price( true );
                 if( base_price > 0 ) {
-                    const auto ratio = ip.price / base_price;
+                    const auto ratio = ip->price / base_price;
                     const auto neutral_low = 0.95;
                     const auto neutral_high = 1.05;
                     if( ratio < neutral_low ) {
@@ -629,8 +689,10 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
                         price_color = c_light_gray;
                     }
                 }
-            } else {
+            } else if( ip ) {
                 price_color = c_dark_gray;
+                price_str.clear();
+            } else {
                 price_str.clear();
             }
             if( should_hilite ) {
@@ -642,7 +704,7 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
             row++;
         }
         const auto paging_y = getmaxy( w_whose ) - 1;
-        const auto page_starts = build_page_starts( list, filtered, entries_per_page );
+        const auto page_starts = build_page_starts( list, filtered, pane_tree, entries_per_page );
         const auto total_pages = std::max( page_starts.size(), size_t{1} );
         const auto current_page = page_index_for_offset( page_starts, offset ) + 1;
         const auto page_label = string_format( _( "< Page %d/%d >" ),
@@ -660,9 +722,18 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
         draw_border( w_info, BORDER_COLOR );
         mvwprintz( w_info, point( 2, 0 ), c_white, _( "< item description >" ) );
         if( !category_mode && !info_filtered.empty() && info_cursor < info_filtered.size() ) {
-            const auto &info_item = *info_list[info_filtered[info_cursor]].locs.front();
-            const auto info_desc = info_item.type->description.translated();
-            fold_and_print( w_info, point( 1, 1 ), info_inner_w, c_light_gray, info_desc );
+            const auto &info_tree = focus_them ? them_tree : you_tree;
+            const auto &info_list = focus_them ? state.theirs : state.yours;
+            const auto info_display = info_filtered[info_cursor];
+            item *const info_item = trade_pocket_ui::item_for_row( info_tree, info_list,
+                                         info_display );
+            if( info_item != nullptr ) {
+                const auto info_desc = info_item->type->description.translated();
+                fold_and_print( w_info, point( 1, 1 ), info_inner_w, c_light_gray, info_desc );
+            } else {
+                trim_and_print( w_info, point( 1, 1 ), info_inner_w, c_dark_gray,
+                                _( "No item selected." ) );
+            }
         } else {
             trim_and_print( w_info, point( 1, 1 ), info_inner_w, c_dark_gray,
                             _( "No item selected." ) );
@@ -674,13 +745,19 @@ auto trading_window::update_win( npc &np, const std::string &deal ) -> void
     wnoutrefresh( w_info );
 }
 
-auto trading_window::show_item_data( size_t index, bool target_is_theirs ) -> info_popup_result
+auto trading_window::show_item_data( const size_t index, const bool target_is_theirs )
+-> info_popup_result
 {
     auto &target_list = target_is_theirs ? state.theirs : state.yours;
-    if( index >= target_list.size() ) {
+    if( index >= target_list.size() || target_list[index].locs.empty() ) {
         return info_popup_result::none;
     }
+    return show_item_data( *target_list[index].locs.front(), target_is_theirs );
+}
 
+auto trading_window::show_item_data( const item &itm, const bool target_is_theirs )
+-> info_popup_result
+{
     const auto &info_win = target_is_theirs ? w_you : w_them;
     auto ui = ui_adaptor{};
     auto w_popup = catacurses::window{};
@@ -694,8 +771,8 @@ auto trading_window::show_item_data( size_t index, bool target_is_theirs ) -> in
     } );
     ui.mark_resize();
 
-    const auto &itm = *target_list[index].locs.front();
-    const auto info_text = itm.info_string();
+    const auto &itm_ref = itm;
+    const auto info_text = itm_ref.info_string();
 
     ui.on_redraw( [&]( const ui_adaptor & ) {
         werase( w_popup );
@@ -765,15 +842,38 @@ auto trading_window::show_item_data( size_t index, bool target_is_theirs ) -> in
 auto trading_window::build_filtered_indices( const std::vector<item_pricing> &list,
         const std::string &filter ) const -> std::vector<size_t>
 {
-    if( filter.empty() ) {
-        return std::views::iota( size_t{0}, list.size() ) | std::ranges::to<std::vector>();
+    trade_pocket_ui::trade_display_tree flat_tree;
+    trade_pocket_ui::build_trade_display_tree( flat_tree, list );
+    return build_filtered_indices( flat_tree, list, filter );
+}
+
+auto trading_window::build_filtered_indices( const trade_pocket_ui::trade_display_tree &tree,
+        const std::vector<item_pricing> &list,
+        const std::string &filter ) const -> std::vector<size_t>
+{
+    trade_pocket_ui::trade_filter_fn filter_fn;
+    if( !filter.empty() ) {
+        const auto parsed = item_filter_from_string( filter );
+        filter_fn = [parsed]( const item & it ) {
+            return parsed( it );
+        };
     }
-    const auto filter_fn = item_filter_from_string( filter );
-    return std::views::iota( size_t{0}, list.size() )
-    | std::views::filter( [&]( size_t idx ) {
-        return filter_fn( *list[idx].locs.front() );
-    } )
-    | std::ranges::to<std::vector>();
+    return trade_pocket_ui::build_visible_trade_rows( tree, list, filter_fn );
+}
+
+void trading_window::rebuild_display_trees()
+{
+    trade_pocket_ui::build_trade_display_tree( them_tree, state.theirs );
+    trade_pocket_ui::build_trade_display_tree( you_tree, state.yours );
+    them_filtered = build_filtered_indices( them_tree, state.theirs, them_filter );
+    you_filtered = build_filtered_indices( you_tree, state.yours, you_filter );
+}
+
+auto trading_window::pricing_index_at( const trade_pocket_ui::trade_display_tree &tree,
+                                       const std::vector<size_t> &visible,
+                                       const size_t visible_index ) const -> size_t
+{
+    return tree.rows[visible[visible_index]].pricing_index;
 }
 
 auto trading_window::get_var_trade( const item &it, int total_count, int amount_hint ) -> int
@@ -833,12 +933,12 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
     category_mode = false;
     them_category_cursor = 0;
     you_category_cursor = 0;
-    them_filtered = build_filtered_indices( state.theirs, them_filter );
-    you_filtered = build_filtered_indices( state.yours, you_filter );
+    rebuild_display_trees();
     ui_manager::redraw();
 
     struct clamp_cursor_options {
         const std::vector<item_pricing> &list;
+        const trade_pocket_ui::trade_display_tree &tree;
         const std::vector<size_t> &filtered;
         size_t &cursor;
         size_t &offset;
@@ -856,7 +956,8 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             opts.offset = 0;
             return;
         }
-        const auto page_starts = build_page_starts( opts.list, opts.filtered, entries_per_page );
+        const auto page_starts = build_page_starts( opts.list, opts.filtered, opts.tree,
+                                      entries_per_page );
         const auto page_index = page_index_for_offset( page_starts, opts.cursor );
         opts.offset = page_starts[page_index];
     };
@@ -864,7 +965,10 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
     const auto affects_npc_capacity = [&]( const item & it ) -> bool {
         return it.where() == item_location_type::character && &it != &np.primary_weapon();
     };
-    const auto apply_trade_change = [&]( item_pricing & ip, int new_amount ) -> void {
+    const auto apply_trade_change = [&]( const size_t pricing_index,
+    const int new_amount ) -> void {
+        auto &target_list = focus_them ? state.theirs : state.yours;
+        auto &ip = target_list[pricing_index];
         auto &owner_sells = focus_them ? ip.u_has : ip.npc_has;
         auto &owner_sells_charge = focus_them ? ip.u_charges : ip.npc_charges;
         const auto has_charges = ip.charges > 0;
@@ -890,8 +994,13 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             state.volume_left += ip.vol * signed_amount;
             state.weight_left += ip.weight * signed_amount;
         }
+        if( clamped_amount > 0 && !pockets_are_classic() ) {
+            trade_pocket_ui::deselect_nested_offerings( focus_them ? them_tree : you_tree,
+                    target_list, pricing_index, focus_them );
+        }
     };
     const auto sync_category_cursor = [&]( const std::vector<item_pricing> &list,
+                                           const trade_pocket_ui::trade_display_tree &tree,
                                            const std::vector<size_t> &filtered_indices,
                                            const std::vector<category_range> &category_ranges,
                                            size_t &category_cursor,
@@ -900,12 +1009,21 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
         {
             return;
         }
-        const auto cursor_category = list[filtered_indices[cursor]]
-        .locs.front()->get_category().get_id();
+        const auto cursor_category = [&]() -> std::optional<item_category_id> {
+            item *const cursor_item = trade_pocket_ui::item_for_row( tree, list,
+                                             filtered_indices[cursor] );
+            if( cursor_item == nullptr ) {
+                return std::nullopt;
+            }
+            return cursor_item->get_category().get_id();
+        }();
+        if( !cursor_category ) {
+            return;
+        }
         const auto match = std::ranges::find_if( category_ranges,
                 [&]( const category_range & entry )
         {
-            return entry.id == cursor_category;
+            return entry.id == *cursor_category;
         } );
         if( match != category_ranges.end() )
         {
@@ -935,6 +1053,7 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
     };
     using balance_map = std::unordered_map<int, balance_choice>;
     const auto calc_category_autobalance_plan = [&]( const std::vector<item_pricing> &list,
+            const trade_pocket_ui::trade_display_tree &tree,
             const std::vector<size_t> &filtered_indices,
     const category_range & range ) -> std::unordered_map<size_t, int> {
         auto plan = std::unordered_map<size_t, int> {};
@@ -942,7 +1061,11 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
         std::ranges::for_each( std::views::iota( range.start, range.end ),
                                [&]( size_t idx )
         {
-            const auto list_index = filtered_indices[idx];
+            const auto &row = tree.rows[filtered_indices[idx]];
+            if( !trade_pocket_ui::row_is_tradeable( row ) ) {
+                return;
+            }
+            const auto list_index = row.pricing_index;
             const auto &ip = list[list_index];
             const auto current_amount = get_current_amount( ip );
             plan.emplace( list_index, current_amount );
@@ -1122,12 +1245,17 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
     // and by the modified clicks, so both clamp the same way.
     const auto adjust_traded_count = [&]( const int delta ) {
         auto &list = focus_them ? state.theirs : state.yours;
+        auto &pane_tree = focus_them ? them_tree : you_tree;
         const auto &filtered_now = focus_them ? them_filtered : you_filtered;
         const auto cursor_now = focus_them ? them_cursor : you_cursor;
         if( category_mode || cursor_now >= filtered_now.size() ) {
             return;
         }
-        auto &ip = list[filtered_now[cursor_now]];
+        const auto &cursor_row = pane_tree.rows[filtered_now[cursor_now]];
+        if( !trade_pocket_ui::row_is_tradeable( cursor_row ) ) {
+            return;
+        }
+        auto &ip = list[cursor_row.pricing_index];
         auto &owner_sells = focus_them ? ip.u_has : ip.npc_has;
         auto &owner_sells_charge = focus_them ? ip.u_charges : ip.npc_charges;
         const int total = ip.charges > 0 ? ip.charges : std::max( ip.count, 1 );
@@ -1185,35 +1313,45 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
     // second copy of the trade bookkeeping.
     const auto toggle_whole_stack = [&]( const size_t index ) {
         auto &target_list = focus_them ? state.theirs : state.yours;
+        auto &pane_tree = focus_them ? them_tree : you_tree;
         auto &filtered = focus_them ? them_filtered : you_filtered;
         auto &offset = focus_them ? them_off : you_off;
         auto &cursor = focus_them ? them_cursor : you_cursor;
         auto &category_cursor = focus_them ? them_category_cursor : you_category_cursor;
-        const auto category_ranges = build_category_ranges( target_list, filtered );
+        const auto category_ranges = build_category_ranges( target_list, filtered, pane_tree );
         if( index >= filtered.size() ) {
+            return;
+        }
+        const auto &row = pane_tree.rows[filtered[index]];
+        if( !trade_pocket_ui::row_is_tradeable( row ) ) {
             return;
         }
 
         cursor = index;
         clamp_cursor_to_list( clamp_cursor_options{
             .list = target_list,
+            .tree = pane_tree,
             .filtered = filtered,
             .cursor = cursor,
             .offset = offset
         } );
         if( category_mode && !category_ranges.empty() ) {
-            const auto cursor_category = target_list[filtered[cursor]]
-                                         .locs.front()->get_category().get_id();
-            const auto match = std::ranges::find_if( category_ranges,
-            [&]( const category_range & entry ) {
-                return entry.id == cursor_category;
-            } );
-            if( match != category_ranges.end() ) {
-                category_cursor = static_cast<size_t>(
-                                      std::distance( category_ranges.begin(), match ) );
+            item *const cursor_item = trade_pocket_ui::item_for_row( pane_tree, target_list,
+                                             filtered[cursor] );
+            if( cursor_item != nullptr ) {
+                const auto cursor_category = cursor_item->get_category().get_id();
+                const auto match = std::ranges::find_if( category_ranges,
+                [&]( const category_range & entry ) {
+                    return entry.id == cursor_category;
+                } );
+                if( match != category_ranges.end() ) {
+                    category_cursor = static_cast<size_t>(
+                                          std::distance( category_ranges.begin(), match ) );
+                }
             }
         }
-        auto &ip = target_list[filtered[index]];
+        const auto pricing_index = row.pricing_index;
+        auto &ip = target_list[pricing_index];
         auto change_amount = 1;
         auto &owner_sells = focus_them ? ip.u_has : ip.npc_has;
         auto &owner_sells_charge = focus_them ? ip.u_charges : ip.npc_charges;
@@ -1269,10 +1407,15 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             state.volume_left += ip.vol * change_amount;
             state.weight_left += ip.weight * change_amount;
         }
+        if( ip.selected && !pockets_are_classic() ) {
+            trade_pocket_ui::deselect_nested_offerings( pane_tree, target_list, pricing_index,
+                    focus_them );
+        }
     };
 
     while( !exit ) {
         auto &target_list = focus_them ? state.theirs : state.yours;
+        auto &pane_tree = focus_them ? them_tree : you_tree;
         auto &filtered = focus_them ? them_filtered : you_filtered;
         auto &offset = focus_them ? them_off : you_off;
         auto &cursor = focus_them ? them_cursor : you_cursor;
@@ -1281,12 +1424,14 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
                                       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" );
         clamp_cursor_to_list( clamp_cursor_options{
             .list = target_list,
+            .tree = pane_tree,
             .filtered = filtered,
             .cursor = cursor,
             .offset = offset
         } );
-        const auto category_ranges = build_category_ranges( target_list, filtered );
-        const auto page_starts = build_page_starts( target_list, filtered, entries_per_page );
+        const auto category_ranges = build_category_ranges( target_list, filtered, pane_tree );
+        const auto page_starts = build_page_starts( target_list, filtered, pane_tree,
+                                      entries_per_page );
         if( category_cursor >= category_ranges.size() ) {
             category_cursor = category_ranges.empty() ? 0 : category_ranges.size() - 1;
         }
@@ -1297,12 +1442,13 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             focus_them = !focus_them;
             if( category_mode ) {
                 auto &new_target_list = focus_them ? state.theirs : state.yours;
+                auto &new_tree = focus_them ? them_tree : you_tree;
                 auto &new_filtered = focus_them ? them_filtered : you_filtered;
                 auto &new_offset = focus_them ? them_off : you_off;
                 auto &new_cursor = focus_them ? them_cursor : you_cursor;
                 auto &new_category_cursor = focus_them ? them_category_cursor : you_category_cursor;
                 const auto new_category_ranges = build_category_ranges( new_target_list,
-                                                 new_filtered );
+                                                 new_filtered, new_tree );
                 if( !new_category_ranges.empty() ) {
                     if( new_category_cursor >= new_category_ranges.size() ) {
                         new_category_cursor = new_category_ranges.size() - 1;
@@ -1310,6 +1456,7 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
                     new_cursor = new_category_ranges[new_category_cursor].start;
                     clamp_cursor_to_list( clamp_cursor_options{
                         .list = new_target_list,
+                        .tree = new_tree,
                         .filtered = new_filtered,
                         .cursor = new_cursor,
                         .offset = new_offset
@@ -1340,30 +1487,41 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             if( category_mode ) {
                 if( !category_ranges.empty() ) {
                     const auto &range = category_ranges[category_cursor];
-                    const auto apply_amount = [&]( item_pricing & ip ) -> void {
+                    const auto apply_amount = [&]( const size_t pricing_index ) -> void {
                         if( action == "RIGHT" )
                         {
+                            const auto &ip = target_list[pricing_index];
                             const auto max_amount = ip.charges > 0 ? ip.charges :
                             std::max( ip.count, 1 );
-                            apply_trade_change( ip, max_amount );
+                            apply_trade_change( pricing_index, max_amount );
                         } else
                         {
-                            apply_trade_change( ip, 0 );
+                            apply_trade_change( pricing_index, 0 );
                         }
                     };
                     std::ranges::for_each( std::views::iota( range.start, range.end ),
                     [&]( size_t idx ) {
-                        apply_amount( target_list[filtered[idx]] );
+                        const auto &row = pane_tree.rows[filtered[idx]];
+                        if( !trade_pocket_ui::row_is_tradeable( row ) ) {
+                            return;
+                        }
+                        apply_amount( row.pricing_index );
                     } );
                 }
             } else if( !filtered.empty() ) {
-                auto &ip = target_list[filtered[cursor]];
+                const auto &row = pane_tree.rows[filtered[cursor]];
+                if( !trade_pocket_ui::row_is_tradeable( row ) ) {
+                    pending_count.reset();
+                    continue;
+                }
+                const auto pricing_index = row.pricing_index;
                 if( action == "RIGHT" ) {
+                    const auto &ip = target_list[pricing_index];
                     const auto max_amount = ip.charges > 0 ? ip.charges : std::max( ip.count, 1 );
                     const auto requested_amount = pending_count.value_or( max_amount );
-                    apply_trade_change( ip, requested_amount );
+                    apply_trade_change( pricing_index, requested_amount );
                 } else {
-                    apply_trade_change( ip, 0 );
+                    apply_trade_change( pricing_index, 0 );
                 }
             }
             pending_count.reset();
@@ -1376,20 +1534,31 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
                     continue;
                 }
                 const auto &range = category_ranges[category_cursor];
-                const auto plan = calc_category_autobalance_plan( target_list, filtered, range );
+                const auto plan = calc_category_autobalance_plan( target_list, pane_tree, filtered,
+                                      range );
                 std::ranges::for_each( std::views::iota( range.start, range.end ),
                 [&]( size_t idx ) {
-                    const auto list_index = filtered[idx];
+                    const auto &row = pane_tree.rows[filtered[idx]];
+                    if( !trade_pocket_ui::row_is_tradeable( row ) ) {
+                        return;
+                    }
+                    const auto list_index = row.pricing_index;
                     auto &ip = target_list[list_index];
                     const auto plan_it = plan.find( list_index );
                     if( plan_it != plan.end() ) {
-                        apply_trade_change( ip, plan_it->second );
+                        apply_trade_change( list_index, plan_it->second );
                     }
                 } );
             } else {
-                auto &ip = target_list[filtered[cursor]];
+                const auto &row = pane_tree.rows[filtered[cursor]];
+                if( !trade_pocket_ui::row_is_tradeable( row ) ) {
+                    pending_count.reset();
+                    continue;
+                }
+                const auto pricing_index = row.pricing_index;
+                auto &ip = target_list[pricing_index];
                 const auto best_amount = calc_autobalance_amount( ip );
-                apply_trade_change( ip, best_amount );
+                apply_trade_change( pricing_index, best_amount );
             }
             pending_count.reset();
         } else if( action == "TOGGLE_ITEM_INFO" ) {
@@ -1398,11 +1567,30 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
         } else if( action == "CATEGORY_SELECTION" ) {
             category_mode = !category_mode;
             if( category_mode && !category_ranges.empty() && !filtered.empty() ) {
-                sync_category_cursor( target_list, filtered, category_ranges, category_cursor,
+                sync_category_cursor( target_list, pane_tree, filtered, category_ranges,
+                                      category_cursor,
                                       cursor );
                 cursor = category_ranges[category_cursor].start;
                 clamp_cursor_to_list( clamp_cursor_options{
                     .list = target_list,
+                    .tree = pane_tree,
+                    .filtered = filtered,
+                    .cursor = cursor,
+                    .offset = offset
+                } );
+            }
+        } else if( action == "SHOW_HIDE_CONTENTS" ) {
+            if( category_mode || filtered.empty() || cursor >= filtered.size() ) {
+                continue;
+            }
+            const auto display_index = filtered[cursor];
+            if( trade_pocket_ui::row_has_collapsible_children( pane_tree, display_index ) ) {
+                trade_pocket_ui::toggle_row_collapse( pane_tree, display_index );
+                filtered = build_filtered_indices( pane_tree, target_list,
+                                                   focus_them ? them_filter : you_filter );
+                clamp_cursor_to_list( clamp_cursor_options{
+                    .list = target_list,
+                    .tree = pane_tree,
                     .filtered = filtered,
                     .cursor = cursor,
                     .offset = offset
@@ -1442,11 +1630,13 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             filter_popup = nullptr;
             if( filter_confirmed ) {
                 active_filter = filter_text;
+                auto &active_tree = focus_them ? them_tree : you_tree;
                 auto &active_list = focus_them ? state.theirs : state.yours;
                 auto &active_filtered = focus_them ? them_filtered : you_filtered;
-                active_filtered = build_filtered_indices( active_list, active_filter );
+                active_filtered = build_filtered_indices( active_tree, active_list, active_filter );
                 clamp_cursor_to_list( clamp_cursor_options{
                     .list = active_list,
+                    .tree = active_tree,
                     .filtered = active_filtered,
                     .cursor = cursor,
                     .offset = offset
@@ -1457,11 +1647,13 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
         } else if( action == "RESET_FILTER" ) {
             auto &active_filter = focus_them ? them_filter : you_filter;
             active_filter.clear();
+            auto &active_tree = focus_them ? them_tree : you_tree;
             auto &active_list = focus_them ? state.theirs : state.yours;
             auto &active_filtered = focus_them ? them_filtered : you_filtered;
-            active_filtered = build_filtered_indices( active_list, active_filter );
+            active_filtered = build_filtered_indices( active_tree, active_list, active_filter );
             clamp_cursor_to_list( clamp_cursor_options{
                 .list = active_list,
+                .tree = active_tree,
                 .filtered = active_filtered,
                 .cursor = cursor,
                 .offset = offset
@@ -1476,7 +1668,8 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             if( !filtered.empty() ) {
                 cursor = offset;
                 if( category_mode && !category_ranges.empty() ) {
-                    sync_category_cursor( target_list, filtered, category_ranges, category_cursor,
+                    sync_category_cursor( target_list, pane_tree, filtered, category_ranges,
+                                          category_cursor,
                                           cursor );
                 }
             }
@@ -1490,7 +1683,8 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             if( !filtered.empty() ) {
                 cursor = offset;
                 if( category_mode && !category_ranges.empty() ) {
-                    sync_category_cursor( target_list, filtered, category_ranges, category_cursor,
+                    sync_category_cursor( target_list, pane_tree, filtered, category_ranges,
+                                          category_cursor,
                                           cursor );
                 }
             }
@@ -1498,7 +1692,15 @@ auto trading_window::perform_trade( npc &np, const std::string &deal ) -> bool
             if( category_mode ) {
                 continue;
             }
-            const auto result = show_item_data( filtered.empty() ? 0 : filtered[cursor], focus_them );
+            if( filtered.empty() ) {
+                continue;
+            }
+            item *const examined = trade_pocket_ui::item_for_row( pane_tree, target_list,
+                                         filtered[cursor] );
+            if( examined == nullptr ) {
+                continue;
+            }
+            const auto result = show_item_data( *examined, focus_them );
             if( !filtered.empty() ) {
                 if( result == info_popup_result::move_up ) {
                     cursor = cursor > 0 ? cursor - 1 : filtered.size() - 1;

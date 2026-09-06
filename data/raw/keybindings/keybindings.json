@@ -3590,6 +3590,13 @@
   },
   {
     "type": "keybinding",
+    "id": "SHOW_HIDE_CONTENTS",
+    "category": "NPC_TRADE",
+    "name": "Collapse or expand contents",
+    "bindings": [ { "input_method": "keyboard", "key": "c" } ]
+  },
+  {
+    "type": "keybinding",
     "id": "EXAMINE",
     "category": "NPC_TRADE",
     "name": "Examine item",
