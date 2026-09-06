@@ -50,6 +50,7 @@
 #include "pickup_token.h"
 #include "player.h"
 #include "player_activity.h"
+#include "pocket_overflow.h"
 #include "point.h"
 #include "popup.h"
 #include "ret_val.h"
@@ -150,6 +151,8 @@ enum pickup_answer : int {
     SPILL,
     EMPTY,
     STASH,
+    DROP_UNDERFOOT,
+    LEAVE,
     NUM_ANSWERS
 };
 
@@ -217,6 +220,12 @@ static pickup_answer handle_problematic_pickup( const item &it, bool &offered_sw
                         it.contents.front().tname(), it.display_name() );
     }
 
+    // A player who wants neither to wear nor wield the thing had only escape,
+    // and nothing said so. Spell both answers out: take it out of whatever is
+    // holding it and set it down, or leave it exactly where it was found.
+    amenu.addentry( DROP_UNDERFOOT, true, 'd', _( "Drop %s at your feet" ), it.display_name() );
+    amenu.addentry( LEAVE, true, 'l', _( "Leave %s where it is" ), it.display_name() );
+
     amenu.query();
     int choice = amenu.ret;
 
@@ -279,6 +288,9 @@ static auto pick_one_up( const pick_one_up_options &opts ) -> bool
     player &u = get_avatar();
     int moves_taken = 100;
     bool picked_up = false;
+    // Set down rather than carried: handled, but never in the character's hands,
+    // so the children below must not be pulled out of it.
+    bool disposed = false;
     pickup_answer option = CANCEL;
 
     // We already checked in do_pickup if this was a nullptr
@@ -392,7 +404,16 @@ static auto pick_one_up( const pick_one_up_options &opts ) -> bool
                 // Some other option
                 break;
             case CANCEL:
+            case LEAVE:
+                // Escape has always put the item back where it came from;
+                // nothing in the menu said so. LEAVE is that answer, spelled out.
                 picked_up = false;
+                break;
+            case DROP_UNDERFOOT:
+                // Same "put it down" used by crafting and by goods traded for:
+                // cargo space in a vehicle wins over the floor.
+                apply_overflow_choice( u, std::move( newloc ), overflow_choice::drop );
+                disposed = true;
                 break;
             case WEAR:
                 newloc = u.wear_item( std::move( newloc ) );
@@ -481,13 +502,17 @@ static auto pick_one_up( const pick_one_up_options &opts ) -> bool
                 }
             }
         }
-        u.moves -= moves_taken;
         if( note_item_favorite && note_item_pos ) {
             maybe_remove_favorite_drop_note( *note_item_pos, note_item_name );
         }
     }
+    if( picked_up || disposed ) {
+        u.moves -= moves_taken;
+    }
 
-    return picked_up || !did_prompt;
+    // Setting an item down is a deliberate answer, not a refusal, so the rest of
+    // the pickup carries on. Leaving it still stops the batch, as escaping does.
+    return picked_up || disposed || !did_prompt;
 }
 
 namespace pickup

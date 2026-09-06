@@ -560,3 +560,54 @@ the bug being present. It failed one run in five. It now uses `crude_picklock`,
 which has no difficulty and cannot fail: stable over 8 consecutive runs. The
 comment above the test says so, because the next person will be tempted to pick
 a more interesting recipe.
+
+---
+
+## Addendum, 2026-09-06 (3) - Drop and Leave in the pickup menu
+
+**Playtest report:** picking up an item no pocket will hold offers only Wear and
+Wield. Both work, but a player who has decided they do not want the item has no
+visible way out.
+
+Escape has always been that way out - `handle_problematic_pickup()` returns
+`CANCEL` for it, and `pick_one_up()` returns the item to wherever it came from.
+Nothing in the menu ever said so, which is the whole defect: the answer existed
+and was invisible.
+
+### Changes, all in `src/pickup.cpp`
+
+Two entries added to `handle_problematic_pickup()`, and two values to
+`pickup_answer` ahead of `NUM_ANSWERS` so the existing
+`choice <= CANCEL || choice >= NUM_ANSWERS` guard admits them:
+
+- **`LEAVE`** (`l`) - shares the `CANCEL` arm. The item stays in the tile,
+  container, corpse or vehicle it was found in.
+- **`DROP_UNDERFOOT`** (`d`) - takes the item out of whatever holds it and sets
+  it down where the character stands, through
+  `apply_overflow_choice( ..., overflow_choice::drop )`. **Reused deliberately
+  rather than rewritten:** that is the same "put it down" crafting and trade
+  use, so vehicle cargo beats the floor everywhere, and it already has tests.
+
+A new `disposed` flag distinguishes "handled, but never carried" from
+"picked up":
+
+- The children block stays under `picked_up`. Dropping a container must not then
+  pull its contents out of it and into the character.
+- `u.moves -= moves_taken` moved out to `picked_up || disposed`, since setting an
+  item down costs time too.
+- The return is now `picked_up || disposed || !did_prompt`. Dropping is a
+  deliberate answer, so a multi-item pickup carries on; **leaving still stops the
+  batch**, exactly as escaping always has.
+
+### Coverage, stated honestly
+
+The drop *action* is covered - `apply_overflow_choice( drop )` has tests for both
+the underfoot and the vehicle-cargo case. The **menu wiring is not unit-tested**,
+because `handle_problematic_pickup()` is a `uilist` and `pick_one_up_options`
+is internal to `pickup.cpp` with no way to inject an answer. The rest of that
+menu (Wear, Wield, Spill, Empty) has never been covered either. If this needs
+real coverage later, the seam to build is a testable answer-to-action function
+that both the menu and a test can call.
+
+The `disposed` refactor is covered by the existing pickup tests only in the sense
+that they still pass; they do not exercise the new arms.
