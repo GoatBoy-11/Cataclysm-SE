@@ -1,36 +1,38 @@
 # Monster Dialogue — Design
 
-**Date:** 2026-09-05
+**Date:** 2026-09-05 (revised 2026-09-06)
 **Project:** Cataclysm: Slop Edition (CSE)
-**Status:** Proposed. Nothing implemented. Phase gates in **Open questions**.
+**Status:** Approved in principle by the owner. Implementation plan at
+`docs/superpowers/plans/2026-09-06-monster-dialogue.md`.
 **Reference implementation:** Cataclysm: DDA `talker` abstraction (pinned at `5b915aea09`)
 
 ## Problem
 
-CSE wants NPC-style branching dialogue available to monsters — not only to the
-handful that already emit canned speech through `speech.json`, but to any `mtype`
-that cares to declare it.
+CSE wants monsters to hold real conversations — barter, negotiation, recruitment,
+speech checks — inspired by Battlespire and Shin Megami Tensei, where talking to
+a monster is an alternative to killing it.
 
-CBN forked from CDDA before CDDA generalised its dialogue system. In CSE today,
-a conversation is structurally an NPC: `struct dialogue` (`src/dialogue.h:221`)
-holds
+**The owner's decision: monsters use the NPC dialogue system itself, not a
+parallel one.** The reason is long-run flexibility, and it is the right call —
+but the valuable inheritance is not the window. It is the JSON vocabulary:
+`condition.cpp` is 1,178 lines of shipped, tested predicates, and `talk_trial`,
+the effect verbs and the topic loader come with it. Per `CLAUDE.md`'s fork-cost
+ladder, content expressed as JSON is tier 1, near-zero merge cost. A bespoke
+system would make every future monster behaviour C++; this makes it data.
+
+The obstacle is that a conversation is structurally an NPC. `struct dialogue`
+(`dialogue.h:221`) holds:
 
 ```cpp
 player *alpha = nullptr;   // dialogue.h:226 — always g->u
 npc    *beta  = nullptr;   // dialogue.h:231 — "The NPC we talk to.  Never null."
 ```
 
-and `npc::talk_to_u()` (`src/npctalk.cpp:1094`) is the only door in. A monster
-cannot be a `beta`, so no monster can hold a topic, a response, a trial or an
-effect.
+and `npc::talk_to_u()` (`npctalk.cpp:1094`) is the only door in.
 
-CDDA solved this with a `talker` interface and `talker_npc` / `talker_monster` /
-`talker_character` / `talker_item` implementations, plus a `chat_topic` field on
-`mtype`. That refactor is expensive *in DDA* because it is entangled with their
-newer effect and condition system. CSE's dialogue surface is much smaller, and
-that is the whole reason this is worth doing here.
+## Part 1 — Feasibility
 
-## The coupling is shallower than it looks
+### The coupling is shallower than it looks
 
 Measured, not estimated:
 
@@ -40,203 +42,234 @@ Measured, not estimated:
 | Files containing them | **2** (`npctalk.cpp`, `condition.cpp`) |
 | `talk_function::` definitions taking `npc &` | 73 (`npctalk_funcs.cpp`) |
 | `npc::talk_to_u()` call sites | 7 |
-| Dialogue UI code needing changes | **0** — see below |
+| Dialogue UI code needing changes | **0** |
 
-The 79 uses cluster hard, and the clusters split cleanly along the line that
-matters:
+The 79 uses split cleanly along the line that matters:
 
 | Member | Uses | Monster needs it? |
 |---|---|---|
 | `chatbin` (missions, first topic, selected skill/style/spell) | 21 | No — NPC-only |
 | `rules` (follower engagement, aim, CBM reserve, pickup) | 14 | No — NPC-only |
-| `op_of_u` (trust/fear/value/anger/owed) | 7 | Not initially |
+| `op_of_u` (trust/fear/value/anger/owed) | 7 | No — monsters use `anger`/`morale` |
 | `name`, `disp_name` | 6 | **Yes** |
 | `value()`, `get_faction()`, `wield_better_weapon()` | 9 | Trade/AI — NPC-only |
 | one-offs: `has_effect`, `is_friendly`, `is_enemy`, `make_angry`, `bub_pos`, `abs_omt_pos`, `get_dimension`, `get_grammatical_genders`, `say` | ~22 | **Yes, all** |
 
-So roughly two thirds of the coupling is to machinery a talking zombie has no
-business touching (missions, follower rules, opinion, trade), and the remaining
-third is `Creature`-level state a monster already has.
+Two thirds of the coupling is to machinery a monster has no business touching.
 
 **The dialogue window is already decoupled.** `dialogue_win.h` mentions `npc`
 only in a comment; `dialogue_window` stores a `std::string npc_name`
 (`dialogue_win.h:66`) and `dialogue::opt()` takes that name as a parameter
-(`npctalk.cpp:2158`). The UI needs no work at all.
+(`npctalk.cpp:2158`). Point `beta` at a talker and the same screen renders a
+monster. The UI needs no work at all.
 
-**The one real gap is speech output.** `say()` is declared on `npc`
-(`npc.h:961`), not on `Creature`. A monster has no equivalent, so the talker
-implementation has to provide one (`sounds::sound()` at the monster's position,
-or a plain `add_msg`) rather than forward to an existing method.
+### The hardcoded NPC response chain is already bypassed
 
-## Decisions
+`dialogue::gen_responses()` (`npctalk.cpp:1653`) contains a long chain of
+hardcoded NPC topics dereferencing `p->chatbin`, missions and training. A monster
+falling into it would crash. It cannot, because both entry points consult JSON
+first and return early:
 
-| Decision | Choice |
+```cpp
+const auto iter = json_talk_topics.find( topic );
+if( iter != json_talk_topics.end() ) {
+    if( jtt.gen_responses( *this ) ) {
+        return;                       // npctalk.cpp:1660
+    }
+}
+```
+
+`dynamic_line()` (`npctalk.cpp:1300`) has the same shape. **With one condition:**
+that early return is `return replace_built_in_responses;` (`npctalk.cpp:3670`).
+A monster topic that omits `"replace_built_in_responses": true` falls straight
+through into the NPC chain. This is therefore a hard requirement on monster
+topics, enforced at load, not a convention.
+
+### The one real gap in speech output
+
+`say()` is declared on `npc` (`npc.h:961`), not `Creature`. The main dialogue
+loop calls `d.beta->say( _( "Bye." ) )` (`npctalk.cpp:1273`). `talker_monster`
+must implement speech itself — `sounds::sound()` at the monster's position, or
+`add_msg`. **Do not add `say()` to `Creature`** to make this convenient; that is
+a tier-4 edit to a file every upstream change touches.
+
+### Barter does not port, and the dialogue system is not why
+
+`class monster : public Creature` (`monster.h:105`) — a monster is **not a
+Character**, and trade is Character-to-Character throughout:
+
+| Function | Signature |
 |---|---|
-| Overall shape | Two phases, gated on a playtest, not one big port |
-| Phase A vehicle | Lua, via hooks that already exist. Zero C++ |
-| Phase B vehicle | A `talker` seam replacing `dialogue::beta` |
-| Phase B scope | Dialogue only. No missions, no trade, no follower rules for monsters |
-| JSON schema | CDDA-compatible `"chat_topic"` on `mtype`; existing `talk_topic` objects reused verbatim |
-| NPC-only effects | Gated at response-selection time, not at call time |
-| Phase A's content | Survives Phase B as flavour data; it is not thrown away |
+| `npc_trading::trade` | `( npc &np, int cost, ... )` — `npctrade.cpp:305` |
+| `transfer_items` | `( ..., Character &giver, Character &receiver, bool npc_gives )` |
+| `setup_trade_state`, `npc_will_accept_trade`, `calc_npc_owes_you`, `update_npc_owed`, `pay_npc` | all take `npc &` |
 
-### Why two phases
+The pricing model reads `np.value()`, `op_of_u.owed`, `is_shopkeeper`,
+`wants_to_sell`, `max_willing_to_owe`, `shop_restock`. A monster has none of
+them, and its inventory is a bare `location_vector<item> inv` (`monster.h:828`)
+with `add_item`/`get_items` — no pockets, no worn slots, no capacity model, no
+ownership.
 
-The question this feature actually turns on is not technical. It is whether a
-talking zombie is still a zombie. That is a playtest question, and per
-`CLAUDE.md` the suite cannot answer it. Phase A exists to put it in front of the
-owner for the price of an evening, before any C++ merge debt is taken on.
+The trade *window* is reusable (`trading_window` takes a `trade_state`,
+`trade_win.h:20`); everything that fills a `trade_state` is NPC-shaped.
 
-Concretely, Phase A answers:
+**Decision: trade is out of scope, replaced by offerings.** `u_consume_item`
+branches on `is_npc` and only touches `d.alpha` (`npctalk.cpp:2613`), so "give it
+meat" is expressible in JSON today: the item leaves the player, and a monster-side
+effect drops its anger. This is thematically stronger than haggling — you do not
+barter with a mi-go, you make an offering — and it lands on the `MEAT` placate
+trigger the engine already has. Real haggling, if ever wanted, is its own spec.
 
-- Do you talk to a hostile mid-fight, or only to something already non-hostile?
-- Does opening your mouth cost a turn? Does it break stealth?
-- What does a hostile monster do while the dialogue window is open — does the
-  world tick?
-- How many monsters should have this? (One mod's worth, or base game?)
+## Part 2 — Gameplay design
 
-Phase B is a moderate C++ change to files that conflict with upstream BN. It
-should not be spent on a feature that turns out to feel wrong.
+### Drive the emotional model that already exists
 
-## Phase A — Lua prototype (zero C++)
+CSE already has a full negotiation substrate with no UI. `monster` carries live
+state the AI reads every turn:
 
-Everything needed is already wired.
+| Field | Meaning |
+|---|---|
+| `anger`, `morale` | ints on the instance (`monster.h:634`) |
+| `mtype::agro` | `[-100,100]` starting aggression (`mtype.h:323`) |
+| `anger` / `fear` / `placate` trigger sets | 12 `mon_trigger` values (`mtype.h:46`, `mtype.h:269`) |
+| `MF_FACTION_MEMORY` | tracks anger **per faction** — it remembers you |
+| `make_friendly()`, `make_ally()`, `make_pet()` | recruitment, already implemented |
 
-| Hook | Fires at | Gives |
-|---|---|---|
-| `on_try_monster_interaction` | `game.cpp:8624`, inside `game::examine()` | `params["monster"]`; returns `allowed` |
-| `on_monster_get_examine_menu_entries` | `monexamine.cpp:641` | `avatar` + `monster`; returns menu rows — **pets only** |
-| `on_monster_examine_menu_entry` | `monexamine.cpp:824` | the chosen row — **pets only** |
-| `on_dialogue_start` / `_option` / `_end` | `npctalk.cpp:1211` / `1250` / `1280` | observe real NPC dialogue |
+`monster::attitude()` (`monster.cpp:1809`) turns those into behaviour on
+thresholds that are exactly the right negotiation targets:
 
-`on_try_monster_interaction` is the important one: it runs for **any** monster on
-the examined tile, hostile included, *before* the pet / mech / pay-bot / friendly
-branches that gate `monexamine`'s menus. A Lua hook can therefore run its own
-conversation there and return `allowed = false` to swallow the normal path.
+```
+morale < 0    → FLEE   (or FOLLOW if morale + anger > 0 and hp > 1/3)
+anger <= 0    → IGNORE (or FLEE if hurt)
+anger < 10    → FOLLOW
+otherwise     → ATTACK
+```
 
-There is also a **per-monster-type** vehicle: `lua_monster_callback_actor`
-(`catalua_icallback_actor.h:275`) is attached to `mtype`
-(`mtype.h:482`, reached via `monster::get_lua_callbacks()`, `monster.h:766`),
-registered from Lua through `game.monster_functions[<mon_id>]`
-(`catalua.cpp:366`, extracted at `catalua.cpp:1089`), and already exposes
-`get_examine_menu_entries` / `on_examine_menu_entry`.
+**So a successful negotiation is `anger -= 15`.** Not a bespoke reputation stat —
+the variable the pathing, fleeing and targeting code already obeys. Three things
+follow for free: every existing AI behaviour respects the outcome; `regen_morale`
+means a talked-down monster drifts back toward hostile over time; and
+`MF_FACTION_MEMORY` means a wronged faction remembers.
 
-**But both of its menu hook sites live inside `monexamine::pet_menu()`**
-(`monexamine.cpp:401`), which `game::examine()` reaches only for a monster
-carrying `effect_pet`. So the per-mtype route is a *pet* vehicle, not a general
-one. It is the right home for talking to something already tamed, and it cannot
-reach a hostile at all. `on_try_monster_interaction` is the only Lua entry that
-sees every monster.
+The precedent for "some characters can talk to some monsters" is already
+throughout that function: `PROF_FERAL` befriends zombies, `THRESH_MYCUS`
+pacifies fungals, `BEE`/`FLOWERS`, `ANIMALEMPATH`, pheromone mutations, and
+per-mutation `anger_relations` / `ignored_by` keyed by species. The game already
+believes in this idea.
 
-`uilist` and `query_popup` are bound in `catalua_bindings_ui.cpp`, so the
-conversation UI is a few lines. `data/mods/` carries working Lua mods to copy
-structure from, including `NPC_lua_hook_test`.
+### Sapience is a ladder of verbs, not a difficulty number
 
-**What Phase A deliberately does not get:** JSON `talk_topic` objects,
-`talk_trial` rolls, the condition system in `condition.cpp` (1,178 lines), and
-the `u_*` effect vocabulary. It is a parallel dialogue system. That is acceptable
-for flavour and simple branching, and unacceptable as a foundation — which is
-exactly why it is a prototype and not the design.
+Four tiers, all derivable from existing `species` and `m_flag` data. **These are
+authoring conventions in JSON, never C++ branches.**
 
-## Phase B — the `talker` seam
+| Tier | Who | The verb | Mechanism |
+|---|---|---|---|
+| **Mute** | zombies, most horrors | none — you shout, it hears | **No `chat_topic`.** Not a conversation. |
+| **Reactive** | `MF_ANIMAL`, insects | calm / threaten / feed | Trials on morale; offerings |
+| **Semantic** | robots, `MF_CARD_OVERRIDE`, turrets | commands, not persuasion | `TALK_TRIAL_CONDITION`; INT and computers |
+| **Sapient** | mi-go, some mutants, named uniques | full conversation | Topic trees, all trials, recruitment |
 
-Only if Phase A survives its playtest.
+**The mute tier must not open a dialogue window.** Showing a conversation screen
+to say "it groans and lunges" is worse than a message line. No `chat_topic` means
+it is a reaction, not a conversation: a message, a `SOUND` trigger, anger up,
+horde drawn. Attempting to talk to a zombie should have a real cost, and teaches
+the tier system in one attempt.
+
+### Balance: gate on traits, not on tuning
+
+If negotiation is reliable, combat becomes optional. Four mitigations, in the
+order they should be leaned on:
+
+1. **Gate availability on mutations and traits.** Talking to monsters becomes a
+   *build*, not a universal verb. This fits the game's identity, reuses the
+   existing `u_has_trait` condition, and solves the balance problem by
+   construction rather than by numbers. This is the primary mitigation.
+2. Failure has teeth — anger up, `SOUND` fires.
+3. Once per encounter; a refusal sticks via an effect or faction anger.
+4. Refusal scales with `mtype::difficulty`; the big ones do not listen.
+
+### Tone
+
+Cataclysm is horror; SMT is a comedy of manners with demons. If most monsters
+chat, the horror evaporates. Verbal dialogue should stay **rare and disturbing**
+— the mi-go that negotiates should be worse to talk to than to fight. The
+playtest question "does a talking zombie stop being a zombie?" has the answer:
+only if it is friendly about it.
+
+### Directions worth keeping in view
+
+- **Queens and hives.** `MF_QUEEN` plus faction anger means one negotiation could
+  set an entire faction's attitude.
+- **Thralls.** `MATT_ZLAVE` and `effect_pacified` already exist — a darker
+  recruitment outcome than befriending.
+
+### Content budget
+
+There are hundreds of `mtype`s. Tier-level generic behaviour covers almost all of
+them with **no writing at all**; hand-written dialogue is reserved for the sapient
+tier and named uniques — on the order of fifteen to thirty entities, ever.
+Scarcity is what makes the special ones land.
+
+## Part 3 — Architecture
 
 ```
 dialogue
   ├── player  *alpha            (unchanged)
   └── talker  *beta             (was: npc *)
                 ├── talker_npc      → wraps npc &,     everything implemented
-                └── talker_monster  → wraps monster &, NPC-only members refuse
+                └── talker_monster  → wraps monster &, NPC-only members absent
 ```
 
-`talker` is a narrow abstract interface — the ~22 generic uses from the table
-above, plus explicit `get_npc()` returning `nullptr` for monsters. NPC-only
-members do not appear on the interface at all; call sites that need them go
-through `get_npc()` and are unreachable for a monster by construction.
+`talker` is a **deliberately narrow** abstract interface: the ~22 generic uses
+from the table above, plus `get_npc()` returning `nullptr` for monsters. NPC-only
+members do not appear on the interface at all — call sites needing them go
+through `get_npc()`, so a monster reaching NPC machinery is a compile error, not
+a runtime check.
 
-### Work items
+That narrowness is the main design risk, not the main design cost. Once `beta` is
+a talker, every NPC feature looks one virtual method away — missions, trade,
+followers, opinion. That gravity is how a 300-line seam becomes a 3,000-line one.
+**Adding a virtual to `talker` requires the same justification as adding a field
+to `item`.**
 
-1. **`src/talker.h` (new file)** — interface plus both implementations. New file,
-   so per `CLAUDE.md`'s fork-cost ladder this is tier 2: it conflicts only if
-   upstream adds the same path.
-2. **`dialogue::beta` retype** — 79 mechanical call-site edits in two files.
-   Tier 4 work, but concentrated, and the compiler finds every one.
-3. **`"chat_topic"` on `mtype`** — parsed in `mtype::load()`
-   (`monstergenerator.cpp:759`), defaulting to empty. Empty means "cannot talk",
-   which is every existing monster, so this is a no-op for all current content.
-4. **`monster::talk_to_u()`** — mirrors `npc::talk_to_u()` (`npctalk.cpp:1094`)
-   minus the mission, attitude, radio and follower blocks. Perhaps 30 lines.
-5. **Entry point** — a `Talk` row in the monster menus, gated on a non-empty
-   `chat_topic`. `game::examine()` (`game.cpp:8602`) is where the NPC path
-   already lives.
-6. **Response gating** — a `speaker` predicate on `json_talk_response` so a
-   response whose effect is NPC-only is not offered when `beta` is a monster.
-   See below.
-7. **Condition audit** — the ~28 `d.beta->` sites in `condition.cpp` each need a
-   monster answer or a documented refusal.
+### Response and effect gating
 
-### Response gating is the part to get right
+73 `talk_function::` entries take `npc &` and are reachable from JSON by name
+through `static_functions_map` (`npctalk.cpp:3142`). Ungated, a JSON author points
+a monster topic at `assign_mission` and the game crashes or silently no-ops.
 
-73 `talk_function::` entries take `npc &` and are reachable from JSON by name.
-Left ungated, a JSON author points a monster topic at `assign_mission` and the
-game either crashes or silently no-ops.
+Gate at **selection** time, not call time: a response whose effect is NPC-only is
+never added to the response list for a monster speaker. The player never sees an
+option that cannot work, and there is no runtime branch to forget. This mirrors
+how `gen_responses()` already prunes on conditions. `load_talk_topic()`
+(`npctalk.cpp:3694`, registered at `init.cpp:450`) and
+`json_talk_topic::check_consistency()` are where a **load-time** error belongs for
+a topic that declares itself monster-usable while carrying NPC-only effects —
+turning an author mistake into a startup message rather than a playtest crash.
 
-Gate at **selection** time, not call time: a response whose effect touches
-NPC-only machinery is never added to the response list for a monster speaker.
-The player never sees an option that cannot work, and there is no runtime branch
-to forget. This mirrors how `gen_responses()` (`npctalk.cpp:1653`) already prunes
-responses on conditions.
+## Part 4 — Known defects and traps in the code being touched
 
-`load_talk_topic()` (`npctalk.cpp:3694`, registered at `init.cpp:450`) and
-`json_talk_topic::check_consistency()` are where a load-time error belongs for a
-topic that declares itself monster-usable while carrying NPC-only effects. That
-turns a class of author mistake into a startup message rather than a playtest
-crash.
+Found while specifying. All three are in code this work must modify.
 
-## Verification plan
-
-Per `CLAUDE.md`: **a green suite is not evidence.** Specifically here —
-
-- Every new test must be watched failing against the unfixed code first. The trap
-  in this feature is a monster dialogue test that passes because the topic never
-  loaded and the response list was trivially empty, which is the same shape as
-  the collapse-test failure recorded in the 2026-09-05 handoff.
-- Assert the precondition rather than creating it: a monster-dialogue test must
-  assert `beta->get_npc() == nullptr`, so the test cannot quietly stop testing a
-  monster.
-- The NPC path is the regression surface that matters. The full existing dialogue
-  suite must stay green across the `beta` retype; that is the evidence the seam
-  is behaviour-preserving.
-- Response gating needs a negative test: an NPC-only effect on a monster topic is
-  refused at load, and never offered at runtime.
-- Playtest gates both phases. Phase A's whole purpose is the playtest.
+1. **`repeat_responses` will null-deref on a monster.** `npctalk.cpp:3646` does
+   `actor = dynamic_cast<player *>( d.beta )` when `repeat.is_npc`, then calls
+   `actor->charges_of(...)` with no null check. Needs a guard regardless.
+2. **`parse_mod`'s `NPC_INTIMIDATE` is an upstream bug.** At `npctalk.cpp:1791`
+   it computes `character_effects::intimidation( u )` — `u` is the *player*
+   (`player &u = *d.alpha`) — identical to `U_INTIMIDATE` on the line above. It
+   should be `p`. BN's defect, not CSE's, but it sits in the exact function
+   monster trials extend and should be fixed here rather than inherited.
+3. **`replace_built_in_responses` is load-bearing**, per Part 1.
 
 ## Open questions
 
-Owner decisions, none of which should be made while AFK:
+Owner decisions. None should be made while AFK.
 
-1. **Does Phase B happen at all?** Gated on the Phase A playtest.
-2. **Hostile monsters.** Can you talk to something actively attacking you? If
-   yes, does the dialogue window let the world tick? This is the single biggest
-   design fork and it changes the entry point.
-3. **Base game or mod?** Whether any shipped `mtype` gets a `chat_topic`, or
-   whether this is purely a modding capability. Affects whether `data/json/`
-   changes at all.
-4. **Turn cost.** Talking is currently free for NPCs. A free conversation with a
-   hostile is an exploit; a costly one is a trap.
-5. **Opinion.** `op_of_u` is NPC-only and monsters have `faction_anger` instead
-   (`catalua_bindings_creature.cpp` binds `add_faction_anger` /
-   `get_faction_anger`). Whether monster dialogue can move faction anger, and
-   whether that is the monster analogue of opinion, is a scope decision.
-
-## Notes for whoever picks this up
-
-- `npc::say()` is on `npc`, not `Creature`. `talker_monster` must implement
-  speech itself. Do not add `say()` to `Creature` to make this convenient — that
-  is a tier-4 edit to a file every upstream change touches.
-- `dialogue_win.*` needs nothing. If a change there looks necessary, the talker
-  interface is leaking a `name` it should have flattened to a string already.
-- The `on_try_monster_interaction` hook returns `allowed` through
-  `get_or( "allowed", true )` with `exit_early`. A Lua prototype that forgets to
-  return `false` will run its conversation *and* the normal pet menu.
+1. **Hostile monsters.** Can you talk to something actively attacking you? This
+   changes the entry point. Deferred to the milestone-2 playtest.
+2. **Turn cost.** Talking is free for NPCs. Free conversation with a hostile is an
+   exploit; a costly one is a trap.
+3. **Base game or mod?** Whether any shipped `mtype` gets a `chat_topic`.
+4. **Which traits gate it**, given the balance decision above.
+5. **Recruitment outcome** — friendly, pet, or `MATT_ZLAVE` thrall — and whether
+   monster dialogue may move faction anger.
