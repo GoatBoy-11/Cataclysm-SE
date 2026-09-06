@@ -2805,6 +2805,12 @@ void Character::note_pocketed_pickup( item &container, size_t pocket_index )
     const std::vector<item *> &stored = pockets[pocket_index].all_items_top();
     if( !stored.empty() ) {
         stored.back()->on_pickup( *this );
+        // Letter hygiene runs on entry to the flat inventory, and an item that
+        // goes into a pocket never enters it. Run the same reconciliation here
+        // or the item keeps a letter another item may already hold. Not
+        // assigning a new one: a letter is claimed by asking for it, and this
+        // path is just putting something away.
+        inv.update_invlet( *stored.back(), false );
     }
 }
 
@@ -3018,9 +3024,12 @@ item *Character::invlet_to_item( const int linvlet )
             invlet_item = it;
             return VisitResponse::ABORT;
         }
-        // Visit top-level items only as UIs don't support nested items.
-        // Also, inventory restack logic depends on this.
-        return VisitResponse::SKIP;
+        // Descend into pockets. The original reason not to - "UIs don't
+        // support nested items" - stopped being true when the inventory
+        // learned to nest, and while this stayed shallow a routed item kept a
+        // letter nothing could see, so the next item to want that letter was
+        // granted it too and both answered to the same key.
+        return VisitResponse::NEXT;
     } );
     return invlet_item;
 }
