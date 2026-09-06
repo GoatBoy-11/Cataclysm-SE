@@ -105,8 +105,8 @@ Everything needed is already wired.
 | Hook | Fires at | Gives |
 |---|---|---|
 | `on_try_monster_interaction` | `game.cpp:8624`, inside `game::examine()` | `params["monster"]`; returns `allowed` |
-| `on_monster_get_examine_menu_entries` | `monexamine.cpp:641` | `avatar` + `monster`; returns menu rows |
-| `on_monster_examine_menu_entry` | `monexamine.cpp:824` | the chosen row |
+| `on_monster_get_examine_menu_entries` | `monexamine.cpp:641` | `avatar` + `monster`; returns menu rows — **pets only** |
+| `on_monster_examine_menu_entry` | `monexamine.cpp:824` | the chosen row — **pets only** |
 | `on_dialogue_start` / `_option` / `_end` | `npctalk.cpp:1211` / `1250` / `1280` | observe real NPC dialogue |
 
 `on_try_monster_interaction` is the important one: it runs for **any** monster on
@@ -116,10 +116,17 @@ conversation there and return `allowed = false` to swallow the normal path.
 
 There is also a **per-monster-type** vehicle: `lua_monster_callback_actor`
 (`catalua_icallback_actor.h:275`) is attached to `mtype`
-(`mtype.h:482`, reached via `monster::get_lua_callbacks()`, `monster.h:766`) and
-already exposes `call_get_examine_menu_entries` and
-`call_on_examine_menu_entry`. Dialogue declared per monster type in JSON, handled
-in Lua, needs no global hook at all.
+(`mtype.h:482`, reached via `monster::get_lua_callbacks()`, `monster.h:766`),
+registered from Lua through `game.monster_functions[<mon_id>]`
+(`catalua.cpp:366`, extracted at `catalua.cpp:1089`), and already exposes
+`get_examine_menu_entries` / `on_examine_menu_entry`.
+
+**But both of its menu hook sites live inside `monexamine::pet_menu()`**
+(`monexamine.cpp:401`), which `game::examine()` reaches only for a monster
+carrying `effect_pet`. So the per-mtype route is a *pet* vehicle, not a general
+one. It is the right home for talking to something already tamed, and it cannot
+reach a hostile at all. `on_try_monster_interaction` is the only Lua entry that
+sees every monster.
 
 `uilist` and `query_popup` are bound in `catalua_bindings_ui.cpp`, so the
 conversation UI is a few lines. `data/mods/` carries working Lua mods to copy
