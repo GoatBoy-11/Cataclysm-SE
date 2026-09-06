@@ -415,3 +415,80 @@ is in the session scratchpad as `takeoff-experiment.patch`.
 off into the flat inventory, and is offered as a drop when it does not fit. What
 the owner saw - a backpack forced to the ground, jeans going to the inventory -
 is that capacity check working, not two different code paths.
+
+---
+
+## Addendum, 2026-09-06 - trade overflow: goods no pocket will hold
+
+**Playtest report:** a double-barrel shotgun taken as a trade reward, and a
+shovel given as a quest reward, both turned up in the flat inventory with no
+message. Smaller reward items in the same trade went into pockets correctly.
+
+**Not a routing failure.** `i_add_routed()` was present and running on all three
+paths. The items simply fit no worn pocket - the shotgun on size, and the
+`makeshift_sling` crafting report is the same story, since the sling is **5 L in
+its own volume** and most worn pockets are 1-4 L. The flat inventory is the
+unconditional fallback, so anything nothing will hold lands there loose and
+silent.
+
+The owner's call, after weighing three options: leave pickup alone (it already
+prompts through `handle_problematic_pickup`), and make **trade, barter and NPC
+rewards** ask instead. A flat-inventory size cap was considered and rejected on
+the owner's objection, which is correct and worth recording: a cap makes the
+inventory accept an item once and refuse the same item the second time, with
+nothing on screen to explain the difference.
+
+### What was built
+
+New file `src/trade_overflow.h` / `.cpp`. New files are the cheapest fork change
+after JSON, and the three call sites take a one-line swap each:
+
+| Path | File |
+|---|---|
+| Trade window | `npctrade.cpp` `transfer_items()` |
+| "Ask for something" reward | `npctalk_funcs.cpp` `give_equipment()` |
+| Dialogue and mission rewards | `npctalk.cpp` `set_u_buy_item()` |
+
+`trade_overflow::deliver()` gives worn pockets first refusal exactly as
+`i_add_routed()` does, and only what they all turn down reaches a menu offering
+wield / wear (armour only) / carry loose / drop, plus two capital-letter
+answers that stick for the rest of the same delivery so a ten-item trade asks
+once.
+
+### Two deliberate calls, both one line to reverse
+
+- **Escape carries the item, it does not drop it.** Dropping on cancel would
+  leave goods the player just paid for on a shop floor they are walking away
+  from - the same class of surprise the menu exists to remove.
+- **A character wearing nothing with a pocket is never asked.** Otherwise an
+  ungeared character gets a menu for every traded item. This is the same guard
+  `pickup.cpp` already applies, and it is what keeps classic mode untouched.
+
+`test_mode` is checked in `deliver()` rather than in `overflow_needs_prompt()`,
+deliberately: the suite runs with `test_mode = true`, so putting the guard in the
+predicate would have made the predicate untestable and the whole feature
+unverifiable.
+
+### Verification
+
+Every branch was broken and watched to fail before being trusted:
+
+| Break | Tests that caught it |
+|---|---|
+| `overflow_needs_prompt` returns true always | 3 cases (ungeared avatar, NPC, liquid + casing) |
+| drop branch neutered | 1 case, 2 assertions |
+| wield and wear branches neutered | 2 cases |
+| the "cannot lose it" `i_add` fallback removed | 2 cases |
+
+Full suite afterwards: **1,164 cases, 1,160 passed, 4 failed** - the four
+documented vision tests at `vision_test.cpp:256`.
+
+### Still open
+
+- **Which garments deserve more generous `max_item_length` / volume.** A balance
+  call, not a code one. `makeshift_sling` was given an explicit 10 L / 150 cm
+  pocket; nothing else has been reviewed.
+- **The pickup-menu nesting feature** (collapsible container entries, ALT
+  modifier) from the 2026-09-05 playtest still needs its own scoping pass.
+- **Per-pocket `rigid`** remains dead until the JSON is authored and the
+  `itype::rigid` gate is removed.

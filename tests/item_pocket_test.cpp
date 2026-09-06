@@ -24,6 +24,7 @@
 #include "options_helpers.h"
 #include "relic.h"
 #include "state_helpers.h"
+#include "trade_overflow.h"
 #include "ret_val.h"
 #include "type_id.h"
 #include "units.h"
@@ -3176,4 +3177,130 @@ TEST_CASE( "a garment is not coloured by the food in its pockets",
     REQUIRE( vest->get_food() != nullptr );
 
     CHECK( vest->color_in_inventory( u ) == plain );
+}
+
+// ---------------------------------------------------------------------------
+// Playtest report, 2026-09-06: a double-barrel shotgun taken as a trade reward
+// turned up in the flat inventory with no message, because nothing worn had a
+// pocket big enough and the flat inventory is the unconditional fallback.
+// Goods handed over by an NPC now ask instead of arriving unannounced.
+// ---------------------------------------------------------------------------
+
+TEST_CASE( "overflow only asks a player who is wearing pockets", "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+
+    // Wearing nothing with a pocket, the flat inventory is all this character
+    // has; asking about every item would be unanswerable noise.
+    CHECK( !overflow_needs_prompt( u, *rock ) );
+
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    CHECK( overflow_needs_prompt( u, *rock ) );
+}
+
+TEST_CASE( "overflow never asks an NPC", "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    standard_npc trader( "Trader" );
+    REQUIRE( !trader.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    detached_ptr<item> rock = item::spawn( "test_rock" );
+
+    // Same gear as the avatar above; only being an NPC differs.
+    CHECK( !overflow_needs_prompt( trader, *rock ) );
+}
+
+TEST_CASE( "overflow does not ask about what routing refuses on principle",
+           "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+
+    detached_ptr<item> water = item::spawn( "water" );
+    REQUIRE( water->made_of( LIQUID ) );
+    CHECK( !overflow_needs_prompt( u, *water ) );
+
+    detached_ptr<item> casing = item::spawn( "9mm_casing" );
+    casing->set_flag( flag_CASING );
+    CHECK( !overflow_needs_prompt( u, *casing ) );
+}
+
+TEST_CASE( "carrying an overflowing item keeps it in the inventory",
+           "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+
+    apply_overflow_choice( u, item::spawn( "test_rock" ), overflow_choice::carry );
+
+    CHECK( u.has_amount( itype_id( "test_rock" ), 1 ) );
+    CHECK( get_map().i_at( u.bub_pos() ).empty() );
+}
+
+TEST_CASE( "dropping an overflowing item leaves it underfoot", "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+
+    apply_overflow_choice( u, item::spawn( "test_rock" ), overflow_choice::drop );
+
+    CHECK( !u.has_amount( itype_id( "test_rock" ), 1 ) );
+    REQUIRE( get_map().i_at( u.bub_pos() ).size() == 1 );
+    CHECK( ( *get_map().i_at( u.bub_pos() ).begin() )->typeId() == itype_id( "test_rock" ) );
+}
+
+TEST_CASE( "wielding an overflowing item takes it in hand", "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.is_armed() );
+
+    apply_overflow_choice( u, item::spawn( "test_rock" ), overflow_choice::wield );
+
+    CHECK( u.primary_weapon().typeId() == itype_id( "test_rock" ) );
+}
+
+TEST_CASE( "wearing an overflowing item puts it on", "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( u.worn.empty() );
+
+    apply_overflow_choice( u, item::spawn( "test_pocket_vest" ), overflow_choice::wear );
+
+    REQUIRE( u.worn.size() == 1 );
+    CHECK( u.worn.front()->typeId() == itype_id( "test_pocket_vest" ) );
+}
+
+TEST_CASE( "an overflow choice that fails still cannot lose the item",
+           "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    get_map().i_clear( u.bub_pos() );
+
+    // A rock is not armour, so wearing it must fail - and hand it back rather
+    // than destroy it. Carrying it loose is the branch that backs up the rest.
+    apply_overflow_choice( u, item::spawn( "test_rock" ), overflow_choice::wear );
+
+    CHECK( u.worn.empty() );
+    CHECK( u.has_amount( itype_id( "test_rock" ), 1 ) );
+}
+
+TEST_CASE( "a delivery with nobody to ask still routes into pockets",
+           "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    item *vest = u.worn.front();
+
+    trade_overflow overflow;
+    overflow.deliver( u, item::spawn( "test_rock" ) );
+
+    CHECK( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 1 );
 }

@@ -77,6 +77,7 @@
 #include "string_input_popup.h"
 #include "string_utils.h"
 #include "text_snippets.h"
+#include "trade_overflow.h"
 #include "translations.h"
 #include "type_id.h"
 #include "ui.h"
@@ -2539,15 +2540,16 @@ void talk_effect_fun_t::set_u_buy_item( const itype_id &item_name, int cost, int
             popup( _( "You can't afford it!" ) );
             return;
         }
+        trade_overflow overflow;
         if( container_name.empty() ) {
             detached_ptr<item> new_item = item::spawn( item_name, calendar::turn );
             item &obj = *new_item;
             if( new_item->count_by_charges() ) {
                 new_item->mod_charges( count - 1 );
-                u.i_add_routed( std::move( new_item ) );
+                overflow.deliver( u, std::move( new_item ) );
             } else {
                 for( int i_cnt = 0; i_cnt < count; i_cnt++ ) {
-                    u.i_add_routed( item::spawn( *new_item ) );
+                    overflow.deliver( u, item::spawn( *new_item ) );
                 }
             }
             if( count == 1 ) {
@@ -2562,7 +2564,7 @@ void talk_effect_fun_t::set_u_buy_item( const itype_id &item_name, int cost, int
             container->put_in_expected( item::spawn( item_name, calendar::turn, count ) );
             //~ %1%s is the NPC name, %2$s is an item
             popup( _( "%1$s gives you a %2$s." ), p.name, container->tname() );
-            u.i_add_routed( std::move( container ) );
+            overflow.deliver( u, std::move( container ) );
         }
     };
 

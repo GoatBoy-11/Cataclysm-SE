@@ -16,6 +16,7 @@
 #include "player.h"
 #include "skill.h"
 #include "string_utils.h"
+#include "trade_overflow.h"
 #include "trade_win.h"
 #include "type_id.h"
 #include "vehicle_selector.h"
@@ -27,6 +28,7 @@ static const flag_id json_flag_NO_UNWIELD( "NO_UNWIELD" );
 void npc_trading::transfer_items( std::vector<item_pricing> &stuff, Character &,
                                   Character &receiver, bool npc_gives )
 {
+    trade_overflow overflow;
     std::ranges::for_each( stuff, [&]( auto & ip ) {
         if( !ip.selected ) {
             return;
@@ -39,12 +41,12 @@ void npc_trading::transfer_items( std::vector<item_pricing> &stuff, Character &,
             auto to_give = gift.split( charges );
             to_give->set_owner( receiver );
 
-            receiver.i_add_routed( std::move( to_give ) );
+            overflow.deliver( receiver, std::move( to_give ) );
         } else {
             const auto count = npc_gives ? ip.u_has : ip.npc_has;
             gift.set_owner( receiver );
             std::ranges::for_each( std::views::take( ip.locs, count ), [&]( auto * it ) {
-                receiver.i_add_routed( it->detach() );
+                overflow.deliver( receiver, it->detach() );
             } );
         }
     } );
