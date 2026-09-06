@@ -68,6 +68,7 @@
 #include "line.h"
 #include "make_static.h"
 #include "map.h"
+#include "loot_pocket_nesting.h"
 #include "map_iterator.h"
 #include "map_selector.h"
 #include "mapdata.h"
@@ -11973,9 +11974,7 @@ void Character::place_corpse()
     std::vector<detached_ptr<item>> tmp = inv_dump_remove();
     detached_ptr<item> body = item::make_corpse( mtype_id::NULL_ID(), calendar::turn, name );
     map &here = get_map();
-    for( auto &itm : tmp ) {
-        here.add_item_or_charges( bub_pos(), std::move( itm ) );
-    }
+    here.spawn_items( bub_pos(), std::move( tmp ) );
     for( const bionic &bio : get_bionic_collection() ) {
         if( bio.info().itype().is_valid() ) {
             detached_ptr<item> cbm = item::spawn( bio.id.str(), calendar::turn );
@@ -12014,6 +12013,7 @@ void Character::place_corpse( const tripoint_abs_omt &om_target )
 
     std::vector<detached_ptr<item>> tmp = inv_dump_remove();
     detached_ptr<item> body = item::make_corpse( mtype_id::NULL_ID(), calendar::turn, name );
+    loot_pocket_nesting::nest_spawned_loot_in_containers( tmp );
     for( auto &itm : tmp ) {
         get_mapbuffer().add_item_or_charges( fin, std::move( itm ), {
             .lookup = mapbuffer_lookup_mode::load_or_generate,

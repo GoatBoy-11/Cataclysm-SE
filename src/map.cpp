@@ -74,6 +74,7 @@
 #include "item_contents.h"
 #include "item_factory.h"
 #include "item_group.h"
+#include "loot_pocket_nesting.h"
 #include "itype.h"
 #include "iuse.h"
 #include "iuse_actor.h"
@@ -5783,6 +5784,7 @@ float map::item_category_spawn_rate( const item &itm )
 std::vector<detached_ptr<item>> map::spawn_items( const tripoint_bub_ms &p,
                              std::vector<detached_ptr<item>> new_items )
 {
+    loot_pocket_nesting::nest_spawned_loot_in_containers( new_items );
     std::vector<detached_ptr<item>> ret;
     if( has_flag( "DESTROY_ITEM", p ) ) {
         return ret;
