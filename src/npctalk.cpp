@@ -77,7 +77,7 @@
 #include "string_input_popup.h"
 #include "string_utils.h"
 #include "text_snippets.h"
-#include "trade_overflow.h"
+#include "pocket_overflow.h"
 #include "translations.h"
 #include "type_id.h"
 #include "ui.h"

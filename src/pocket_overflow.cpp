@@ -1,4 +1,4 @@
-#include "trade_overflow.h"
+#include "pocket_overflow.h"
 
 #include <string>
 
@@ -9,6 +9,7 @@
 #include "item.h"
 #include "item_contents.h"
 #include "item_pocket.h"
+#include "activity_handlers.h"
 #include "map.h"
 #include "output.h"
 #include "ret_val.h"
@@ -48,29 +49,33 @@ bool wears_usable_pockets( const Character &who )
     return false;
 }
 
-/** Set the item down where the character stands, keeping it if the tile will not take it. */
-detached_ptr<item> drop_here( Character &who, detached_ptr<item> &&it )
+/**
+ * Set the item down where the character stands. Cargo space in a vehicle they
+ * are standing in comes first: dropping a rifle just traded for through the
+ * floor of the truck you are sitting in is not what "drop" means here. The
+ * helper carries its own messaging and handles ownership, and it always places
+ * the item somewhere, so nothing comes back.
+ */
+void drop_here( Character &who, detached_ptr<item> &&it )
 {
-    const std::string dropped_name = it->display_name();
-    detached_ptr<item> refused = get_map().add_item_or_charges( who.bub_pos(), std::move( it ) );
-    if( !refused ) {
-        who.add_msg_if_player( _( "You set down the %s." ), dropped_name );
-    }
-    return refused;
+    put_into_vehicle_or_drop( who, item_drop_reason::too_large, std::move( it ) );
 }
 
 } // namespace
 
+bool pocket_capacity_binds( const Character &who )
+{
+    // Classic mode is the promise that BN's flat inventory still behaves like
+    // BN's, and a character wearing nothing with a pocket is not playing with
+    // pockets either - enforcing them would leave that character unable to keep
+    // anything at all.
+    return !pockets_are_classic() && wears_usable_pockets( who );
+}
+
 bool overflow_needs_prompt( const Character &who, const item &it )
 {
     // Only the player can answer a menu.
-    if( !who.is_avatar() ) {
-        return false;
-    }
-    // Classic mode is the promise that BN's flat inventory still behaves like
-    // BN's; a character wearing nothing with a pocket is not playing with
-    // pockets either, and would otherwise be asked about every single item.
-    if( pockets_are_classic() || !wears_usable_pockets( who ) ) {
+    if( !who.is_avatar() || !pocket_capacity_binds( who ) ) {
         return false;
     }
     // Routing turns these two away whatever the room available - a liquid needs
@@ -94,14 +99,14 @@ void apply_overflow_choice( Character &who, detached_ptr<item> &&it, overflow_ch
             break;
         case overflow_choice::drop:
         case overflow_choice::drop_rest:
-            it = drop_here( who, std::move( it ) );
-            break;
+            drop_here( who, std::move( it ) );
+            return;
         case overflow_choice::carry:
         case overflow_choice::carry_rest:
             break;
     }
-    // Wielding, wearing and dropping all hand the item back when they fail.
-    // Carrying it loose is the one branch that cannot, so it backs up the rest.
+    // Wielding and wearing hand the item back when they fail. Carrying it loose
+    // is the branch that cannot fail, so it backs up the rest.
     if( it ) {
         who.i_add( std::move( it ) );
     }

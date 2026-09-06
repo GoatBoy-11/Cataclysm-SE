@@ -61,6 +61,7 @@
 #include "pimpl.h"
 #include "player.h"
 #include "player_activity.h"
+#include "pocket_overflow.h"
 #include "point.h"
 #include "recipe.h"
 #include "recipe_dictionary.h"
@@ -812,13 +813,29 @@ static void set_item_inventory( Character &who, detached_ptr<item> &&newit )
     // We might not have space for the item
     if( who.can_pick_volume( *newit ) &&
         who.can_pick_weight( *newit, !get_option<bool>( "DANGEROUS_PICKUPS" ) ) ) {
-        add_msg( m_info, "%c - %s", newit->invlet == 0 ? ' ' : newit->invlet,
-                 newit->tname() );
+        const char assigned_invlet = newit->invlet;
+        const std::string craft_name = newit->tname();
         // Worn pockets get first refusal, as on every other acquisition path.
         // Crafting handed the result straight to the flat inventory, so a
         // finished item sat loose while a backpack had room for it.
-        who.i_add_routed( std::move( newit ) );
-        return;
+        //
+        // NPCs keep the flat inventory as their backstop. One that crafted a
+        // result too big for its own pockets would otherwise leave it on the
+        // floor and never think to pick it up again.
+        if( who.is_avatar() && pocket_capacity_binds( who ) ) {
+            newit = who.i_add_to_worn_pockets( std::move( newit ), nullptr, false, false );
+        } else {
+            who.i_add_routed( std::move( newit ) );
+        }
+        if( !newit ) {
+            add_msg( m_info, "%c - %s", assigned_invlet == 0 ? ' ' : assigned_invlet, craft_name );
+            return;
+        }
+        // Nothing worn will hold it, and the flat inventory is a compatibility
+        // layer rather than storage the player can aim at. Put the result where
+        // the player can see it - the workbench or vehicle they crafted at, or
+        // the tile under their feet - and say why it is not in a pocket.
+        who.add_msg_if_player( m_info, _( "No pocket will hold the %s." ), craft_name );
     }
 
     return set_item_map_or_vehicle( who, who.bub_pos(), std::move( newit ) );

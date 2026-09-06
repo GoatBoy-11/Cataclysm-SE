@@ -24,10 +24,12 @@
 #include "options_helpers.h"
 #include "relic.h"
 #include "state_helpers.h"
-#include "trade_overflow.h"
+#include "pocket_overflow.h"
 #include "ret_val.h"
 #include "type_id.h"
 #include "units.h"
+#include "vehicle.h"
+#include "veh_type.h"
 
 TEST_CASE( "empty_pocket_reports_empty_and_full_remaining_volume", "[item][pocket]" )
 {
@@ -3303,4 +3305,44 @@ TEST_CASE( "a delivery with nobody to ask still routes into pockets",
     overflow.deliver( u, item::spawn( "test_rock" ) );
 
     CHECK( items_in_pockets( *vest, itype_id( "test_rock" ) ) == 1 );
+}
+
+TEST_CASE( "the pocket capacity rule binds only a character wearing pockets",
+           "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+
+    // Wearing nothing with a pocket, BN's flat inventory is all this character
+    // has; binding them to pockets would leave them unable to keep anything.
+    CHECK( !pocket_capacity_binds( u ) );
+
+    REQUIRE( !u.wear_item( item::spawn( "test_pocket_vest" ) ) );
+    CHECK( pocket_capacity_binds( u ) );
+}
+
+TEST_CASE( "an overflowing item dropped in a vehicle goes into its cargo",
+           "[pocket][routing][trade]" )
+{
+    clear_all_state();
+    avatar &u = g->u;
+    map &here = get_map();
+    const tripoint_bub_ms where = u.bub_pos();
+    here.i_clear( where );
+
+    vehicle *veh = here.add_vehicle( vproto_id( "none" ), where, 0_degrees, 0, 0 );
+    REQUIRE( veh != nullptr );
+    REQUIRE( veh->install_part( tripoint_mnt_veh::zero(), vpart_id( "frame_vertical" ), true ) >= 0 );
+    const int cargo = veh->install_part( tripoint_mnt_veh::zero(), vpart_id( "box" ), true );
+    REQUIRE( cargo >= 0 );
+    here.add_vehicle_to_cache( veh );
+    here.build_map_cache( where.z(), true );
+    REQUIRE( here.veh_at( where ).part_with_feature( "CARGO", false ) );
+
+    apply_overflow_choice( u, item::spawn( "test_rock" ), overflow_choice::drop );
+
+    // Cargo space beats the floor: goods dropped inside the truck you are
+    // sitting in must not fall through it.
+    CHECK( here.i_at( where ).empty() );
+    CHECK( veh->get_items( cargo ).size() == 1 );
 }

@@ -24,6 +24,14 @@ enum class overflow_choice {
 };
 
 /**
+ * Whether pocket capacity binds @p who at all. False in classic mode, and for
+ * anyone wearing nothing with a pocket: they have BN's flat inventory and
+ * nothing else, so enforcing pockets on them would leave them unable to keep
+ * anything at all.
+ */
+bool pocket_capacity_binds( const Character &who );
+
+/**
  * Whether @p who should be asked what to do with @p it, rather than handed it
  * loose. False for anyone who cannot answer a menu or is not playing with
  * pockets at all - NPCs, classic mode, a character wearing nothing with a

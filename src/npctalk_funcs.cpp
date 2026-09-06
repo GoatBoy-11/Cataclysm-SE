@@ -46,7 +46,7 @@
 #include "point.h"
 #include "rng.h"
 #include "string_id.h"
-#include "trade_overflow.h"
+#include "pocket_overflow.h"
 #include "translations.h"
 #include "ui.h"
 

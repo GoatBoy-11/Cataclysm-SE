@@ -14,6 +14,7 @@
 #include "item.h"
 #include "itype.h"
 #include "iuse.h"
+#include "item_pocket.h"
 #include "map.h"
 #include "map_helpers.h"
 #include "npc.h"
@@ -1279,4 +1280,56 @@ TEST_CASE("vehicle kitchen craft preserves frozen component rot", "[crafting][ro
     auto& result = *craft_cooked_meat_at_vehicle(fixture);
 
     check_cooked_meat_is_fresh(result);
+}
+
+// Playtest report, 2026-09-06: a crafted makeshift sling landed in the flat
+// inventory with no message, because nothing worn had room for its 5 L. A
+// finished item no pocket will hold now goes where the player can see it - the
+// workbench or vehicle they crafted at, or the tile under their feet.
+//
+// crude_picklock has no difficulty, so the craft cannot fail. carver_off was
+// tried first and made this test flaky one run in five: a failed craft yields
+// nothing, and "nothing on the floor" is indistinguishable from the bug.
+TEST_CASE("a craft result no pocket will hold is put down", "[crafting][pocket]") {
+    clear_all_state();
+    std::vector<detached_ptr<item>> tools;
+    add_tool(tools, "hammer");
+    add_tool(tools, "scrap");
+
+    avatar& you = get_avatar();
+    const recipe_id rid("crude_picklock");
+    prep_craft(rid, tools, true);
+    set_time(midday);
+
+    // Every worn pocket refuses, standing in for a result too big to stow. The
+    // tools stay reachable: prep_craft puts them in the flat inventory, which
+    // pocket settings do not touch.
+    REQUIRE(!you.worn.empty());
+    for (item* garment : you.worn) {
+        for (item_pocket& pocket : garment->contents.get_pockets()) {
+            pocket.get_settings().set_disabled(true);
+        }
+    }
+    get_map().i_clear(you.bub_pos());
+
+    you.learn_recipe(&rid.obj());
+    you.make_craft(rid, 1);
+    REQUIRE(you.activity);
+    while (you.activity && you.activity->id() == activity_id("ACT_CRAFT")) {
+        you.moves = 100;
+        you.activity->do_turn(you);
+    }
+
+    const itype_id picklock("crude_picklock");
+    const auto is_result = [&picklock](const item& it) { return it.typeId() == picklock; };
+    CHECK(you.items_with(is_result).empty());
+    for (const tripoint_bub_ms& tile : closest_points_first(you.bub_pos(), 2)) {
+        for (const item* it : get_map().i_at(tile)) {
+            INFO("at " << (tile - you.bub_pos()).raw().to_string() << ": " << it->typeId().str());
+        }
+    }
+    const map_stack underfoot = get_map().i_at(you.bub_pos());
+    const bool put_down = std::ranges::any_of(
+        underfoot, [&picklock](const item* it) { return it->typeId() == picklock; });
+    CHECK(put_down);
 }

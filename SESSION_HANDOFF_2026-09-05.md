@@ -492,3 +492,71 @@ documented vision tests at `vision_test.cpp:256`.
   modifier) from the 2026-09-05 playtest still needs its own scoping pass.
 - **Per-pocket `rigid`** remains dead until the JSON is authored and the
   `itype::rigid` gate is removed.
+
+---
+
+## Addendum, 2026-09-06 (2) - vehicle cargo, and crafting stops stashing silently
+
+Follow-up to the trade-overflow work above, after reading what CDDA actually
+does rather than recalling it.
+
+### What CDDA does
+
+CDDA has **no flat inventory** - `Character::inv` survives only as an invlet
+shim, and `try_add()` goes to pockets and nowhere else. So the situation CSE hit
+cannot arise there. `Character::i_add`
+(`../CDDA/src/character_inventory.cpp:451`) runs a fixed ladder: best pocket,
+then wield if hands are free, then `add_item_or_charges` on the ground, and
+finally return `nowhere` if the caller passed `allow_drop = false`. Trade
+(`npctrade.cpp:89`) opts into the whole ladder explicitly. **No menu anywhere on
+the acquisition path.** CDDA's prompts appear only when something already
+carried stops fitting - the reload-overflow menu at
+`../CDDA/src/activity_actor.cpp:8064` is the closest analogue to ours, and it
+offers Wield / Drop with escape meaning drop.
+
+CSE cannot copy that model outright, because CSE still has the flat inventory
+that classic mode is defined in terms of. What was worth stealing was the one
+step CDDA has that CSE lacked everywhere: **vehicle cargo before bare ground**.
+
+### Changes
+
+`src/trade_overflow.{h,cpp}` renamed to **`src/pocket_overflow.{h,cpp}`** - it is
+no longer trade-only. The `trade_overflow` class keeps its name, since it really
+is the per-delivery trade helper.
+
+1. **`pocket_capacity_binds( who )`** hoisted out of `overflow_needs_prompt()`.
+   One predicate, two callers, one place to change the rule: false in classic
+   mode and for anyone wearing nothing with a pocket.
+2. **`drop_here()` now calls `put_into_vehicle_or_drop( ..., too_large, ... )`**
+   instead of `map::add_item_or_charges`. Cargo space wins over the floor, the
+   helper carries its own messaging, and it handles pickup ownership - all three
+   were missing before.
+3. **`crafting.cpp` `set_item_inventory()`**: for the avatar, when
+   `pocket_capacity_binds()`, a result no worn pocket will hold now falls through
+   to `set_item_map_or_vehicle()` with an explanatory message, rather than
+   landing in the flat inventory unannounced. That helper already preferred a
+   vehicle and a workbench over bare ground.
+
+**NPCs deliberately keep the flat-inventory backstop in crafting.** An NPC that
+crafted something too big for its own pockets would otherwise leave it on the
+floor and never think to pick it up again. This is why the crafting guard reads
+`who.is_avatar() && pocket_capacity_binds( who )` rather than the predicate
+alone.
+
+### Verification
+
+Each behaviour was broken and watched to fail:
+
+| Break | Caught by |
+|---|---|
+| crafting strict path disabled | the new crafting test, 2 assertions |
+| `drop_here` reverted to a bare map drop | the new vehicle-cargo test, 2 assertions |
+| `pocket_capacity_binds` returns true always | 2 cases |
+
+**One flaky test was caught and fixed before it shipped.** The crafting test was
+first written against `carver_off`, which is difficulty 4 - so the craft itself
+can fail, yielding nothing, and "nothing on the floor" is indistinguishable from
+the bug being present. It failed one run in five. It now uses `crude_picklock`,
+which has no difficulty and cannot fail: stable over 8 consecutive runs. The
+comment above the test says so, because the next person will be tempted to pick
+a more interesting recipe.

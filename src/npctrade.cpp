@@ -16,7 +16,7 @@
 #include "player.h"
 #include "skill.h"
 #include "string_utils.h"
-#include "trade_overflow.h"
+#include "pocket_overflow.h"
 #include "trade_win.h"
 #include "type_id.h"
 #include "vehicle_selector.h"
