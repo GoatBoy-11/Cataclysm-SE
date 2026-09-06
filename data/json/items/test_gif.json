@@ -1,0 +1,23 @@
+[
+  {
+    "id": "test_gif",
+    "type": "GENERIC",
+    "category": "other",
+    "name": { "str": "test gif" },
+    "description": "A test print for animated show_image GIF playback.  Activate it to view the animation.",
+    "looks_like": "photo_album",
+    "symbol": ",",
+    "color": "light_cyan",
+    "material": [ "paper" ],
+    "weight": "3 g",
+    "volume": "5 ml",
+    "price": "0 cent",
+    "price_postapoc": "0 cent",
+    "use_action": {
+      "type": "show_image",
+      "image": "test_gif.gif",
+      "caption": "Animated GIF test",
+      "mode": "native"
+    }
+  }
+]

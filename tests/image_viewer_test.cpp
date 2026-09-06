@@ -140,3 +140,87 @@ TEST_CASE( "demo_photograph_registers_show_image_use_action", "[show_image][iuse
     // use() returns 0 (no charges consumed), so invoke_item reports false; the contract is that it does not hang.
     you.invoke_item( &held );
 }
+
+TEST_CASE( "uses_spritesheet_animation_requires_full_layout", "[show_image]" )
+{
+    CHECK( !uses_spritesheet_animation( {} ) );
+    CHECK( !uses_spritesheet_animation( { .frame_width = 10 } ) );
+    CHECK( !uses_spritesheet_animation( { .frame_width = 10, .frame_height = 10 } ) );
+    CHECK( uses_spritesheet_animation( { .frame_width = 10, .frame_height = 10, .frame_count = 2 } ) );
+}
+
+TEST_CASE( "spritesheet_columns_default_to_horizontal_strip", "[show_image]" )
+{
+    const auto spec = image_animation_spec {
+        .frame_width = 100,
+        .frame_height = 50,
+        .frame_count = 5,
+    };
+    CHECK( compute_spritesheet_columns( 500, spec ) == 5 );
+    CHECK( compute_spritesheet_columns( 300, spec ) == 3 );
+}
+
+TEST_CASE( "spritesheet_frame_rects_index_left_to_right", "[show_image]" )
+{
+    const auto spec = image_animation_spec {
+        .frame_width = 100,
+        .frame_height = 50,
+        .frame_count = 5,
+        .columns = 2,
+    };
+    const auto first = get_spritesheet_frame_rect( 200, 100, spec, 0 );
+    const auto second = get_spritesheet_frame_rect( 200, 100, spec, 1 );
+    const auto third = get_spritesheet_frame_rect( 200, 100, spec, 2 );
+    REQUIRE( first );
+    REQUIRE( second );
+    REQUIRE( third );
+    CHECK( *first == spritesheet_frame_rect { .pos = point( 0, 0 ), .size = point( 100, 50 ) } );
+    CHECK( *second == spritesheet_frame_rect { .pos = point( 100, 0 ), .size = point( 100, 50 ) } );
+    CHECK( *third == spritesheet_frame_rect { .pos = point( 0, 50 ), .size = point( 100, 50 ) } );
+    CHECK( !get_spritesheet_frame_rect( 200, 100, spec, 5 ) );
+}
+
+TEST_CASE( "advance_image_animation_loops_with_uniform_duration", "[show_image]" )
+{
+    const auto spec = image_animation_spec {
+        .frame_width = 1,
+        .frame_height = 1,
+        .frame_count = 3,
+        .loop = true,
+    };
+    auto state = image_animation_state {};
+    advance_image_animation( state, spec, 250, 100 );
+    CHECK( state.frame_index == 2 );
+    CHECK( state.ms_into_frame == 50 );
+    advance_image_animation( state, spec, 50, 100 );
+    CHECK( state.frame_index == 0 );
+    CHECK( state.ms_into_frame == 0 );
+}
+
+TEST_CASE( "advance_image_animation_holds_last_frame_when_not_looping", "[show_image]" )
+{
+    const auto spec = image_animation_spec {
+        .frame_width = 1,
+        .frame_height = 1,
+        .frame_count = 2,
+        .loop = false,
+    };
+    auto state = image_animation_state {};
+    advance_image_animation( state, spec, 250, 100 );
+    CHECK( state.frame_index == 1 );
+    advance_image_animation( state, spec, 250, 100 );
+    CHECK( state.frame_index == 1 );
+}
+
+TEST_CASE( "show_image_accepts_spritesheet_options_in_test_mode", "[show_image]" )
+{
+    CHECK( show_image( {
+        .image = "test_photo_sheet.png",
+        .animation = {
+            .frame_width = 320,
+            .frame_height = 240,
+            .frame_count = 3,
+            .frame_duration = 120,
+        }
+    } ) );
+}

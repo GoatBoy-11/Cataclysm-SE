@@ -1170,13 +1170,21 @@ All object defined use actions support the following two types.
     "color_swap": true          // Allow the color to be swapped to any other named color
 },
 "use_action": {
-    "type": "show_image",           // Show a PNG overlay until the player dismisses it (Escape or another key).
+    "type": "show_image",           // Show an image overlay until the player dismisses it (Escape or another key).
     "image": "family.png",          // File under gfx/images/ or a loaded mod's images/ (or gfx/images/) folder. `.png` is assumed if omitted.
     "caption": "Summer, 1998",      // Optional caption drawn under the image.
     "mode": "native",               // Optional. `native` (default, 1:1 pixels, centered), `fullscreen` (letterbox to fit), or `scale`.
-    "scale": 2.0                    // Optional. Size multiplier used when `mode` is `scale`. If `scale` is set without `mode`, `scale` mode is inferred.
+    "scale": 2.0,                   // Optional. Size multiplier used when `mode` is `scale`. If `scale` is set without `mode`, `scale` mode is inferred.
+    "frame_width": 320,             // Optional spritesheet frame width in pixels. Requires `frame_height` and `frame_count`.
+    "frame_height": 240,            // Optional spritesheet frame height in pixels.
+    "frame_count": 8,               // Optional number of frames in a PNG spritesheet.
+    "frame_duration": 120,          // Optional frame time in ms for spritesheets, or to override animated GIF/APNG/WebP timing.
+    "columns": 4,                   // Optional spritesheet columns. Defaults to a single horizontal row.
+    "loop": true                    // Optional. Whether animation loops. Defaults to true.
 }
 ```
+
+Animated GIF, APNG, and animated WebP files play automatically when no spritesheet fields are set. PNG spritesheets use one image file with the frame fields above. The same animation fields can be nested under `"animation": { ... }`.
 
 Images are resolved in this order: each loaded mod's `images/` folder, then that mod's `gfx/images/` folder (later mods override earlier ones), then the core `gfx/images/` folder. Path traversal (`..`) is rejected.
 
@@ -1184,8 +1192,16 @@ Lua can show the same overlay without an item:
 
 ```lua
 local ui = require("lib.ui")
-ui.show_image("family.png")
+ui.show_image("family.gif")
 ui.show_image({ image = "family.png", caption = "Summer, 1998", mode = "native" })
+ui.show_image({
+    image = "family_sheet.png",
+    frame_width = 320,
+    frame_height = 240,
+    frame_count = 8,
+    frame_duration = 120,
+    columns = 4,
+})
 ```
 
 ### Random Descriptions

@@ -306,9 +306,50 @@ void cata::detail::reg_game_api( sol::state &lua )
         }, title, radius, failure );
     } );
 
-    DOC( "Show a PNG overlay. Argument is a filename under gfx/images or a mod's images/ folder, or a table { image, caption?, mode?, scale? }. mode is native, fullscreen, or scale. Returns false if the image cannot be found. Dismiss with Escape or another key." );
+    DOC( "Show an image overlay. Argument is a filename under gfx/images or a mod's images/ folder, or a table { image, caption?, mode?, scale?, frame_width?, frame_height?, frame_count?, frame_duration?, columns?, loop?, animation? }. Animated GIF/APNG/WebP files play automatically. PNG spritesheets need frame_width, frame_height, and frame_count. Returns false if the image cannot be found. Dismiss with Escape or another key." );
     luna::set_fx( lib, "show_image", []( const sol::object & arg ) -> bool {
         auto opts = show_image_options{};
+        const auto load_animation_table = []( const sol::table & table, image_animation_options & anim ) {
+            if( const auto nested = table.get<sol::optional<sol::table>>( "animation" ) ) {
+                if( const auto value = nested->get<sol::optional<int>>( "frame_width" ) ) {
+                    anim.frame_width = *value;
+                }
+                if( const auto value = nested->get<sol::optional<int>>( "frame_height" ) ) {
+                    anim.frame_height = *value;
+                }
+                if( const auto value = nested->get<sol::optional<int>>( "frame_count" ) ) {
+                    anim.frame_count = *value;
+                }
+                if( const auto value = nested->get<sol::optional<int>>( "frame_duration" ) ) {
+                    anim.frame_duration = *value;
+                }
+                if( const auto value = nested->get<sol::optional<int>>( "columns" ) ) {
+                    anim.columns = *value;
+                }
+                if( const auto value = nested->get<sol::optional<bool>>( "loop" ) ) {
+                    anim.loop = *value;
+                }
+                return;
+            }
+            if( const auto value = table.get<sol::optional<int>>( "frame_width" ) ) {
+                anim.frame_width = *value;
+            }
+            if( const auto value = table.get<sol::optional<int>>( "frame_height" ) ) {
+                anim.frame_height = *value;
+            }
+            if( const auto value = table.get<sol::optional<int>>( "frame_count" ) ) {
+                anim.frame_count = *value;
+            }
+            if( const auto value = table.get<sol::optional<int>>( "frame_duration" ) ) {
+                anim.frame_duration = *value;
+            }
+            if( const auto value = table.get<sol::optional<int>>( "columns" ) ) {
+                anim.columns = *value;
+            }
+            if( const auto value = table.get<sol::optional<bool>>( "loop" ) ) {
+                anim.loop = *value;
+            }
+        };
         if( arg.is<std::string>() )
         {
             opts.image = arg.as<std::string>();
@@ -333,6 +374,7 @@ void cata::detail::reg_game_api( sol::state &lua )
                     opts.mode = image_display_mode::scale;
                 }
             }
+            load_animation_table( table, opts.animation );
         } else
         {
             throw std::runtime_error( "show_image expects a filename or a table" );

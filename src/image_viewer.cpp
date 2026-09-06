@@ -34,6 +34,7 @@
 
 #if defined( TILES )
 #include "color.h"
+#include "sdl_utils.h"
 #include "sdl_wrappers.h"
 #include "sdltiles.h"
 #endif
@@ -42,6 +43,9 @@ namespace fs = std::filesystem;
 
 namespace
 {
+
+constexpr int default_frame_duration_ms = 100;
+constexpr int max_animation_frames = 256;
 
 auto has_parent_dir( const fs::path &path ) -> bool
 {
@@ -70,7 +74,7 @@ auto to_lower_ascii( std::string value ) -> std::string
 auto has_image_extension( const std::string &path ) -> bool
 {
     static const auto exts = std::unordered_set<std::string> {
-        ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"
+        ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp", ".apng"
     };
     return exts.contains( to_lower_ascii( fs::path( path ).extension().generic_string() ) );
 }
@@ -109,7 +113,29 @@ std::optional<std::string>
     return std::nullopt;
 }
 
+auto frame_duration_for( const image_animation_spec &spec, int frame_index,
+                         int default_ms ) -> int
+{
+    if( !spec.frame_durations_ms.empty() && frame_index >= 0 &&
+        frame_index < static_cast<int>( spec.frame_durations_ms.size() ) ) {
+        const int delay = spec.frame_durations_ms[frame_index];
+        if( delay > 0 ) {
+            return delay;
+        }
+    }
+    return default_ms;
+}
+
 #if defined( TILES )
+
+struct image_viewer_content {
+    point frame_size = point_zero;
+    image_animation_spec spec;
+    SDL_Texture_Ptr atlas;
+    std::vector<SDL_Texture_Ptr> frames;
+    bool uses_spritesheet = false;
+};
+
 struct sdl_render_state_guard {
     const SDL_Renderer_Ptr &renderer;
     point logical_size = point_zero;
@@ -195,22 +221,210 @@ auto draw_image_caption( const std::string &caption, const SDL_Rect &image_rect 
     } );
 }
 
-auto run_image_viewer_modal( const std::string &path, const show_image_options &opts ) -> bool
+auto build_animation_spec( const show_image_options &opts, int frame_width, int frame_height,
+                           int frame_count, std::vector<int> frame_durations_ms ) -> image_animation_spec
 {
-    SDL_Texture_Ptr texture;
-    point image_size;
+    auto spec = image_animation_spec {
+        .frame_width = frame_width,
+        .frame_height = frame_height,
+        .frame_count = frame_count,
+        .columns = opts.animation.columns,
+        .frame_durations_ms = std::move( frame_durations_ms ),
+        .loop = opts.animation.loop,
+    };
+    if( opts.animation.frame_duration > 0 ) {
+        spec.frame_durations_ms.clear();
+    }
+    return spec;
+}
+
+auto load_spritesheet_content( const std::string &path, const show_image_options &opts ) ->
+std::optional<image_viewer_content>
+{
+    const auto &anim = opts.animation;
+    if( anim.frame_width <= 0 || anim.frame_height <= 0 || anim.frame_count <= 1 ) {
+        return std::nullopt;
+    }
+    if( anim.frame_count > max_animation_frames ) {
+        DebugLog( DL::Error, DC::Main ) << "show_image spritesheet exceeds frame limit for '" << path << "'";
+        return std::nullopt;
+    }
+
+    SDL_Surface_Ptr surface;
     try {
-        auto surface = load_image( path.c_str() );
-        image_size = point( surface->w, surface->h );
-        texture = CreateTextureFromSurface( get_sdl_renderer(), surface );
+        surface = load_image( path.c_str() );
     } catch( const std::exception &err ) {
         DebugLog( DL::Error, DC::SDL ) << "show_image failed to load '" << path << "': " << err.what();
-        return false;
+        return std::nullopt;
     }
+
+    const auto columns = compute_spritesheet_columns( surface->w, {
+        .frame_width = anim.frame_width,
+        .frame_height = anim.frame_height,
+        .frame_count = anim.frame_count,
+        .columns = anim.columns,
+    } );
+    const auto rows = ( anim.frame_count + columns - 1 ) / columns;
+    if( surface->w < columns * anim.frame_width || surface->h < rows * anim.frame_height ) {
+        DebugLog( DL::Error, DC::Main ) << "show_image spritesheet '" << path << "' is too small for layout";
+        return std::nullopt;
+    }
+
+    auto atlas = CreateTextureFromSurface( get_sdl_renderer(), surface );
+    if( !atlas ) {
+        DebugLog( DL::Error, DC::SDL ) << "show_image failed to create texture for '" << path << "'";
+        return std::nullopt;
+    }
+
+    return image_viewer_content {
+        .frame_size = point( anim.frame_width, anim.frame_height ),
+        .spec = build_animation_spec( opts, anim.frame_width, anim.frame_height, anim.frame_count, {} ),
+        .atlas = std::move( atlas ),
+        .uses_spritesheet = true,
+    };
+}
+
+auto load_file_animation_content( const std::string &path, const show_image_options &opts ) ->
+std::optional<image_viewer_content>
+{
+    IMG_Animation *const raw_anim = IMG_LoadAnimation( path.c_str() );
+    if( raw_anim == nullptr ) {
+        return std::nullopt;
+    }
+
+    const auto anim = std::unique_ptr<IMG_Animation, decltype( &IMG_FreeAnimation )>( raw_anim,
+    IMG_FreeAnimation );
+    if( anim->count <= 1 || anim->w <= 0 || anim->h <= 0 ) {
+        return std::nullopt;
+    }
+    if( anim->count > max_animation_frames ) {
+        DebugLog( DL::Error, DC::Main ) << "show_image animation exceeds frame limit for '" << path << "'";
+        return std::nullopt;
+    }
+
+    auto durations = std::vector<int> {};
+    if( opts.animation.frame_duration <= 0 && anim->delays != nullptr ) {
+        durations.reserve( anim->count );
+        for( int i = 0; i < anim->count; ++i ) {
+            durations.push_back( anim->delays[i] > 0 ? anim->delays[i] : default_frame_duration_ms );
+        }
+    }
+
+    auto frames = std::vector<SDL_Texture_Ptr> {};
+    frames.reserve( anim->count );
+    const auto &renderer = get_sdl_renderer();
+    for( int i = 0; i < anim->count; ++i ) {
+        if( anim->frames == nullptr || anim->frames[i] == nullptr ) {
+            DebugLog( DL::Error, DC::SDL ) << "show_image missing animation frame in '" << path << "'";
+            return std::nullopt;
+        }
+        SDL_Surface_Ptr frame_surface( SDL_ConvertSurface( anim->frames[i], sdl_color_pixel_format ) );
+        if( !frame_surface ) {
+            DebugLog( DL::Error, DC::SDL ) << "show_image failed to convert animation frame in '" << path << "'";
+            return std::nullopt;
+        }
+        auto texture = CreateTextureFromSurface( renderer, frame_surface );
+        if( !texture ) {
+            DebugLog( DL::Error, DC::SDL ) << "show_image failed to create animation texture for '" << path << "'";
+            return std::nullopt;
+        }
+        frames.emplace_back( std::move( texture ) );
+    }
+
+    return image_viewer_content {
+        .frame_size = point( anim->w, anim->h ),
+        .spec = build_animation_spec( opts, anim->w, anim->h, anim->count, std::move( durations ) ),
+        .frames = std::move( frames ),
+    };
+}
+
+auto load_static_content( const std::string &path, const show_image_options &opts ) ->
+std::optional<image_viewer_content>
+{
+    SDL_Surface_Ptr surface;
+    try {
+        surface = load_image( path.c_str() );
+    } catch( const std::exception &err ) {
+        DebugLog( DL::Error, DC::SDL ) << "show_image failed to load '" << path << "': " << err.what();
+        return std::nullopt;
+    }
+
+    auto texture = CreateTextureFromSurface( get_sdl_renderer(), surface );
     if( !texture ) {
         DebugLog( DL::Error, DC::SDL ) << "show_image failed to create texture for '" << path << "'";
+        return std::nullopt;
+    }
+
+    auto frames = std::vector<SDL_Texture_Ptr> {};
+    frames.emplace_back( std::move( texture ) );
+    return image_viewer_content {
+        .frame_size = point( surface->w, surface->h ),
+        .spec = build_animation_spec( opts, surface->w, surface->h, 1, {} ),
+        .frames = std::move( frames ),
+    };
+}
+
+auto load_image_viewer_content( const std::string &path, const show_image_options &opts ) ->
+std::optional<image_viewer_content>
+{
+    if( uses_spritesheet_animation( opts.animation ) ) {
+        if( auto content = load_spritesheet_content( path, opts ) ) {
+            return content;
+        }
+        return std::nullopt;
+    }
+    if( auto content = load_file_animation_content( path, opts ) ) {
+        return content;
+    }
+    return load_static_content( path, opts );
+}
+
+auto draw_image_frame( const image_viewer_content &content, int frame_index,
+                       const SDL_Rect &buffer_rect ) -> void
+{
+    const auto &renderer = get_sdl_renderer();
+    const auto render_state_guard = sdl_render_state_guard( renderer );
+    SDL_FRect dst_rect{};
+    SDL_RectToFRect( &buffer_rect, &dst_rect );
+
+    if( content.uses_spritesheet && content.atlas ) {
+        float atlas_w = 0.0f;
+        float atlas_h = 0.0f;
+        SDL_GetTextureSize( content.atlas.get(), &atlas_w, &atlas_h );
+        const auto frame_rect = get_spritesheet_frame_rect( static_cast<int>( atlas_w ),
+                                static_cast<int>( atlas_h ), content.spec, frame_index );
+        if( !frame_rect ) {
+            return;
+        }
+        const SDL_FRect src_rect {
+            static_cast<float>( frame_rect->pos.x ),
+            static_cast<float>( frame_rect->pos.y ),
+            static_cast<float>( frame_rect->size.x ),
+            static_cast<float>( frame_rect->size.y ),
+        };
+        RenderCopy( renderer, content.atlas, &src_rect, &dst_rect );
+        return;
+    }
+
+    if( frame_index < 0 || frame_index >= static_cast<int>( content.frames.size() ) ||
+        !content.frames[frame_index] ) {
+        return;
+    }
+    RenderCopy( renderer, content.frames[frame_index], nullptr, &dst_rect );
+}
+
+auto run_image_viewer_modal( const std::string &path, const show_image_options &opts ) -> bool
+{
+    auto loaded = load_image_viewer_content( path, opts );
+    if( !loaded ) {
         return false;
     }
+    auto content = std::move( *loaded );
+
+    const int playback_frame_duration = opts.animation.frame_duration > 0 ? opts.animation.frame_duration :
+                                        default_frame_duration_ms;
+    auto anim_state = image_animation_state {};
+    auto last_tick = SDL_GetTicks();
 
     ui_adaptor ui;
     ui.on_screen_resize( [&]( ui_adaptor & ui ) {
@@ -219,7 +433,7 @@ auto run_image_viewer_modal( const std::string &path, const show_image_options &
     ui.mark_resize();
     ui.on_redraw( [&]( ui_adaptor & /*ui*/ ) {
         const auto dest = get_image_dest_rect( {
-            .image_size = image_size,
+            .image_size = content.frame_size,
             .screen_size = get_sdl_window_size(),
             .mode = opts.mode,
             .scale = opts.scale
@@ -231,11 +445,7 @@ auto run_image_viewer_modal( const std::string &path, const show_image_options &
         if( !buffer_rect ) {
             return;
         }
-        const auto &renderer = get_sdl_renderer();
-        const auto render_state_guard = sdl_render_state_guard( renderer );
-        SDL_FRect f_rect{};
-        SDL_RectToFRect( &*buffer_rect, &f_rect );
-        RenderCopy( renderer, texture, nullptr, &f_rect );
+        draw_image_frame( content, anim_state.frame_index, *buffer_rect );
         draw_image_caption( opts.caption.translated(), *buffer_rect );
     } );
 
@@ -249,6 +459,14 @@ auto run_image_viewer_modal( const std::string &path, const show_image_options &
     ctxt.register_action( "SELECT" );
 
     while( true ) {
+        const auto now = SDL_GetTicks();
+        const auto elapsed = now - last_tick;
+        last_tick = now;
+        if( elapsed > 0 ) {
+            advance_image_animation( anim_state, content.spec, static_cast<int>( elapsed ),
+                                     playback_frame_duration );
+        }
+
         ui_manager::redraw();
         refresh_display();
         const auto action = ctxt.handle_input( 5 );
@@ -290,6 +508,108 @@ auto image_display_mode_from_string( const std::string &str ) -> std::optional<i
         return image_display_mode::scale;
     }
     return std::nullopt;
+}
+
+auto uses_spritesheet_animation( const image_animation_options &opts ) -> bool
+{
+    return opts.frame_width > 0 && opts.frame_height > 0 && opts.frame_count > 1;
+}
+
+auto load_image_animation_options( const JsonObject &jo, image_animation_options &opts ) -> void
+{
+    if( jo.has_object( "animation" ) ) {
+        JsonObject source = jo.get_object( "animation" );
+        assign( source, "frame_width", opts.frame_width );
+        assign( source, "frame_height", opts.frame_height );
+        assign( source, "frame_count", opts.frame_count );
+        assign( source, "frame_duration", opts.frame_duration );
+        assign( source, "columns", opts.columns );
+        if( source.has_bool( "loop" ) ) {
+            opts.loop = source.get_bool( "loop" );
+        }
+        return;
+    }
+
+    assign( jo, "frame_width", opts.frame_width );
+    assign( jo, "frame_height", opts.frame_height );
+    assign( jo, "frame_count", opts.frame_count );
+    assign( jo, "frame_duration", opts.frame_duration );
+    assign( jo, "columns", opts.columns );
+    if( jo.has_bool( "loop" ) ) {
+        opts.loop = jo.get_bool( "loop" );
+    }
+}
+
+auto compute_spritesheet_columns( int sheet_width, const image_animation_spec &spec ) -> int
+{
+    if( spec.frame_width <= 0 || sheet_width <= 0 ) {
+        return 0;
+    }
+    if( spec.columns > 0 ) {
+        return spec.columns;
+    }
+    return std::max( 1, sheet_width / spec.frame_width );
+}
+
+auto get_spritesheet_frame_rect( int sheet_width, int sheet_height, const image_animation_spec &spec,
+                                 int frame_index ) -> std::optional<spritesheet_frame_rect>
+{
+    if( frame_index < 0 || frame_index >= spec.frame_count || spec.frame_width <= 0 ||
+        spec.frame_height <= 0 ) {
+        return std::nullopt;
+    }
+
+    const auto columns = compute_spritesheet_columns( sheet_width, spec );
+    if( columns <= 0 ) {
+        return std::nullopt;
+    }
+
+    const auto col = frame_index % columns;
+    const auto row = frame_index / columns;
+    const auto origin = point( col * spec.frame_width, row * spec.frame_height );
+    if( origin.x + spec.frame_width > sheet_width || origin.y + spec.frame_height > sheet_height ) {
+        return std::nullopt;
+    }
+
+    return spritesheet_frame_rect {
+        .pos = origin,
+        .size = point( spec.frame_width, spec.frame_height )
+    };
+}
+
+auto advance_image_animation( image_animation_state &state, const image_animation_spec &spec,
+                              int elapsed_ms, int default_frame_duration_ms ) -> void
+{
+    if( spec.frame_count <= 1 || elapsed_ms <= 0 ) {
+        return;
+    }
+
+    auto remaining = elapsed_ms;
+    while( remaining > 0 ) {
+        const int duration = frame_duration_for( spec, state.frame_index, default_frame_duration_ms );
+        if( duration <= 0 ) {
+            return;
+        }
+
+        const int until_next = duration - state.ms_into_frame;
+        if( remaining < until_next ) {
+            state.ms_into_frame += remaining;
+            return;
+        }
+
+        remaining -= until_next;
+        state.ms_into_frame = 0;
+
+        if( state.frame_index + 1 < spec.frame_count ) {
+            state.frame_index++;
+        } else if( spec.loop ) {
+            state.frame_index = 0;
+        } else {
+            state.frame_index = spec.frame_count - 1;
+            state.ms_into_frame = duration - 1;
+            return;
+        }
+    }
 }
 
 auto get_image_search_roots() -> std::vector<std::string>
@@ -415,6 +735,29 @@ void show_image_actor::load( const JsonObject &jo )
     if( mode == image_display_mode::scale && scale <= 0.0 ) {
         jo.throw_error( "scale must be greater than 0", "scale" );
     }
+
+    load_image_animation_options( jo, animation );
+    if( uses_spritesheet_animation( animation ) ) {
+        if( animation.frame_width <= 0 ) {
+            jo.throw_error( "frame_width must be greater than 0 for spritesheet animation", "frame_width" );
+        }
+        if( animation.frame_height <= 0 ) {
+            jo.throw_error( "frame_height must be greater than 0 for spritesheet animation", "frame_height" );
+        }
+        if( animation.frame_count <= 1 ) {
+            jo.throw_error( "frame_count must be greater than 1 for spritesheet animation", "frame_count" );
+        }
+        if( animation.frame_count > max_animation_frames ) {
+            jo.throw_error( string_format( "frame_count must be %d or less", max_animation_frames ),
+                            "frame_count" );
+        }
+        if( animation.frame_duration < 0 ) {
+            jo.throw_error( "frame_duration must be 0 or greater", "frame_duration" );
+        }
+        if( animation.columns < 0 ) {
+            jo.throw_error( "columns must be 0 or greater", "columns" );
+        }
+    }
 }
 
 int show_image_actor::use( player &p, item &, bool /*t*/, const tripoint_bub_ms & ) const
@@ -426,7 +769,8 @@ int show_image_actor::use( player &p, item &, bool /*t*/, const tripoint_bub_ms 
     .image = image,
     .caption = caption,
     .mode = mode,
-    .scale = scale
+    .scale = scale,
+    .animation = animation
 } ) ) {
         p.add_msg_if_player( m_info, _( "You can't make anything out." ) );
     }

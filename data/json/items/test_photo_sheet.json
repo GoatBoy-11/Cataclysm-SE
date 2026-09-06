@@ -1,0 +1,27 @@
+[
+  {
+    "id": "test_photo_sheet",
+    "type": "GENERIC",
+    "category": "other",
+    "name": { "str": "test photo sheet" },
+    "description": "A test spritesheet for the show_image animation fields.",
+    "looks_like": "photo_album",
+    "symbol": ",",
+    "color": "light_cyan",
+    "material": [ "paper" ],
+    "weight": "3 g",
+    "volume": "5 ml",
+    "price": "0 cent",
+    "price_postapoc": "0 cent",
+    "use_action": {
+      "type": "show_image",
+      "image": "test_photo_sheet.png",
+      "caption": "Spritesheet test",
+      "mode": "native",
+      "frame_width": 320,
+      "frame_height": 240,
+      "frame_count": 3,
+      "frame_duration": 250
+    }
+  }
+]
