@@ -610,12 +610,18 @@ void map::on_submap_loaded( const tripoint_abs_sm &p, const dimension_id &dim_id
     get_mapbuffer().refresh_active_item_submap_index( p, resident_item_lookup() );
 
     // Register any funnel traps so fill_water_collectors can skip the mapbuffer scan.
+    // Guard against duplicate registration: on_submap_loaded() may be replayed for
+    // already-resident submaps (e.g. game::load_map() after m.load() cleared the
+    // list, or submap_loader.update() firing for the bubble), and funnel_locations_
+    // is a vector with no natural dedup — a double entry would fill at 2x rate (#10171).
     if( sm != nullptr && !sm->trap_cache.empty() ) {
-        std::ranges::for_each( sm->trap_cache, [&]( const point_sm_ms & lp ) {
-            if( sm->get_trap( lp ).obj().is_funnel() ) {
-                funnel_locations_.emplace_back( p, lp );
+        for( const point_sm_ms &lp : sm->trap_cache ) {
+            if( sm->get_effective_trap( lp ).obj().is_funnel() ) {
+                if( !std::ranges::contains( funnel_locations_, std::pair( p, lp ) ) ) {
+                    funnel_locations_.emplace_back( p, lp );
+                }
             }
-        } );
+        }
     }
 
 }

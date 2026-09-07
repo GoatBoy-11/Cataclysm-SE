@@ -361,7 +361,9 @@ static void fill_water_collectors( int mmPerHour, bool acid )
         if( !sm ) {
             return;
         }
-        const trap &tr = sm->get_trap( lp ).obj();
+        // Resolve the effective trap: terrain-attached funnels (e.g. gutter
+        // downspouts) live in ter_t::trap, not the standalone trp array.
+        const trap &tr = sm->get_effective_trap( lp ).obj();
         if( !tr.is_funnel() ) {
             return;
         }

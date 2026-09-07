@@ -89,6 +89,7 @@
 #include "drop_token.h"
 #include "fluid_grid.h"
 #include "editmap.h"
+#include "enchantments/enchantment_vision.h"
 #include "enums.h"
 #include "event.h"
 #include "event_bus.h"
@@ -844,6 +845,17 @@ void game::load_map( const point_abs_sm &pos_sm, const bool pump_events )
     // entities before the map's listener clears cached submap pointers.
     submap_loader.add_listener( this );
     submap_loader.add_listener( &m );
+
+    // m.load() above cleared map::funnel_locations_ and the map listener was
+    // only just registered, so the submaps loaded by m.load() never fired
+    // on_submap_loaded() for it.  Replay on_submap_loaded() for every
+    // currently-resident submap so funnel traps (e.g. gutter downspouts) are
+    // registered and fill_water_collectors() can find them (#10171).
+    for( auto &[raw_pos, sm_ptr] : MAPBUFFER_REGISTRY.get( new_dim_id ) ) {
+        if( sm_ptr ) {
+            m.on_submap_loaded( tripoint_abs_sm( raw_pos ), new_dim_id );
+        }
+    }
 
     const auto bubble_begin = pos_sm;
     const auto bubble_end = bubble_begin + point_rel_sm( g_mapsize, g_mapsize );
@@ -4860,7 +4872,8 @@ static void draw_critter_internal( const catacurses::window &w, const Creature &
         return;
     }
 
-    if( u.sees_with_infrared( critter ) || u.sees_with_specials( critter ) ) {
+    if( u.sees_with_infrared( critter ) ||
+        u.sees_with_specials( critter ) != enchantment_vision_id::NULL_ID() ) {
         mvwputch( w, point( mx, my ), c_red, '?' );
     }
 }
@@ -5575,32 +5588,36 @@ auto game::mon_info_update() -> void
             }
         }
 
-        //Safemode monster check
-        const auto safemode_state = get_safemode().check_monster( critter.name(), player_attitude,
-                                    mon_dist );
+        // Safemode monster check
+        // Dont do different z-level -> They are not threats, yet can be seen
+        // Via special vision effects such as `ANTENNAE` or `DRONE_CAM`
+        if( critter.bub_pos().z() == u.bub_pos().z() ) {
+            const auto safemode_state = get_safemode().check_monster( critter.name(), player_attitude,
+                                        mon_dist );
 
-        if( ( !safemode_empty && safemode_state == RULE_BLACKLISTED ) || ( safemode_empty &&
-                ( MATT_ATTACK == matt || MATT_FOLLOW == matt ) ) ) {
-            if( index < 8 && critter.sees( g->u ) ) {
-                dangerous[index] = true;
-            }
-
-            if( !safemode_empty || mon_dist <= iProxyDist ) {
-                auto passmon = false;
-                if( critter.ignoring > 0 ) {
-                    if( safe_mode != SAFE_MODE_ON ) {
-                        critter.ignoring = 0;
-                    } else if( ( sm_ignored_time == 0_seconds || ( critter.lastseen_turn &&
-                                 *critter.lastseen_turn > calendar::turn - sm_ignored_time ) ) &&
-                               ( mon_dist > critter.ignoring / 2 || mon_dist < 6 ) ) {
-                        passmon = true;
-                    }
-                    critter.lastseen_turn = calendar::turn;
+            if( ( !safemode_empty && safemode_state == RULE_BLACKLISTED ) || ( safemode_empty &&
+                    ( MATT_ATTACK == matt || MATT_FOLLOW == matt ) ) ) {
+                if( index < 8 && critter.sees( g->u ) ) {
+                    dangerous[index] = true;
                 }
 
-                if( !passmon ) {
-                    newseen++;
-                    new_seen_mon.push_back( mon_ptr );
+                if( !safemode_empty || mon_dist <= iProxyDist ) {
+                    auto passmon = false;
+                    if( critter.ignoring > 0 ) {
+                        if( safe_mode != SAFE_MODE_ON ) {
+                            critter.ignoring = 0;
+                        } else if( ( sm_ignored_time == 0_seconds || ( critter.lastseen_turn &&
+                                     *critter.lastseen_turn > calendar::turn - sm_ignored_time ) ) &&
+                                   ( mon_dist > critter.ignoring / 2 || mon_dist < 6 ) ) {
+                            passmon = true;
+                        }
+                        critter.lastseen_turn = calendar::turn;
+                    }
+
+                    if( !passmon ) {
+                        newseen++;
+                        new_seen_mon.push_back( mon_ptr );
+                    }
                 }
             }
         }
@@ -8980,10 +8997,16 @@ void game::print_all_tile_info( const tripoint_bub_ms &lp, const catacurses::win
 
             if( creature != nullptr ) {
                 std::vector<std::string> buf;
-                if( u.sees_with_infrared( *creature ) ) {
+                enchantment_vision_id special = u.sees_with_specials( *creature );
+                if( special != enchantment_vision_id::NULL_ID() ) {
+                    if( special->use_normal_mon_tile() ) {
+                        int vLines = last_line - line;
+                        line = creature->print_info( w_look, ++line, vLines, column );
+                    } else {
+                        buf.emplace_back( special->get_mon_desc( *creature ) );
+                    }
+                } else if( u.sees_with_infrared( *creature ) ) {
                     creature->describe_infrared( buf );
-                } else if( u.sees_with_specials( *creature ) ) {
-                    creature->describe_specials( buf );
                 }
                 for( const std::string &s : buf ) {
                     mvwprintw( w_look, point( 1, ++line ), s );
