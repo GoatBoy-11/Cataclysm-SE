@@ -110,6 +110,100 @@ linting uses the VS tree's
 Adding a file to `tests/` requires re-running `cmake --preset cse-msvc`: the `tests/`
 glob has no `CONFIGURE_DEPENDS`, unlike `src/`.
 
+## Building in the Linux web container (Claude Code on the web)
+
+A web session runs on Ubuntu 24.04 in an ephemeral container at
+`/home/user/Cataclysm-SE`, cloned fresh from `origin`. **None of the Windows
+guidance above applies there** — no MSVC, no `F:` drive, no repo-root exe, no
+playtest. What it can do is configure, build and run the whole test suite, and
+that was verified end to end on 2026-09-08.
+
+The curses preset is the target; tiles needs a display the container has not got.
+Everything below is needed, and each line is a thing that failed without it.
+
+```sh
+apt-get install -y --no-install-recommends \
+    libncursesw5-dev libsqlite3-dev zlib1g-dev gettext mold ccache astyle \
+    libc++-18-dev libc++abi-18-dev
+git clone --depth 1 --branch release-3.4.8 https://github.com/libsdl-org/SDL.git /tmp/SDL3
+
+cmake --preset ci-curses \
+    -DLIBBACKTRACE=OFF -DBACKTRACE=OFF \
+    -DFETCHCONTENT_SOURCE_DIR_SDL3=/tmp/SDL3 \
+    -DSDL_X11=OFF -DSDL_WAYLAND=OFF -DSDL_VULKAN=OFF \
+    -DSDL_OPENGL=OFF -DSDL_OPENGLES=OFF -DSDL_UNIX_CONSOLE_BUILD=ON \
+    -DCMAKE_CXX_FLAGS=-stdlib=libc++ -DCMAKE_EXE_LINKER_FLAGS=-stdlib=libc++
+cmake --build build --target cata_test --parallel 4
+```
+
+Four traps, in the order they bite:
+
+1. **SDL3 is fetched even for the curses build** (`CMakeLists.txt:417`, for the
+   compute backend), and the container's egress proxy answers GitHub's release
+   tarball URL with **403**. `git clone` of the same repo is allowed, so clone the
+   tag and point `FETCHCONTENT_SOURCE_DIR_SDL3` at it.
+2. **SDL3 then refuses to configure without a window system.** Turning X11 and
+   Wayland off is not enough — it fails the "you probably didn't mean this" check
+   until `SDL_UNIX_CONSOLE_BUILD=ON` says you did.
+3. **The stock toolchain cannot compile this codebase.** It is C++23
+   (`CMAKE_CXX_STANDARD 23`) and CI uses **clang 22**, which the container cannot
+   install: `apt.llvm.org` is blocked by the egress policy. Of what apt does offer:
+   - clang 18 + the default libstdc++ 13 → no `std::ranges::to` (`action.cpp:1111`).
+   - clang 18 + libstdc++ 14 (installing `g++-14` is enough to retarget it) gets
+     `ranges::to` but still **no `std::expected`** (`creature_functions.h:33`):
+     libstdc++ gates `<expected>` on `__cpp_concepts >= 202002L` and clang 18
+     defines `201907L`.
+   - **g++-14** gets past both and then dies on
+     `enchantment_condition.cpp:275`, "conflicting declaration `auto
+     condition_functions`" — the tree has never been built with GCC.
+   - **clang 18 + libc++ 18 builds clean.** That is the only combination that
+     works, and it is why `-stdlib=libc++` is in the command above.
+4. **`ccache` and `mold` are named by the preset**, so they must exist or configure
+   fails on the first target.
+
+A cold build is about 25 minutes on 4 cores. The suite takes about 15.
+
+Run it from the repo root, with the CPU backend for the same reason as on Windows —
+there is no GPU here either:
+
+```sh
+CATA_TEST_COMPUTE_ACCELERATION=cpu ./build/tests/cata_test "[optional-filter]"
+```
+
+**A full run here reports 1,187 cases, 1,181 passed, 6 failed.** Two more than the
+Windows count, and neither extra one is a CSE defect:
+
+- The **four documented vision tests** fail exactly as they do under the Windows
+  CPU backend.
+- **`lcmatch_uses_pinyin_search_when_enabled`** (`pinyin_test.cpp:19`) fails for
+  want of locale data the container does not carry.
+- **`map spawn_items nests pocket loot before placing on the tile`**
+  (`loot_pocket_nesting_test.cpp:60`) fails because it is **not portable**, and
+  this is worth fixing. It pins `rng_set_engine_seed( 4 )` and then relies on
+  `one_in()` — through `std::uniform_int_distribution`, whose sequence is
+  **implementation-defined**. Seed 4 happens to roll a nesting on MSVC and not
+  under libc++. The two sibling tests in that file pass, because they call
+  `nest_spawned_loot_in_containers()` with an explicit `1/1` chance instead of
+  rolling. The fix is to stop depending on the roll, not to hunt for a seed that
+  works in two standard libraries.
+
+**The fork has no CI.** GitHub Actions has never run on
+`GoatBoy-11/Cataclysm-SE` — `list_workflow_runs` returns zero for every workflow.
+Nothing but a local run has ever checked CSE, on any platform, which is why a
+non-portable test could sit in `main` unnoticed. A web session is currently the
+only thing that builds CSE with a compiler that is not MSVC.
+
+### What a web session can and cannot do
+
+Can: read and change C++, JSON and Lua; build; run the suite and read real
+failures; merge upstream BN; write and review plans and handoffs; commit and push.
+
+Cannot: **playtest**. No tiles build, no display, no repo-root exe, no
+`rotate-game-exe.sh`, and the container is discarded when the session ends. Given
+how much of this project's real defect-finding has come from the owner's playtests
+and not from the suite, treat anything a web session ships as needing a playtest on
+the Windows machine before it is believed.
+
 ## Testing
 
 **This machine has no working SDL_GPU device.** The test binary defaults to the
