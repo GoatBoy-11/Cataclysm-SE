@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <utility>
 #include <set>
@@ -135,8 +136,13 @@ class Item_spawn_data
          * all linked groups.
          */
         virtual bool remove_item( const itype_id &itemid ) = 0;
-        virtual bool replace_item( const itype_id &itemid, const itype_id &replacementid,
-                                   const std::string &context ) = 0;
+        /**
+         * Apply every item migration in @p migrations to this and all linked
+         * groups, in a single traversal.  Items absent from the map are left
+         * alone.  @p context names this group for migration warnings.
+         */
+        virtual bool replace_items( const std::unordered_map<itype_id, itype_id> &migrations,
+                                    const std::string &context ) = 0;
         virtual bool has_item( const itype_id &itemid ) const = 0;
 
         virtual std::set<const itype *> every_item() const = 0;
@@ -205,8 +211,8 @@ class Item_modifier
         detached_ptr<item> modify( detached_ptr<item> &&new_item ) const;
         void check_consistency( const std::string &context ) const;
         bool remove_item( const itype_id &itemid );
-        bool replace_item( const itype_id &itemid, const itype_id &replacementid,
-                           const std::string &context );
+        bool replace_items( const std::unordered_map<itype_id, itype_id> &migrations,
+                            const std::string &context );
 
         // Currently these always have the same chance as the item group it's part of, but
         // theoretically it could be defined per-item / per-group.
@@ -255,8 +261,8 @@ class Single_item_creator : public Item_spawn_data
         detached_ptr<item>create_single( const time_point &birthday, RecursionList &rec ) const override;
         void check_consistency( const std::string &context ) const override;
         bool remove_item( const itype_id &itemid ) override;
-        bool replace_item( const itype_id &itemid, const itype_id &replacementid,
-                           const std::string &context ) override;
+        bool replace_items( const std::unordered_map<itype_id, itype_id> &migrations,
+                            const std::string &context ) override;
 
         bool has_item( const itype_id &itemid ) const override;
         std::set<const itype *> every_item() const override;
@@ -306,8 +312,8 @@ class Item_group : public Item_spawn_data
         bool remove_item( const itype_id &itemid ) override;
         bool remove_specific_item( const std::string &itemid );
         bool remove_specific_group( const std::string &itemid );
-        bool replace_item( const itype_id &itemid, const itype_id &replacementid,
-                           const std::string &context ) override;
+        bool replace_items( const std::unordered_map<itype_id, itype_id> &migrations,
+                            const std::string &context ) override;
         bool has_item( const itype_id &itemid ) const override;
         std::set<const itype *> every_item() const override;
         std::vector<detached_ptr<item>> every_item_modified( bool modify = true ) const override;

@@ -353,27 +353,28 @@ bool Single_item_creator::remove_item( const itype_id &itemid )
     return type == S_NONE;
 }
 
-bool Single_item_creator::replace_item( const itype_id &itemid, const itype_id &replacementid,
-                                        const std::string &context )
+bool Single_item_creator::replace_items(
+    const std::unordered_map<itype_id, itype_id> &migrations, const std::string &context )
 {
     if( modifier ) {
-        if( modifier->replace_item( itemid, replacementid, context ) ) {
+        if( modifier->replace_items( migrations, context ) ) {
             return true;
         }
     }
     if( type == S_ITEM ) {
-        if( itemid.str() == id ) {
+        const auto migrated = migrations.find( itype_id( id ) );
+        if( migrated != migrations.end() ) {
             if( get_option<bool>( "MIGRATION_CHECKS" ) ) {
-                debugmsg( "Migrated item: %s in ( %s ), should be migrated to %s", itemid,
-                          context, replacementid );
+                debugmsg( "Migrated item: %s in ( %s ), should be migrated to %s", migrated->first,
+                          context, migrated->second );
             }
-            id = replacementid.str();
+            id = migrated->second.str();
             return true;
         }
     } else if( type == S_ITEM_GROUP ) {
         Item_spawn_data *isd = item_controller->get_group( item_group_id( id ) );
         if( isd != nullptr ) {
-            isd->replace_item( itemid, replacementid, "in itemgroup " + id );
+            isd->replace_items( migrations, "in itemgroup " + id );
         }
     }
     return type == S_NONE;
@@ -681,14 +682,14 @@ bool Item_modifier::remove_item( const itype_id &itemid )
     return false;
 }
 
-bool Item_modifier::replace_item( const itype_id &itemid, const itype_id &replacementid,
-                                  const std::string &context )
+bool Item_modifier::replace_items(
+    const std::unordered_map<itype_id, itype_id> &migrations, const std::string &context )
 {
     if( ammo != nullptr ) {
-        ammo->replace_item( itemid, replacementid, "ammo of " + context );
+        ammo->replace_items( migrations, "ammo of " + context );
     }
     if( container != nullptr ) {
-        if( container->replace_item( itemid, replacementid, "container of " + context ) ) {
+        if( container->replace_items( migrations, "container of " + context ) ) {
             return true;
         }
     }
@@ -857,11 +858,11 @@ bool Item_group::remove_specific_group( const std::string &itemid )
     return items.empty();
 }
 
-bool Item_group::replace_item( const itype_id &itemid, const itype_id &replacementid,
-                               const std::string &context )
+bool Item_group::replace_items(
+    const std::unordered_map<itype_id, itype_id> &migrations, const std::string &context )
 {
     for( const std::unique_ptr<Item_spawn_data> &elem : items ) {
-        ( elem )->replace_item( itemid, replacementid, "item in " + context );
+        ( elem )->replace_items( migrations, "item in " + context );
     }
     return items.empty();
 }

@@ -1074,6 +1074,39 @@ void Item_factory::finalize()
     }
 }
 
+/**
+ * Resolve the migration table into a flat item -> final replacement map.
+ *
+ * Migrations can chain, ie. a migrates to b and b in turn migrates to c.  Applying
+ * them one at a time only resolved such a chain when the ids happened to sort in
+ * chain order; resolving up front makes the outcome independent of iteration order.
+ * Migrations whose immediate replacement does not exist are dropped, matching the
+ * per-migration validity check below.
+ */
+static std::unordered_map<itype_id, itype_id> flatten_migrations(
+    const std::map<itype_id, migration> &migrations,
+    const std::unordered_map<itype_id, itype> &templates )
+{
+    std::unordered_map<itype_id, itype_id> flat;
+    for( const std::pair<const itype_id, migration> &migrate : migrations ) {
+        if( !templates.contains( migrate.second.replace ) ) {
+            continue;
+        }
+        itype_id dest = migrate.second.replace;
+        // Follow the chain, stopping on a cycle or on a link with no valid replacement.
+        std::set<itype_id> seen{ migrate.first };
+        while( seen.insert( dest ).second ) {
+            const auto next = migrations.find( dest );
+            if( next == migrations.end() || !templates.contains( next->second.replace ) ) {
+                break;
+            }
+            dest = next->second.replace;
+        }
+        flat.emplace( migrate.first, dest );
+    }
+    return flat;
+}
+
 void Item_factory::finalize_item_blacklist()
 {
     for( const itype_id &blackout : item_blacklist ) {
@@ -1106,14 +1139,21 @@ void Item_factory::finalize_item_blacklist()
         }
     }
 
+    // Rewrite the item groups in a single traversal.  Walking every group once per
+    // migration is quadratic, and with ~190 migrations over ~4900 groups it was by
+    // far the most expensive step of loading the game.
+    const std::unordered_map<itype_id, itype_id> flat_migrations =
+        flatten_migrations( migrations, m_templates );
+    if( !flat_migrations.empty() ) {
+        for( std::pair<const item_group_id, std::unique_ptr<Item_spawn_data>> &g : m_template_groups ) {
+            g.second->replace_items( flat_migrations, g.first.str() );
+        }
+    }
+
     for( const std::pair<const itype_id, migration> &migrate : migrations ) {
         if( !m_templates.contains( migrate.second.replace ) ) {
             debugmsg( "Replacement item for migration %s does not exist", migrate.first.c_str() );
             continue;
-        }
-
-        for( std::pair<const item_group_id, std::unique_ptr<Item_spawn_data>> &g : m_template_groups ) {
-            g.second->replace_item( migrate.first, migrate.second.replace, g.first.str() );
         }
 
         // replace migrated items in requirements

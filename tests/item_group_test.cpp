@@ -2,9 +2,13 @@
 #include "flag.h"
 #include "item.h"
 #include "item_group.h"
+#include "itype.h"
 #include "stringmaker.h"
 
 #include <algorithm>
+#include <set>
+#include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -157,4 +161,28 @@ TEST_CASE("item_modifier modifies charges for item", "[item_group]") {
             }
         }
     }
+}
+
+
+TEST_CASE("replace_items migrates every entry in a single pass", "[item_group]") {
+    Item_group group(Item_group::G_COLLECTION, 100, 0, 0);
+    group.add_item_entry(itype_id("glock_19"), 100);
+    group.add_item_entry(itype_id("matches"), 100);
+
+    // The map is expected to arrive already flattened, so each entry is visited
+    // once: matches becomes glock_19 and is not migrated on to the vest.
+    const std::unordered_map<itype_id, itype_id> migrations = {
+        { itype_id("glock_19"), itype_id("modularvestceramic") },
+        { itype_id("matches"), itype_id("glock_19") },
+    };
+    group.replace_items(migrations, "test group");
+
+    std::set<std::string> ids;
+    for (const itype* type : group.every_item()) {
+        ids.insert(type->get_id().str());
+    }
+
+    CHECK(ids.count("modularvestceramic") == 1);
+    CHECK(ids.count("glock_19") == 1);
+    CHECK(ids.count("matches") == 0);
 }
