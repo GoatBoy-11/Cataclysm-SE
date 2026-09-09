@@ -38,7 +38,7 @@ Everything below is CSE-only. Anything not listed here behaves as Bright Nights 
 - **Item pockets.** Dark Days Ahead's pocket system, ported to Bright Nights. Containers and
   clothing hold items in real pockets bounded by volume, weight, length and flags, with curated
   pocket data for 114 wearables and synthesized pockets for magazines, mods and corpses. Legacy
-  saves are read and converted. Switch it off per world with **Item pocket system**.
+  saves are read and converted. This is fully optional but must be set at world generation.
 - **Pocket handling.** Inventory shows pocket contents nested, items you pick up are routed into
   worn pockets, and pockets can be organised with reusable presets, sealed, or set to preserve.
   **Choosing an item's pocket** adds a prompt at pickup. The organiser is bound to `o` and `P`.
@@ -46,12 +46,9 @@ Everything below is CSE-only. Anything not listed here behaves as Bright Nights 
   side buttons. Toggle with **Enable mouse**.
 - **Images in game.** Items and Lua scripts can raise a modal image overlay, including animated
   GIFs and spritesheets.
-- **New traits.** A set of personality traits not found upstream, among them Coward's Sprint and a
-  considerably expanded Anime Protagonist.
+- **New traits.** New personality traits, with more planned to be added.
 - **Imported items.** The Dark Days Ahead wallet family and wallet-sized money, resized ammo boxes,
   assorted small tools, and the item length values that make pocket limits bite.
-- **Extra art.** civilian_variety sprites and ChibiUltica sheets grafted into the bundled MSX++
-  UnDeadPeople tileset.
 - **Faster loading.** Item migrations are applied in a single pass over the item groups, cutting
   roughly 7.5 seconds off loading a world.
 
