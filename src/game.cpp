@@ -11978,12 +11978,14 @@ static void butcher_submenu( const std::vector<item *> &corpses, int corpse = -1
     avatar &you = get_avatar();
     const inventory &inv = you.crafting_inventory();
 
-    const int factor = inv.max_quality( quality_id( "BUTCHER" ) );
+    const int factor = std::max( you.max_quality( quality_id( "BUTCHER" ) ),
+                                 inv.max_quality( quality_id( "BUTCHER" ) ) );
     const std::string msg_inv = factor > INT_MIN
                                 ? string_format( _( "Your best tool has <color_cyan>%d butchering</color>." ), factor )
                                 :  _( "You have no butchering tool." );
 
-    const int factor_diss = inv.max_quality( quality_id( "CUT_FINE" ) );
+    const int factor_diss = std::max( you.max_quality( quality_id( "CUT_FINE" ) ),
+                                      inv.max_quality( quality_id( "CUT_FINE" ) ) );
     const std::string msg_inv_diss = factor_diss > INT_MIN
                                      ? string_format( _( "Your best tool has <color_cyan>%d fine cutting</color>." ), factor_diss )
                                      :  _( "You have no fine cutting tool." );
@@ -12922,8 +12924,9 @@ bool game::walk_move( const tripoint_bub_ms &dest_loc, const bool via_ramp )
     }
     if( !u.has_artifact_with( AEP_STEALTH ) &&
         !u.has_enchantment_flag( enchantment_flag_id( "SILENT" ) ) ) {
-        int volume = u.is_stealthy() ? 30 : 50;
-        volume *= u.mutation_value( "noise_modifier" );
+        int volume = u.is_stealthy() ? 40 : 60;
+        // Used to be a multiplier on tile distance, this approximates that
+        volume += ( u.mutation_value( "noise_modifier" ) / 2 * 6 );
         volume += u.bonus_from_enchantments( volume, enchantment_value_id( "NOISE" ) );
         if( volume > 0 ) {
             if( u.movement_mode_is( CMM_RUN ) ) {
