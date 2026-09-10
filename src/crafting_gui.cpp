@@ -44,6 +44,7 @@
 #include "output.h"
 #include "player.h"
 #include "point.h"
+#include "proficiency.h"
 #include "recipe.h"
 #include "recipe_dictionary.h"
 #include "requirements.h"
@@ -172,11 +173,14 @@ struct availability {
         is_nested_category = r->is_nested();
         could_craft_if_knew = req.can_make_with_inventory(
                                   inv, all_items_filter, batch_size, cost_adjustment::start_only );
-        can_craft = known && could_craft_if_knew;
+        // A practice drill you have not grown into yet is refused rather than offered
+        // as a craft that would teach nothing.
+        const bool within_reach = r->practice_is_within_reach( crafter );
+        can_craft = known && could_craft_if_knew && within_reach;
         can_craft_non_rotten = req.can_make_with_inventory(
                                    inv, no_rotten_filter, batch_size, cost_adjustment::start_only );
         const requirement_data &simple_req = r->simple_requirements();
-        apparently_craftable = simple_req.can_make_with_inventory(
+        apparently_craftable = within_reach && simple_req.can_make_with_inventory(
                                    inv, all_items_filter, batch_size, cost_adjustment::start_only );
         has_all_skills = r->skill_used.is_null() ||
                          crafter.get_skill_level( r->skill_used ) >= r->difficulty;
@@ -557,18 +561,22 @@ static std::vector<std::string> recipe_info(
                           recp.has_flag( flag_BLIND_IMPOSSIBLE ) ? _( "Impossible" ) :
                           _( "Reasonable" ) );
 
-    std::string nearby_string;
     const inventory &crafting_inv = crafter.crafting_inventory();
-    const int nearby_amount = crafting_inv.count_item( recp.result() );
-    if( nearby_amount == 0 ) {
-        nearby_string = "<color_light_gray>0</color>";
-    } else if( nearby_amount > 9000 ) {
-        // at some point you get too many to count at a glance and just know you have a lot
-        nearby_string = _( "<color_red>It's Over 9000!!!</color>" );
-    } else {
-        nearby_string = string_format( "<color_yellow>%d</color>", nearby_amount );
+    // A practice recipe produces nothing, so a count of the result nearby would only
+    // ever report zero of an item that does not exist.
+    if( !recp.is_practice() ) {
+        std::string nearby_string;
+        const int nearby_amount = crafting_inv.count_item( recp.result() );
+        if( nearby_amount == 0 ) {
+            nearby_string = "<color_light_gray>0</color>";
+        } else if( nearby_amount > 9000 ) {
+            // at some point you get too many to count at a glance and just know you have a lot
+            nearby_string = _( "<color_red>It's Over 9000!!!</color>" );
+        } else {
+            nearby_string = string_format( "<color_yellow>%d</color>", nearby_amount );
+        }
+        oss << string_format( _( "Nearby: %s\n" ), nearby_string );
     }
-    oss << string_format( _( "Nearby: %s\n" ), nearby_string );
 
     const bool can_craft_this = avail.can_craft;
     if( can_craft_this && !avail.can_craft_non_rotten ) {
@@ -677,6 +685,60 @@ static input_context make_crafting_context( bool highlight_unread_recipes )
     return ctxt;
 }
 
+/**
+ * A practice recipe hands nothing back, so the item info panel that normally
+ * describes the result would sit empty.  Describe the drill instead: what it
+ * trains, how far it can carry you, and which proficiencies it works on.
+ */
+static item_info_data practice_info_data( const Character &crafter, const recipe &recp,
+        int &scroll_pos )
+{
+    std::vector<iteminfo> info;
+    if( !recp.description.empty() ) {
+        info.emplace_back( "DESCRIPTION", recp.description.translated() );
+        info.emplace_back( "DESCRIPTION", "--" );
+    }
+
+    if( recp.skill_used && recp.practice_data ) {
+        const int level = crafter.get_skill_level( recp.skill_used );
+        info.emplace_back( "DESCRIPTION",
+                           string_format( _( "Trains <color_cyan>%s</color>, which you have at level <color_cyan>%d</color>." ),
+                                          recp.skill_used->name(), level ) );
+        if( level < recp.practice_data->min_difficulty ) {
+            info.emplace_back( "DESCRIPTION",
+                               string_format(
+                                   _( "<color_red>Too advanced until your %s reaches level %d.</color>" ),
+                                   recp.skill_used->name(), recp.practice_data->min_difficulty ) );
+        } else if( level >= recp.practice_data->skill_limit ) {
+            info.emplace_back( "DESCRIPTION",
+                               _( "<color_yellow>You have outgrown this drill and will learn nothing more from it.</color>" ) );
+        }
+        info.emplace_back( "DESCRIPTION",
+                           string_format( _( "It stops teaching at level <color_cyan>%d</color>." ),
+                                          recp.practice_data->skill_limit ) );
+        info.emplace_back( "DESCRIPTION", "--" );
+    }
+
+    const auto prof_names = []( const std::vector<proficiency_id> &profs ) {
+        return enumerate_as_string( profs.begin(), profs.end(), []( const proficiency_id & prof ) {
+            return prof->name();
+        } );
+    };
+
+    const std::vector<proficiency_id> required = recp.required_proficiencies();
+    if( !required.empty() ) {
+        info.emplace_back( "DESCRIPTION",
+                           string_format( _( "Requires: <color_cyan>%s</color>" ), prof_names( required ) ) );
+    }
+    const std::vector<proficiency_id> used = recp.used_proficiencies();
+    if( !used.empty() ) {
+        info.emplace_back( "DESCRIPTION",
+                           string_format( _( "Also practices: <color_cyan>%s</color>" ), prof_names( used ) ) );
+    }
+
+    return item_info_data( recp.result_name(), _( "practice" ), info, {}, scroll_pos );
+}
+
 const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
 {
     struct {
@@ -724,6 +786,9 @@ const recipe *select_crafting_recipe( int &batch_size_out, Character &crafter )
 
     const auto item_info_data_from_recipe =
     [&]( const recipe * rec, const int count, int &scroll_pos ) {
+        if( rec->is_practice() ) {
+            return practice_info_data( crafter, *rec, scroll_pos );
+        }
         if( item_info_cache.last_recipe != rec || item_info_cache.batch_size != count ) {
             item_info_cache.last_recipe = rec;
             item_info_cache.batch_size = count;

@@ -200,6 +200,22 @@ std::vector<const recipe *> recipe_subset::search( const search_type key, const 
             return false;
         }
 
+        // A practice recipe has no result item, so any search that asks about one
+        // would be judging the null itype rather than the recipe itself.
+        if( r->is_practice() ) {
+            switch( key ) {
+                case search_type::name:
+                case search_type::tool:
+                case search_type::component:
+                case search_type::quality:
+                case search_type::skill:
+                case search_type::primary_skill:
+                    break;
+                default:
+                    return false;
+            }
+        }
+
         bool match = true;
         switch( key ) {
             case search_type::name:
