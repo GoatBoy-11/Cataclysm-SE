@@ -1,0 +1,452 @@
+[
+  {
+    "type": "requirement",
+    "id": "basic_axes",
+    "tools": [ [ [ "primitive_axe", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_batons",
+    "tools": [
+      [
+        [ "cudgel", -1 ],
+        [ "bat", -1 ],
+        [ "bat_metal", -1 ],
+        [ "bat_nerf", -1 ],
+        [ "baton-extended", -1 ],
+        [ "PR24-extended", -1 ],
+        [ "bowling_pin", -1 ],
+        [ "cane", -1 ],
+        [ "hollow_cane", -1 ],
+        [ "glass_macuahuitl", -1 ],
+        [ "makeshift_sap", -1 ],
+        [ "shillelagh_fake", -1 ],
+        [ "pipe", -1 ],
+        [ "stick", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_flails",
+    "tools": [ [ [ "2h_flail_wood", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_great_hammers",
+    "tools": [
+      [
+        [ "glass_macuahuitl", -1 ],
+        [ "hammer_sledge", -1 ],
+        [ "hammer_sledge_short", -1 ],
+        [ "hammer_sledge_heavy", -1 ],
+        [ "hammer_sledge_engineer", -1 ],
+        [ "lucern_hammerfake", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_great_swords",
+    "tools": [ [ [ "zweihander_inferior", -1 ], [ "zweihander_fake", -1 ], [ "nodachi_inferior", -1 ], [ "nodachi_fake", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_hooks",
+    "tools": [
+      [
+        [ "makeshift_scythe_war", -1 ],
+        [ "makeshift_halberd", -1 ],
+        [ "makeshift_scythe_war", -1 ],
+        [ "battleaxe_fake", -1 ],
+        [ "battleaxe_inferior", -1 ],
+        [ "hockey_stick", -1 ],
+        [ "lucern_hammerfake", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_knives",
+    "tools": [
+      [
+        [ "knife_hunting", -1 ],
+        [ "makeshift_knife", -1 ],
+        [ "bone_knife", -1 ],
+        [ "primitive_knife", -1 ],
+        [ "kris_fake", -1 ],
+        [ "tanto_fake", -1 ],
+        [ "tanto_inferior", -1 ],
+        [ "kirpan_cheap", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_long_swords",
+    "tools": [
+      [
+        [ "sword_wood", -1 ],
+        [ "bokken", -1 ],
+        [ "bokken_fake", -1 ],
+        [ "bokken_inferior", -1 ],
+        [ "sword_nail", -1 ],
+        [ "sword_crude", -1 ],
+        [ "sword_metal", -1 ],
+        [ "longsword_inferior", -1 ],
+        [ "longsword_fake", -1 ],
+        [ "katana_inferior", -1 ],
+        [ "katana_fake", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_maces",
+    "tools": [
+      [
+        [ "mace_inferior", -1 ],
+        [ "mace_fake", -1 ],
+        [ "morningstar_fake", -1 ],
+        [ "morningstar_inferior", -1 ],
+        [ "nailbat", -1 ],
+        [ "nailboard", -1 ],
+        [ "bwirebat", -1 ],
+        [ "bat", -1 ],
+        [ "bat_metal", -1 ],
+        [ "bat_nerf", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_medium_swords",
+    "tools": [
+      [
+        [ "cavalry_sabre_fake", -1 ],
+        [ "jian_fake", -1 ],
+        [ "jian_inferior", -1 ],
+        [ "scimitar_fake", -1 ],
+        [ "scimitar_inferior", -1 ],
+        [ "arming_sword_fake", -1 ],
+        [ "arming_sword_inferior", -1 ],
+        [ "wakizashi_inferior", -1 ],
+        [ "wakizashi_fake", -1 ],
+        [ "broadsword_inferior", -1 ],
+        [ "broadsword_fake", -1 ],
+        [ "cutlass_fake", -1 ],
+        [ "cutlass_inferior", -1 ],
+        [ "sword_wood", -1 ],
+        [ "sword_nail", -1 ],
+        [ "sword_crude", -1 ],
+        [ "sword_metal", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_polearms",
+    "tools": [
+      [
+        [ "makeshift_halberd", -1 ],
+        [ "halberd_fake", -1 ],
+        [ "naginata_fake", -1 ],
+        [ "naginata_inferior", -1 ],
+        [ "makeshift_scythe_war", -1 ],
+        [ "hockey_stick", -1 ],
+        [ "lucern_hammerfake", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_quarterstaves",
+    "tools": [ [ [ "pool_cue", -1 ], [ "mop", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_shivs",
+    "tools": [
+      [
+        [ "glass_shiv", -1 ],
+        [ "sharp_toothbrush", -1 ],
+        [ "bone_knife", -1 ],
+        [ "knuckle_katar", -1 ],
+        [ "screwdriver", -1 ],
+        [ "scissors", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_short_swords",
+    "tools": [ [ [ "makeshift_machete", -1 ], [ "machete_gimmick", -1 ], [ "machete", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_spears",
+    "tools": [
+      [
+        [ "pitchfork", -1 ],
+        [ "pointy_stick_long", -1 ],
+        [ "spear_wood", -1 ],
+        [ "spear_spike", -1 ],
+        [ "spear_knife", -1 ],
+        [ "spear_knife_superior", -1 ],
+        [ "spear_homemade_halfpike", -1 ],
+        [ "spear_rebar", -1 ],
+        [ "pike_wood", -1 ],
+        [ "pike_fake", -1 ],
+        [ "pike_inferior", -1 ],
+        [ "spear_stone", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "basic_thrusting_swords",
+    "tools": [
+      [
+        [ "estoc_fake", -1 ],
+        [ "estoc_inferior", -1 ],
+        [ "fencing_foil", -1 ],
+        [ "fencing_foil_sharpened", -1 ],
+        [ "shock_foil", -1 ],
+        [ "fencing_epee", -1 ],
+        [ "fencing_epee_sharpened", -1 ],
+        [ "shock_epee", -1 ],
+        [ "fencing_sabre", -1 ],
+        [ "fencing_sabre_sharpened", -1 ],
+        [ "shock_sabre", -1 ],
+        [ "rapier_fake", -1 ],
+        [ "broadsword_fake", -1 ],
+        [ "broadsword_inferior", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "crossbows",
+    "tools": [
+      [
+        [ "bullet_crossbow", -1 ],
+        [ "crossbow", -1 ],
+        [ "compositecrossbow", -1 ],
+        [ "compcrossbow", -1 ],
+        [ "huge_crossbow", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "fastener_small",
+    "components": [ [ [ "string_6", 2 ], [ "cordage_6_leather", 2 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "improvised_melee_weapons",
+    "tools": [ [ [ "stick", -1 ], [ "stick_long", -1 ], [ "2x4", -1 ], [ "pipe", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "nails",
+    "components": [ [ [ "nail", 1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_axes",
+    "tools": [ [ [ "hatchet", -1 ], [ "copper_ax", -1 ], [ "iceaxe", -1 ], [ "crash_axe", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_batons",
+    "tools": [
+      [
+        [ "blackjack", -1 ],
+        [ "bwirebat", -1 ],
+        [ "shillelagh", -1 ],
+        [ "shillelagh_weighted", -1 ],
+        [ "shocktonfa_off", -1 ],
+        [ "tonfa", -1 ],
+        [ "tonfa_wood", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_claws",
+    "tools": [ [ [ "bagh_nakha", -1 ], [ "bio_claws_weapon", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_flails",
+    "tools": [ [ [ "2h_flail_steel", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_great_axes",
+    "tools": [ [ [ "fire_ax", -1 ], [ "battleaxe", -1 ], [ "ax", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_great_hammers",
+    "tools": [ [ [ "warhammer", -1 ], [ "lucern_hammer", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_great_swords",
+    "tools": [ [ [ "zweihander", -1 ], [ "nodachi", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_hooks",
+    "tools": [
+      [
+        [ "scythe_war", -1 ],
+        [ "ji", -1 ],
+        [ "halberd", -1 ],
+        [ "glaive", -1 ],
+        [ "battleaxe", -1 ],
+        [ "lucern_hammer", -1 ],
+        [ "warhammer", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_knives",
+    "tools": [
+      [
+        [ "knife_combat", -1 ],
+        [ "knife_rambo", -1 ],
+        [ "knife_rambo", -1 ],
+        [ "knife_rm42", -1 ],
+        [ "knife_folding", -1 ],
+        [ "knife_trench", -1 ],
+        [ "knife_trench", -1 ],
+        [ "knife_baselard", -1 ],
+        [ "kris", -1 ],
+        [ "kukri", -1 ],
+        [ "tanto", -1 ],
+        [ "kirpan", -1 ],
+        [ "butterfly_swords", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_long_swords",
+    "tools": [ [ [ "katana", -1 ], [ "longsword", -1 ], [ "nodachi", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_maces",
+    "tools": [ [ [ "mace", -1 ], [ "mace", -1 ], [ "morningstar", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_medium_swords",
+    "tools": [
+      [
+        [ "broadsword", -1 ],
+        [ "cavalry_sabre", -1 ],
+        [ "jian", -1 ],
+        [ "scimitar", -1 ],
+        [ "arming_sword", -1 ],
+        [ "dao", -1 ],
+        [ "wakizashi", -1 ],
+        [ "sword_cane", -1 ],
+        [ "cutlass", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_polearms",
+    "tools": [
+      [
+        [ "glaive", -1 ],
+        [ "halberd", -1 ],
+        [ "lajatang", -1 ],
+        [ "naginata", -1 ],
+        [ "scythe_war", -1 ],
+        [ "lucern_hammer", -1 ],
+        [ "ji", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_quarterstaves",
+    "tools": [ [ [ "i_staff", -1 ], [ "q_staff", -1 ], [ "shock_staff", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_shivs",
+    "tools": [ [ [ "switchblade", -1 ], [ "knife_swissarmy", -1 ], [ "punch_dagger", -1 ], [ "knuckle_katar", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_short_swords",
+    "tools": [ [ [ "khopesh", -1 ], [ "sword_xiphos", -1 ], [ "sword_bayonet", -1 ], [ "butterfly_swords", -1 ] ] ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_spears",
+    "tools": [
+      [
+        [ "spear_steel", -1 ],
+        [ "spear_copper", -1 ],
+        [ "spear_pipe", -1 ],
+        [ "qiang", -1 ],
+        [ "javelin", -1 ],
+        [ "javelin_iron", -1 ],
+        [ "pike_copper", -1 ],
+        [ "pike", -1 ],
+        [ "spear_dory", -1 ],
+        [ "ji", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "real_thrusting_swords",
+    "tools": [
+      [
+        [ "estoc", -1 ],
+        [ "sword_cane", -1 ],
+        [ "rapier", -1 ],
+        [ "cavalry_sabre", -1 ],
+        [ "jian", -1 ],
+        [ "broadsword", -1 ]
+      ]
+    ]
+  },
+  {
+    "type": "requirement",
+    "id": "sewing_aramids",
+    "qualities": [ { "id": "SEW", "level": 3 }, { "id": "CUT", "level": 2 } ]
+  },
+  {
+    "type": "requirement",
+    "id": "tailoring_cotton_patchwork",
+    "qualities": [ { "id": "SEW", "level": 1 } ]
+  },
+  {
+    "type": "requirement",
+    "id": "tailoring_leather_small",
+    "components": [ [ [ "leather", 1 ] ] ],
+    "qualities": [ { "id": "SEW", "level": 1 }, { "id": "LEATHER_AWL", "level": 1 } ]
+  },
+  {
+    "type": "requirement",
+    "id": "waterproofing_plastic_sheets",
+    "components": [ [ [ "duct_tape", 5 ] ] ],
+    "qualities": [ { "id": "CUT", "level": 1 } ]
+  },
+  {
+    "type": "requirement",
+    "id": "whips",
+    "tools": [ [ [ "bullwhip", -1 ], [ "bullwhip_razor", -1 ] ] ]
+  }
+]
