@@ -230,9 +230,9 @@ Branding is done: menu, window titles, memorial header, README, and userdata pat
 (`cataclysm-cse`, separate from BN's). Build targets, translations and code comments
 deliberately keep upstream names to hold merge cost down.
 
-CSE is on GitHub as of 2026-09-02: `origin` is
-`https://github.com/GoatBoy-11/Cataclysm-SE.git`, `upstream` is
-`https://github.com/cataclysmbn/Cataclysm-BN.git`. The repo is a **public fork** of
+CSE is on GitHub as of 2026-09-02: `origin` is the CSE fork, `upstream` is
+`https://github.com/cataclysmbn/Cataclysm-BN.git`. Run `git remote -v` for the actual
+URLs rather than hard-coding them here. The repo is a **public fork** of
 Cataclysm-BN, because a fork shares object storage with its parent — only CSE's own
 commits upload, and the 7.1 GB history does not (a standalone repo would need chunked
 pushes past GitHub's ~2 GB single-push limit). A fork of a public repo cannot be made
@@ -249,6 +249,10 @@ outside `F:\Projects\CSE`.
 Work in progress and its open threads live in the dated handoff files at the repo root,
 `SESSION_HANDOFF_YYYY-MM-DD.md`. **Read the newest one before starting.** It, not this
 file, is the record of what is half-finished.
+
+These are **local working notes, not tracked** — they are excluded via `.git/info/exclude`
+and will not be in a fresh clone. Keep them that way; they are for the owner, not the
+public repo.
 
 **Do not trust plan checkboxes** in `docs/superpowers/plans/`. Several read as unticked
 despite their work being committed. Read `git log` for what actually shipped.
