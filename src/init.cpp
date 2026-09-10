@@ -94,6 +94,7 @@
 #include "overmap_location.h"
 #include "overmap_special.h"
 #include "profession.h"
+#include "proficiency.h"
 #include "recipe_dictionary.h"
 #include "recipe_groups.h"
 #include "regional_settings.h"
@@ -483,6 +484,8 @@ void DynamicDataLoader::initialize()
     add( "score", &score::load_score );
     add( "achievement", &achievement::load_achievement );
     add( "named_color", &RGBColor::load_named_color );
+    add( "proficiency", &proficiency::load_proficiencies );
+    add( "proficiency_category", &proficiency_category::load_proficiency_categories );
 #if defined(TILES)
     add( "mod_tileset", &load_mod_tileset );
 #else
@@ -659,6 +662,8 @@ void DynamicDataLoader::unload_data()
     VehiclePalette::reset();
     VehiclePlacement::reset();
     VehicleSpawn::reset();
+    proficiency::reset();
+    proficiency_category::reset();
     vitamin::reset();
     vpart_info::reset();
     weapon_category::reset();
@@ -780,6 +785,7 @@ void DynamicDataLoader::check_consistency( loading_ui &ui )
                 }
             },
             { _( "Vitamins" ), &vitamin::check_consistency },
+            { _( "Proficiencies" ), &proficiency::check_consistency },
             { _( "Weather types" ), &weather_types::check_consistency },
             { _( "World types" ), &world_types::check_consistency },
             { _( "Field types" ), &field_types::check_consistency },

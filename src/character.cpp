@@ -93,6 +93,7 @@
 #include "player_activity.h"
 #include "pocket_destination_menu.h"
 #include "profession.h"
+#include "proficiency.h"
 #include "profile.h"
 #include "recipe_dictionary.h"
 #include "regen.h"
@@ -4437,6 +4438,82 @@ std::vector<Character::overlay_entry> Character::get_overlay_ids() const
         rval.push_back( ent );
     }
     return rval;
+}
+
+bool Character::has_proficiency( const proficiency_id &prof ) const
+{
+    return _proficiencies->has_learned( prof );
+}
+
+bool Character::has_prof_prereqs( const proficiency_id &prof ) const
+{
+    return _proficiencies->has_prereqs( prof );
+}
+
+float Character::get_proficiency_practice( const proficiency_id &prof ) const
+{
+    return _proficiencies->pct_practiced( prof );
+}
+
+time_duration Character::get_proficiency_practiced_time( const proficiency_id &prof ) const
+{
+    return _proficiencies->pct_practiced_time( prof );
+}
+
+time_duration Character::proficiency_training_needed( const proficiency_id &prof ) const
+{
+    return _proficiencies->training_time_needed( prof );
+}
+
+void Character::add_proficiency( const proficiency_id &prof, const bool ignore_requirements )
+{
+    if( ignore_requirements ) {
+        _proficiencies->direct_learn( prof );
+        return;
+    }
+    _proficiencies->learn( prof );
+}
+
+void Character::lose_proficiency( const proficiency_id &prof, const bool ignore_requirements )
+{
+    if( ignore_requirements ) {
+        _proficiencies->direct_remove( prof );
+        return;
+    }
+    _proficiencies->remove( prof );
+}
+
+bool Character::practice_proficiency( const proficiency_id &prof, const time_duration &amount,
+                                      const std::optional<time_duration> &max )
+{
+    return _proficiencies->practice( prof, amount, 0.0f, max );
+}
+
+void Character::set_proficiency_practiced_time( const proficiency_id &prof,
+        const time_duration &amount )
+{
+    _proficiencies->set_time_practiced( prof, amount );
+}
+
+std::vector<display_proficiency> Character::display_proficiencies() const
+{
+    return _proficiencies->display();
+}
+
+std::vector<proficiency_id> Character::known_proficiencies() const
+{
+    return _proficiencies->known_profs();
+}
+
+std::vector<proficiency_id> Character::learning_proficiencies() const
+{
+    return _proficiencies->learning_profs();
+}
+
+float Character::get_proficiency_bonus( const std::string &category,
+                                        const proficiency_bonus_type prof_bonus ) const
+{
+    return _proficiencies->get_proficiency_bonus( category, prof_bonus );
 }
 
 const SkillLevelMap &Character::get_all_skills() const

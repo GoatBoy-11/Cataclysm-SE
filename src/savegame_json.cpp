@@ -98,6 +98,7 @@
 #include "player_activity.h"
 #include "point.h"
 #include "profession.h"
+#include "proficiency.h"
 #include "recipe.h"
 #include "recipe_dictionary.h"
 #include "relic.h"
@@ -832,6 +833,10 @@ void Character::load( const JsonObject &data )
         member.read( ( *_skills )[skill_id( member.name() )] );
     }
 
+    // Absent in saves written before proficiencies existed, which leaves the set empty.
+    _proficiencies->clear();
+    data.read( "proficiencies", *_proficiencies );
+
     data.read( "learned_recipes", *learned_recipes );
     autolearn_skills_stamp->clear(); // Invalidates the cache
 
@@ -976,6 +981,8 @@ void Character::store( JsonOut &json ) const
         json.member( pair.first.str(), pair.second );
     }
     json.end_object();
+
+    json.member( "proficiencies", *_proficiencies );
 
     // npc: unimplemented, potentially useful
     json.member( "learned_recipes", *learned_recipes );

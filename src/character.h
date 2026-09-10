@@ -56,6 +56,9 @@ class JsonObject;
 class JsonOut;
 class SkillLevel;
 class SkillLevelMap;
+class proficiency_set;
+struct display_proficiency;
+enum class proficiency_bonus_type : int;
 class bionic_collection;
 class character_martial_arts;
 class faction;
@@ -1684,6 +1687,25 @@ class Character : public Creature, public location_visitable<Character>
 
         void set_skill_level( const skill_id &ident, int level );
         void mod_skill_level( const skill_id &ident, int delta );
+
+        /** Proficiencies: knowledge of how a thing is done, held apart from skill. */
+        bool has_proficiency( const proficiency_id &prof ) const;
+        bool has_prof_prereqs( const proficiency_id &prof ) const;
+        float get_proficiency_practice( const proficiency_id &prof ) const;
+        time_duration get_proficiency_practiced_time( const proficiency_id &prof ) const;
+        time_duration proficiency_training_needed( const proficiency_id &prof ) const;
+        void add_proficiency( const proficiency_id &prof, bool ignore_requirements = false );
+        void lose_proficiency( const proficiency_id &prof, bool ignore_requirements = false );
+        /** @return true if the proficiency became known as a result. */
+        bool practice_proficiency( const proficiency_id &prof, const time_duration &amount,
+                                   const std::optional<time_duration> &max = std::nullopt );
+        void set_proficiency_practiced_time( const proficiency_id &prof,
+                                            const time_duration &amount );
+        std::vector<display_proficiency> display_proficiencies() const;
+        std::vector<proficiency_id> known_proficiencies() const;
+        std::vector<proficiency_id> learning_proficiencies() const;
+        float get_proficiency_bonus( const std::string &category,
+                                     proficiency_bonus_type prof_bonus ) const;
         /** Checks whether the character's skills meet the required */
         bool meets_skill_requirements( const std::map<skill_id, int> &req,
                                        const item *context = nullptr ) const;
@@ -2459,6 +2481,8 @@ class Character : public Creature, public location_visitable<Character>
         // --------------- Values ---------------
         /** Character skills. */
         pimpl<SkillLevelMap> _skills;
+        /** Character proficiencies, known and part-learned. */
+        pimpl<proficiency_set> _proficiencies;
         /** Stamp of character skills. @ref learned_recipes are valid only with this set of skills. */
         mutable pimpl<SkillLevelMap> autolearn_skills_stamp;
         /** Subset of learned recipes. Needs to be mutable for lazy initialization. */

@@ -162,6 +162,12 @@ using overmap_special_id = string_id<overmap_special>;
 class profession;
 using profession_id = string_id<profession>;
 
+class proficiency;
+using proficiency_id = string_id<proficiency>;
+
+struct proficiency_category;
+using proficiency_category_id = string_id<proficiency_category>;
+
 class recipe;
 using recipe_id = string_id<recipe>;
 
