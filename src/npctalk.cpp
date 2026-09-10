@@ -60,6 +60,7 @@
 #include "npc.h"
 #include "npc_class.h"
 #include "npctalk.h"
+#include "proficiency.h"
 #include "npctrade.h"
 #include "options.h"
 #include "output.h"
@@ -162,6 +163,22 @@ int calc_skill_training_cost( const npc &p, const skill_id &skill )
 // TODO: all styles cost the same and take the same time to train,
 // maybe add values to the ma_style class to makes this variable
 // TODO: maybe move this function into the ma_style class? Or into the NPC class?
+time_duration calc_proficiency_training_time( const npc &, const Character &student,
+        const proficiency_id &proficiency )
+{
+    // A single sitting never runs past half an hour, however far there is to go.
+    return std::min( 30_minutes, student.proficiency_training_needed( proficiency ) );
+}
+
+int calc_proficiency_training_cost( const npc &p, const Character &student,
+                                    const proficiency_id &proficiency )
+{
+    if( p.is_player_ally() ) {
+        return 0;
+    }
+    return to_seconds<int>( calc_proficiency_training_time( p, student, proficiency ) );
+}
+
 time_duration calc_ma_style_training_time( const npc &, const matype_id & /* id */ )
 {
     return 30_minutes;
@@ -1634,6 +1651,14 @@ talk_response &dialogue::add_response( const std::string &text, const std::strin
 }
 
 talk_response &dialogue::add_response( const std::string &text, const std::string &r,
+                                       const proficiency_id &proficiency, const bool first )
+{
+    talk_response &result = add_response( text, r, first );
+    result.proficiency = proficiency;
+    return result;
+}
+
+talk_response &dialogue::add_response( const std::string &text, const std::string &r,
                                        const spell_id &sp, const bool first )
 {
     talk_response &result = add_response( text, r, first );
@@ -1702,10 +1727,16 @@ void dialogue::gen_responses( const talk_topic &the_topic )
             if( !skillt.is_valid() ) {
                 const matype_id styleid = matype_id( backlog.name );
                 if( !styleid.is_valid() ) {
-                    const spell_id &sp_id = spell_id( backlog.name );
-                    if( p->magic->knows_spell( sp_id ) ) {
-                        add_response( string_format( _( "Yes, let's resume training %s" ), sp_id->name ),
-                                      "TALK_TRAIN_START", sp_id );
+                    const proficiency_id prof_id( backlog.name );
+                    if( prof_id.is_valid() ) {
+                        add_response( string_format( _( "Yes, let's resume training %s" ), prof_id->name() ),
+                                      "TALK_TRAIN_START", prof_id );
+                    } else {
+                        const spell_id &sp_id = spell_id( backlog.name );
+                        if( p->magic->knows_spell( sp_id ) ) {
+                            add_response( string_format( _( "Yes, let's resume training %s" ), sp_id->name ),
+                                          "TALK_TRAIN_START", sp_id );
+                        }
                     }
                 } else {
                     const martialart &style = styleid.obj();
@@ -1733,9 +1764,18 @@ void dialogue::gen_responses( const talk_topic &the_topic )
                 teachable_spells.emplace_back( sp );
             }
         }
-        if( trainable.empty() && styles.empty() && teachable_spells.empty() ) {
+        const std::vector<proficiency_id> teachable_profs = p->proficiencies_offered_to( &you );
+        if( trainable.empty() && styles.empty() && teachable_spells.empty() &&
+            teachable_profs.empty() ) {
             add_response_none( _( "Oh, okay." ) );
             return;
+        }
+        for( const proficiency_id &prof : teachable_profs ) {
+            const int cost = calc_proficiency_training_cost( *p, you, prof );
+            //~ Proficiency name (cost in dollars)
+            const std::string text = string_format( cost > 0 ? _( "%s ( cost $%d )" ) : "%s",
+                                                    prof->name(), cost / 100 );
+            add_response( text, "TALK_TRAIN_START", prof );
         }
         for( const spell_id &sp : teachable_spells ) {
             const spell &temp_spell = p->magic->get_spell( sp );
@@ -2300,6 +2340,12 @@ talk_topic dialogue::opt( dialogue_window &d_win, const std::string &npc_name,
         beta->chatbin.style = matype_id::NULL_ID();
         beta->chatbin.skill = skill_id::NULL_ID();
         beta->chatbin.dialogue_spell = chosen.dialogue_spell;
+        beta->chatbin.proficiency = proficiency_id();
+    } else if( !chosen.proficiency.is_empty() ) {
+        beta->chatbin.style = matype_id::NULL_ID();
+        beta->chatbin.skill = skill_id::NULL_ID();
+        beta->chatbin.dialogue_spell = spell_id();
+        beta->chatbin.proficiency = chosen.proficiency;
     }
     const bool success = chosen.trial.roll( *this );
     const auto &effects = success ? chosen.success : chosen.failure;

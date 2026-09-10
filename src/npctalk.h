@@ -3,6 +3,7 @@
 #include "type_id.h"
 
 class npc;
+class Character;
 class time_duration;
 
 namespace talk_function
@@ -92,6 +93,10 @@ void go_to_sleep( npc &p );
 
 time_duration calc_skill_training_time( const npc &p, const skill_id &skill );
 int calc_skill_training_cost( const npc &p, const skill_id &skill );
+time_duration calc_proficiency_training_time( const npc &p, const Character &student,
+        const proficiency_id &proficiency );
+int calc_proficiency_training_cost( const npc &p, const Character &student,
+                                    const proficiency_id &proficiency );
 time_duration calc_ma_style_training_time( const npc &, const matype_id & /* id */ );
 int calc_ma_style_training_cost( const npc &p, const matype_id & /* id */ );
 

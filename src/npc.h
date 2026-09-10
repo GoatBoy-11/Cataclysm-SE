@@ -742,6 +742,10 @@ struct npc_chatbin {
      * The spell this NPC offers to train
      */
     spell_id dialogue_spell;
+    /**
+     * The proficiency this NPC offers to train.
+     */
+    proficiency_id proficiency;
     std::string first_topic = "TALK_NONE";
 
     npc_chatbin() = default;

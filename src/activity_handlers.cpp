@@ -2296,6 +2296,19 @@ void activity_handlers::train_finish( player_activity *act, player *p )
         return;
     }
 
+    const proficiency_id prof( act->name );
+    if( prof.is_valid() ) {
+        // The teacher covers the whole session's worth of practice.
+        const time_duration lesson = time_duration::from_turns( act->moves_total / 100 );
+        if( p->practice_proficiency( prof, lesson ) ) {
+            add_msg( m_good, _( "You are now proficient: %s" ), prof->name() );
+        } else {
+            add_msg( m_good, _( "You get some instruction in %s." ), prof->name() );
+        }
+        act->set_to_null();
+        return;
+    }
+
     const matype_id &ma_id = matype_id( act->name );
     if( ma_id.is_valid() ) {
         const martialart &mastyle = ma_id.obj();

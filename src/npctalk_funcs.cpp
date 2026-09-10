@@ -35,6 +35,7 @@
 #include "morale_types.h"
 #include "mutation.h"
 #include "npc.h"
+#include "proficiency.h"
 #include "npctrade.h"
 #include "output.h"
 #include "overmap.h"
@@ -897,8 +898,14 @@ void talk_function::start_training( npc &p )
             int seconds = g->u.magic->time_to_learn_spell( g->u, sp_id ) / 50;
             time = time_duration::from_seconds( clamp( seconds, 7200, 21600 ) );
         }
+    } else if( p.chatbin.proficiency.is_valid() &&
+               !g->u.has_proficiency( p.chatbin.proficiency ) ) {
+        const proficiency_id &prof = p.chatbin.proficiency;
+        cost = calc_proficiency_training_cost( p, g->u, prof );
+        time = calc_proficiency_training_time( p, g->u, prof );
+        name = prof.str();
     } else {
-        debugmsg( "start_training with no valid skill or style set" );
+        debugmsg( "start_training with no valid skill, style or proficiency set" );
         return;
     }
 
