@@ -16,7 +16,6 @@
     "description": "This versatile implement is a custom-forged version of a traditional weapon that originated in Nepal.  Featuring a heavy blade with an inwardly-curved edge, this one is made of medium steel, and is about what you'd expect to see in a hunting shop.",
     "price_postapoc": "12 USD 50 cent",
     "category": "weapons",
-    "looks_like": "kukri",
     "name": { "str": "medium steel kukri" },
     "cutting": 20,
     "to_hit": 1
@@ -81,8 +80,7 @@
     "category": "weapons",
     "name": { "str": "medium steel trench knife", "str_pl": "medium steel trench knives" },
     "cutting": 18,
-    "to_hit": 1,
-    "looks_like": "knife_combat"
+    "to_hit": 1
   },
   {
     "id": "knife_cleaver",
@@ -103,7 +101,7 @@
     "bashing": 6,
     "cutting": 16,
     "to_hit": 1,
-    "looks_like": "knife_combat"
+    "looks_like": "knife_butcher"
   },
   {
     "id": "knife_large",
@@ -125,7 +123,7 @@
     "bashing": 1,
     "cutting": 18,
     "to_hit": 1,
-    "looks_like": "knife_combat"
+    "looks_like": "knife_rambo"
   },
   {
     "id": "knife_small",
@@ -147,7 +145,7 @@
     "bashing": 2,
     "cutting": 7,
     "to_hit": 1,
-    "looks_like": "knife_combat"
+    "looks_like": "pockknife"
   },
   {
     "id": "rapier",
@@ -165,7 +163,6 @@
     "description": "A thin sword with an ornate hand guard.  It looks like the preferred weapon of gentlemen and swashbucklers.  Light and quick, it makes any battle a stylish battle.\n\nMade with medium steel and with a grip made of leather wrapped in steel wire, this weapon is comfortable in your hand, though the balance isn't perfect and the edge could be sharper.",
     "price_postapoc": "25 USD",
     "category": "weapons",
-    "looks_like": "rapier",
     "name": { "str": "medium steel rapier" },
     "bashing": 3,
     "cutting": 29,
@@ -188,7 +185,6 @@
     "description": "A thin thrusting sword, a sort of predecessor to the rapier.  It requires a larger baldric or scabbard compared to smaller swords.",
     "price_postapoc": "50 USD",
     "category": "weapons",
-    "looks_like": "estoc",
     "name": { "str": "estoc" },
     "bashing": 11,
     "cutting": 36,
@@ -211,7 +207,6 @@
     "description": "A classic medieval sword, just the right size to use one-handed.",
     "price_postapoc": "45 USD",
     "category": "weapons",
-    "looks_like": "arming_sword",
     "name": { "str": "arming sword" },
     "bashing": 6,
     "cutting": 30,
@@ -234,7 +229,6 @@
     "description": "A curved sword associated with various Middle Eastern and Central Asian countries.  Designed for slashing, and quite deadly against unarmored targets.",
     "price_postapoc": "35 USD",
     "category": "weapons",
-    "looks_like": "katana",
     "name": { "str": "shamshir" },
     "bashing": 5,
     "cutting": 30,
@@ -257,7 +251,6 @@
     "description": "A comparatively-common Japanese short sword.  Smaller and lighter than a katana, but still effective in combat.",
     "price_postapoc": "27 USD 50 cent",
     "category": "weapons",
-    "looks_like": "wakizashi",
     "name": { "str_sp": "wakizashi" },
     "bashing": 2,
     "cutting": 32,
@@ -280,7 +273,6 @@
     "description": "An early modern sword that saw use in the 16th, 17th, and 18th centuries.  Called 'broad' to contrast with the slimmer rapiers.\n\nMade with medium steel and with a grip made of leather wrapped in steel wire, this weapon is comfortable in your hand, though the balance isn't perfect and the edge could be sharper.",
     "price_postapoc": "50 USD",
     "category": "weapons",
-    "looks_like": "broadsword",
     "name": { "str": "medium steel broadsword" },
     "bashing": 6,
     "cutting": 28,
@@ -303,7 +295,6 @@
     "description": "An ancient Chinese doubled-edged straight sword, with an ornate guard and a tassel attached to the pommel.  One of the four major weapons in folklore, alongside the dao saber, qiang spear, and gun staff.",
     "price_postapoc": "40 USD",
     "category": "weapons",
-    "looks_like": "arming_sword",
     "name": { "str_sp": "jian" },
     "bashing": 5,
     "cutting": 29,
@@ -348,7 +339,6 @@
     "description": "A curved sword associated with cavalry from the Early Modern period onward.  Lightweight, but a deadly slashing weapon.",
     "price_postapoc": "40 USD",
     "category": "weapons",
-    "looks_like": "cavalry_sabre",
     "name": { "str": "cavalry saber" },
     "bashing": 5,
     "cutting": 27,
@@ -394,7 +384,7 @@
     "description": "A distinct Dacian sword that curves forward, allowing you to bypass shields or hook and pull enemies, while delivering decent chopping damage.",
     "price_postapoc": "45 USD",
     "category": "weapons",
-    "looks_like": "katana",
+    "looks_like": "machete",
     "name": { "str": "falx", "str_pl": "falxes" },
     "bashing": 5,
     "cutting": 26,
@@ -417,7 +407,6 @@
     "description": "A huge axe designed for warfare.  Though intended for use as a weapon, it can also be pressed into service as a rather clumsy woodcutting tool.",
     "price_postapoc": "120 USD",
     "category": "weapons",
-    "looks_like": "battleaxe",
     "name": { "str": "battle axe" },
     "bashing": 19,
     "cutting": 38,
@@ -443,7 +432,6 @@
     "bashing": 23,
     "cutting": 22,
     "to_hit": 1,
-    "looks_like": "machete",
     "weapon_category": [ "1H_HOOKED", "2H_HAMMERS" ]
   },
   {
@@ -465,7 +453,6 @@
     "bashing": 28,
     "cutting": 31,
     "to_hit": 1,
-    "looks_like": "machete",
     "weapon_category": [ "1H_HOOKED", "HOOKED_POLES" ]
   },
   {
@@ -505,7 +492,7 @@
     "bashing": 3,
     "cutting": 13,
     "to_hit": 1,
-    "looks_like": "machete"
+    "looks_like": "pipe"
   },
   {
     "id": "makeshift_glaive",
@@ -526,7 +513,7 @@
     "bashing": 13,
     "cutting": 31,
     "to_hit": 1,
-    "looks_like": "machete",
+    "looks_like": "halberd",
     "weapon_category": [ "1H_HOOKED", "HOOKED_POLES" ]
   }
 ]
