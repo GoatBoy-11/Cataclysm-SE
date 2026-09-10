@@ -22,7 +22,8 @@
         [ "makeshift_sap", -1 ],
         [ "shillelagh_fake", -1 ],
         [ "pipe", -1 ],
-        [ "stick", -1 ]
+        [ "stick", -1 ],
+        [ "club_wooden", -1 ]
       ]
     ]
   },
@@ -61,7 +62,8 @@
         [ "battleaxe_fake", -1 ],
         [ "battleaxe_inferior", -1 ],
         [ "hockey_stick", -1 ],
-        [ "lucern_hammerfake", -1 ]
+        [ "lucern_hammerfake", -1 ],
+        [ "makeshift_glaive", -1 ]
       ]
     ]
   },
@@ -77,7 +79,9 @@
         [ "kris_fake", -1 ],
         [ "tanto_fake", -1 ],
         [ "tanto_inferior", -1 ],
-        [ "kirpan_cheap", -1 ]
+        [ "kirpan_cheap", -1 ],
+        [ "knife_large", -1 ],
+        [ "knife_cleaver", -1 ]
       ]
     ]
   },
@@ -114,7 +118,8 @@
         [ "bwirebat", -1 ],
         [ "bat", -1 ],
         [ "bat_metal", -1 ],
-        [ "bat_nerf", -1 ]
+        [ "bat_nerf", -1 ],
+        [ "club_wooden", -1 ]
       ]
     ]
   },
@@ -154,7 +159,8 @@
         [ "naginata_inferior", -1 ],
         [ "makeshift_scythe_war", -1 ],
         [ "hockey_stick", -1 ],
-        [ "lucern_hammerfake", -1 ]
+        [ "lucern_hammerfake", -1 ],
+        [ "makeshift_glaive", -1 ]
       ]
     ]
   },
@@ -173,7 +179,9 @@
         [ "bone_knife", -1 ],
         [ "knuckle_katar", -1 ],
         [ "screwdriver", -1 ],
-        [ "scissors", -1 ]
+        [ "scissors", -1 ],
+        [ "knife_small", -1 ],
+        [ "knife_large", -1 ]
       ]
     ]
   },
@@ -220,7 +228,8 @@
         [ "shock_sabre", -1 ],
         [ "rapier_fake", -1 ],
         [ "broadsword_fake", -1 ],
-        [ "broadsword_inferior", -1 ]
+        [ "broadsword_inferior", -1 ],
+        [ "sharpened_pipe", -1 ]
       ]
     ]
   },
@@ -308,7 +317,8 @@
         [ "glaive", -1 ],
         [ "battleaxe", -1 ],
         [ "lucern_hammer", -1 ],
-        [ "warhammer", -1 ]
+        [ "warhammer", -1 ],
+        [ "poleaxe", -1 ]
       ]
     ]
   },
@@ -329,7 +339,9 @@
         [ "kukri", -1 ],
         [ "tanto", -1 ],
         [ "kirpan", -1 ],
-        [ "butterfly_swords", -1 ]
+        [ "butterfly_swords", -1 ],
+        [ "knife_KABAR", -1 ],
+        [ "karambit", -1 ]
       ]
     ]
   },
@@ -356,7 +368,10 @@
         [ "dao", -1 ],
         [ "wakizashi", -1 ],
         [ "sword_cane", -1 ],
-        [ "cutlass", -1 ]
+        [ "cutlass", -1 ],
+        [ "talwar", -1 ],
+        [ "falx", -1 ],
+        [ "kilij", -1 ]
       ]
     ]
   },
@@ -371,7 +386,8 @@
         [ "naginata", -1 ],
         [ "scythe_war", -1 ],
         [ "lucern_hammer", -1 ],
-        [ "ji", -1 ]
+        [ "ji", -1 ],
+        [ "poleaxe", -1 ]
       ]
     ]
   },
@@ -418,7 +434,8 @@
         [ "rapier", -1 ],
         [ "cavalry_sabre", -1 ],
         [ "jian", -1 ],
-        [ "broadsword", -1 ]
+        [ "broadsword", -1 ],
+        [ "talwar", -1 ]
       ]
     ]
   },
