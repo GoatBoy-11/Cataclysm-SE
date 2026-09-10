@@ -14,12 +14,14 @@
   {
     "type": "weapon_category",
     "id": "KNIVES",
+    "proficiencies": [ "prof_knives_familiar", "prof_knives_pro", "prof_knives_master" ],
     "name": "Knives",
     "//": "Short blade fixed onto a handle, for cutting or as weapon."
   },
   {
     "type": "weapon_category",
     "id": "SHORT_SWORDS",
+    "proficiencies": [ "prof_short_swords_familiar", "prof_short_swords_pro", "prof_short_swords_master" ],
     "name": "Short Swords",
     "//": "One handed sword of length between a large knife and a 'proper' sword."
   },
@@ -44,6 +46,7 @@
   {
     "type": "weapon_category",
     "id": "BIONIC_SWORDS",
+    "proficiencies": [ "prof_bionic_swords_familiar", "prof_bionic_swords_pro", "prof_bionic_swords_master" ],
     "name": "Bionic Swords",
     "//": "Swords integrated into the body via bionics."
   },
@@ -56,6 +59,7 @@
   {
     "type": "weapon_category",
     "id": "BATONS",
+    "proficiencies": [ "prof_batons_familiar", "prof_batons_pro", "prof_batons_master" ],
     "name": "Batons",
     "//": "Thin, balanced rod of strong material."
   },
@@ -74,12 +78,14 @@
   {
     "type": "weapon_category",
     "id": "QUARTERSTAVES",
+    "proficiencies": [ "prof_quarterstaves_familiar", "prof_quarterstaves_pro", "prof_quarterstaves_master" ],
     "name": "Quarterstaves",
     "//": "Long pole wielded with both hands."
   },
   {
     "type": "weapon_category",
     "id": "MACES",
+    "proficiencies": [ "prof_maces_familiar", "prof_maces_pro", "prof_maces_master" ],
     "name": "Maces",
     "//": "Short one-handed weapon with a striking head firmly attached to a short handle."
   },
@@ -92,6 +98,7 @@
   {
     "type": "weapon_category",
     "id": "FLAILS",
+    "proficiencies": [ "prof_flails_familiar", "prof_flails_pro", "prof_flails_master" ],
     "name": "Flails",
     "//": "Striking head attached to handle by flexible rope/chain."
   },
@@ -122,6 +129,7 @@
   {
     "type": "weapon_category",
     "id": "WHIPS",
+    "proficiencies": [ "prof_whips_familiar", "prof_whips_pro", "prof_whips_master" ],
     "name": "Whips",
     "//": "Flexible tool used to strike at range."
   },
@@ -140,6 +148,7 @@
   {
     "type": "weapon_category",
     "id": "SPEARS",
+    "proficiencies": [ "prof_spears_familiar", "prof_spears_pro", "prof_spears_master" ],
     "name": "Spears",
     "//": "Polearm with a long shaft and a sharp tip made of hard material."
   },
@@ -170,6 +179,7 @@
   {
     "type": "weapon_category",
     "id": "BIONIC_WEAPONRY",
+    "proficiencies": [ "prof_bionics_familiar", "prof_bionics_pro", "prof_bionics_master" ],
     "name": "Bionic Weaponry",
     "//": "Weapons integrated into the body via bionics."
   },

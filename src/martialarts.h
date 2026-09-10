@@ -39,6 +39,11 @@ class weapon_category
             return name_;
         }
 
+        /** Proficiencies that make weapons in this category easier to wield. */
+        const std::vector<proficiency_id> &proficiencies() const {
+            return proficiencies_;
+        }
+
     private:
         friend class generic_factory<weapon_category>;
 
@@ -46,6 +51,7 @@ class weapon_category
         bool was_loaded = false;
 
         translation name_;
+        std::vector<proficiency_id> proficiencies_;
 
     public:
         LUA_TYPE_OPS( weapon_category, id );

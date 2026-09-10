@@ -49,6 +49,7 @@
 #include "map_iterator.h"
 #include "mapdata.h"
 #include "martialarts.h"
+#include "proficiency.h"
 #include "messages.h"
 #include "monattack.h"
 #include "monster.h"
@@ -1484,9 +1485,32 @@ int Character::get_melee_stamina_cost( const item &weapon )
     const int deft_bonus = has_trait( trait_DEFT ) ? 50 : 0;
     const float strbonus = 1 / ( 2 + ( str_cur * 0.25f ) );
     const float skill_cost = std::max( 0.667f, ( ( 30.0f - melee ) / 30.0f ) );
+    // Knowing a weapon's category makes it cheaper to swing.  The bonuses live on
+    // the proficiencies themselves, so a familiar/pro/master chain compounds.
+    float proficiency_multiplier = 1.0f;
+    if( get_option<bool>( "PROFICIENCY_SYSTEM" ) ) {
+        float loss = 0.0f;
+        for( const weapon_category_id &cat : weapon.type->weapon_category ) {
+            if( !cat.is_valid() ) {
+                continue;
+            }
+            for( const proficiency_id &prof : cat->proficiencies() ) {
+                if( !has_proficiency( prof ) ) {
+                    continue;
+                }
+                const std::optional<float> bonus =
+                    prof->bonus_for( "melee_attack", proficiency_bonus_type::stamina );
+                if( bonus ) {
+                    loss += *bonus;
+                }
+            }
+        }
+        proficiency_multiplier = std::clamp( 1.0f - loss, 0.0f, 1.0f );
+    }
+
     /** @EFFECT_MELEE and @EFFECT_STR reduce stamina cost of melee attacks */
     return ( weight_cost + encumbrance_cost - deft_bonus + 50 ) * skill_cost *
-           ( 0.75f + strbonus );
+           ( 0.75f + strbonus ) * proficiency_multiplier;
 }
 
 // Melee calculation is in parts. This sets up the attack, then in deal_melee_attack,

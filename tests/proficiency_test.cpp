@@ -210,3 +210,24 @@ TEST_CASE("a character practises a proficiency until they know it", "[proficienc
 
     you.lose_proficiency(prof_familiar, true);
 }
+
+TEST_CASE("weapon proficiencies make a familiar weapon cheaper to swing", "[proficiency]") {
+    const proficiency_id knives_familiar("prof_knives_familiar");
+    REQUIRE(knives_familiar.is_valid());
+
+    Character &you = get_avatar();
+    you.lose_proficiency(knives_familiar, true);
+
+    detached_ptr<item> knife = item::spawn("knife_combat");
+    REQUIRE(knife);
+
+    const int untrained = you.get_melee_stamina_cost(*knife);
+    you.add_proficiency(knives_familiar, true);
+    const int trained = you.get_melee_stamina_cost(*knife);
+
+    // The bonus lives on the proficiency, reached through the weapon's category.
+    CHECK(trained < untrained);
+
+    you.lose_proficiency(knives_familiar, true);
+    CHECK(you.get_melee_stamina_cost(*knife) == untrained);
+}

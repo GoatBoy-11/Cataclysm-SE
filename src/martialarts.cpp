@@ -1,5 +1,7 @@
 #include "martialarts.h"
 
+#include "proficiency.h"
+
 #include <algorithm>
 #include <cstdlib>
 #include <iterator>
@@ -76,6 +78,8 @@ void weapon_category::reset()
 void weapon_category::load( const JsonObject &jo, const std::string & )
 {
     mandatory( jo, was_loaded, "name", name_ );
+    optional( jo, was_loaded, "proficiencies", proficiencies_,
+              auto_flags_reader<proficiency_id> {} );
 }
 
 const std::vector<weapon_category> &weapon_category::get_all()
