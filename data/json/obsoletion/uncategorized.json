@@ -411,6 +411,7 @@
   {
     "type": "weapon_category",
     "id": "HAND_AXES",
+    "proficiencies": [ "prof_hand_axes_familiar", "prof_hand_axes_pro", "prof_hand_axes_master" ],
     "name": "Hand Axes",
     "//": "Axe with a short handle, typically wielded in one hand, ocassionally thrown."
   },
