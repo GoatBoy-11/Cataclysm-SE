@@ -79,6 +79,7 @@
 #include "overmapbuffer.h"
 #include "player.h"
 #include "player_activity.h"
+#include "proficiency.h"
 #include "point.h"
 #include "ranged.h"
 #include "recipe.h"
@@ -525,6 +526,51 @@ enum class butcherable_rating : int {
     info_tools
 };
 
+static const proficiency_id proficiency_prof_butchering_basic( "prof_butchering_basic" );
+static const proficiency_id proficiency_prof_butchering_adv( "prof_butchering_adv" );
+static const proficiency_id proficiency_prof_skinning_basic( "prof_skinning_basic" );
+static const proficiency_id proficiency_prof_skinning_adv( "prof_skinning_adv" );
+
+/**
+ * How much longer butchery takes for the proficiencies @p who lacks.  Partial
+ * practice pays off proportionally, so progress is felt before it completes.
+ */
+static float butchery_proficiency_time_factor( const Character &who )
+{
+    if( !get_option<bool>( "PROFICIENCY_SYSTEM" ) ) {
+        return 1.0f;
+    }
+    float factor = 1.0f;
+    for( const proficiency_id &id : {
+             proficiency_prof_butchering_basic, proficiency_prof_skinning_basic
+         } ) {
+        if( !id.is_valid() || who.has_proficiency( id ) ) {
+            continue;
+        }
+        const float excess = id->default_time_multiplier() - 1.0f;
+        factor *= 1.0f + excess * ( 1.0f - who.get_proficiency_practice( id ) );
+    }
+    return factor;
+}
+
+/** Extra butchery roll from what @p who knows, up to +4 when fully practised. */
+static double butchery_proficiency_bonus( const Character &who )
+{
+    if( !get_option<bool>( "PROFICIENCY_SYSTEM" ) ) {
+        return 0.0;
+    }
+    double bonus = 0.0;
+    for( const proficiency_id &id : {
+             proficiency_prof_butchering_basic, proficiency_prof_butchering_adv,
+             proficiency_prof_skinning_basic, proficiency_prof_skinning_adv
+         } ) {
+        if( id.is_valid() ) {
+            bonus += who.get_proficiency_practice( id );
+        }
+    }
+    return bonus;
+}
+
 butchery_setup consider_butchery( const item &corpse_item, player &u, butcher_type action )
 {
     map &here = get_map();
@@ -704,10 +750,12 @@ butchery_setup consider_butchery( const item &corpse_item, player &u, butcher_ty
                       butcherable_rating::warn_cannibalism );
     }
 
-    setup.move_cost = butcher_time_to_cut( corpse_item, action );
+    setup.move_cost = std::round( butcher_time_to_cut( corpse_item, action ) *
+                                  butchery_proficiency_time_factor( u ) );
 
     return setup;
 }
+
 
 static void set_up_butchery_activity( player_activity &act, player &u, const butchery_setup &setup )
 {
@@ -1153,6 +1201,17 @@ static void butchery_drops_harvest( item *corpse_item, const mtype &mt, player &
     if( action != DISSECT ) {
         p.practice( skill_survival, std::max( 0, practice ), std::max( mt.size - creature_size::medium,
                     0 ) + 4 );
+        // Learn the trade by doing it; the advanced forms only once the basics stick.
+        const time_duration worked = time_duration::from_turns( std::max( 1, practice ) * 10 );
+        player &who = const_cast<player &>( p );
+        who.practice_proficiency( proficiency_prof_butchering_basic, worked );
+        who.practice_proficiency( proficiency_prof_skinning_basic, worked );
+        if( who.has_proficiency( proficiency_prof_butchering_basic ) ) {
+            who.practice_proficiency( proficiency_prof_butchering_adv, worked );
+        }
+        if( who.has_proficiency( proficiency_prof_skinning_basic ) ) {
+            who.practice_proficiency( proficiency_prof_skinning_adv, worked );
+        }
     }
 }
 
@@ -1244,6 +1303,8 @@ void activity_handlers::butcher_finish( player_activity *act, player *p )
         skill_shift += skill_level;
         ///\EFFECT_DEX >8 randomly increases butcher rolls, slightly, <8 decreases
         skill_shift += rng_float( 0, p->get_dex() - 8 ) / 4.0;
+        // Knowing how a carcass comes apart is worth as much as a couple of skill levels
+        skill_shift += butchery_proficiency_bonus( *p );
         if( factor < 0 ) {
             skill_shift -= rng_float( 0, -factor / 5.0 );
         }

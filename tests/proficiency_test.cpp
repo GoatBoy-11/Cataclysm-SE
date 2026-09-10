@@ -261,3 +261,26 @@ TEST_CASE("books soften a proficiency you lack", "[proficiency]") {
     // A book about one proficiency says nothing about another.
     CHECK(one.time_factor(prof_pro) == Approx(0.0f));
 }
+
+TEST_CASE("focus changes how fast a proficiency is picked up", "[proficiency]") {
+    Character &you = get_avatar();
+    const int saved_focus = you.focus_pool;
+    const time_duration chunk = prof_familiar->time_to_learn() / 4;
+
+    you.lose_proficiency(prof_familiar);
+    you.focus_pool = 100;
+    you.practice_proficiency(prof_familiar, chunk);
+    const float attentive = you.get_proficiency_practice(prof_familiar);
+    REQUIRE(attentive > 0.0f);
+
+    you.lose_proficiency(prof_familiar);
+    you.focus_pool = 20;
+    you.practice_proficiency(prof_familiar, chunk);
+    const float distracted = you.get_proficiency_practice(prof_familiar);
+
+    // Same work, less attention, less learned.
+    CHECK(distracted < attentive);
+
+    you.lose_proficiency(prof_familiar);
+    you.focus_pool = saved_focus;
+}

@@ -4486,7 +4486,14 @@ void Character::lose_proficiency( const proficiency_id &prof, const bool ignore_
 bool Character::practice_proficiency( const proficiency_id &prof, const time_duration &amount,
                                       const std::optional<time_duration> &max )
 {
-    return _proficiencies->practice( prof, amount, 0.0f, max );
+    time_duration effective = amount;
+    // Picking up knowledge tracks attention the same way skills do.  A handful of
+    // proficiencies are rote enough to be exempt and say so in their JSON.
+    if( prof.is_valid() && !prof->ignore_focus() ) {
+        const int focused = adjust_for_focus( to_turns<int>( amount ) );
+        effective = time_duration::from_turns( std::max( 0, focused ) );
+    }
+    return _proficiencies->practice( prof, effective, 0.0f, max );
 }
 
 void Character::set_proficiency_practiced_time( const proficiency_id &prof,
