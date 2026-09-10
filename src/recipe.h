@@ -31,6 +31,21 @@ constexpr recipe_filter_flags operator&( recipe_filter_flags l, recipe_filter_fl
                static_cast<unsigned>( l ) & static_cast<unsigned>( r ) );
 }
 
+/**
+ * A proficiency a recipe cares about.  Missing one you merely *use* slows the
+ * craft and hurts the skill roll; missing a *required* one blocks it outright.
+ * An unset multiplier or penalty falls back to the proficiency's own default.
+ */
+struct recipe_proficiency {
+    proficiency_id id;
+    bool required = false;
+    std::optional<float> time_multiplier;
+    std::optional<float> skill_penalty;
+    float learning_time_multiplier = 1.0f;
+
+    void deserialize( const JsonObject &jo );
+};
+
 class recipe
 {
         friend class recipe_dictionary;
@@ -150,6 +165,18 @@ class recipe
         bool has_byproducts() const;
 
         int batch_time( int batch, float multiplier, size_t assistants ) const;
+
+        /** Proficiencies this recipe names.  Empty unless the JSON says otherwise. */
+        std::vector<recipe_proficiency> proficiencies;
+        /** Mandatory to craft at all. */
+        std::vector<proficiency_id> required_proficiencies() const;
+        /** Not mandatory, but missing them impedes the craft. */
+        std::vector<proficiency_id> used_proficiencies() const;
+        bool character_has_required_proficiencies( const Character &c ) const;
+        /** Multiplier on craft time for the proficiencies @p c lacks.  1.0 if none. */
+        float proficiency_time_maluses( const Character &c ) const;
+        /** Skill levels to dock for the proficiencies @p c lacks.  0.0 if none. */
+        float proficiency_skill_maluses( const Character &c ) const;
         time_duration batch_duration( int batch = 1, float multiplier = 1.0,
                                       size_t assistants = 0 ) const;
 

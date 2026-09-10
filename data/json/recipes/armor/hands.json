@@ -1,6 +1,11 @@
 [
   {
     "result": "gauntlets_chitin",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_chitinworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -14,6 +19,11 @@
   },
   {
     "result": "gauntlets_acidchitin",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_chitinworking" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -27,6 +37,11 @@
   },
   {
     "result": "gauntlets_larmor",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -75,6 +90,7 @@
   },
   {
     "result": "gloves_fingerless",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "id_suffix": "from patches",
     "category": "CC_ARMOR",
@@ -114,6 +130,7 @@
   },
   {
     "result": "gloves_wool_fingerless",
+    "proficiencies": [ { "proficiency": "prof_knitting" }, { "proficiency": "prof_knitting_speed" } ],
     "type": "recipe",
     "byproducts": [ [ "yarn", 5 ] ],
     "category": "CC_ARMOR",
@@ -203,6 +220,7 @@
   },
   {
     "result": "gloves_fur",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_furriery" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -295,6 +313,7 @@
   },
   {
     "result": "gloves_leather",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -383,6 +402,19 @@
   },
   {
     "result": "gloves_plate",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_armorsmithing" },
+      {
+        "proficiency": "prof_closures",
+        "required": false,
+        "time_multiplier": 1.5,
+        "learning_time_multiplier": 0.25,
+        "skill_penalty": 0.15
+      },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -407,6 +439,13 @@
   },
   {
     "result": "gloves_survivor",
+    "proficiencies": [
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_polymerworking" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -433,6 +472,7 @@
   },
   {
     "result": "gloves_wool",
+    "proficiencies": [ { "proficiency": "prof_knitting" }, { "proficiency": "prof_knitting_speed" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -445,6 +485,7 @@
   },
   {
     "result": "gloves_work",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -504,6 +545,13 @@
   },
   {
     "result": "gloves_wsurvivor",
+    "proficiencies": [
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_polymerworking" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_furriery" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -530,6 +578,7 @@
   },
   {
     "result": "mittens",
+    "proficiencies": [ { "proficiency": "prof_knitting" }, { "proficiency": "prof_knitting_speed" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -543,6 +592,7 @@
   },
   {
     "result": "nomex_gloves",
+    "proficiencies": [ { "proficiency": "prof_polymerworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -566,6 +616,7 @@
   },
   {
     "result": "thermal_gloves",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",
@@ -581,6 +632,7 @@
   },
   {
     "result": "wetsuit_gloves",
+    "proficiencies": [ { "proficiency": "prof_elastics" }, { "proficiency": "prof_closures_waterproofing" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_HANDS",

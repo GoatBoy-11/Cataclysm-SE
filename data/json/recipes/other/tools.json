@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "wood_smoother",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -56,6 +57,7 @@
   {
     "type": "recipe",
     "result": "large_tent_kit",
+    "proficiencies": [ { "proficiency": "prof_closures" }, { "proficiency": "prof_closures_waterproofing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "tailor",
@@ -145,6 +147,12 @@
   {
     "type": "recipe",
     "result": "small_space_heater",
+    "proficiencies": [
+      { "proficiency": "prof_appliance_repair" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -165,6 +173,12 @@
   {
     "type": "recipe",
     "result": "large_space_heater",
+    "proficiencies": [
+      { "proficiency": "prof_appliance_repair" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -185,6 +199,7 @@
   {
     "type": "recipe",
     "result": "puller",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -200,6 +215,11 @@
   {
     "type": "recipe",
     "result": "press",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -223,6 +243,7 @@
   {
     "type": "recipe",
     "result": "press_dowel",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "survival",
@@ -450,6 +471,7 @@
   {
     "type": "recipe",
     "result": "needle_bone",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "survival",
@@ -462,6 +484,7 @@
   {
     "type": "recipe",
     "result": "needle_wood",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -473,6 +496,7 @@
   },
   {
     "result": "bone_flute",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -512,6 +536,7 @@
   {
     "type": "recipe",
     "result": "primitive_knife",
+    "proficiencies": [ { "proficiency": "prof_knapping" }, { "proficiency": "prof_knapping_speed" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "survival",
@@ -528,6 +553,7 @@
   {
     "type": "recipe",
     "result": "digging_stick",
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 3, "skill_penalty": 0 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "survival",
@@ -540,6 +566,7 @@
   {
     "type": "recipe",
     "result": "primitive_shovel",
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 3, "skill_penalty": 0 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "survival",
@@ -558,6 +585,7 @@
   {
     "type": "recipe",
     "result": "copper_ax",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_redsmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -578,6 +606,7 @@
   {
     "type": "recipe",
     "result": "primitive_axe",
+    "proficiencies": [ { "proficiency": "prof_knapping" }, { "proficiency": "prof_knapping_speed" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -597,6 +626,7 @@
   {
     "type": "recipe",
     "result": "primitive_adze",
+    "proficiencies": [ { "proficiency": "prof_knapping" }, { "proficiency": "prof_knapping_speed" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -641,6 +671,11 @@
   {
     "type": "recipe",
     "result": "flint_steel",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "survival",
@@ -656,6 +691,7 @@
   {
     "type": "recipe",
     "result": "knitting_needles",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -668,6 +704,7 @@
   {
     "type": "recipe",
     "result": "distaff_spindle",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -680,6 +717,7 @@
   {
     "type": "recipe",
     "result": "carding_paddles",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -704,6 +742,11 @@
   {
     "type": "recipe",
     "result": "screwdriver",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -716,6 +759,11 @@
   {
     "type": "recipe",
     "result": "screwdriver_set",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "id_suffix": "forged",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -730,6 +778,7 @@
   {
     "type": "recipe",
     "result": "stepladder",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -743,6 +792,7 @@
   {
     "type": "recipe",
     "result": "tree_spile",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -767,6 +817,15 @@
   {
     "type": "recipe",
     "result": "crude_picklock",
+    "proficiencies": [
+      {
+        "proficiency": "prof_lockpicking",
+        "required": false,
+        "time_multiplier": 2,
+        "learning_time_multiplier": 0,
+        "skill_penalty": 0.5
+      }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "mechanics",
@@ -779,6 +838,11 @@
   {
     "type": "recipe",
     "result": "picklocks",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "mechanics",
@@ -992,6 +1056,7 @@
   {
     "type": "recipe",
     "result": "rock_quern",
+    "proficiencies": [ { "proficiency": "prof_knapping" }, { "proficiency": "prof_knapping_speed" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1076,6 +1141,7 @@
   {
     "type": "recipe",
     "result": "forge",
+    "proficiencies": [ { "proficiency": "prof_metalworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1114,6 +1180,7 @@
   {
     "type": "recipe",
     "result": "crucible_clay",
+    "proficiencies": [ { "proficiency": "prof_pottery" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1126,6 +1193,11 @@
   {
     "type": "recipe",
     "result": "tongs",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking", "required": true },
+      { "proficiency": "prof_blacksmithing", "required": true },
+      { "proficiency": "prof_toolsmithing", "required": true }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1139,6 +1211,11 @@
   {
     "type": "recipe",
     "result": "chisel",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1153,6 +1230,11 @@
   {
     "type": "recipe",
     "result": "swage",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1164,6 +1246,11 @@
   {
     "type": "recipe",
     "result": "hammer",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1201,6 +1288,12 @@
   {
     "type": "recipe",
     "result": "hammer_bronze",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing" },
+      { "proficiency": "prof_redsmithing_adv" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1213,6 +1306,11 @@
   {
     "type": "recipe",
     "result": "hand_drill",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1225,6 +1323,11 @@
   {
     "type": "recipe",
     "result": "scissors",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_toolsmithing", "required": false, "time_multiplier": 1.5 },
+      { "proficiency": "prof_bladesmith", "required": false, "time_multiplier": 1.5 }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1302,6 +1405,7 @@
   {
     "type": "recipe",
     "result": "pot",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1330,6 +1434,7 @@
   {
     "type": "recipe",
     "result": "teapot",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1341,6 +1446,11 @@
   {
     "type": "recipe",
     "result": "wrench",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1352,6 +1462,11 @@
   {
     "type": "recipe",
     "result": "pliers",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1376,6 +1491,12 @@
   {
     "type": "recipe",
     "result": "hacksaw",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" },
+      { "proficiency": "prof_tempering" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1407,6 +1528,11 @@
   {
     "type": "recipe",
     "result": "boltcutters",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1420,6 +1546,11 @@
   {
     "type": "recipe",
     "result": "shovel",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1475,6 +1606,11 @@
   {
     "type": "recipe",
     "result": "e_tool",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1487,6 +1623,11 @@
   {
     "type": "recipe",
     "result": "hoe",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1500,6 +1641,12 @@
   {
     "type": "recipe",
     "result": "ax",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1526,6 +1673,11 @@
   {
     "type": "recipe",
     "result": "saw",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1567,6 +1719,11 @@
   {
     "type": "recipe",
     "result": "hammer_sledge_short",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "id_suffix": "forged",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -1595,6 +1752,11 @@
   {
     "type": "recipe",
     "result": "hammer_sledge_heavy",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1608,6 +1770,11 @@
   {
     "type": "recipe",
     "result": "hammer_sledge_engineer",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1676,6 +1843,7 @@
   {
     "type": "recipe",
     "result": "magnifying_glass",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1690,6 +1858,7 @@
   {
     "type": "recipe",
     "result": "survivor_scope",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1715,6 +1884,7 @@
   {
     "type": "recipe",
     "result": "char_forge",
+    "proficiencies": [ { "proficiency": "prof_metalworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1744,6 +1914,7 @@
   {
     "type": "recipe",
     "result": "char_smoker",
+    "proficiencies": [ { "proficiency": "prof_metalworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1765,6 +1936,11 @@
   {
     "type": "recipe",
     "result": "waffleiron",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1776,6 +1952,11 @@
   {
     "type": "recipe",
     "result": "pastaextruder",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1806,6 +1987,11 @@
   {
     "type": "recipe",
     "result": "kiln",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1861,6 +2047,11 @@
   {
     "type": "recipe",
     "result": "metal_smoother",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1872,6 +2063,7 @@
   {
     "type": "recipe",
     "result": "char_kiln",
+    "proficiencies": [ { "proficiency": "prof_metalworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1903,6 +2095,7 @@
   {
     "type": "recipe",
     "result": "mop",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1916,6 +2109,7 @@
   {
     "type": "recipe",
     "result": "mirror",
+    "proficiencies": [ { "proficiency": "prof_glassblowing", "required": false, "time_multiplier": 6 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -1943,6 +2137,7 @@
   {
     "type": "recipe",
     "result": "pipe_glass",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2013,6 +2208,7 @@
   {
     "type": "recipe",
     "result": "fishing_hook_bone",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2131,6 +2327,11 @@
   {
     "type": "recipe",
     "result": "metal_funnel",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2158,6 +2359,7 @@
   {
     "type": "recipe",
     "result": "funnel",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2184,6 +2386,7 @@
   {
     "type": "recipe",
     "result": "leather_funnel",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "tailor",
@@ -2245,6 +2448,7 @@
   {
     "type": "recipe",
     "result": "clay_pot",
+    "proficiencies": [ { "proficiency": "prof_pottery", "required": false, "time_multiplier": 1.5 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2271,6 +2475,7 @@
   {
     "type": "recipe",
     "result": "clay_teapot",
+    "proficiencies": [ { "proficiency": "prof_pottery" }, { "proficiency": "prof_pottery_glazing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2370,6 +2575,11 @@
   {
     "type": "recipe",
     "result": "needle_curved",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2395,6 +2605,7 @@
   {
     "type": "recipe",
     "result": "wash_kit",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "survival",
@@ -2451,6 +2662,7 @@
   {
     "type": "recipe",
     "result": "platinum_grille",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2465,6 +2677,7 @@
   {
     "type": "recipe",
     "result": "steel_grille",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2476,6 +2689,11 @@
   },
   {
     "result": "anvil_bronze",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking", "required": true },
+      { "proficiency": "prof_redsmithing", "required": true },
+      { "proficiency": "prof_redsmithing_adv" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2557,6 +2775,7 @@
   {
     "type": "recipe",
     "result": "funnel_separation",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2573,6 +2792,7 @@
   {
     "type": "recipe",
     "result": "plastic_jack_o_lantern",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2601,6 +2821,11 @@
   },
   {
     "result": "g_shovel",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2628,6 +2853,13 @@
   },
   {
     "result": "sickle",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" },
+      { "proficiency": "prof_bladesmith" },
+      { "proficiency": "prof_carving" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2669,6 +2901,17 @@
   },
   {
     "result": "shears",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" },
+      {
+        "proficiency": "prof_plasticworking",
+        "required": false,
+        "time_multiplier": 1.25,
+        "learning_time_multiplier": 0.1
+      }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2750,6 +2993,18 @@
   },
   {
     "result": "knife_folding",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" },
+      { "proficiency": "prof_toolsmithing" },
+      {
+        "proficiency": "prof_plasticworking",
+        "required": false,
+        "time_multiplier": 1.15,
+        "learning_time_multiplier": 0.1
+      }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2762,6 +3017,11 @@
   },
   {
     "result": "steel_pan",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2784,6 +3044,7 @@
   },
   {
     "result": "awl_bone",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2796,6 +3057,7 @@
   },
   {
     "result": "awl_steel",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2809,6 +3071,11 @@
   {
     "type": "recipe",
     "result": "sewing_kit",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_plasticworking" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -2836,6 +3103,7 @@
   },
   {
     "result": "churn",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2856,6 +3124,11 @@
   },
   {
     "result": "horse_tack",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2900,6 +3173,7 @@
   },
   {
     "result": "jack_small",
+    "proficiencies": [ { "proficiency": "prof_metalworking" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2916,6 +3190,11 @@
   },
   {
     "result": "pickaxe",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2929,6 +3208,7 @@
   },
   {
     "result": "still",
+    "proficiencies": [ { "proficiency": "prof_metalworking" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2971,6 +3251,11 @@
   },
   {
     "result": "can_sealer",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -2987,6 +3272,7 @@
   {
     "type": "recipe",
     "result": "mortar_pestle",
+    "proficiencies": [ { "proficiency": "prof_knapping" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -3079,6 +3365,11 @@
   },
   {
     "result": "crowbar",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -3090,6 +3381,11 @@
   },
   {
     "result": "halligan",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -3101,6 +3397,11 @@
   },
   {
     "result": "claw_bar",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -3112,6 +3413,11 @@
   },
   {
     "result": "iceaxe",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -3153,6 +3459,7 @@
   },
   {
     "result": "dog_whistle_wood",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -3178,6 +3485,7 @@
   },
   {
     "result": "makeshift_hose",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
@@ -3205,6 +3513,7 @@
   {
     "type": "recipe",
     "result": "stone_chisel",
+    "proficiencies": [ { "proficiency": "prof_knapping" }, { "proficiency": "prof_knapping_speed" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",
@@ -3305,6 +3614,7 @@
   {
     "type": "recipe",
     "result": "clamp",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "skill_used": "fabrication",
     "difficulty": 3,
@@ -3339,6 +3649,11 @@
   {
     "type": "recipe",
     "result": "metal_file",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "fabrication",

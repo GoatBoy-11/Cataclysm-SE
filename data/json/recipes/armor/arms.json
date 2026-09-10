@@ -26,6 +26,11 @@
   },
   {
     "result": "armguard_chitin",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_chitinworking" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -39,6 +44,12 @@
   },
   {
     "result": "armguard_acidchitin",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_chitinworking" },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -52,6 +63,7 @@
   },
   {
     "result": "armguard_hard",
+    "proficiencies": [ { "proficiency": "prof_polymerworking" }, { "proficiency": "prof_plasticworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -65,6 +77,7 @@
   },
   {
     "result": "armguard_larmor",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -104,6 +117,7 @@
   },
   {
     "result": "armguard_metal",
+    "proficiencies": [ { "proficiency": "prof_metalworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -118,6 +132,12 @@
   },
   {
     "result": "armguard_bronze",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing", "required": true },
+      { "proficiency": "prof_redsmithing_adv" },
+      { "proficiency": "prof_articulation", "required": true }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -141,6 +161,7 @@
   },
   {
     "result": "armguard_scrap",
+    "proficiencies": [ { "proficiency": "prof_armorsmithing", "skill_penalty": 0 }, { "proficiency": "prof_articulation" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -155,6 +176,7 @@
   },
   {
     "result": "armguard_soft",
+    "proficiencies": [ { "proficiency": "prof_polymerworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -168,6 +190,7 @@
   },
   {
     "result": "elbow_pads",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",
@@ -207,6 +230,7 @@
   },
   {
     "result": "vambrace_larmor",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_ARMS",

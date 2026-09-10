@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "arrow_small_game_fletched",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -20,6 +21,7 @@
   {
     "type": "recipe",
     "result": "arrow_fire_hardened_fletched",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -34,6 +36,7 @@
   {
     "type": "recipe",
     "result": "arrow_wood",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -54,6 +57,7 @@
   {
     "type": "recipe",
     "result": "arrow_field_point_fletched",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -74,6 +78,7 @@
   {
     "type": "recipe",
     "result": "arrow_heavy_field_point_fletched",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -94,6 +99,7 @@
   {
     "type": "recipe",
     "result": "arrow_metal_sharpened_fletched",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" }, { "proficiency": "prof_metalworking" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -117,6 +123,7 @@
   {
     "type": "recipe",
     "result": "arrow_heavy_fire_hardened_fletched",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -192,6 +199,7 @@
   {
     "type": "recipe",
     "result": "arrow_wood_heavy",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -222,6 +230,7 @@
   {
     "type": "recipe",
     "result": "bolt_wood",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -242,6 +251,7 @@
   {
     "type": "recipe",
     "result": "bolt_wood_bodkin",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -262,6 +272,7 @@
   {
     "type": "recipe",
     "result": "bolt_wood_small_game",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -339,6 +350,7 @@
   {
     "type": "recipe",
     "result": "bolt_metal",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" }, { "proficiency": "prof_metalworking" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -357,6 +369,7 @@
   {
     "type": "recipe",
     "result": "bolt_crude",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -371,6 +384,7 @@
   {
     "type": "recipe",
     "result": "bolt_simple_wood",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -389,6 +403,7 @@
   {
     "type": "recipe",
     "result": "bolt_simple_small_game",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -407,6 +422,7 @@
   {
     "type": "recipe",
     "result": "bolt_makeshift",
+    "proficiencies": [ { "proficiency": "prof_fletching" }, { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",
@@ -527,6 +543,7 @@
   {
     "type": "recipe",
     "result": "arrow_plastic",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_ARROWS",
     "skill_used": "fabrication",

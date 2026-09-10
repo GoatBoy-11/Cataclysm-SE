@@ -467,6 +467,7 @@
   },
   {
     "result": "steam_watts_small",
+    "proficiencies": [ { "proficiency": "prof_basic_engines" }, { "proficiency": "prof_welding_basic" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
@@ -613,6 +614,7 @@
   },
   {
     "result": "reins_tackle",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
@@ -625,6 +627,7 @@
   },
   {
     "result": "yoke_harness",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
@@ -742,6 +745,10 @@
   },
   {
     "result": "minifreezer",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.1, "learning_time_multiplier": 0.1 },
+      { "proficiency": "prof_appliance_repair" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
@@ -771,6 +778,7 @@
   },
   {
     "result": "programmable_autopilot",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
@@ -812,6 +820,10 @@
   },
   {
     "result": "minifridge",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.1, "learning_time_multiplier": 0.1 },
+      { "proficiency": "prof_appliance_repair" }
+    ],
     "type": "recipe",
     "copy-from": "minifreezer",
     "skills_required": [ "fabrication", 4 ],
@@ -848,6 +860,7 @@
   },
   {
     "result": "mountable_cooler",
+    "proficiencies": [ { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.1, "learning_time_multiplier": 0.1 } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
@@ -861,6 +874,7 @@
   },
   {
     "result": "vh_autoclave",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
@@ -903,6 +917,7 @@
   },
   {
     "result": "wheel_caster",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
@@ -948,6 +963,7 @@
   {
     "type": "recipe",
     "result": "boat_board",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -961,6 +977,7 @@
   {
     "type": "recipe",
     "result": "plastic_boat_hull",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -987,6 +1004,7 @@
   {
     "type": "recipe",
     "result": "sail",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1053,6 +1071,7 @@
   {
     "type": "recipe",
     "result": "hand_paddles",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1080,6 +1099,7 @@
   {
     "type": "recipe",
     "result": "towel_hanger",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1117,6 +1137,7 @@
   {
     "type": "recipe",
     "result": "turret_mount",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "mechanics",
@@ -1136,6 +1157,7 @@
   {
     "type": "recipe",
     "result": "turret_controls",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "electronics",
@@ -1278,6 +1300,7 @@
   {
     "type": "recipe",
     "result": "foldwoodframe",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" }, { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1334,6 +1357,7 @@
   {
     "type": "recipe",
     "result": "frame",
+    "proficiencies": [ { "proficiency": "prof_blacksmithing", "time_multiplier": 10 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1347,6 +1371,7 @@
   {
     "type": "recipe",
     "result": "hdframe",
+    "proficiencies": [ { "proficiency": "prof_blacksmithing", "time_multiplier": 10 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1390,6 +1415,7 @@
   {
     "type": "recipe",
     "result": "frame_wood",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1430,6 +1456,7 @@
   {
     "type": "recipe",
     "result": "wheel_wood",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1443,6 +1470,7 @@
   {
     "type": "recipe",
     "result": "wheel_wood_b",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1583,6 +1611,7 @@
   {
     "type": "recipe",
     "result": "steel_plate",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1597,6 +1626,7 @@
   {
     "type": "recipe",
     "result": "spiked_plate",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1610,6 +1640,7 @@
   {
     "type": "recipe",
     "result": "hard_plate",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1819,6 +1850,7 @@
   {
     "type": "recipe",
     "result": "headlight_reinforced",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_welding_basic" }, { "proficiency": "prof_welding" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1832,6 +1864,7 @@
   {
     "type": "recipe",
     "result": "wide_headlight_reinforced",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_welding_basic" }, { "proficiency": "prof_welding" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1845,6 +1878,12 @@
   {
     "type": "recipe",
     "result": "reinforced_solar_panel",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1859,6 +1898,11 @@
   {
     "type": "recipe",
     "result": "cargo_rack",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1874,6 +1918,7 @@
   {
     "type": "recipe",
     "result": "w_table",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1888,6 +1933,11 @@
   {
     "type": "recipe",
     "result": "workbench",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1916,6 +1966,11 @@
   {
     "type": "recipe",
     "result": "muffler",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "mechanics",
@@ -1930,6 +1985,11 @@
   {
     "type": "recipe",
     "result": "seat",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1943,6 +2003,13 @@
   {
     "type": "recipe",
     "result": "seat_leather",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1969,6 +2036,11 @@
   {
     "type": "recipe",
     "result": "vehicle_controls",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "mechanics",
@@ -1982,6 +2054,7 @@
   {
     "type": "recipe",
     "result": "chitin_plate",
+    "proficiencies": [ { "proficiency": "prof_chitinworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -1994,6 +2067,7 @@
   {
     "type": "recipe",
     "result": "acidchitin_plate",
+    "proficiencies": [ { "proficiency": "prof_chitinworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",
@@ -2032,6 +2106,11 @@
   {
     "type": "recipe",
     "result": "v_scoop_item",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "mechanics",
@@ -2046,6 +2125,11 @@
   {
     "type": "recipe",
     "result": "v_planter_item",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "mechanics",
@@ -2060,6 +2144,11 @@
   {
     "type": "recipe",
     "result": "v_reaper_item",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "mechanics",
@@ -2074,6 +2163,11 @@
   {
     "type": "recipe",
     "result": "v_plow_item",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "mechanics",
@@ -2088,6 +2182,12 @@
   {
     "type": "recipe",
     "result": "reinforced_solar_panel_v2",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_VEHICLE",
     "skill_used": "fabrication",

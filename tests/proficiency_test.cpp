@@ -2,8 +2,11 @@
 
 #include "calendar.h"
 #include "json.h"
+#include "avatar.h"
+#include "character.h"
 #include "profession.h"
 #include "proficiency.h"
+#include "recipe.h"
 #include "type_id.h"
 
 #include <sstream>
@@ -143,4 +146,38 @@ TEST_CASE("professions grant proficiencies", "[proficiency]") {
         }
     }
     CHECK(has_blacksmithing);
+}
+
+TEST_CASE("recipe proficiencies penalise a character who lacks them", "[proficiency]") {
+    const recipe_id rid("arrow_small_game_fletched");
+    REQUIRE(rid.is_valid());
+    const recipe &rec = *rid;
+    REQUIRE(!rec.proficiencies.empty());
+
+    const std::vector<proficiency_id> used = rec.used_proficiencies();
+    REQUIRE(!used.empty());
+
+    Character &you = get_avatar();
+    for (const proficiency_id &p : used) {
+        you.lose_proficiency(p, true);
+    }
+
+    // Missing them costs time and effective skill.
+    CHECK(rec.proficiency_time_maluses(you) > 1.0f);
+    CHECK(rec.proficiency_skill_maluses(you) > 0.0f);
+
+    for (const proficiency_id &p : used) {
+        you.add_proficiency(p, true);
+    }
+
+    // Knowing them costs nothing at all.
+    CHECK(rec.proficiency_time_maluses(you) == Approx(1.0f));
+    CHECK(rec.proficiency_skill_maluses(you) == Approx(0.0f));
+
+    // Nothing here is required, so the recipe is never gated.
+    CHECK(rec.character_has_required_proficiencies(you));
+
+    for (const proficiency_id &p : used) {
+        you.lose_proficiency(p, true);
+    }
 }

@@ -14,6 +14,11 @@
   {
     "//": "CDDA builds this from the requirement groups tailoring_leather_small and fastener_small, neither of which CSE has; they expand to one leather, thread, and a small fastener. sewing_standard is CSE's equivalent for the thread and needle. CDDA's 3 hours assumes its proficiency penalties, so the time follows CSE's own leather storage recipes instead - backpack_leather is 50 minutes for twenty leather.",
     "result": "wallet_leather",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_leatherworking_basic" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_STORAGE",

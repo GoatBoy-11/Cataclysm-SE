@@ -1,6 +1,7 @@
 [
   {
     "result": "bastsandals",
+    "proficiencies": [ { "proficiency": "prof_basketweaving" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -14,6 +15,11 @@
   },
   {
     "result": "boots",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -26,6 +32,12 @@
   },
   {
     "result": "boots_chitin",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_chitinworking" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -39,6 +51,12 @@
   },
   {
     "result": "boots_acidchitin",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_chitinworking" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -72,6 +90,12 @@
   },
   {
     "result": "boots_fur",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_furriery" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -147,6 +171,11 @@
   },
   {
     "result": "boots_larmor",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -193,6 +222,14 @@
   },
   {
     "result": "boots_plate",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_armorsmithing" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -217,6 +254,7 @@
   },
   {
     "result": "boots_scrap",
+    "proficiencies": [ { "proficiency": "prof_cobbling" }, { "proficiency": "prof_metalworking" }, { "proficiency": "prof_articulation" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -232,6 +270,17 @@
   },
   {
     "result": "boots_survivor",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_plasticworking" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_intro_chemistry" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -251,6 +300,11 @@
   },
   {
     "result": "boots_western",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -264,6 +318,11 @@
   },
   {
     "result": "boots_winter",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_plasticworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -276,6 +335,18 @@
   },
   {
     "result": "boots_wsurvivor",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_plasticworking" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_furriery" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -295,6 +366,7 @@
   },
   {
     "result": "clogs",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -307,6 +379,7 @@
   },
   {
     "result": "geta",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -380,6 +453,11 @@
   },
   {
     "result": "leathersandals",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -392,6 +470,11 @@
   },
   {
     "result": "mocassins",
+    "proficiencies": [
+      { "proficiency": "prof_cobbling" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_furriery" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -411,6 +494,7 @@
   },
   {
     "result": "nomex_socks",
+    "proficiencies": [ { "proficiency": "prof_polymerworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -423,6 +507,7 @@
   },
   {
     "result": "shoes_birchbark",
+    "proficiencies": [ { "proficiency": "prof_basketweaving" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -457,6 +542,7 @@
   },
   {
     "result": "socks_wool",
+    "proficiencies": [ { "proficiency": "prof_knitting" }, { "proficiency": "prof_knitting_speed" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -502,6 +588,7 @@
   },
   {
     "result": "straw_sandals",
+    "proficiencies": [ { "proficiency": "prof_basketweaving" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -514,6 +601,7 @@
   },
   {
     "result": "swim_fins",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" }, { "proficiency": "prof_cobbling" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -529,6 +617,7 @@
   },
   {
     "result": "thermal_socks",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",
@@ -544,6 +633,11 @@
   },
   {
     "result": "wetsuit_booties",
+    "proficiencies": [
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_elastics" },
+      { "proficiency": "prof_cobbling" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_FEET",

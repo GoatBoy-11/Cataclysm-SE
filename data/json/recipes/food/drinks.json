@@ -40,6 +40,7 @@
   {
     "type": "recipe",
     "result": "protein_shake",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -106,6 +107,7 @@
   {
     "type": "recipe",
     "result": "pine_tea",
+    "proficiencies": [ { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -129,6 +131,7 @@
   {
     "type": "recipe",
     "result": "dandelion_tea",
+    "proficiencies": [ { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -153,6 +156,7 @@
   {
     "type": "recipe",
     "result": "dandelionburdock_tea",
+    "proficiencies": [ { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -177,6 +181,11 @@
   {
     "type": "recipe",
     "result": "chicory_coffee",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_forage_cooking" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -198,6 +207,7 @@
   {
     "type": "recipe",
     "result": "chamomile_tea",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -221,6 +231,7 @@
   {
     "type": "recipe",
     "result": "lotus_tea",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -244,6 +255,7 @@
   {
     "type": "recipe",
     "result": "spurge_tea",
+    "proficiencies": [ { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -267,6 +279,7 @@
   {
     "type": "recipe",
     "result": "kompot",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -308,6 +321,7 @@
   {
     "type": "recipe",
     "result": "coffee_substitute",
+    "proficiencies": [ { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -321,6 +335,7 @@
   {
     "type": "recipe",
     "result": "almond_milk",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "result_mult": 3,
     "byproducts": [ [ "almond_pulp" ] ],
     "id_suffix": "mortar",
@@ -339,6 +354,7 @@
   {
     "type": "recipe",
     "result": "almond_milk",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "result_mult": 3,
     "byproducts": [ [ "almond_pulp" ] ],
     "category": "CC_FOOD",
@@ -356,6 +372,7 @@
   {
     "type": "recipe",
     "result": "soy_milk",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -371,6 +388,7 @@
   {
     "type": "recipe",
     "result": "milk",
+    "proficiencies": [ { "proficiency": "prof_preservation" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -409,6 +427,7 @@
   {
     "type": "recipe",
     "result": "can_coconut",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "charges": 1,
     "byproducts": [ [ "juice_pulp", 2 ] ],
     "category": "CC_FOOD",
@@ -425,6 +444,7 @@
   {
     "type": "recipe",
     "result": "coffee_syrup",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -1027,6 +1047,7 @@
   {
     "type": "recipe",
     "result": "hickory_nut_ambrosia",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_DRINKS",
     "skill_used": "cooking",
@@ -1657,6 +1678,7 @@
   {
     "type": "recipe",
     "result": "kompot",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -1681,6 +1703,7 @@
   {
     "type": "recipe",
     "result": "kompot",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",

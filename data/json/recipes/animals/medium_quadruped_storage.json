@@ -1,6 +1,11 @@
 [
   {
     "result": "saddlebag",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ANIMALS",
     "subcategory": "CSC_ANIMALS_EQUINE STORAGE",

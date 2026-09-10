@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "blun_shot",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
     "skill_used": "fabrication",
@@ -29,6 +30,7 @@
   {
     "type": "recipe",
     "result": "blun_shot",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "id_suffix": "using_big_scrap",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -68,6 +70,7 @@
   {
     "type": "recipe",
     "result": "blun_slug",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "id_suffix": "using_lead",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -89,6 +92,7 @@
   {
     "type": "recipe",
     "result": "blun_flechette",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
     "skill_used": "fabrication",
@@ -137,6 +141,7 @@
   },
   {
     "result": "bp_410shot_000",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -213,6 +218,7 @@
   },
   {
     "result": "bp_shot_00",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -228,6 +234,7 @@
   },
   {
     "result": "bp_shot_bird",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -243,6 +250,7 @@
   },
   {
     "result": "bp_shot_dragon",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -259,6 +267,7 @@
   },
   {
     "result": "bp_shot_flechette",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -275,6 +284,7 @@
   },
   {
     "result": "bp_shot_slug",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -290,6 +300,7 @@
   },
   {
     "result": "shot_scrap",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -323,6 +334,7 @@
   },
   {
     "result": "bp_shot_scrap",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",
@@ -356,6 +368,7 @@
   },
   {
     "result": "signal_flare",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_SHOT",

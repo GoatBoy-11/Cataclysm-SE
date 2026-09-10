@@ -29,6 +29,12 @@
   },
   {
     "result": "armor_blarmor",
+    "proficiencies": [
+      { "proficiency": "prof_articulation" },
+      { "proficiency": "prof_tanning_basic" },
+      { "proficiency": "prof_tanning" },
+      { "proficiency": "prof_leatherworking_basic" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -51,6 +57,11 @@
   },
   {
     "result": "armor_chitin",
+    "proficiencies": [
+      { "proficiency": "prof_chitinworking" },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking_basic" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -64,6 +75,12 @@
   },
   {
     "result": "armor_acidchitin",
+    "proficiencies": [
+      { "proficiency": "prof_articulation" },
+      { "proficiency": "prof_chitinworking" },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking_basic" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -77,6 +94,7 @@
   },
   {
     "result": "armor_farmor",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_furriery" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -90,6 +108,7 @@
   },
   {
     "result": "armor_larmor",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -160,6 +179,12 @@
   },
   {
     "result": "armor_nomad",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -179,6 +204,12 @@
   },
   {
     "result": "armor_nomad_light",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -198,6 +229,14 @@
   },
   {
     "result": "armor_plarmor",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic", "time_multiplier": 1.1, "skill_penalty": 0.15 },
+      { "proficiency": "prof_closures", "time_multiplier": 1.1 },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_armorsmithing" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -238,6 +277,14 @@
   },
   {
     "result": "armor_samurai",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic", "time_multiplier": 1.1, "skill_penalty": 0.15 },
+      { "proficiency": "prof_closures", "time_multiplier": 1.1 },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_armorsmithing" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -272,6 +319,11 @@
   },
   {
     "result": "armor_scrapsuit",
+    "proficiencies": [
+      { "proficiency": "prof_armorsmithing", "required": false, "time_multiplier": 1.5 },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -287,6 +339,11 @@
   },
   {
     "result": "armor_scrapsuit",
+    "proficiencies": [
+      { "proficiency": "prof_armorsmithing", "required": false, "time_multiplier": 1.5 },
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -347,6 +404,7 @@
   },
   {
     "result": "chainmail_suit_faraday",
+    "proficiencies": [ { "proficiency": "prof_closures" }, { "proficiency": "prof_chain_armour" }, { "proficiency": "prof_shock_weapons" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -376,6 +434,7 @@
   },
   {
     "result": "cloak_fur",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_furriery" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -396,6 +455,7 @@
   },
   {
     "result": "cloak_leather",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -422,6 +482,11 @@
   },
   {
     "result": "entry_suit",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_polymerworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -468,6 +533,7 @@
   },
   {
     "result": "gambeson",
+    "proficiencies": [ { "proficiency": "prof_closures" }, { "proficiency": "prof_articulation" }, { "proficiency": "prof_quilting" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -662,6 +728,11 @@
   },
   {
     "result": "nomex_suit",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_closures_waterproofing" },
+      { "proficiency": "prof_polymerworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -674,6 +745,7 @@
   },
   {
     "result": "shark_suit_faraday",
+    "proficiencies": [ { "proficiency": "prof_shock_weapons" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -720,6 +792,7 @@
   },
   {
     "result": "thermal_outfit",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_closures" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -734,6 +807,7 @@
   },
   {
     "result": "thermal_outfit",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_closures" } ],
     "type": "recipe",
     "id_suffix": "thermal_outfit_from_bits",
     "category": "CC_ARMOR",
@@ -756,6 +830,7 @@
   },
   {
     "result": "thermal_suit",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_closures" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -799,6 +874,7 @@
   },
   {
     "result": "wetsuit",
+    "proficiencies": [ { "proficiency": "prof_elastics" }, { "proficiency": "prof_closures_waterproofing" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -813,6 +889,7 @@
   },
   {
     "result": "wetsuit_spring",
+    "proficiencies": [ { "proficiency": "prof_elastics" }, { "proficiency": "prof_closures_waterproofing" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",
@@ -927,6 +1004,7 @@
   },
   {
     "result": "zentai",
+    "proficiencies": [ { "proficiency": "prof_elastics" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_SUIT",

@@ -151,6 +151,9 @@
   {
     "type": "recipe",
     "result": "adjustable_stock",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.25, "learning_time_multiplier": 0.1 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -172,6 +175,9 @@
   {
     "type": "recipe",
     "result": "folding_stock",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.25, "learning_time_multiplier": 0.1 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -207,6 +213,9 @@
   {
     "type": "recipe",
     "result": "bipod",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.25, "learning_time_multiplier": 0.1 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -222,6 +231,9 @@
   {
     "type": "recipe",
     "result": "grip",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.25, "learning_time_multiplier": 0.1 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -244,6 +256,7 @@
   {
     "type": "recipe",
     "result": "muzzle_brake",
+    "proficiencies": [ { "proficiency": "prof_welding_basic" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "mechanics",
@@ -280,6 +293,9 @@
   {
     "type": "recipe",
     "result": "pistol_stock",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.25, "learning_time_multiplier": 0.1 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -295,6 +311,9 @@
   {
     "type": "recipe",
     "result": "recoil_stock",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.25, "learning_time_multiplier": 0.1 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -445,6 +464,7 @@
   {
     "type": "recipe",
     "result": "bow_stabilizer",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -499,6 +519,7 @@
   {
     "type": "recipe",
     "result": "ugl_buttstock",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -787,6 +808,7 @@
   {
     "type": "recipe",
     "result": "tele_sight",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -813,6 +835,7 @@
   {
     "type": "recipe",
     "result": "tele_sight_pistol",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -839,6 +862,9 @@
   {
     "type": "recipe",
     "result": "pistol_stock",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.25, "learning_time_multiplier": 0.1 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",
@@ -884,6 +910,7 @@
   {
     "type": "recipe",
     "result": "bow_stabilizer_set",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_MODS",
     "skill_used": "fabrication",

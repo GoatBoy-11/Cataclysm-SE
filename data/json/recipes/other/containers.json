@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "waterskin",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic", "time_multiplier": 2 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "tailor",
@@ -28,6 +29,7 @@
   {
     "type": "recipe",
     "result": "waterskin2",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic", "time_multiplier": 2 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "tailor",
@@ -54,6 +56,7 @@
   {
     "type": "recipe",
     "result": "waterskin3",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic", "time_multiplier": 2 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "tailor",
@@ -132,6 +135,11 @@
   {
     "type": "recipe",
     "result": "jerrycan_big",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "id_suffix": "welder",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
@@ -146,6 +154,11 @@
   {
     "type": "recipe",
     "result": "flask_hip",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -158,6 +171,7 @@
   {
     "type": "recipe",
     "result": "bowl_plastic",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -170,6 +184,7 @@
   {
     "type": "recipe",
     "result": "bottle_plastic",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -182,6 +197,7 @@
   {
     "type": "recipe",
     "result": "bottle_plastic_small",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -194,6 +210,7 @@
   {
     "type": "recipe",
     "result": "bottle_twoliter",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -206,6 +223,7 @@
   {
     "type": "recipe",
     "result": "canister_empty",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -280,6 +298,7 @@
   {
     "type": "recipe",
     "result": "metal_tank",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_welding_basic" }, { "proficiency": "prof_welding" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -293,6 +312,11 @@
   {
     "type": "recipe",
     "result": "metal_tank_little",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -306,6 +330,7 @@
   {
     "type": "recipe",
     "result": "55gal_drum",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "id_suffix": "from_scratch",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
@@ -318,6 +343,7 @@
   {
     "type": "recipe",
     "result": "30gal_drum",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "id_suffix": "from_scratch",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
@@ -330,6 +356,11 @@
   {
     "type": "recipe",
     "result": "55gal_drum",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "id_suffix": "welded",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
@@ -343,6 +374,11 @@
   {
     "type": "recipe",
     "result": "30gal_drum",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "id_suffix": "welded",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
@@ -356,6 +392,7 @@
   {
     "type": "recipe",
     "result": "30gal_barrel",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -381,6 +418,7 @@
   {
     "type": "recipe",
     "result": "bottle_glass",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -405,6 +443,7 @@
   {
     "type": "recipe",
     "result": "flask_glass",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -417,6 +456,7 @@
   {
     "type": "recipe",
     "result": "test_tube",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -454,6 +494,11 @@
   {
     "type": "recipe",
     "result": "bucket",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -468,6 +513,7 @@
   {
     "type": "recipe",
     "result": "canteen",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -481,6 +527,7 @@
   {
     "type": "recipe",
     "result": "2lcanteen",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -494,6 +541,11 @@
   {
     "type": "recipe",
     "result": "pot_canning",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -507,6 +559,7 @@
   {
     "type": "recipe",
     "result": "bowl_clay",
+    "proficiencies": [ { "proficiency": "prof_pottery" }, { "proficiency": "prof_pottery_glazing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -520,6 +573,7 @@
   {
     "type": "recipe",
     "result": "clay_canister",
+    "proficiencies": [ { "proficiency": "prof_pottery" }, { "proficiency": "prof_pottery_glazing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -533,6 +587,7 @@
   {
     "type": "recipe",
     "result": "clay_hydria",
+    "proficiencies": [ { "proficiency": "prof_pottery" }, { "proficiency": "prof_pottery_glazing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -546,6 +601,7 @@
   {
     "type": "recipe",
     "result": "clay_watercont",
+    "proficiencies": [ { "proficiency": "prof_pottery" }, { "proficiency": "prof_pottery_glazing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -559,6 +615,7 @@
   {
     "type": "recipe",
     "result": "jug_clay",
+    "proficiencies": [ { "proficiency": "prof_pottery" }, { "proficiency": "prof_pottery_glazing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -571,6 +628,7 @@
   },
   {
     "result": "keg_steel",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
@@ -619,6 +677,7 @@
   {
     "type": "recipe",
     "result": "canteen_wood",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",
@@ -638,6 +697,7 @@
   {
     "type": "recipe",
     "result": "bottle_metal",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_CONTAINERS",
     "skill_used": "fabrication",

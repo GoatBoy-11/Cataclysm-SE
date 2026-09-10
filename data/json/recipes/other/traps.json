@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "caltrops",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
     "skill_used": "fabrication",
@@ -27,6 +28,7 @@
   {
     "type": "recipe",
     "result": "caltrops",
+    "proficiencies": [ { "proficiency": "prof_welding_basic" }, { "proficiency": "prof_metalworking" } ],
     "id_suffix": "from wire",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
@@ -41,6 +43,7 @@
   {
     "type": "recipe",
     "result": "telepad",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
     "skill_used": "traps",
@@ -57,6 +60,7 @@
   {
     "type": "recipe",
     "result": "tripwire",
+    "proficiencies": [ { "proficiency": "prof_traps" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
     "skill_used": "traps",
@@ -85,6 +89,7 @@
   {
     "type": "recipe",
     "result": "board_trap",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
     "skill_used": "traps",
@@ -97,6 +102,7 @@
   {
     "type": "recipe",
     "result": "board_trap",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "id_suffix": "use_nailboards",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
@@ -110,6 +116,13 @@
   {
     "type": "recipe",
     "result": "beartrap",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" },
+      { "proficiency": "prof_traps" },
+      { "proficiency": "prof_trapsetting" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
     "skill_used": "traps",
@@ -127,6 +140,7 @@
   {
     "type": "recipe",
     "result": "crossbow_trap",
+    "proficiencies": [ { "proficiency": "prof_traps" }, { "proficiency": "prof_trapsetting" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
     "skill_used": "traps",
@@ -155,6 +169,7 @@
   {
     "type": "recipe",
     "result": "shotgun_trap",
+    "proficiencies": [ { "proficiency": "prof_traps" }, { "proficiency": "prof_trapsetting" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",
     "skill_used": "traps",
@@ -184,6 +199,7 @@
   {
     "type": "recipe",
     "result": "boobytrap",
+    "proficiencies": [ { "proficiency": "prof_traps" }, { "proficiency": "prof_trapsetting" } ],
     "id_suffix": "closed_cans_such_as_drinks",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TRAPS",

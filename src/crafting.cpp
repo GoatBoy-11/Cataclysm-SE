@@ -63,6 +63,7 @@
 #include "player_activity.h"
 #include "pocket_overflow.h"
 #include "point.h"
+#include "proficiency.h"
 #include "recipe.h"
 #include "recipe_dictionary.h"
 #include "requirements.h"
@@ -979,6 +980,11 @@ double Character::crafting_success_roll( const recipe &making ) const
             add_msg_if_player( m_info, _( "%s helps with crafting…" ), np->name );
             break;
         }
+    }
+
+    // Proficiencies you lack cost you effective skill, four dice to the level
+    if( get_option<bool>( "PROFICIENCY_SYSTEM" ) ) {
+        skill_dice -= static_cast<int>( making.proficiency_skill_maluses( *this ) * 4 );
     }
 
     // farsightedness can impose a penalty on electronics and tailoring success

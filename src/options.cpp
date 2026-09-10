@@ -2906,6 +2906,13 @@ void options_manager::add_options_world_default()
     }, "reset"
        );
 
+    add( "PROFICIENCY_SYSTEM", world_default, translate_marker( "Crafting proficiencies" ),
+         translate_marker( "If true, proficiencies a recipe names but your character lacks slow "
+                           "the craft and hurt its success roll.  If false, proficiencies are "
+                           "tracked and displayed but do not affect crafting." ),
+         true
+       );
+
     add( "POCKET_SYSTEM", world_default, translate_marker( "Item pocket system" ),
     translate_marker( "Full gives items their individual pockets, so a garment's cargo pockets fill separately.  Classic pools each item's storage into one compartment, as before pockets existed." ), {
         { "full", translate_marker( "Full" ) }, { "classic", translate_marker( "Classic" ) }

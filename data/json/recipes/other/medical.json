@@ -79,6 +79,7 @@
   {
     "type": "recipe",
     "result": "quikclot",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MEDICAL",
     "skill_used": "cooking",
@@ -167,6 +168,11 @@
   },
   {
     "result": "anesthetic",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_organic_chemistry" },
+      { "proficiency": "prof_pharmaceutical" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MEDICAL",
@@ -268,6 +274,7 @@
   },
   {
     "result": "disinfectant_makeshift",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MEDICAL",
@@ -278,6 +285,7 @@
   },
   {
     "result": "mugwort_oil",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MEDICAL",
@@ -293,6 +301,7 @@
   },
   {
     "result": "thyme_oil",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MEDICAL",

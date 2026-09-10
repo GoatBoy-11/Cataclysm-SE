@@ -45,6 +45,7 @@
   {
     "type": "recipe",
     "result": "spear_rebar",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_welding_basic" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -56,6 +57,12 @@
   {
     "type": "recipe",
     "result": "knife_baselard",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" },
+      { "proficiency": "prof_leatherworking_basic", "skill_penalty": 0 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -68,6 +75,11 @@
   {
     "type": "recipe",
     "result": "copper_knife",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing" },
+      { "proficiency": "prof_redsmithing_adv" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -91,6 +103,7 @@
   {
     "type": "recipe",
     "result": "pike_wood",
+    "proficiencies": [ { "proficiency": "prof_carving", "skill_penalty": 0 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -110,6 +123,11 @@
   {
     "type": "recipe",
     "result": "pike_copper",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing" },
+      { "proficiency": "prof_carving", "skill_penalty": 0 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -129,6 +147,7 @@
   {
     "type": "recipe",
     "result": "spear_wood",
+    "proficiencies": [ { "proficiency": "prof_carving", "skill_penalty": 0 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -147,6 +166,11 @@
   {
     "type": "recipe",
     "result": "spear_stone",
+    "proficiencies": [
+      { "proficiency": "prof_knapping" },
+      { "proficiency": "prof_knapping_speed" },
+      { "proficiency": "prof_carving", "skill_penalty": 0.15 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -165,6 +189,11 @@
   {
     "type": "recipe",
     "result": "spear_copper",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing" },
+      { "proficiency": "prof_carving", "skill_penalty": 0 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -226,6 +255,7 @@
   {
     "type": "recipe",
     "result": "javelin",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -244,6 +274,11 @@
   {
     "type": "recipe",
     "result": "javelin_iron",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -291,6 +326,7 @@
   {
     "type": "recipe",
     "result": "spear_spike",
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -313,6 +349,7 @@
   {
     "type": "recipe",
     "result": "spear_knife",
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -344,6 +381,7 @@
   {
     "type": "recipe",
     "result": "spear_knife_superior",
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -376,6 +414,7 @@
   {
     "type": "recipe",
     "result": "spear_knife_superior",
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -401,6 +440,11 @@
   {
     "type": "recipe",
     "result": "knife_combat",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -425,6 +469,17 @@
   {
     "type": "recipe",
     "result": "switchblade",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" },
+      {
+        "proficiency": "prof_plasticworking",
+        "time_multiplier": 1.1,
+        "learning_time_multiplier": 0.1,
+        "skill_penalty": 0
+      }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -438,6 +493,11 @@
   {
     "type": "recipe",
     "result": "punch_dagger",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -450,6 +510,7 @@
   {
     "type": "recipe",
     "result": "pockknife",
+    "proficiencies": [ { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.1, "learning_time_multiplier": 0.1 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -561,6 +622,7 @@
   {
     "type": "recipe",
     "result": "shock_foil",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_shock_weapons" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -582,6 +644,7 @@
   {
     "type": "recipe",
     "result": "shock_epee",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_shock_weapons" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -603,6 +666,7 @@
   {
     "type": "recipe",
     "result": "shock_sabre",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_shock_weapons" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -692,6 +756,11 @@
   {
     "type": "recipe",
     "result": "knife_rambo",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -703,6 +772,12 @@
   {
     "type": "recipe",
     "result": "qiang",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" },
+      { "proficiency": "prof_carving", "skill_penalty": 0 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
     "skill_used": "fabrication",
@@ -728,6 +803,12 @@
   },
   {
     "result": "fencing_epee_sharpened",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.2, "learning_time_multiplier": 0.2, "skill_penalty": 0 }
+    ],
     "id_suffix": "from_scratch",
     "type": "recipe",
     "category": "CC_WEAPON",
@@ -741,6 +822,12 @@
   },
   {
     "result": "fencing_foil_sharpened",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.2, "learning_time_multiplier": 0.2, "skill_penalty": 0 }
+    ],
     "id_suffix": "from_scratch",
     "type": "recipe",
     "category": "CC_WEAPON",
@@ -754,6 +841,12 @@
   },
   {
     "result": "fencing_sabre_sharpened",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.2, "learning_time_multiplier": 0.2, "skill_penalty": 0 }
+    ],
     "id_suffix": "from_scratch",
     "type": "recipe",
     "category": "CC_WEAPON",
@@ -767,6 +860,11 @@
   },
   {
     "result": "kirpan",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "type": "recipe",
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
@@ -790,6 +888,12 @@
   },
   {
     "result": "pitchfork",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0 }
+    ],
     "type": "recipe",
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
@@ -830,6 +934,7 @@
   },
   {
     "result": "spear_pipe",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_welding_basic" } ],
     "type": "recipe",
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
@@ -844,6 +949,7 @@
   },
   {
     "result": "grip_hook",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_welding_basic" } ],
     "type": "recipe",
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
@@ -857,6 +963,12 @@
   },
   {
     "result": "ji",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing" },
+      { "proficiency": "prof_redsmithing_adv" },
+      { "proficiency": "prof_carving", "skill_penalty": 0 }
+    ],
     "type": "recipe",
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",
@@ -874,6 +986,12 @@
   },
   {
     "result": "spear_dory",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing" },
+      { "proficiency": "prof_redsmithing_adv" },
+      { "proficiency": "prof_carving", "skill_penalty": 0 }
+    ],
     "type": "recipe",
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_PIERCING",

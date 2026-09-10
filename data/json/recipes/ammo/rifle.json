@@ -1,6 +1,7 @@
 [
   {
     "result": "flintlock_ammo",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -18,6 +19,7 @@
   },
   {
     "result": "flintlock_shot",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -83,6 +85,7 @@
   },
   {
     "result": "bp_22_lr",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -115,6 +118,7 @@
   },
   {
     "result": "bp_223",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -217,6 +221,7 @@
   },
   {
     "result": "bp_3006",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -233,6 +238,7 @@
   },
   {
     "result": "bp_3006fmj",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -249,6 +255,7 @@
   },
   {
     "result": "bp_3006_incendiary",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -366,6 +373,7 @@
   },
   {
     "result": "reloaded_4570_bp",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -630,6 +638,7 @@
   },
   {
     "result": "bp_50_incendiary",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -825,6 +834,7 @@
   },
   {
     "result": "bp_762_51",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -846,6 +856,7 @@
   },
   {
     "result": "bp_762_51_incendiary",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -884,6 +895,7 @@
   },
   {
     "result": "bp_762_54R",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",
@@ -948,6 +960,7 @@
   },
   {
     "result": "bp_762_m87",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_RIFLE",

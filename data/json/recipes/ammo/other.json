@@ -26,6 +26,7 @@
   {
     "type": "recipe",
     "result": "marble",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_OTHER",
     "skill_used": "fabrication",
@@ -55,6 +56,7 @@
   {
     "type": "recipe",
     "result": "fishspear",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_OTHER",
     "skill_used": "fabrication",
@@ -129,6 +131,7 @@
   {
     "type": "recipe",
     "result": "wooden_bead",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_AMMO_OTHER",
     "skill_used": "fabrication",

@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "meat_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -93,6 +94,7 @@
   {
     "type": "recipe",
     "result": "mutant_meat_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -119,6 +121,7 @@
   {
     "type": "recipe",
     "result": "mutant_human_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -204,6 +207,7 @@
   {
     "type": "recipe",
     "result": "stomach_boiled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -217,6 +221,7 @@
   {
     "type": "recipe",
     "result": "hstomach_boiled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -230,6 +235,7 @@
   {
     "type": "recipe",
     "result": "small_stomach_boiled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -243,6 +249,7 @@
   {
     "type": "recipe",
     "result": "small_hstomach_boiled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -256,6 +263,7 @@
   {
     "type": "recipe",
     "result": "fish_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -283,6 +291,7 @@
   {
     "type": "recipe",
     "result": "tallow",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -340,6 +349,7 @@
   {
     "type": "recipe",
     "result": "meat_smoked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_curing" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -355,6 +365,7 @@
   {
     "type": "recipe",
     "result": "fish_smoked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_curing" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -370,6 +381,12 @@
   {
     "type": "recipe",
     "result": "fish_fried",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_frying" },
+      { "proficiency": "prof_frying_bread" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -385,6 +402,7 @@
   {
     "type": "recipe",
     "result": "sushi_fishroll",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -415,6 +433,7 @@
   {
     "type": "recipe",
     "result": "sushi_meatroll",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -444,6 +463,7 @@
   {
     "type": "recipe",
     "result": "sashimi",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -471,6 +491,12 @@
   {
     "type": "recipe",
     "result": "sausage",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_preservation" },
+      { "proficiency": "prof_food_curing" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -498,6 +524,7 @@
   {
     "type": "recipe",
     "result": "bratwurst_sausage",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" }, { "proficiency": "prof_preservation" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -524,6 +551,7 @@
   {
     "type": "recipe",
     "result": "sausage_raw",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -550,6 +578,7 @@
   {
     "type": "recipe",
     "result": "sausage_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -564,6 +593,12 @@
   {
     "type": "recipe",
     "result": "bologna",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_preservation" },
+      { "proficiency": "prof_food_curing" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -613,6 +648,7 @@
   {
     "type": "recipe",
     "result": "human_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -640,6 +676,7 @@
   {
     "type": "recipe",
     "result": "meat_aspic",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -658,6 +695,7 @@
   {
     "type": "recipe",
     "result": "jerky",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "delete_flags": [ "BAD_TASTE" ],
@@ -684,6 +722,7 @@
   {
     "type": "recipe",
     "result": "salted_fish",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -697,6 +736,7 @@
   {
     "type": "recipe",
     "result": "cracklins",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -731,6 +771,7 @@
   {
     "type": "recipe",
     "result": "pemmican",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -764,6 +805,7 @@
   {
     "type": "recipe",
     "result": "soup_meat",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -779,6 +821,7 @@
   {
     "type": "recipe",
     "result": "soup_blood",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -809,6 +852,7 @@
   {
     "type": "recipe",
     "result": "soup_fish",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -824,6 +868,7 @@
   {
     "type": "recipe",
     "result": "soup_woods",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "charges": 2,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -870,6 +915,7 @@
   {
     "type": "recipe",
     "result": "glazed_tenderloin",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -898,6 +944,7 @@
   {
     "type": "recipe",
     "result": "sweet_sausage",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -925,6 +972,7 @@
   {
     "type": "recipe",
     "result": "pie_meat",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -953,6 +1001,7 @@
   {
     "type": "recipe",
     "result": "curry_meat",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "charges": 1,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -989,6 +1038,7 @@
   {
     "type": "recipe",
     "result": "chili",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1031,6 +1081,7 @@
   {
     "type": "recipe",
     "result": "pizza_supreme",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1060,6 +1111,7 @@
   {
     "type": "recipe",
     "result": "pizza_meat",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1080,6 +1132,7 @@
   {
     "type": "recipe",
     "result": "meat_salted",
+    "proficiencies": [ { "proficiency": "prof_preservation" } ],
     "id_suffix": "vacuum_packed",
     "container": "plastic_bag_vac",
     "category": "CC_FOOD",
@@ -1097,6 +1150,7 @@
   {
     "type": "recipe",
     "result": "salted_fish",
+    "proficiencies": [ { "proficiency": "prof_preservation" } ],
     "id_suffix": "vacuum_packed",
     "container": "plastic_bag_vac",
     "category": "CC_FOOD",
@@ -1373,6 +1427,7 @@
   {
     "type": "recipe",
     "result": "sausagegravy",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1432,6 +1487,7 @@
   {
     "type": "recipe",
     "result": "corndogs_homemade",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_frying" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1482,6 +1538,7 @@
   {
     "type": "recipe",
     "result": "meat_pickled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "container": "jar_glass_sealed",
     "category": "CC_FOOD",
@@ -1504,6 +1561,7 @@
   {
     "type": "recipe",
     "result": "fish_pickled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "container": "jar_glass_sealed",
     "category": "CC_FOOD",
@@ -1556,6 +1614,7 @@
   {
     "type": "recipe",
     "result": "pelmeni",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1570,6 +1629,7 @@
   {
     "type": "recipe",
     "result": "haggis",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1591,6 +1651,7 @@
   {
     "type": "recipe",
     "result": "haggis",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "id_suffix": "large",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -1633,6 +1694,11 @@
   {
     "type": "recipe",
     "result": "sausage_wasteland",
+    "proficiencies": [
+      { "proficiency": "prof_scav_cooking" },
+      { "proficiency": "prof_preservation" },
+      { "proficiency": "prof_food_curing" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1699,6 +1765,7 @@
   {
     "type": "recipe",
     "result": "sausage_wasteland",
+    "proficiencies": [ { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_curing" } ],
     "id_suffix": "smoke",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -1802,6 +1869,7 @@
   {
     "type": "recipe",
     "result": "sausage_wasteland_raw",
+    "proficiencies": [ { "proficiency": "prof_scav_cooking" }, { "proficiency": "prof_preservation" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -1961,6 +2029,7 @@
   {
     "type": "recipe",
     "result": "fish_pickled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "container": "jar_3l_glass_sealed",
     "category": "CC_FOOD",
@@ -1983,6 +2052,7 @@
   {
     "type": "recipe",
     "result": "meat_pickled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "container": "jar_3l_glass_sealed",
     "category": "CC_FOOD",
@@ -2053,6 +2123,7 @@
   },
   {
     "result": "offal_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "type": "recipe",
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
@@ -2096,6 +2167,7 @@
   },
   {
     "result": "offal_pickled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "type": "recipe",
     "id_suffix": "jarred",
     "category": "CC_FOOD",
@@ -2119,6 +2191,7 @@
   {
     "type": "recipe",
     "result": "meat_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -2137,6 +2210,7 @@
   {
     "type": "recipe",
     "result": "fish_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -2155,6 +2229,7 @@
   {
     "type": "recipe",
     "result": "soup_woods",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -2175,6 +2250,7 @@
   {
     "type": "recipe",
     "result": "soup_meat",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -2230,6 +2306,7 @@
   {
     "type": "recipe",
     "result": "soup_fish",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -2250,6 +2327,7 @@
   {
     "type": "recipe",
     "result": "meat_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2275,6 +2353,7 @@
   {
     "type": "recipe",
     "result": "fish_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2300,6 +2379,7 @@
   {
     "type": "recipe",
     "result": "soup_woods",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -2322,6 +2402,7 @@
   {
     "type": "recipe",
     "result": "soup_meat",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -2382,6 +2463,7 @@
   {
     "type": "recipe",
     "result": "soup_fish",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -2404,6 +2486,7 @@
   {
     "type": "recipe",
     "result": "meat_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2422,6 +2505,7 @@
   {
     "type": "recipe",
     "result": "fish_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2439,6 +2523,7 @@
   },
   {
     "result": "offal_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "type": "recipe",
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
@@ -2458,6 +2543,7 @@
   {
     "type": "recipe",
     "result": "soup_woods",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2478,6 +2564,7 @@
   {
     "type": "recipe",
     "result": "soup_meat",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2533,6 +2620,7 @@
   {
     "type": "recipe",
     "result": "soup_fish",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2619,6 +2707,7 @@
   {
     "type": "recipe",
     "result": "liver_onion",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" }, { "proficiency": "prof_frying" } ],
     "result_mult": 2,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -2634,6 +2723,12 @@
   {
     "type": "recipe",
     "result": "fried_livers",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_frying" },
+      { "proficiency": "prof_frying_bread" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2655,6 +2750,7 @@
   {
     "type": "recipe",
     "result": "humble_pie",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2673,6 +2769,7 @@
   {
     "type": "recipe",
     "result": "stewed_tripe",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "byproducts": [ [ "broth", 4 ] ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -2711,6 +2808,12 @@
   {
     "type": "recipe",
     "result": "fried_tripe",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep", "time_multiplier": 1 },
+      { "proficiency": "prof_knife_skills", "time_multiplier": 1 },
+      { "proficiency": "prof_frying", "time_multiplier": 1.2 },
+      { "proficiency": "prof_frying_bread", "time_multiplier": 1 }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2728,6 +2831,7 @@
   {
     "type": "recipe",
     "result": "leverpostej",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "skill_used": "cooking",
     "difficulty": 5,
@@ -2749,6 +2853,12 @@
   {
     "type": "recipe",
     "result": "fried_brain",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_frying" },
+      { "proficiency": "prof_frying_bread" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2769,6 +2879,7 @@
   {
     "type": "recipe",
     "result": "deviled_kidney",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2793,6 +2904,7 @@
   {
     "type": "recipe",
     "result": "grilled_sweetbread",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "charges": 1,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -2808,6 +2920,7 @@
   {
     "type": "recipe",
     "result": "canned_liver",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
@@ -2825,6 +2938,7 @@
   {
     "type": "recipe",
     "result": "canned_liver",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2851,6 +2965,7 @@
   {
     "type": "recipe",
     "result": "lung_provence",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2903,6 +3018,7 @@
   {
     "type": "recipe",
     "result": "scrambledeggsandbrain",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",
@@ -2928,6 +3044,12 @@
   {
     "type": "recipe",
     "result": "sausage_casings",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_preservation" },
+      { "proficiency": "prof_food_curing" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_MEAT",
     "skill_used": "cooking",

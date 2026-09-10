@@ -68,6 +68,7 @@
   {
     "type": "recipe",
     "result": "cudgel",
+    "proficiencies": [ { "proficiency": "prof_carving", "skill_penalty": 0 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -79,6 +80,7 @@
   {
     "type": "recipe",
     "result": "nailboard",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic", "skill_penalty": 0 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -102,6 +104,7 @@
   {
     "type": "recipe",
     "result": "nailbat",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic", "skill_penalty": 0 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -147,6 +150,7 @@
   {
     "type": "recipe",
     "result": "sword_nail",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic", "skill_penalty": 0 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -159,6 +163,7 @@
   {
     "type": "recipe",
     "result": "knuckle_steel",
+    "proficiencies": [ { "proficiency": "prof_metalworking" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -172,6 +177,7 @@
   {
     "type": "recipe",
     "result": "knuckle_nail",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic", "skill_penalty": 0 }, { "proficiency": "prof_carving", "skill_penalty": 0 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -185,6 +191,7 @@
   {
     "type": "recipe",
     "result": "cestus",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic", "skill_penalty": 0.15 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -212,6 +219,7 @@
   {
     "type": "recipe",
     "result": "tonfa",
+    "proficiencies": [ { "proficiency": "prof_plasticworking", "skill_penalty": 4 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -241,6 +249,7 @@
   {
     "type": "recipe",
     "result": "tonfa_wood",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -255,6 +264,11 @@
   {
     "type": "recipe",
     "result": "shocktonfa_off",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering", "skill_penalty": 0.5 },
+      { "proficiency": "prof_shock_weapons" },
+      { "proficiency": "prof_plasticworking", "skill_penalty": 0.5 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -289,6 +303,7 @@
   {
     "type": "recipe",
     "result": "bokken",
+    "proficiencies": [ { "proficiency": "prof_carving", "skill_penalty": 0.5 } ],
     "byproducts": [ [ "splinter", 30 ] ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
@@ -309,6 +324,12 @@
   {
     "type": "recipe",
     "result": "mace",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_carving", "skill_penalty": 0 },
+      { "proficiency": "prof_leatherworking_basic", "skill_penalty": 0 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -321,6 +342,13 @@
   {
     "type": "recipe",
     "result": "morningstar",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" },
+      { "proficiency": "prof_carving", "skill_penalty": 0 },
+      { "proficiency": "prof_leatherworking_basic", "skill_penalty": 0 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -333,6 +361,7 @@
   {
     "type": "recipe",
     "result": "q_staff",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",
@@ -346,6 +375,11 @@
   {
     "type": "recipe",
     "result": "i_staff",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_BASHING",
     "skill_used": "fabrication",

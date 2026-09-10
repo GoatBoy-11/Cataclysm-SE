@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "motor_micro",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
     "skill_used": "electronics",
@@ -533,6 +534,7 @@
   {
     "type": "recipe",
     "result": "directional_antenna",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
     "skill_used": "electronics",
@@ -547,6 +549,7 @@
   {
     "type": "recipe",
     "result": "amplifier",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
     "skill_used": "electronics",
@@ -562,6 +565,7 @@
   {
     "type": "recipe",
     "result": "power_supply",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
     "skill_used": "electronics",
@@ -592,6 +596,7 @@
   {
     "type": "recipe",
     "result": "receiver",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
     "skill_used": "electronics",
@@ -607,6 +612,7 @@
   {
     "type": "recipe",
     "result": "transponder",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
     "skill_used": "electronics",
@@ -681,6 +687,11 @@
   },
   {
     "result": "battery_ups",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "type": "recipe",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
@@ -719,6 +730,7 @@
   },
   {
     "result": "magazine_battery_mod",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_circuits" } ],
     "type": "recipe",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
@@ -735,6 +747,7 @@
   },
   {
     "result": "magazine_battery_light_mod",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_circuits" } ],
     "type": "recipe",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
@@ -752,6 +765,7 @@
   },
   {
     "result": "magazine_battery_medium_mod",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_circuits" } ],
     "type": "recipe",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",
@@ -769,6 +783,7 @@
   },
   {
     "result": "magazine_battery_heavy_mod",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_circuits" } ],
     "type": "recipe",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_COMPONENTS",

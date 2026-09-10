@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "brandy",
+    "proficiencies": [ { "proficiency": "prof_distilling" }, { "proficiency": "prof_beverage_distilling" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
     "skill_used": "cooking",
@@ -16,6 +17,7 @@
   },
   {
     "result": "gin",
+    "proficiencies": [ { "proficiency": "prof_distilling" }, { "proficiency": "prof_beverage_distilling" } ],
     "type": "recipe",
     "id_suffix": "from_mash",
     "category": "CC_FOOD",
@@ -32,6 +34,7 @@
   },
   {
     "result": "vodka",
+    "proficiencies": [ { "proficiency": "prof_distilling" }, { "proficiency": "prof_beverage_distilling" } ],
     "type": "recipe",
     "id_suffix": "from_wash",
     "category": "CC_FOOD",
@@ -49,6 +52,7 @@
   {
     "type": "recipe",
     "result": "rum",
+    "proficiencies": [ { "proficiency": "prof_distilling" }, { "proficiency": "prof_beverage_distilling" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
     "skill_used": "cooking",
@@ -64,6 +68,7 @@
   {
     "type": "recipe",
     "result": "whiskey",
+    "proficiencies": [ { "proficiency": "prof_distilling" }, { "proficiency": "prof_beverage_distilling" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
     "skill_used": "cooking",
@@ -79,6 +84,7 @@
   {
     "type": "recipe",
     "result": "moonshine",
+    "proficiencies": [ { "proficiency": "prof_distilling" }, { "proficiency": "prof_beverage_distilling" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
     "skill_used": "cooking",
@@ -94,6 +100,7 @@
   {
     "type": "recipe",
     "result": "brew_mycus_wine",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_winemaking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
     "skill_used": "cooking",
@@ -109,6 +116,7 @@
   {
     "type": "recipe",
     "result": "brew_whiskey",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_brewing" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -130,6 +138,7 @@
   {
     "type": "recipe",
     "result": "brew_gin",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_brewing" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -150,6 +159,7 @@
   {
     "type": "recipe",
     "result": "brew_vodka",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_brewing" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -180,6 +190,7 @@
   {
     "type": "recipe",
     "result": "brew_rum",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -196,6 +207,7 @@
   {
     "type": "recipe",
     "result": "brew_moonshine",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_brewing" } ],
     "result_mult": 15,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -217,6 +229,7 @@
   {
     "type": "recipe",
     "result": "brew_fruit_wine",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_winemaking" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -237,6 +250,7 @@
   {
     "type": "recipe",
     "result": "brew_hb_beer",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_brewing" } ],
     "result_mult": 15,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -258,6 +272,7 @@
   {
     "type": "recipe",
     "result": "brew_mead",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_winemaking" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -276,6 +291,7 @@
   {
     "type": "recipe",
     "result": "brew_dandelion_wine",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_winemaking" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -302,6 +318,12 @@
   {
     "type": "recipe",
     "result": "brew_burdock_wine",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_fermenting" },
+      { "proficiency": "prof_winemaking" }
+    ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -328,6 +350,7 @@
   {
     "type": "recipe",
     "result": "brew_pine_wine",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_winemaking" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -354,6 +377,7 @@
   {
     "type": "recipe",
     "result": "brew_vinegar",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_lactofermenting" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",
@@ -378,6 +402,7 @@
   {
     "type": "recipe",
     "result": "brew_sake",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_fermenting" }, { "proficiency": "prof_brewing" } ],
     "result_mult": 3,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREW",

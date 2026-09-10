@@ -17,6 +17,7 @@
   },
   {
     "result": "bp_9mmfmj",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -33,6 +34,7 @@
   },
   {
     "result": "bp_40fmj",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -65,6 +67,7 @@
   },
   {
     "result": "bp_32_acp",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -81,6 +84,7 @@
   },
   {
     "result": "bp_38_fmj",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -97,6 +101,7 @@
   },
   {
     "result": "bp_44fmj",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -113,6 +118,7 @@
   },
   {
     "result": "bp_45_acp",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -161,6 +167,7 @@
   },
   {
     "result": "bp_380_FMJ",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -177,6 +184,7 @@
   },
   {
     "result": "36navy",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -194,6 +202,7 @@
   },
   {
     "result": "44army",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -344,6 +353,7 @@
   },
   {
     "result": "bp_357mag_fmj",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -376,6 +386,7 @@
   },
   {
     "result": "bp_357sig_fmj",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",
@@ -474,6 +485,7 @@
   },
   {
     "result": "bp_10mm_fmj",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_PISTOL",

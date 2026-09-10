@@ -15,6 +15,7 @@
   },
   {
     "result": "bikini_bottom",
+    "proficiencies": [ { "proficiency": "prof_elastics", "time_multiplier": 1.25, "skill_penalty": 0.15 } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -93,6 +94,11 @@
   },
   {
     "result": "chaps_leather",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_closures" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -118,6 +124,7 @@
   },
   {
     "result": "hot_pants",
+    "proficiencies": [ { "proficiency": "prof_elastics" }, { "proficiency": "prof_closures" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -144,6 +151,11 @@
   },
   {
     "result": "hot_pants_leather",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_closures" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -157,6 +169,7 @@
   },
   {
     "result": "jeans",
+    "proficiencies": [ { "proficiency": "prof_closures" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -209,6 +222,7 @@
   },
   {
     "result": "knee_pads",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" }, { "proficiency": "prof_closures" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -234,6 +248,7 @@
   },
   {
     "result": "leg_warmers_xlf",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_furriery" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -260,6 +275,7 @@
   },
   {
     "result": "legguard_hard",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" }, { "proficiency": "prof_elastics" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -298,6 +314,11 @@
   },
   {
     "result": "legguard_metal",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_armorsmithing" },
+      { "proficiency": "prof_articulation" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -322,6 +343,7 @@
   },
   {
     "result": "legguard_scrap",
+    "proficiencies": [ { "proficiency": "prof_closures" }, { "proficiency": "prof_articulation" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -451,6 +473,7 @@
   {
     "type": "recipe",
     "result": "leg_warmers_f",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_furriery" } ],
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
     "skill_used": "tailor",
@@ -463,6 +486,11 @@
   },
   {
     "result": "pants_fur",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_furriery" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -476,6 +504,11 @@
   },
   {
     "result": "pants_faux_fur",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_furriery" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -489,6 +522,11 @@
   },
   {
     "result": "pants_leather",
+    "proficiencies": [
+      { "proficiency": "prof_closures" },
+      { "proficiency": "prof_leatherworking_basic" },
+      { "proficiency": "prof_leatherworking" }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -691,6 +729,12 @@
   },
   {
     "result": "legguard_bronze",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing", "required": true },
+      { "proficiency": "prof_redsmithing_adv" },
+      { "proficiency": "prof_articulation", "required": true }
+    ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",
@@ -717,6 +761,7 @@
   },
   {
     "result": "skirt_leather",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" }, { "proficiency": "prof_leatherworking" } ],
     "type": "recipe",
     "category": "CC_ARMOR",
     "subcategory": "CSC_ARMOR_LEGS",

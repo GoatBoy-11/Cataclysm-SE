@@ -50,6 +50,7 @@
 #include "point.h"
 #include "ranged.h"
 #include "crafting_quality.h"
+#include "proficiency.h"
 #include "recipe.h"
 #include "recipe_dictionary.h"
 #include "rng.h"
@@ -2295,7 +2296,12 @@ void craft_activity_actor::refresh_speed( player_activity &act, const Character 
     const float game_opt_mult = get_option<int>( "CRAFTING_SPEED_MULT" ) == 0
                                 ? 9999.0f
                                 : 100.0f / static_cast<float>( get_option<int>( "CRAFTING_SPEED_MULT" ) );
-    act.speed.skills = mutation_mult * game_opt_mult;
+    // Proficiencies you lack slow the craft.  Folded in here for the same reason
+    // the mutation and option multipliers are: there is no dedicated speed field.
+    const float proficiency_mult = get_option<bool>( "PROFICIENCY_SYSTEM" )
+                                   ? making.proficiency_time_maluses( who )
+                                   : 1.0f;
+    act.speed.skills = mutation_mult * game_opt_mult * proficiency_mult;
 }
 
 void craft_activity_actor::start( player_activity &act, Character &who )

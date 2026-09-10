@@ -13,6 +13,10 @@
   {
     "type": "recipe",
     "result": "water_faucet",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking", "required": false, "time_multiplier": 1.5 },
+      { "proficiency": "prof_plumbing", "required": false, "time_multiplier": 3, "skill_penalty": 0.5 }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_PARTS",
     "skill_used": "fabrication",
@@ -102,6 +106,11 @@
   },
   {
     "result": "blade_scythe",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_PARTS",
@@ -113,6 +122,11 @@
   },
   {
     "result": "hinge",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_PARTS",
@@ -125,6 +139,7 @@
   },
   {
     "result": "sheet_metal",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_PARTS",
@@ -136,6 +151,11 @@
   },
   {
     "result": "sheet_metal",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "id_suffix": "welding",
     "type": "recipe",
     "category": "CC_OTHER",
@@ -149,6 +169,7 @@
   },
   {
     "result": "sheet_metal_small",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_PARTS",
@@ -204,6 +225,7 @@
   {
     "type": "recipe",
     "result": "wood_panel",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic" } ],
     "subcategory": "CSC_OTHER_PARTS",
     "id_suffix": "from nailed planks",
     "category": "CC_OTHER",
@@ -229,6 +251,11 @@
   },
   {
     "result": "xlframe",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_PARTS",

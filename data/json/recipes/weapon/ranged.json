@@ -12,6 +12,7 @@
   {
     "type": "recipe",
     "result": "throwing_stick",
+    "proficiencies": [ { "proficiency": "prof_carving", "time_multiplier": 4, "skill_penalty": 0.5 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "survival",
@@ -39,6 +40,7 @@
   {
     "type": "recipe",
     "result": "net",
+    "proficiencies": [ { "proficiency": "prof_fibers", "time_multiplier": 4, "skill_penalty": 0 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "survival",
@@ -54,6 +56,7 @@
   {
     "type": "recipe",
     "result": "sling",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -67,6 +70,7 @@
   {
     "type": "recipe",
     "result": "sling",
+    "proficiencies": [ { "proficiency": "prof_fibers", "skill_penalty": 0 } ],
     "id_suffix": "cord",
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
@@ -80,6 +84,7 @@
   {
     "type": "recipe",
     "result": "slingshot",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -91,6 +96,7 @@
   {
     "type": "recipe",
     "result": "bullwhip",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -104,6 +110,7 @@
   {
     "type": "recipe",
     "result": "longbow",
+    "proficiencies": [ { "proficiency": "prof_bowyery" }, { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -120,6 +127,7 @@
   {
     "type": "recipe",
     "result": "selfbow",
+    "proficiencies": [ { "proficiency": "prof_bowyery" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -132,6 +140,7 @@
   {
     "type": "recipe",
     "result": "shortbow",
+    "proficiencies": [ { "proficiency": "prof_bowyery" }, { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -167,6 +176,7 @@
   {
     "type": "recipe",
     "result": "compositebow",
+    "proficiencies": [ { "proficiency": "prof_bowyery" }, { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -186,6 +196,7 @@
   {
     "type": "recipe",
     "result": "woodgreatbow",
+    "proficiencies": [ { "proficiency": "prof_bowyery" }, { "proficiency": "prof_carving" } ],
     "byproducts": [ [ "splinter", 20 ] ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
@@ -201,6 +212,13 @@
   {
     "type": "recipe",
     "result": "compgreatbow",
+    "proficiencies": [
+      { "proficiency": "prof_bowyery" },
+      { "proficiency": "prof_carving" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_plasticworking", "time_multiplier": 1.5, "learning_time_multiplier": 0.25 }
+    ],
     "byproducts": [ [ "splinter", 20 ] ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
@@ -227,6 +245,12 @@
   {
     "type": "recipe",
     "result": "revolver_shotgun",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic" },
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_revolver" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "mechanics",
@@ -262,6 +286,7 @@
   {
     "type": "recipe",
     "result": "atlatl",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -290,6 +315,10 @@
   {
     "type": "recipe",
     "result": "hand_crossbow",
+    "proficiencies": [
+      { "proficiency": "prof_bowyery", "time_multiplier": 1.5, "skill_penalty": 0.15 },
+      { "proficiency": "prof_gunsmithing_spring" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -316,6 +345,10 @@
   {
     "type": "recipe",
     "result": "crossbow",
+    "proficiencies": [
+      { "proficiency": "prof_bowyery", "time_multiplier": 1.5, "skill_penalty": 0.15 },
+      { "proficiency": "prof_gunsmithing_spring" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -337,6 +370,11 @@
   {
     "type": "recipe",
     "result": "compositecrossbow",
+    "proficiencies": [
+      { "proficiency": "prof_bowyery", "time_multiplier": 1.5, "skill_penalty": 0.15 },
+      { "proficiency": "prof_gunsmithing_spring" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -366,6 +404,10 @@
   {
     "type": "recipe",
     "result": "bullet_crossbow",
+    "proficiencies": [
+      { "proficiency": "prof_bowyery", "time_multiplier": 1.5, "skill_penalty": 0.15 },
+      { "proficiency": "prof_gunsmithing_spring" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -380,6 +422,7 @@
   {
     "type": "recipe",
     "result": "2_shot_special",
+    "proficiencies": [ { "proficiency": "prof_gunsmithing_basic" }, { "proficiency": "prof_gunsmithing_improv" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "mechanics",
@@ -420,6 +463,7 @@
   {
     "type": "recipe",
     "result": "blunderbuss",
+    "proficiencies": [ { "proficiency": "prof_gunsmithing_basic" }, { "proficiency": "prof_gunsmithing_improv" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -433,6 +477,7 @@
   {
     "type": "recipe",
     "result": "pipe_shotgun",
+    "proficiencies": [ { "proficiency": "prof_gunsmithing_basic" }, { "proficiency": "prof_gunsmithing_improv" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -447,6 +492,7 @@
   {
     "type": "recipe",
     "result": "pipe_double_shotgun",
+    "proficiencies": [ { "proficiency": "prof_gunsmithing_basic" }, { "proficiency": "prof_gunsmithing_improv" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -551,6 +597,12 @@
   {
     "type": "recipe",
     "result": "bigun",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic" },
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_improv" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "mechanics",
@@ -581,6 +633,12 @@
   {
     "type": "recipe",
     "result": "ashot",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic" },
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_improv" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "mechanics",
@@ -596,6 +654,11 @@
   {
     "type": "recipe",
     "result": "throwing_knife",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -607,6 +670,11 @@
   {
     "type": "recipe",
     "result": "throwing_axe",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -632,6 +700,7 @@
   {
     "type": "recipe",
     "result": "lawn_dart",
+    "proficiencies": [ { "proficiency": "prof_plasticworking", "time_multiplier": 3 } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -646,6 +715,11 @@
   {
     "type": "recipe",
     "result": "huge_crossbow",
+    "proficiencies": [
+      { "proficiency": "prof_bowyery", "time_multiplier": 1.5, "skill_penalty": 0.15 },
+      { "proficiency": "prof_gunsmithing_spring" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -675,6 +749,11 @@
   {
     "type": "recipe",
     "result": "rep_crossbow",
+    "proficiencies": [
+      { "proficiency": "prof_bowyery", "time_multiplier": 1.5, "skill_penalty": 0.15 },
+      { "proficiency": "prof_gunsmithing_spring" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -755,6 +834,11 @@
   {
     "type": "recipe",
     "result": "surv_rocket_launcher",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic" },
+      { "proficiency": "prof_gunsmithing_improv" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -768,6 +852,7 @@
   {
     "type": "recipe",
     "result": "bullwhip_razor",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -781,6 +866,11 @@
   {
     "type": "recipe",
     "result": "chemical_thrower",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic" },
+      { "proficiency": "prof_gunsmithing_improv" }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "mechanics",
@@ -800,6 +890,7 @@
   {
     "type": "recipe",
     "result": "staff_sling",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -814,6 +905,13 @@
   {
     "type": "recipe",
     "result": "rifle_flintlock",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_antique" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -829,6 +927,13 @@
   {
     "type": "recipe",
     "result": "longrifle_flintlock",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_antique" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -844,6 +949,13 @@
   {
     "type": "recipe",
     "result": "carbine_flintlock",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_antique" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -859,6 +971,13 @@
   {
     "type": "recipe",
     "result": "pistol_flintlock",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_antique" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "fabrication",
@@ -873,6 +992,13 @@
   },
   {
     "result": "carbine_flintlock_double",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_antique" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 }
+    ],
     "type": "recipe",
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
@@ -888,6 +1014,7 @@
   },
   {
     "result": "carbine_flintlock_double",
+    "proficiencies": [ { "proficiency": "prof_gunsmithing_basic" }, { "proficiency": "prof_gunsmithing_antique" } ],
     "type": "recipe",
     "id_suffix": "from_antiques",
     "category": "CC_WEAPON",
@@ -904,6 +1031,11 @@
   {
     "type": "recipe",
     "result": "speargun",
+    "proficiencies": [
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_spring" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "mechanics",
@@ -917,6 +1049,11 @@
   {
     "type": "recipe",
     "result": "doublespeargun",
+    "proficiencies": [
+      { "proficiency": "prof_gunsmithing_basic" },
+      { "proficiency": "prof_gunsmithing_spring" },
+      { "proficiency": "prof_carving", "time_multiplier": 1.5, "skill_penalty": 0.15 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "mechanics",
@@ -1207,6 +1344,12 @@
   {
     "type": "recipe",
     "result": "coilgun",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_electromagnetics" },
+      { "proficiency": "prof_gunsmithing_improv" },
+      { "proficiency": "prof_plasticworking", "time_multiplier": 1.25, "learning_time_multiplier": 0.1 }
+    ],
     "category": "CC_WEAPON",
     "subcategory": "CSC_WEAPON_RANGED",
     "skill_used": "electronics",

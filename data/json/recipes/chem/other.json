@@ -39,6 +39,11 @@
   {
     "type": "recipe",
     "result": "pur_tablets",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_organic_chemistry" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_OTHER",
     "skill_used": "cooking",
@@ -60,6 +65,7 @@
   {
     "type": "recipe",
     "result": "heatpack",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_OTHER",
     "skill_used": "cooking",
@@ -120,6 +126,11 @@
   },
   {
     "result": "lye",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "type": "recipe",
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_OTHER",

@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "cake2",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" }, { "proficiency": "prof_baking_desserts_1" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -25,6 +26,12 @@
   {
     "type": "recipe",
     "result": "donut_holes",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_frying" },
+      { "proficiency": "prof_frying_bread" },
+      { "proficiency": "prof_baking", "skill_penalty": 0.1 }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -40,6 +47,7 @@
   {
     "type": "recipe",
     "result": "sponge_cake",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -60,6 +68,7 @@
   {
     "type": "recipe",
     "result": "space_cake",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "copy-from": "sponge_cake",
     "qualities": [ { "id": "COOK", "level": 3 } ],
     "tools": [ [ [ "surface_heat", 8, "LIST" ] ] ],
@@ -75,6 +84,7 @@
   {
     "type": "recipe",
     "result": "brownie",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" }, { "proficiency": "prof_baking_desserts_1" } ],
     "copy-from": "sponge_cake",
     "qualities": [ { "id": "COOK", "level": 3 } ],
     "tools": [ [ [ "surface_heat", 8, "LIST" ] ] ],
@@ -90,6 +100,7 @@
   {
     "type": "recipe",
     "result": "brownie_weed",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" }, { "proficiency": "prof_baking_desserts_1" } ],
     "copy-from": "brownie",
     "qualities": [ { "id": "COOK", "level": 3 } ],
     "tools": [ [ [ "surface_heat", 8, "LIST" ] ] ],
@@ -106,6 +117,7 @@
   {
     "type": "recipe",
     "result": "flatbread",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -142,6 +154,7 @@
   {
     "type": "recipe",
     "result": "tortilla_corn",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -157,6 +170,7 @@
   {
     "type": "recipe",
     "result": "cornbread",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -191,6 +205,7 @@
   {
     "type": "recipe",
     "result": "biscuit",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -211,6 +226,7 @@
   {
     "type": "recipe",
     "result": "johnnycake",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_frying" }, { "proficiency": "prof_frying_bread" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -230,6 +246,7 @@
   {
     "type": "recipe",
     "result": "pancakes",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -251,6 +268,7 @@
   {
     "type": "recipe",
     "result": "choc_pancakes",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -273,6 +291,7 @@
   {
     "type": "recipe",
     "result": "frenchtoast",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -301,6 +320,7 @@
   {
     "type": "recipe",
     "result": "waffles",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -322,6 +342,7 @@
   {
     "type": "recipe",
     "result": "choc_waffles",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -363,6 +384,7 @@
   {
     "type": "recipe",
     "result": "brioche",
+    "proficiencies": [ { "proficiency": "prof_baking" }, { "proficiency": "prof_baking_desserts_1" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -385,6 +407,7 @@
   {
     "type": "recipe",
     "result": "wastebread",
+    "proficiencies": [ { "proficiency": "prof_baking" }, { "proficiency": "prof_scav_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",
@@ -440,6 +463,12 @@
   {
     "type": "recipe",
     "result": "sourdough_bread",
+    "proficiencies": [
+      { "proficiency": "prof_baking" },
+      { "proficiency": "prof_baking_bread" },
+      { "proficiency": "prof_fermenting" },
+      { "proficiency": "prof_lactofermenting" }
+    ],
     "byproducts": [ [ "sourdough_split_uncovered", 1 ] ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
@@ -455,6 +484,7 @@
   {
     "type": "recipe",
     "result": "bread_garlic",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_BREAD",
     "skill_used": "cooking",

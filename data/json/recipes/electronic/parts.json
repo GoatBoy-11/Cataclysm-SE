@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "beeper",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -17,6 +18,11 @@
   {
     "type": "recipe",
     "result": "recharge_station",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -32,6 +38,12 @@
   {
     "type": "recipe",
     "result": "battery_charger",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking" },
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -48,6 +60,11 @@
   {
     "type": "recipe",
     "result": "solar_panel",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -64,6 +81,12 @@
   {
     "type": "recipe",
     "result": "wind_turbine",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_carpentry_basic" },
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "fabrication",
@@ -87,6 +110,11 @@
   {
     "type": "recipe",
     "result": "xl_wind_turbine",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_carpentry_basic" },
+      { "proficiency": "prof_elec_soldering" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "fabrication",
@@ -118,6 +146,11 @@
   {
     "type": "recipe",
     "result": "water_wheel",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_carpentry_basic" },
+      { "proficiency": "prof_elec_soldering" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "fabrication",
@@ -147,6 +180,11 @@
   {
     "type": "recipe",
     "result": "xl_water_wheel",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_carpentry_basic" },
+      { "proficiency": "prof_elec_soldering" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "fabrication",
@@ -184,6 +222,11 @@
   {
     "type": "recipe",
     "result": "solar_panel_v2",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -370,6 +413,11 @@
   {
     "type": "recipe",
     "result": "medium_storage_battery",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -384,6 +432,11 @@
   {
     "type": "recipe",
     "result": "storage_battery",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "id_suffix": "from_medium",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
@@ -399,6 +452,11 @@
   {
     "type": "recipe",
     "result": "storage_battery",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -413,6 +471,7 @@
   {
     "type": "recipe",
     "result": "motor_tiny",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -429,6 +488,7 @@
   {
     "type": "recipe",
     "result": "motor_small",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -445,6 +505,7 @@
   {
     "type": "recipe",
     "result": "camera_control",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -460,6 +521,7 @@
   {
     "type": "recipe",
     "result": "omnicamera",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" }, { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -475,6 +537,7 @@
   {
     "type": "recipe",
     "result": "omnicamera",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "id_suffix": "from-cameras",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
@@ -494,6 +557,7 @@
   {
     "type": "recipe",
     "result": "radio_repeater_mod",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "fabrication",
@@ -536,6 +600,7 @@
   {
     "type": "recipe",
     "result": "heavy_battery_cell",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_circuits" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -568,6 +633,7 @@
   {
     "type": "recipe",
     "result": "heavy_plus_battery_cell",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_circuits" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -583,6 +649,7 @@
   },
   {
     "result": "battery_car",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "type": "recipe",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
@@ -605,6 +672,7 @@
   },
   {
     "result": "battery_motorbike",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" } ],
     "type": "recipe",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
@@ -628,6 +696,11 @@
   {
     "type": "recipe",
     "result": "large_storage_battery",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",
@@ -750,6 +823,7 @@
   {
     "type": "recipe",
     "result": "alternator_bicycle",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_PARTS",
     "skill_used": "electronics",

@@ -168,6 +168,7 @@
   {
     "type": "recipe",
     "result": "cooking_oil",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -210,6 +211,7 @@
   {
     "type": "recipe",
     "result": "mayonnaise",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -293,6 +295,7 @@
   {
     "type": "recipe",
     "result": "morel_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -308,6 +311,7 @@
   {
     "type": "recipe",
     "result": "morel_fried",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_frying" }, { "proficiency": "prof_frying_bread" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -350,6 +354,7 @@
   {
     "type": "recipe",
     "result": "coffee_raw_kentucky",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "delete_flags": [ "HIDDEN_POISON" ],
@@ -419,6 +424,11 @@
   {
     "type": "recipe",
     "result": "cheese_hard",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_cheesemaking_1" },
+      { "proficiency": "prof_cheesemaking_2" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -465,6 +475,7 @@
   {
     "type": "recipe",
     "result": "deluxe_beans",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -499,6 +510,7 @@
   {
     "type": "recipe",
     "result": "deluxe_rice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -525,6 +537,7 @@
   {
     "type": "recipe",
     "result": "tofu_rice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -539,6 +552,7 @@
   {
     "type": "recipe",
     "result": "deluxe_beansnrice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -652,6 +666,7 @@
   {
     "type": "recipe",
     "result": "granola",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -817,6 +832,7 @@
   {
     "type": "recipe",
     "result": "pizza_cheese",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -837,6 +853,7 @@
   {
     "type": "recipe",
     "result": "salt",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
     "skill_used": "cooking",
@@ -902,6 +919,7 @@
   {
     "type": "recipe",
     "result": "sugar",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "id_suffix": "from_wood",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
@@ -1733,6 +1751,7 @@
   {
     "type": "recipe",
     "result": "dogfood",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1760,6 +1779,7 @@
   {
     "type": "recipe",
     "result": "dogfood",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
@@ -1792,6 +1812,7 @@
   {
     "type": "recipe",
     "result": "dogfood",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -1820,6 +1841,7 @@
   {
     "type": "recipe",
     "result": "catfood",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1847,6 +1869,7 @@
   {
     "type": "recipe",
     "result": "catfood",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
@@ -1878,6 +1901,7 @@
   {
     "type": "recipe",
     "result": "catfood",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -1905,6 +1929,7 @@
   {
     "type": "recipe",
     "result": "broth_bone",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1924,6 +1949,7 @@
   {
     "type": "recipe",
     "result": "broth_bone",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -1943,6 +1969,7 @@
   {
     "type": "recipe",
     "result": "con_milk",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -1973,6 +2000,7 @@
   {
     "type": "recipe",
     "result": "con_milk",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1998,6 +2026,7 @@
   {
     "type": "recipe",
     "result": "con_milk",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",
@@ -2031,6 +2060,7 @@
   {
     "type": "recipe",
     "result": "broth_bone",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_OTHER",

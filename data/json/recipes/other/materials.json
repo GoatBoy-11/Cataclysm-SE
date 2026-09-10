@@ -56,6 +56,10 @@
   {
     "type": "recipe",
     "result": "reinforced_glass_sheet",
+    "proficiencies": [
+      { "proficiency": "prof_glassblowing", "required": false, "time_multiplier": 1.5, "skill_penalty": 0.15 },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -95,6 +99,7 @@
   {
     "type": "recipe",
     "result": "thread",
+    "proficiencies": [ { "proficiency": "prof_spinning", "skill_penalty": 0.5, "time_multiplier": 6 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "tailor",
@@ -154,6 +159,7 @@
   {
     "type": "recipe",
     "result": "string_6",
+    "proficiencies": [ { "proficiency": "prof_fibers" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "tailor",
@@ -165,6 +171,7 @@
   {
     "type": "recipe",
     "result": "string_36",
+    "proficiencies": [ { "proficiency": "prof_fibers" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "tailor",
@@ -176,6 +183,7 @@
   {
     "type": "recipe",
     "result": "rope_6",
+    "proficiencies": [ { "proficiency": "prof_fibers" }, { "proficiency": "prof_fibers_rope" } ],
     "id_suffix": "from_string",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
@@ -188,6 +196,7 @@
   {
     "type": "recipe",
     "result": "rope_6",
+    "proficiencies": [ { "proficiency": "prof_fibers" }, { "proficiency": "prof_fibers_rope" } ],
     "id_suffix": "from_cloth",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
@@ -201,6 +210,7 @@
   {
     "type": "recipe",
     "result": "rope_30",
+    "proficiencies": [ { "proficiency": "prof_fibers_rope", "required": false, "time_multiplier": 1.5 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "tailor",
@@ -212,6 +222,7 @@
   {
     "type": "recipe",
     "result": "rope_makeshift_6",
+    "proficiencies": [ { "proficiency": "prof_fibers" }, { "proficiency": "prof_fibers_rope" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "survival",
@@ -284,6 +295,11 @@
   {
     "type": "recipe",
     "result": "blade",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_bladesmith" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -334,6 +350,12 @@
   {
     "type": "recipe",
     "result": "it_battery_mount",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_welding_basic", "skill_penalty": 0.5 },
+      { "proficiency": "prof_welding" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -361,6 +383,7 @@
   {
     "type": "recipe",
     "result": "nail",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing", "time_multiplier": 1.5 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -372,6 +395,7 @@
   {
     "type": "recipe",
     "result": "chain",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -407,6 +431,11 @@
   {
     "type": "recipe",
     "result": "glass_shard",
+    "proficiencies": [
+      { "proficiency": "prof_glassblowing" },
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -432,6 +461,7 @@
   {
     "type": "recipe",
     "result": "glass_sheet",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -445,6 +475,7 @@
   {
     "type": "recipe",
     "result": "material_quicklime",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -462,6 +493,7 @@
   {
     "type": "recipe",
     "result": "material_cement",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -478,6 +510,7 @@
   {
     "type": "recipe",
     "result": "cu_pipe",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_redsmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -524,6 +557,7 @@
   {
     "type": "recipe",
     "result": "plastic_chunk",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_organic_chemistry" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "cooking",
@@ -539,6 +573,7 @@
   {
     "type": "recipe",
     "result": "pipe",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -550,6 +585,7 @@
   {
     "type": "recipe",
     "result": "plastic_chunk",
+    "proficiencies": [ { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.5 } ],
     "id_suffix": "from_plastic_bags",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
@@ -584,6 +620,7 @@
   {
     "type": "recipe",
     "result": "chunk_rubber",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_organic_chemistry" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -617,6 +654,11 @@
   {
     "type": "recipe",
     "result": "spring",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_blacksmithing" },
+      { "proficiency": "prof_toolsmithing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -628,6 +670,7 @@
   {
     "type": "recipe",
     "result": "rebar",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -640,6 +683,7 @@
   {
     "type": "recipe",
     "result": "railroad_track_small",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -1125,6 +1169,11 @@
   },
   {
     "result": "scrap_bronze",
+    "proficiencies": [
+      { "proficiency": "prof_metalworking" },
+      { "proficiency": "prof_redsmithing" },
+      { "proficiency": "prof_redsmithing_adv" }
+    ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
@@ -1170,6 +1219,7 @@
   {
     "type": "recipe",
     "result": "tempered_glass_sheet",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -1235,6 +1285,7 @@
   {
     "type": "recipe",
     "result": "steel_armor",
+    "proficiencies": [ { "proficiency": "prof_metalworking" }, { "proficiency": "prof_blacksmithing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -1297,6 +1348,7 @@
   {
     "type": "recipe",
     "result": "cac2powder",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",
@@ -1309,6 +1361,7 @@
   {
     "type": "recipe",
     "result": "cordage_6",
+    "proficiencies": [ { "proficiency": "prof_fibers" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "tailor",
@@ -1320,6 +1373,7 @@
   {
     "type": "recipe",
     "result": "cordage_36",
+    "proficiencies": [ { "proficiency": "prof_fibers" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "tailor",
@@ -1661,6 +1715,7 @@
   },
   {
     "result": "fuse",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
@@ -1675,6 +1730,7 @@
   },
   {
     "result": "fuse",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "id_suffix": "with gunpowder",
     "category": "CC_OTHER",
@@ -1689,6 +1745,7 @@
   },
   {
     "result": "fuse",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "id_suffix": "with paper & gunpowder",
@@ -1717,6 +1774,7 @@
   {
     "type": "recipe",
     "result": "glass_tinted",
+    "proficiencies": [ { "proficiency": "prof_glassblowing" }, { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_MATERIALS",
     "skill_used": "fabrication",

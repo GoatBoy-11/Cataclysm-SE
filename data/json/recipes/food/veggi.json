@@ -2,6 +2,7 @@
   {
     "type": "recipe",
     "result": "mushroom_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -41,6 +42,12 @@
   {
     "type": "recipe",
     "result": "onion_rings",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_knife_skills" },
+      { "proficiency": "prof_frying" },
+      { "proficiency": "prof_frying_bread" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -56,6 +63,7 @@
   {
     "type": "recipe",
     "result": "sushi_rice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -76,6 +84,7 @@
   {
     "type": "recipe",
     "result": "onigiri",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -105,6 +114,7 @@
   {
     "type": "recipe",
     "result": "sushi_veggyroll",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -146,6 +156,7 @@
   {
     "type": "recipe",
     "result": "tofu",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -160,6 +171,7 @@
   {
     "type": "recipe",
     "result": "tofu_fried",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_frying" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -174,6 +186,7 @@
   {
     "type": "recipe",
     "result": "tofu_stirfry",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -208,6 +221,7 @@
   {
     "type": "recipe",
     "result": "veggy_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -221,6 +235,7 @@
   {
     "type": "recipe",
     "result": "veggy_wild_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -234,6 +249,7 @@
   {
     "type": "recipe",
     "result": "cooked_cattail_stalk",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -250,6 +266,7 @@
   {
     "type": "recipe",
     "result": "dahlia_baked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -270,6 +287,7 @@
   {
     "type": "recipe",
     "result": "salsify_baked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -284,6 +302,7 @@
   {
     "type": "recipe",
     "result": "dandelion_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -299,6 +318,12 @@
   {
     "type": "recipe",
     "result": "dandelion_fried",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_forage_cooking" },
+      { "proficiency": "prof_frying" },
+      { "proficiency": "prof_frying_bread" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -315,6 +340,7 @@
   {
     "type": "recipe",
     "result": "burdock_cooked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -338,6 +364,12 @@
   {
     "type": "recipe",
     "result": "burdock_fried",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_forage_cooking" },
+      { "proficiency": "prof_frying" },
+      { "proficiency": "prof_frying_bread" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -362,6 +394,12 @@
   {
     "type": "recipe",
     "result": "dandelionburdock_fried",
+    "proficiencies": [
+      { "proficiency": "prof_food_prep" },
+      { "proficiency": "prof_forage_cooking" },
+      { "proficiency": "prof_frying" },
+      { "proficiency": "prof_frying_bread" }
+    ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -417,6 +455,7 @@
   {
     "type": "recipe",
     "result": "cooked_pumpkin",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -432,6 +471,7 @@
   {
     "type": "recipe",
     "result": "potato_baked",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -506,6 +546,7 @@
   {
     "type": "recipe",
     "result": "veggy_aspic",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -553,6 +594,7 @@
   {
     "type": "recipe",
     "result": "soup_mushroom",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -568,6 +610,7 @@
   {
     "type": "recipe",
     "result": "soup_veggy",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "charges": 1,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -610,6 +653,7 @@
   {
     "type": "recipe",
     "result": "deluxe_veggy_beans",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -649,6 +693,7 @@
   {
     "type": "recipe",
     "result": "deluxe_veggy_rice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -681,6 +726,7 @@
   {
     "type": "recipe",
     "result": "deluxe_veggy_beansnrice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -866,6 +912,7 @@
   {
     "type": "recipe",
     "result": "acorn_roasted",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -898,6 +945,7 @@
   {
     "type": "recipe",
     "result": "fruit_pancakes",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -920,6 +968,7 @@
   {
     "type": "recipe",
     "result": "fruit_waffles",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -968,6 +1017,7 @@
   {
     "type": "recipe",
     "result": "pie",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" }, { "proficiency": "prof_baking_desserts_1" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -987,6 +1037,7 @@
   {
     "type": "recipe",
     "result": "pie_veggy",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -1002,6 +1053,7 @@
   {
     "type": "recipe",
     "result": "curry_veggy",
+    "proficiencies": [ { "proficiency": "prof_food_prep" } ],
     "charges": 1,
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -1040,6 +1092,7 @@
   {
     "type": "recipe",
     "result": "pizza_veggy",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_baking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -1087,6 +1140,7 @@
   {
     "type": "recipe",
     "result": "veggy_salted",
+    "proficiencies": [ { "proficiency": "prof_preservation" } ],
     "id_suffix": "vacuum_packed",
     "container": "plastic_bag_vac",
     "category": "CC_FOOD",
@@ -1104,6 +1158,7 @@
   {
     "type": "recipe",
     "result": "apple_sugar",
+    "proficiencies": [ { "proficiency": "prof_preservation" } ],
     "id_suffix": "vacuum_packed",
     "container": "plastic_bag_vac",
     "category": "CC_FOOD",
@@ -1203,6 +1258,7 @@
   {
     "type": "recipe",
     "result": "veggy_pickled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "container": "jar_glass_sealed",
     "category": "CC_FOOD",
@@ -1329,6 +1385,7 @@
   {
     "type": "recipe",
     "result": "veggy_salad",
+    "proficiencies": [ { "proficiency": "prof_knife_skills" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -1438,6 +1495,7 @@
   {
     "type": "recipe",
     "result": "veggy_pickled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "container": "jar_3l_glass_sealed",
     "category": "CC_FOOD",
@@ -1511,6 +1569,7 @@
   {
     "type": "recipe",
     "result": "fiddlehead_boiled",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -1526,6 +1585,7 @@
   {
     "type": "recipe",
     "result": "fiddlehead_sauteed",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "id_suffix": "from_raw",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -1543,6 +1603,7 @@
   {
     "type": "recipe",
     "result": "fiddlehead_sauteed",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_forage_cooking" } ],
     "id_suffix": "from_boiled",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -1617,6 +1678,7 @@
   {
     "type": "recipe",
     "result": "V8",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -1642,6 +1704,7 @@
   {
     "type": "recipe",
     "result": "soup_mushroom",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1662,6 +1725,7 @@
   {
     "type": "recipe",
     "result": "soup_mushroom",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -1684,6 +1748,7 @@
   {
     "type": "recipe",
     "result": "soup_mushroom",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -1704,6 +1769,7 @@
   {
     "type": "recipe",
     "result": "veggy_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1726,6 +1792,7 @@
   {
     "type": "recipe",
     "result": "apple_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1744,6 +1811,7 @@
   {
     "type": "recipe",
     "result": "soup_veggy",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1764,6 +1832,7 @@
   {
     "type": "recipe",
     "result": "broth",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1784,6 +1853,7 @@
   {
     "type": "recipe",
     "result": "jam_fruit",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "id_suffix": "jarred",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -1807,6 +1877,7 @@
   {
     "type": "recipe",
     "result": "jam_fruit",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "id_suffix": "jarred_3L",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -1830,6 +1901,7 @@
   {
     "type": "recipe",
     "result": "can_tomato",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1848,6 +1920,7 @@
   {
     "type": "recipe",
     "result": "can_beans",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -1870,6 +1943,7 @@
   {
     "type": "recipe",
     "result": "veggy_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -1895,6 +1969,7 @@
   {
     "type": "recipe",
     "result": "apple_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -1921,6 +1996,7 @@
   {
     "type": "recipe",
     "result": "can_tomato",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -1947,6 +2023,7 @@
   {
     "type": "recipe",
     "result": "can_beans",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
     "skill_used": "cooking",
@@ -1972,6 +2049,7 @@
   {
     "type": "recipe",
     "result": "soup_veggy",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -1994,6 +2072,7 @@
   {
     "type": "recipe",
     "result": "veggy_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2016,6 +2095,7 @@
   {
     "type": "recipe",
     "result": "apple_canned",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2035,6 +2115,7 @@
   {
     "type": "recipe",
     "result": "can_tomato",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2057,6 +2138,7 @@
   {
     "type": "recipe",
     "result": "can_beans",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2079,6 +2161,7 @@
   {
     "type": "recipe",
     "result": "soup_veggy",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2099,6 +2182,7 @@
   {
     "type": "recipe",
     "result": "broth",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2119,6 +2203,7 @@
   {
     "type": "recipe",
     "result": "sauce_red",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2141,6 +2226,7 @@
   {
     "type": "recipe",
     "result": "sauce_red",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ] ],
     "container": "jar_glass_sealed",
@@ -2163,6 +2249,7 @@
   {
     "type": "recipe",
     "result": "sauce_red",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -2189,6 +2276,7 @@
   {
     "type": "recipe",
     "result": "broth",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_VEGGI",
@@ -2211,6 +2299,7 @@
   {
     "type": "recipe",
     "result": "apple_cider",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ], [ "juice_pulp", 4 ] ],
     "container": "jar_glass_sealed",
@@ -2229,6 +2318,7 @@
   {
     "type": "recipe",
     "result": "apple_cider",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "byproducts": [ [ "juice_pulp", 4 ] ],
     "container": "can_medium",
@@ -2247,6 +2337,7 @@
   {
     "type": "recipe",
     "result": "apple_cider",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ], [ "juice_pulp", 24 ] ],
     "container": "jar_3l_glass_sealed",
@@ -2270,6 +2361,7 @@
   {
     "type": "recipe",
     "result": "juice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred",
     "byproducts": [ [ "water", 10 ], [ "juice_pulp", 2 ] ],
     "container": "jar_glass_sealed",
@@ -2289,6 +2381,7 @@
   {
     "type": "recipe",
     "result": "juice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "canned",
     "byproducts": [ [ "juice_pulp", 2 ] ],
     "container": "can_medium",
@@ -2307,6 +2400,7 @@
   {
     "type": "recipe",
     "result": "juice",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_preservation" }, { "proficiency": "prof_food_canning" } ],
     "id_suffix": "jarred_3l",
     "byproducts": [ [ "water", 10 ], [ "juice_pulp", 12 ] ],
     "container": "jar_3l_glass_sealed",

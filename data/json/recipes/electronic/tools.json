@@ -98,6 +98,7 @@
   {
     "type": "recipe",
     "result": "soldering_iron",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering", "skill_penalty": 0.125 }, { "proficiency": "prof_elec_circuits" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -119,6 +120,7 @@
   {
     "type": "recipe",
     "result": "noise_emitter",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "id_suffix": "radio-mod",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
@@ -144,6 +146,7 @@
   {
     "type": "recipe",
     "result": "noise_emitter",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_semiconductors" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -157,6 +160,7 @@
   {
     "type": "recipe",
     "result": "radio",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_semiconductors" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -192,6 +196,11 @@
   {
     "type": "recipe",
     "result": "hotplate",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "time_multiplier": 1.5 },
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -240,6 +249,7 @@
   {
     "type": "recipe",
     "result": "coffeemaker",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_circuits" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -284,6 +294,11 @@
   {
     "type": "recipe",
     "result": "two_way_radio",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_semiconductors" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -305,6 +320,11 @@
   {
     "type": "recipe",
     "result": "electrohack",
+    "proficiencies": [
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" },
+      { "proficiency": "prof_elec_integrated_circuits" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -379,6 +399,11 @@
   {
     "type": "recipe",
     "result": "dehydrator",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking" },
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -425,6 +450,11 @@
   {
     "type": "recipe",
     "result": "hand_crank_charger",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking" },
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "fabrication",
@@ -455,6 +485,11 @@
   {
     "type": "recipe",
     "result": "vibrator",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking" },
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "fabrication",
@@ -518,6 +553,7 @@
   {
     "type": "recipe",
     "result": "remotevehcontrol",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -542,6 +578,7 @@
   {
     "type": "recipe",
     "result": "drive_by_wire_controls",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "mechanics",
@@ -569,6 +606,7 @@
   {
     "type": "recipe",
     "result": "electronics_controls",
+    "proficiencies": [ { "proficiency": "prof_plasticworking" }, { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -584,6 +622,11 @@
   {
     "type": "recipe",
     "result": "makeshift_sealer",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking" },
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -607,6 +650,11 @@
   {
     "type": "recipe",
     "result": "elec_hairtrimmer",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "time_multiplier": 1.5 },
+      { "proficiency": "prof_elec_soldering" },
+      { "proficiency": "prof_elec_circuits" }
+    ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "fabrication",
@@ -628,6 +676,7 @@
   {
     "type": "recipe",
     "result": "radio_mod",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -656,6 +705,7 @@
   {
     "type": "recipe",
     "result": "electrolysis_kit",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "electronics",
@@ -670,6 +720,7 @@
   {
     "type": "recipe",
     "result": "light_minus_disposable_cell",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",
     "skill_used": "cooking",
@@ -787,6 +838,7 @@
   },
   {
     "result": "food_processor",
+    "proficiencies": [ { "proficiency": "prof_elec_soldering" }, { "proficiency": "prof_elec_circuits" } ],
     "type": "recipe",
     "category": "CC_ELECTRONIC",
     "subcategory": "CSC_ELECTRONIC_TOOLS",

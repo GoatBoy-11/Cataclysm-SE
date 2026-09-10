@@ -35,6 +35,7 @@
   },
   {
     "result": "spaghetti_bolognese",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "type": "recipe",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_PASTA",
@@ -62,6 +63,7 @@
   },
   {
     "result": "lasagne",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "type": "recipe",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_PASTA",
@@ -90,6 +92,7 @@
   },
   {
     "result": "spaghetti_pesto",
+    "proficiencies": [ { "proficiency": "prof_food_prep" }, { "proficiency": "prof_knife_skills" } ],
     "type": "recipe",
     "category": "CC_FOOD",
     "subcategory": "CSC_FOOD_PASTA",

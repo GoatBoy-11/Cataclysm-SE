@@ -1,4 +1,5 @@
 #include "recipe.h"
+#include "proficiency.h"
 
 #include <algorithm>
 #include <cmath>
@@ -40,6 +41,75 @@ recipe::recipe() : skill_used( skill_id::NULL_ID() ) {}
 time_duration recipe::batch_duration( int batch, float multiplier, size_t assistants ) const
 {
     return time_duration::from_turns( batch_time( batch, multiplier, assistants ) / 100 );
+}
+
+void recipe_proficiency::deserialize( const JsonObject &jo )
+{
+    jo.read( "proficiency", id );
+    jo.read( "required", required );
+    jo.read( "learning_time_multiplier", learning_time_multiplier );
+    if( jo.has_float( "time_multiplier" ) ) {
+        time_multiplier = static_cast<float>( jo.get_float( "time_multiplier" ) );
+    }
+    if( jo.has_float( "skill_penalty" ) ) {
+        skill_penalty = static_cast<float>( jo.get_float( "skill_penalty" ) );
+    }
+}
+
+std::vector<proficiency_id> recipe::required_proficiencies() const
+{
+    std::vector<proficiency_id> ret;
+    for( const recipe_proficiency &rp : proficiencies ) {
+        if( rp.required ) {
+            ret.push_back( rp.id );
+        }
+    }
+    return ret;
+}
+
+std::vector<proficiency_id> recipe::used_proficiencies() const
+{
+    std::vector<proficiency_id> ret;
+    for( const recipe_proficiency &rp : proficiencies ) {
+        if( !rp.required ) {
+            ret.push_back( rp.id );
+        }
+    }
+    return ret;
+}
+
+bool recipe::character_has_required_proficiencies( const Character &c ) const
+{
+    for( const recipe_proficiency &rp : proficiencies ) {
+        if( rp.required && !c.has_proficiency( rp.id ) ) {
+            return false;
+        }
+    }
+    return true;
+}
+
+float recipe::proficiency_time_maluses( const Character &c ) const
+{
+    float total = 1.0f;
+    for( const recipe_proficiency &rp : proficiencies ) {
+        if( rp.required || c.has_proficiency( rp.id ) || !rp.id.is_valid() ) {
+            continue;
+        }
+        total *= rp.time_multiplier.value_or( rp.id->default_time_multiplier() );
+    }
+    return total;
+}
+
+float recipe::proficiency_skill_maluses( const Character &c ) const
+{
+    float total = 0.0f;
+    for( const recipe_proficiency &rp : proficiencies ) {
+        if( rp.required || c.has_proficiency( rp.id ) || !rp.id.is_valid() ) {
+            continue;
+        }
+        total += rp.skill_penalty.value_or( rp.id->default_skill_penalty() );
+    }
+    return total;
 }
 
 int recipe::batch_time( int batch, float multiplier, size_t assistants ) const
@@ -123,6 +193,9 @@ void recipe::load( const JsonObject &jo, const std::string &src )
     }
     assign( jo, "difficulty", difficulty, strict, 0, MAX_SKILL );
     assign( jo, "flags", flags );
+    if( jo.has_array( "proficiencies" ) ) {
+        jo.read( "proficiencies", proficiencies );
+    }
 
     if( jo.has_string( "nested_name" ) ) {
         assign( jo, "nested_name", nested_name );

@@ -76,6 +76,12 @@
   {
     "type": "recipe",
     "result": "shelter_kit",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic", "required": false, "time_multiplier": 2, "skill_penalty": 0.5 },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_closures", "required": false, "time_multiplier": 1.5 },
+      { "proficiency": "prof_closures_waterproofing" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "survival",
@@ -89,6 +95,12 @@
   {
     "type": "recipe",
     "result": "shelter_kit",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic", "required": false, "time_multiplier": 2, "skill_penalty": 0.5 },
+      { "proficiency": "prof_leatherworking" },
+      { "proficiency": "prof_closures", "required": false, "time_multiplier": 1.5 },
+      { "proficiency": "prof_closures_waterproofing" }
+    ],
     "id_suffix": "repair",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
@@ -102,6 +114,10 @@
   {
     "type": "recipe",
     "result": "fur_rollmat",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic", "required": false, "time_multiplier": 2, "skill_penalty": 0.5 },
+      { "proficiency": "prof_furriery" }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "survival",
@@ -193,6 +209,7 @@
   {
     "type": "recipe",
     "result": "holy_symbol_wood",
+    "proficiencies": [ { "proficiency": "prof_carving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "fabrication",
@@ -224,6 +241,7 @@
   {
     "type": "recipe",
     "result": "clay_pot_flower",
+    "proficiencies": [ { "proficiency": "prof_pottery", "required": false, "time_multiplier": 1.5 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "fabrication",
@@ -308,6 +326,7 @@
   {
     "type": "recipe",
     "result": "leather_tarp",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "tailor",
@@ -343,6 +362,7 @@
   {
     "type": "recipe",
     "result": "fiber_mat",
+    "proficiencies": [ { "proficiency": "prof_basketweaving" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "tailor",
@@ -427,6 +447,7 @@
   },
   {
     "result": "acetylene",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "type": "recipe",
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
@@ -572,6 +593,10 @@
   {
     "type": "recipe",
     "result": "glass_fridge",
+    "proficiencies": [
+      { "proficiency": "prof_plasticworking", "required": false, "time_multiplier": 1.1, "learning_time_multiplier": 0.1 },
+      { "proficiency": "prof_appliance_repair", "required": false, "skill_penalty": 0 }
+    ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "fabrication",
@@ -620,6 +645,7 @@
   {
     "type": "recipe",
     "result": "oven",
+    "proficiencies": [ { "proficiency": "prof_appliance_repair" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "fabrication",
@@ -834,6 +860,7 @@
   {
     "type": "recipe",
     "result": "sharp_rock",
+    "proficiencies": [ { "proficiency": "prof_knapping", "time_multiplier": 1.25, "skill_penalty": 0.1 } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_TOOLS",
     "skill_used": "survival",
@@ -872,6 +899,7 @@
   {
     "type": "recipe",
     "result": "ceramic_cup",
+    "proficiencies": [ { "proficiency": "prof_pottery" }, { "proficiency": "prof_pottery_glazing" } ],
     "category": "CC_OTHER",
     "subcategory": "CSC_OTHER_OTHER",
     "skill_used": "fabrication",

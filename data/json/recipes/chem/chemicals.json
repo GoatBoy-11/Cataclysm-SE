@@ -92,6 +92,12 @@
   {
     "type": "recipe",
     "result": "insecticide",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_organic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -113,6 +119,11 @@
   {
     "type": "recipe",
     "result": "insecticide",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "id_suffix": "nicotine",
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -151,6 +162,11 @@
   {
     "type": "recipe",
     "result": "bleach",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -185,6 +201,11 @@
   {
     "type": "recipe",
     "result": "oxy_powder",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "byproducts": [ [ "salt_water", 2 ] ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -216,6 +237,11 @@
   {
     "type": "recipe",
     "result": "lye_powder",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "id_suffix": "from_lye",
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -257,6 +283,7 @@
   {
     "type": "recipe",
     "result": "fertilizer_liquid",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -299,6 +326,7 @@
   {
     "type": "recipe",
     "result": "soap",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -330,6 +358,11 @@
   {
     "type": "recipe",
     "result": "chem_hydrogen_peroxide_conc",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -344,6 +377,11 @@
   {
     "type": "recipe",
     "result": "chem_muriatic_acid",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -358,6 +396,11 @@
   {
     "type": "recipe",
     "result": "chem_muriatic_acid",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "id_suffix": "by_electrolysis",
     "byproducts": [ [ "lye", 2 ] ],
     "category": "CC_CHEM",
@@ -376,6 +419,11 @@
   {
     "type": "recipe",
     "result": "chem_sulphuric_acid",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -420,6 +468,12 @@
   {
     "type": "recipe",
     "result": "chem_nitric_acid",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_distilling" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "id_suffix": "from ammonia",
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -468,6 +522,11 @@
   {
     "type": "recipe",
     "result": "chem_aluminium_sulphate",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -498,6 +557,11 @@
   {
     "type": "recipe",
     "result": "chem_ammonium_nitrate",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "charges": 100,
@@ -537,6 +601,11 @@
   {
     "type": "recipe",
     "result": "chem_potassium_hydroxide",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "byproducts": [ [ "water" ] ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -557,6 +626,11 @@
   {
     "type": "recipe",
     "result": "chem_saltpetre",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "byproducts": [ [ "ammonia", 1 ] ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -572,6 +646,11 @@
   {
     "type": "recipe",
     "result": "chem_saltpetre",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "id_suffix": "niter",
     "result_mult": 5,
     "category": "CC_CHEM",
@@ -602,6 +681,12 @@
   {
     "type": "recipe",
     "result": "chem_acetic_acid",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_distilling" },
+      { "proficiency": "prof_organic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -616,6 +701,13 @@
   {
     "type": "recipe",
     "result": "chem_hexamine",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_organic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" },
+      { "proficiency": "prof_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -629,6 +721,11 @@
   {
     "type": "recipe",
     "result": "chem_formaldehyde",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_organic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -643,6 +740,11 @@
   {
     "type": "recipe",
     "result": "chem_methanol",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_distilling" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "byproducts": [ [ "chem_ethanol", 2 ] ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -658,6 +760,11 @@
   {
     "type": "recipe",
     "result": "chem_methanol",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_distilling" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "id_suffix": "from wood",
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -673,6 +780,11 @@
   {
     "type": "recipe",
     "result": "chem_rdx",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_organic_chemistry" }
+    ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -687,6 +799,7 @@
   {
     "type": "recipe",
     "result": "chem_thermite",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -711,6 +824,7 @@
   {
     "type": "recipe",
     "result": "chem_rocket_fuel",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -723,6 +837,7 @@
   {
     "type": "recipe",
     "result": "tool_rocket_candy",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
     "skill_used": "cooking",
@@ -735,6 +850,11 @@
   },
   {
     "result": "lye",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_inorganic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "type": "recipe",
     "id_suffix": "by_electrolysis",
     "category": "CC_CHEM",
@@ -752,6 +872,11 @@
   },
   {
     "result": "ether",
+    "proficiencies": [
+      { "proficiency": "prof_intro_chemistry" },
+      { "proficiency": "prof_organic_chemistry" },
+      { "proficiency": "prof_intro_chem_synth" }
+    ],
     "type": "recipe",
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",
@@ -769,6 +894,7 @@
   },
   {
     "result": "zinc_metal",
+    "proficiencies": [ { "proficiency": "prof_metallurgy" } ],
     "type": "recipe",
     "category": "CC_CHEM",
     "subcategory": "CSC_CHEM_CHEMICALS",

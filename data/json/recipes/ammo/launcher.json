@@ -1,6 +1,7 @@
 [
   {
     "result": "40x53mm_buckshot_m169",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
@@ -18,6 +19,7 @@
   },
   {
     "result": "40x53mm_slug_m169",
+    "proficiencies": [ { "proficiency": "prof_handloading" } ],
     "type": "recipe",
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
@@ -171,6 +173,7 @@
   {
     "type": "recipe",
     "result": "napalm",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
     "skill_used": "cooking",
@@ -272,6 +275,7 @@
   {
     "type": "recipe",
     "result": "flamethrower_fuel",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
     "skill_used": "cooking",
@@ -285,6 +289,7 @@
   {
     "type": "recipe",
     "result": "spiked_rocket",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
     "skill_used": "fabrication",
@@ -303,6 +308,7 @@
   {
     "type": "recipe",
     "result": "explosive_hm_rocket",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_handloading" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
     "skill_used": "fabrication",
@@ -324,6 +330,7 @@
   {
     "type": "recipe",
     "result": "incendiary_hm_rocket",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
     "skill_used": "fabrication",
@@ -342,6 +349,7 @@
   {
     "type": "recipe",
     "result": "gas_fungicidal",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" }, { "proficiency": "prof_inorganic_chemistry" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
     "skill_used": "cooking",
@@ -356,6 +364,7 @@
   {
     "type": "recipe",
     "result": "gas_insecticidal",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
     "skill_used": "cooking",
@@ -370,6 +379,7 @@
   {
     "type": "recipe",
     "result": "gas_chloramine",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry" } ],
     "category": "CC_AMMO",
     "subcategory": "CSC_AMMO_LAUNCHER",
     "skill_used": "cooking",
