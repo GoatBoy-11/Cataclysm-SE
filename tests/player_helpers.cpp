@@ -79,6 +79,10 @@ void clear_character(player& dummy, bool debug_storage) {
     dummy.environmental_revert_effect();
 
     dummy.clear_skills();
+    dummy.clear_proficiencies();
+    // Focus is not reset anywhere else, and learning is scaled by it, so a test that
+    // drained it left every later test learning less than the time it spent.
+    dummy.focus_pool = 100;
     dummy.clear_morale();
     dummy.activity->set_to_null();
     // Make sure any lingering safe references from the activity are removed

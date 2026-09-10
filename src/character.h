@@ -1820,6 +1820,9 @@ class Character : public Creature, public location_visitable<Character>
         }
         /** Clear the skills map, setting all levels to 0 */
         void clear_skills();
+        /** Forget every proficiency, known and in progress.  Character creation and
+         *  tests use this the way they use clear_skills(). */
+        void clear_proficiencies();
         /** Empties the trait and mutations lists */
         void clear_mutations();
         /** Returns true if the player has crossed a mutation threshold

@@ -2332,10 +2332,12 @@ talk_topic dialogue::opt( dialogue_window &d_win, const std::string &npc_name,
         beta->chatbin.skill = chosen.skill;
         beta->chatbin.style = matype_id::NULL_ID();
         beta->chatbin.dialogue_spell = spell_id();
+        beta->chatbin.proficiency = proficiency_id();
     } else if( chosen.style ) {
         beta->chatbin.style = chosen.style;
         beta->chatbin.skill = skill_id::NULL_ID();
         beta->chatbin.dialogue_spell = spell_id();
+        beta->chatbin.proficiency = proficiency_id();
     } else if( chosen.dialogue_spell != spell_id() ) {
         beta->chatbin.style = matype_id::NULL_ID();
         beta->chatbin.skill = skill_id::NULL_ID();

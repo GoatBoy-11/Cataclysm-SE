@@ -1514,6 +1514,7 @@ void npc_chatbin::serialize( JsonOut &json ) const
     }
     json.member( "skill", skill );
     json.member( "style", style );
+    json.member( "proficiency", proficiency );
     json.member( "missions", mission::to_uid_vector( missions ) );
     json.member( "missions_assigned", mission::to_uid_vector( missions_assigned ) );
     json.end_object();
@@ -1534,6 +1535,7 @@ void npc_chatbin::deserialize( JsonIn &jsin )
 
     data.read( "skill", skill );
     data.read( "style", style );
+    data.read( "proficiency", proficiency );
 
     std::vector<int> tmpmissions;
     data.read( "missions", tmpmissions );

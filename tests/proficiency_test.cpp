@@ -4,10 +4,17 @@
 #include "json.h"
 #include "avatar.h"
 #include "character.h"
+#include "activity_handlers.h"
+#include "game_constants.h"
+#include "npc.h"
 #include "npc_class.h"
+#include "npctalk.h"
+#include "player_activity.h"
 #include "profession.h"
 #include "proficiency.h"
+#include "player_helpers.h"
 #include "recipe.h"
+#include "state_helpers.h"
 #include "type_id.h"
 
 #include <sstream>
@@ -158,6 +165,7 @@ TEST_CASE("recipe proficiencies penalise a character who lacks them", "[proficie
     const std::vector<proficiency_id> used = rec.used_proficiencies();
     REQUIRE(!used.empty());
 
+    clear_avatar();
     Character &you = get_avatar();
     for (const proficiency_id &p : used) {
         you.lose_proficiency(p, true);
@@ -184,11 +192,8 @@ TEST_CASE("recipe proficiencies penalise a character who lacks them", "[proficie
 }
 
 TEST_CASE("a character practises a proficiency until they know it", "[proficiency]") {
+    clear_avatar();
     Character &you = get_avatar();
-    // Learning tracks attention, so a test that ran earlier and drained focus would
-    // leave this one learning far less than the time it thinks it is spending.
-    const int saved_focus = you.focus_pool;
-    you.focus_pool = 100;
     you.lose_proficiency(prof_familiar, true);
     REQUIRE(!you.has_proficiency(prof_familiar));
 
@@ -214,13 +219,13 @@ TEST_CASE("a character practises a proficiency until they know it", "[proficienc
     CHECK(listed);
 
     you.lose_proficiency(prof_familiar, true);
-    you.focus_pool = saved_focus;
 }
 
 TEST_CASE("weapon proficiencies make a familiar weapon cheaper to swing", "[proficiency]") {
     const proficiency_id knives_familiar("prof_knives_familiar");
     REQUIRE(knives_familiar.is_valid());
 
+    clear_avatar();
     Character &you = get_avatar();
     you.lose_proficiency(knives_familiar, true);
 
@@ -269,6 +274,7 @@ TEST_CASE("books soften a proficiency you lack", "[proficiency]") {
 }
 
 TEST_CASE("focus changes how fast a proficiency is picked up", "[proficiency]") {
+    clear_avatar();
     Character &you = get_avatar();
     const int saved_focus = you.focus_pool;
     const time_duration chunk = prof_familiar->time_to_learn() / 4;
@@ -310,7 +316,44 @@ TEST_CASE("npc classes grant proficiencies", "[proficiency]") {
     CHECK(teaches_wound_care);
 }
 
+TEST_CASE("an NPC teaches a proficiency their class knows", "[proficiency][npc]") {
+    clear_all_state();
+    avatar &you = get_avatar();
+    const proficiency_id taught("prof_wound_care");
+    REQUIRE(taught.is_valid());
+    REQUIRE(!you.has_proficiency(taught));
+
+    standard_npc doc("Doc", tripoint_bub_ms(g_half_mapsize_x + 1, g_half_mapsize_y, 0));
+    doc.randomize(npc_class_id("NC_DOCTOR"));
+    REQUIRE(doc.has_proficiency(taught));
+    const std::vector<proficiency_id> offered = doc.proficiencies_offered_to(&you);
+    REQUIRE(std::ranges::find(offered, taught) != offered.end());
+
+    // A lesson runs half an hour however far there is to go, and is charged in cents
+    // of its own length.
+    const time_duration lesson = calc_proficiency_training_time(doc, you, taught);
+    CHECK(lesson == 30_minutes);
+    const int cost = calc_proficiency_training_cost(doc, you, taught);
+    CHECK(cost == to_seconds<int>(lesson));
+
+    // Settle the fee up front so no trade window opens.
+    doc.op_of_u.owed = cost;
+    doc.chatbin.proficiency = taught;
+    talk_function::start_training(doc);
+
+    // The lesson is an activity, and the activity is what carries the proficiency id
+    // through to the handler that grants it.
+    REQUIRE(you.activity);
+    REQUIRE(you.activity->id() == activity_id("ACT_TRAIN"));
+    CHECK(you.activity->name == taught.str());
+    CHECK(doc.op_of_u.owed == 0);
+
+    activity_handlers::train_finish(&*you.activity, &you);
+    CHECK(you.get_proficiency_practice(taught) > 0.0f);
+}
+
 TEST_CASE("a teacher only offers what the student lacks", "[proficiency]") {
+    clear_avatar();
     Character &you = get_avatar();
     you.lose_proficiency(prof_familiar);
     you.add_proficiency(prof_familiar, true);
@@ -337,6 +380,7 @@ TEST_CASE("practice recipes train instead of producing", "[proficiency]") {
     REQUIRE(rec.practice_data.has_value());
     CHECK(rec.practice_data->skill_limit == 5);
 
+    clear_avatar();
     Character &you = get_avatar();
     const int saved = you.get_skill_level(rec.skill_used);
 

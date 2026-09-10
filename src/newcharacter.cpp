@@ -4629,6 +4629,11 @@ void Character::clear_skills()
     }
 }
 
+void Character::clear_proficiencies()
+{
+    *_proficiencies = proficiency_set();
+}
+
 void newcharacter::add_traits( Character &ch )
 {
     points_left points = points_left();
