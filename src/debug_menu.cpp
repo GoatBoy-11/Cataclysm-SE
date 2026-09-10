@@ -87,6 +87,7 @@
 #include "path_info.h"
 #include "pimpl.h"
 #include "player.h"
+#include "proficiency.h"
 #include "pldata.h"
 #include "point.h"
 #include "popup.h"
@@ -659,7 +660,8 @@ void character_edit_menu( Character &c )
         pick, desc, skills, stats, items, delete_items, item_worn,
         hp, stamina, morale, clear_morale, pain, needs, healthy, status, mission_add, mission_edit,
         tele, mutate, bionics, npc_class, attitude, opinion, effects,
-        learn_ma, unlock_recipes, forget_items, learn_spells, level_spells
+        learn_ma, unlock_recipes, forget_items, learn_spells, level_spells,
+        proficiencies
     };
 
     // Maybe TODO: this could actually be static if not for translations
@@ -686,7 +688,8 @@ void character_edit_menu( Character &c )
             uilist_entry( edit_character::effects, true, 'E',  _( "Edit [E]ffects" ) ),
             uilist_entry( edit_character::learn_ma, true, 'l', _( "[l]earn all melee styles" ) ),
             uilist_entry( edit_character::unlock_recipes, true, 'r', _( "Unlock all [r]ecipes" ) ),
-            uilist_entry( edit_character::forget_items, true, 'F', _( "[F]orget all items" ) )
+            uilist_entry( edit_character::forget_items, true, 'F', _( "[F]orget all items" ) ),
+            uilist_entry( edit_character::proficiencies, true, 'c', _( "Toggle a profi[c]iency" ) )
         }
     };
 
@@ -1159,6 +1162,38 @@ void character_edit_menu( Character &c )
             }
         }
         break;
+        case edit_character::proficiencies: {
+            std::vector<proficiency_id> ids;
+            for( const proficiency &prof : proficiency::get_all() ) {
+                ids.push_back( prof.prof_id() );
+            }
+            std::sort( ids.begin(), ids.end(),
+            []( const proficiency_id & a, const proficiency_id & b ) {
+                return localized_compare( a->name(), b->name() );
+            } );
+
+            uilist prof_menu;
+            prof_menu.text = _( "Select a proficiency to grant or remove" );
+            prof_menu.desc_enabled = true;
+            for( size_t i = 0; i < ids.size(); i++ ) {
+                prof_menu.addentry_desc( static_cast<int>( i ), true, MENU_AUTOASSIGN,
+                                         string_format( "[%s] %s",
+                                                 p.has_proficiency( ids[i] ) ? "x" : " ", ids[i]->name() ),
+                                         ids[i]->description() );
+            }
+            prof_menu.query();
+            if( prof_menu.ret >= 0 && prof_menu.ret < static_cast<int>( ids.size() ) ) {
+                const proficiency_id &chosen = ids[prof_menu.ret];
+                // Ignore prerequisites; this is a debug tool, not a career.
+                if( p.has_proficiency( chosen ) ) {
+                    p.lose_proficiency( chosen, true );
+                } else {
+                    p.add_proficiency( chosen, true );
+                }
+            }
+            break;
+        }
+
         case edit_character::learn_ma:
             add_msg( m_info, _( "Martial arts debug." ) );
             add_msg( _( "Your eyes blink rapidly as knowledge floods your brain." ) );
