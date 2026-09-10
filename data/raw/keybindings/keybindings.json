@@ -3625,7 +3625,8 @@
     "type": "keybinding",
     "id": "VIEW_PROFICIENCIES",
     "name": "View proficiencies",
-    "bindings": [ { "input_method": "keyboard", "key": "p" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "c" } ],
+    "category": "PLAYER_INFO"
   },
   {
     "id": "ACTIVATE",
