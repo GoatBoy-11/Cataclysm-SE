@@ -88,28 +88,44 @@ bool recipe::character_has_required_proficiencies( const Character &c ) const
     return true;
 }
 
-float recipe::proficiency_time_maluses( const Character &c ) const
+float recipe::proficiency_time_maluses( const Character &c,
+                                        const book_proficiency_bonuses &books ) const
 {
     float total = 1.0f;
     for( const recipe_proficiency &rp : proficiencies ) {
         if( rp.required || c.has_proficiency( rp.id ) || !rp.id.is_valid() ) {
             continue;
         }
-        total *= rp.time_multiplier.value_or( rp.id->default_time_multiplier() );
+        const float malus = rp.time_multiplier.value_or( rp.id->default_time_multiplier() );
+        // A book covering this proficiency removes part of the excess over 1.0.
+        const float mitigated = 1.0f + ( malus - 1.0f ) * ( 1.0f - books.time_factor( rp.id ) );
+        total *= std::max( 1.0f, mitigated );
     }
     return total;
 }
 
-float recipe::proficiency_skill_maluses( const Character &c ) const
+float recipe::proficiency_skill_maluses( const Character &c,
+                                         const book_proficiency_bonuses &books ) const
 {
     float total = 0.0f;
     for( const recipe_proficiency &rp : proficiencies ) {
         if( rp.required || c.has_proficiency( rp.id ) || !rp.id.is_valid() ) {
             continue;
         }
-        total += rp.skill_penalty.value_or( rp.id->default_skill_penalty() );
+        const float malus = rp.skill_penalty.value_or( rp.id->default_skill_penalty() );
+        total += malus * ( 1.0f - books.fail_factor( rp.id ) );
     }
     return total;
+}
+
+float recipe::proficiency_time_maluses( const Character &c ) const
+{
+    return proficiency_time_maluses( c, c.book_bonuses_nearby() );
+}
+
+float recipe::proficiency_skill_maluses( const Character &c ) const
+{
+    return proficiency_skill_maluses( c, c.book_bonuses_nearby() );
 }
 
 int recipe::batch_time( int batch, float multiplier, size_t assistants ) const

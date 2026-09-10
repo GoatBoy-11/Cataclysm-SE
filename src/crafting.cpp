@@ -956,6 +956,28 @@ void Character::craft_skill_gain( const item &craft, const int &multiplier )
 }
 
 
+book_proficiency_bonuses Character::book_bonuses_nearby() const
+{
+    book_proficiency_bonuses result;
+    // Two copies of the same book are no more help than one.
+    std::set<itype_id> seen;
+    // crafting_inventory() is non-const upstream too; this only reads it.
+    const inventory &inv = const_cast<Character *>( this )->crafting_inventory();
+    for( const std::vector<item *> *stack : inv.const_slice() ) {
+        if( stack->empty() ) {
+            continue;
+        }
+        const item *it = stack->front();
+        if( it == nullptr || !it->is_book() || !seen.insert( it->typeId() ).second ) {
+            continue;
+        }
+        for( const book_proficiency_bonus &bonus : it->type->book->proficiencies ) {
+            result.add( bonus );
+        }
+    }
+    return result;
+}
+
 bool Character::craft_proficiency_gain( const item &craft, const time_duration &time )
 {
     if( !craft.is_craft() ) {

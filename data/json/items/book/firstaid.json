@@ -1,6 +1,7 @@
 [
   {
     "id": "emergency_book",
+    "proficiencies": [ { "proficiency": "prof_wound_care_expert", "time_factor": 0.75, "fail_factor": 0.5 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Guide to Advanced Emergency Care", "str_pl": "copies of Guide to Advanced Emergency Care" },
@@ -20,6 +21,7 @@
   },
   {
     "id": "mag_firstaid",
+    "proficiencies": [ { "proficiency": "prof_wound_care", "time_factor": 0.75, "fail_factor": 0.5 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Paramedics", "str_pl": "issues of Paramedics" },
@@ -37,6 +39,10 @@
   },
   {
     "id": "manual_first_aid",
+    "proficiencies": [
+      { "proficiency": "prof_wound_care", "time_factor": 0.75, "fail_factor": 0.5 },
+      { "proficiency": "prof_wound_care_expert", "time_factor": 0.75, "fail_factor": 0.5 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Big Book of First Aid", "str_pl": "copies of The Big Book of First Aid" },
@@ -53,6 +59,7 @@
   },
   {
     "id": "pocket_firstaid",
+    "proficiencies": [ { "proficiency": "prof_wound_care", "time_factor": 0.75, "fail_factor": 0.5 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Pocket Guide to First Aid", "str_pl": "copies of Pocket Guide to First Aid" },
@@ -70,6 +77,7 @@
   },
   {
     "id": "textbook_firstaid",
+    "proficiencies": [ { "proficiency": "prof_wound_care_expert", "time_factor": 0.75, "fail_factor": 0.5 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "First Responder Handbook", "str_pl": "copies of First Responder Handbook" },

@@ -1,6 +1,7 @@
 [
   {
     "id": "adv_chemistry",
+    "proficiencies": [ { "proficiency": "prof_intro_chemistry", "time_factor": 0.6, "fail_factor": 0.25 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Advanced Physical Chemistry", "str_pl": "copies of Advanced Physical Chemistry" },
@@ -20,6 +21,11 @@
   },
   {
     "id": "brewing_cookbook",
+    "proficiencies": [
+      { "proficiency": "prof_fermenting", "time_factor": 0.1, "fail_factor": 0.25 },
+      { "proficiency": "prof_brewing", "time_factor": 0.25, "fail_factor": 0.5 },
+      { "proficiency": "prof_winemaking", "time_factor": 0.1, "fail_factor": 0.25 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Homebrewer's Bible", "str_pl": "copies of The Homebrewer's Bible" },
@@ -39,6 +45,13 @@
   },
   {
     "id": "cookbook",
+    "proficiencies": [
+      { "proficiency": "prof_baking", "time_factor": 0.25, "fail_factor": 0.2 },
+      { "proficiency": "prof_baking_bread", "time_factor": 0.25, "fail_factor": 0.2 },
+      { "proficiency": "prof_baking_desserts_1", "time_factor": 0.25, "fail_factor": 0.2 },
+      { "proficiency": "prof_fermenting", "time_factor": 0.05, "fail_factor": 0.1 },
+      { "proficiency": "prof_lactofermenting", "time_factor": 0.05, "fail_factor": 0.1 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Cooking on a Budget", "str_pl": "copies of Cooking on a Budget" },
@@ -110,6 +123,12 @@
   },
   {
     "id": "family_cookbook",
+    "proficiencies": [
+      { "proficiency": "prof_baking", "time_factor": 0.1, "fail_factor": 0.4 },
+      { "proficiency": "prof_baking_bread", "time_factor": 0.1, "fail_factor": 0.25 },
+      { "proficiency": "prof_baking_desserts_1", "time_factor": 0.1, "fail_factor": 0.25 },
+      { "proficiency": "prof_frying", "time_factor": 0.1, "fail_factor": 0.2 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "family cookbook" },
@@ -164,6 +183,7 @@
   },
   {
     "id": "modern_tanner",
+    "proficiencies": [ { "proficiency": "prof_leatherworking_basic", "time_factor": 0.6, "fail_factor": 0.25 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Modern Tanner", "str_pl": "copies of The Modern Tanner" },
@@ -430,6 +450,12 @@
   },
   {
     "id": "vinegar_maker",
+    "proficiencies": [
+      { "proficiency": "prof_fermenting", "time_factor": 0.1, "fail_factor": 0.4 },
+      { "proficiency": "prof_distilling", "time_factor": 0.1, "fail_factor": 0.3 },
+      { "proficiency": "prof_brewing", "time_factor": 0.05, "fail_factor": 0.1 },
+      { "proficiency": "prof_winemaking", "time_factor": 0.05, "fail_factor": 0.2 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Vinegar Maker's Handbook", "str_pl": "copies of Vinegar Maker's Handbook" },
@@ -447,6 +473,10 @@
   },
   {
     "id": "preserving_juice",
+    "proficiencies": [
+      { "proficiency": "prof_preservation", "time_factor": 0.1, "fail_factor": 0.1 },
+      { "proficiency": "prof_food_canning", "time_factor": 0.1, "fail_factor": 0.4 }
+    ],
     "type": "BOOK",
     "name": { "str": "Drink the Harvest", "str_pl": "copies of Drink the Harvest" },
     "description": "Canning foods doesn't have to stop with jam and pickles.  This book provides a plethora of juices that can be preserved.",
@@ -455,6 +485,7 @@
   },
   {
     "id": "offalcooking",
+    "proficiencies": [ { "proficiency": "prof_frying", "time_factor": 0.1, "fail_factor": 0.2 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Offal Holiday Cooking", "str_pl": "copies of Offal Holiday Cooking" },
@@ -472,6 +503,10 @@
   },
   {
     "id": "dairy_book",
+    "proficiencies": [
+      { "proficiency": "prof_cheesemaking_1", "time_factor": 0.1, "fail_factor": 0.4 },
+      { "proficiency": "prof_cheesemaking_2", "time_factor": 0.1, "fail_factor": 0.1 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Things to do with Milk", "str_pl": "copies of Things to do with Milk" },
@@ -545,6 +580,11 @@
   },
   {
     "id": "winemaking_beginner",
+    "proficiencies": [
+      { "proficiency": "prof_fermenting", "time_factor": 0.1, "fail_factor": 0.5 },
+      { "proficiency": "prof_brewing", "time_factor": 0.1, "fail_factor": 0.1 },
+      { "proficiency": "prof_winemaking", "time_factor": 0.25, "fail_factor": 0.3 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Winemaking for Beginners", "str_pl": "copies of Winemaking for Beginners" },
@@ -561,6 +601,10 @@
   },
   {
     "id": "manual_canning",
+    "proficiencies": [
+      { "proficiency": "prof_preservation", "time_factor": 0.1, "fail_factor": 0.25 },
+      { "proficiency": "prof_food_canning", "time_factor": 0.2, "fail_factor": 0.4 }
+    ],
     "type": "BOOK",
     "name": { "str": "You Can Can at Home", "str_pl": "copies of You Can Can at Home" },
     "description": "This entry-level guide to home canning talks about the importance of acidity and food contents in preservation, and how to avoid contaminants in your canning batches.",
@@ -569,6 +613,10 @@
   },
   {
     "id": "manual_sealing",
+    "proficiencies": [
+      { "proficiency": "prof_preservation", "time_factor": 0.05, "fail_factor": 0.1 },
+      { "proficiency": "prof_food_canning", "time_factor": 0.05, "fail_factor": 0.3 }
+    ],
     "type": "BOOK",
     "name": { "str": "Can Sealer Instructions", "str_pl": "copies of Can Sealer Instructions" },
     "description": "This dry guide to a home-use tin can sealer goes into clear detail on everything you can seal with the device and how to do it safely, and includes some basic recipes.",
@@ -577,6 +625,12 @@
   },
   {
     "id": "baking_book",
+    "proficiencies": [
+      { "proficiency": "prof_baking", "time_factor": 0.1, "fail_factor": 0.5 },
+      { "proficiency": "prof_baking_bread", "time_factor": 0.1, "fail_factor": 0.5 },
+      { "proficiency": "prof_baking_desserts_1", "time_factor": 0.1, "fail_factor": 0.5 },
+      { "proficiency": "prof_baking_desserts_2", "time_factor": 0.1, "fail_factor": 0.4 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Baker's Companion", "str_pl": "copies of The Baker's Companion" },
@@ -596,6 +650,10 @@
   },
   {
     "id": "fermenting_book",
+    "proficiencies": [
+      { "proficiency": "prof_fermenting", "time_factor": 0.25, "fail_factor": 0.3 },
+      { "proficiency": "prof_lactofermenting", "time_factor": 0.2, "fail_factor": 0.4 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Fermenting Culture", "str_pl": "copies of Fermenting Culture" },
@@ -615,6 +673,13 @@
   },
   {
     "id": "distilling_cookbook",
+    "proficiencies": [
+      { "proficiency": "prof_fermenting", "time_factor": 0.05, "fail_factor": 0.05 },
+      { "proficiency": "prof_brewing", "time_factor": 0.05, "fail_factor": 0.1 },
+      { "proficiency": "prof_winemaking", "time_factor": 0.05, "fail_factor": 0.1 },
+      { "proficiency": "prof_distilling", "time_factor": 0.2, "fail_factor": 0.2 },
+      { "proficiency": "prof_beverage_distilling", "time_factor": 0.3, "fail_factor": 0.4 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Out of the Holler and into the Home: A guide to home distilation. ", "str_pl": "copies of Out of the Holler" },
@@ -634,6 +699,10 @@
   },
   {
     "id": "sweets_book",
+    "proficiencies": [
+      { "proficiency": "prof_baking", "time_factor": 0.1, "fail_factor": 0.25 },
+      { "proficiency": "prof_baking_desserts_1", "time_factor": 0.1, "fail_factor": 0.4 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Sweets for your Sweet Child", "str_pl": "copies of Sweets for Sweet" },

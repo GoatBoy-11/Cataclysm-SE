@@ -196,5 +196,35 @@ class proficiency_set
         void deserialize( const JsonObject &jsobj );
 };
 
+/**
+ * A book's offer to stand in for a proficiency you lack.  Each factor is the
+ * share of the penalty it removes, from 0 (no help) to just under 1 (almost all).
+ */
+struct book_proficiency_bonus {
+    proficiency_id id;
+    float time_factor = 0.5f;
+    float fail_factor = 0.5f;
+    bool include_prereqs = true;
+
+    bool was_loaded = false;
+    void deserialize( const JsonObject &jo );
+};
+
+/** The combined offer of every book within reach. */
+class book_proficiency_bonuses
+{
+    private:
+        std::vector<book_proficiency_bonus> bonuses;
+        void add( const book_proficiency_bonus &bonus, std::set<proficiency_id> &already_included );
+
+    public:
+        void add( const book_proficiency_bonus &bonus );
+        book_proficiency_bonuses &operator+=( const book_proficiency_bonuses &rhs );
+        /** Share of the crafting failure penalty these books remove, 0 to 1. */
+        float fail_factor( const proficiency_id &id ) const;
+        /** Share of the crafting time penalty these books remove, 0 to 1. */
+        float time_factor( const proficiency_id &id ) const;
+};
+
 /** Browse the proficiencies @p u knows and is learning.  Read-only. */
 void show_proficiencies_window( const Character &u );

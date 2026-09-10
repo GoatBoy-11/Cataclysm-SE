@@ -20,6 +20,10 @@
   },
   {
     "id": "fun_survival",
+    "proficiencies": [
+      { "proficiency": "prof_knapping", "time_factor": 0.15, "fail_factor": 0.15 },
+      { "proficiency": "prof_knapping_speed", "time_factor": 0.15, "fail_factor": 0.15 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Through the Lens", "str_pl": "copies of Through the Lens" },
@@ -72,6 +76,10 @@
   },
   {
     "id": "manual_survival",
+    "proficiencies": [
+      { "proficiency": "prof_knapping", "time_factor": 0.15, "fail_factor": 0.2 },
+      { "proficiency": "prof_knapping_speed", "time_factor": 0.15, "fail_factor": 0.2 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Pitching a Tent", "str_pl": "copies of Pitching a Tent" },
@@ -88,6 +96,10 @@
   },
   {
     "id": "pocket_survival",
+    "proficiencies": [
+      { "proficiency": "prof_knapping", "time_factor": 0.25, "fail_factor": 0.3 },
+      { "proficiency": "prof_knapping_speed", "time_factor": 0.25, "fail_factor": 0.3 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Pocket Survival Guide", "str_pl": "copies of Pocket Survival Guide" },
@@ -106,6 +118,10 @@
   },
   {
     "id": "survival_book",
+    "proficiencies": [
+      { "proficiency": "prof_knapping", "time_factor": 0.1, "fail_factor": 0.15 },
+      { "proficiency": "prof_knapping_speed", "time_factor": 0.1, "fail_factor": 0.15 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Autobiography of a Mountain Man", "str_pl": "copies of Autobiography of a Mountain Man" },

@@ -17,6 +17,7 @@ class JsonObject;
 class item;
 class time_duration;
 class Character;
+class book_proficiency_bonuses;
 template<typename T>
 class detached_ptr;
 
@@ -173,9 +174,16 @@ class recipe
         /** Not mandatory, but missing them impedes the craft. */
         std::vector<proficiency_id> used_proficiencies() const;
         bool character_has_required_proficiencies( const Character &c ) const;
-        /** Multiplier on craft time for the proficiencies @p c lacks.  1.0 if none. */
+        /**
+         * Penalties for the proficiencies @p c lacks.  Books within reach soften
+         * them: a book covering a proficiency removes part of its penalty.
+         */
+        float proficiency_time_maluses( const Character &c,
+                                        const book_proficiency_bonuses &books ) const;
+        float proficiency_skill_maluses( const Character &c,
+                                         const book_proficiency_bonuses &books ) const;
+        /** As above, using whatever books @p c has to hand. */
         float proficiency_time_maluses( const Character &c ) const;
-        /** Skill levels to dock for the proficiencies @p c lacks.  0.0 if none. */
         float proficiency_skill_maluses( const Character &c ) const;
         time_duration batch_duration( int batch = 1, float multiplier = 1.0,
                                       size_t assistants = 0 ) const;

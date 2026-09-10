@@ -1,6 +1,7 @@
 [
   {
     "id": "glassblowing_book",
+    "proficiencies": [ { "proficiency": "prof_glassblowing", "time_factor": 0.7, "fail_factor": 0.5 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Art of Glassblowing", "str_pl": "copies of The Art of Glassblowing" },
@@ -19,6 +20,10 @@
   },
   {
     "id": "jewelry_book",
+    "proficiencies": [
+      { "proficiency": "prof_fine_metalsmithing", "time_factor": 0.2, "fail_factor": 0.3, "include_prereqs": false },
+      { "proficiency": "prof_gem_setting", "time_factor": 0.2, "fail_factor": 0.3, "include_prereqs": false }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Antique Adornments", "str_pl": "copies of Antique Adornments" },
@@ -36,6 +41,7 @@
   },
   {
     "id": "mag_fabrication",
+    "proficiencies": [ { "proficiency": "prof_pottery", "time_factor": 0.15, "fail_factor": 0.15 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Crafty Crafter's Quarterly", "str_pl": "Crafty Crafter's Quarterlies" },
@@ -70,6 +76,7 @@
   },
   {
     "id": "recipe_arrows",
+    "proficiencies": [ { "proficiency": "prof_fletching", "time_factor": 0.15, "fail_factor": 0.35 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Fletcher's Friend", "str_pl": "copies of The Fletcher's Friend" },
@@ -87,6 +94,7 @@
   },
   {
     "id": "recipe_bows",
+    "proficiencies": [ { "proficiency": "prof_bowyery", "time_factor": 0.15, "fail_factor": 0.5 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Bowyer's Buddy", "str_pl": "copies of The Bowyer's Buddy" },
@@ -104,6 +112,7 @@
   },
   {
     "id": "recipe_bullets",
+    "proficiencies": [ { "proficiency": "prof_handloading", "time_factor": 0.8, "fail_factor": 0.5 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Handloader's Helper", "str_pl": "copies of The Handloader's Helper" },
@@ -174,6 +183,7 @@
   },
   {
     "id": "textbook_armeast",
+    "proficiencies": [ { "proficiency": "prof_armorsmithing", "time_factor": 0.2, "fail_factor": 0.3, "include_prereqs": false } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Art of Japanese Armormaking", "str_pl": "copies of The Art of Japanese Armormaking" },
@@ -192,6 +202,7 @@
   },
   {
     "id": "textbook_armschina",
+    "proficiencies": [ { "proficiency": "prof_redsmithing", "time_factor": 0.15, "fail_factor": 0.3, "include_prereqs": false } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Arms and Armor of Imperial China", "str_pl": "copies of Arms and Armor of Imperial China" },
@@ -210,6 +221,7 @@
   },
   {
     "id": "textbook_armwest",
+    "proficiencies": [ { "proficiency": "prof_armorsmithing", "time_factor": 0.2, "fail_factor": 0.25 } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Studies in Historic Armorsmithing", "str_pl": "copies of Studies in Historic Armorsmithing" },
@@ -281,6 +293,7 @@
   },
   {
     "id": "textbook_weapeast",
+    "proficiencies": [ { "proficiency": "prof_bladesmith", "time_factor": 0.2, "fail_factor": 0.3, "include_prereqs": true } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Swords of the Samurai", "str_pl": "copies of The Swords of the Samurai" },
@@ -299,6 +312,7 @@
   },
   {
     "id": "textbook_weapwest",
+    "proficiencies": [ { "proficiency": "prof_bladesmith", "time_factor": 0.15, "fail_factor": 0.25, "include_prereqs": true } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Historic Weaponsmith", "str_pl": "copies of The Historic Weaponsmith" },
@@ -317,6 +331,7 @@
   },
   {
     "id": "welding_book",
+    "proficiencies": [ { "proficiency": "prof_welding", "time_factor": 0.25, "fail_factor": 0.3, "include_prereqs": true } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Welding and Metallurgy", "str_pl": "copies of Welding and Metallurgy" },
@@ -335,6 +350,10 @@
   },
   {
     "id": "101_carpentry",
+    "proficiencies": [
+      { "proficiency": "prof_carpentry_basic", "time_factor": 0.2, "fail_factor": 0.3, "include_prereqs": true },
+      { "proficiency": "prof_plumbing", "time_factor": 0.2, "fail_factor": 0.2, "include_prereqs": true }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "101 Home Repairs", "str_pl": "copies of 101 Home Repairs" },
@@ -351,6 +370,10 @@
   },
   {
     "id": "carpentry_book",
+    "proficiencies": [
+      { "proficiency": "prof_carpentry_basic", "time_factor": 0.3, "fail_factor": 0.3, "include_prereqs": true },
+      { "proficiency": "prof_plumbing", "time_factor": 0.2, "fail_factor": 0.3, "include_prereqs": true }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "The Complete Home Repair Guide", "str_pl": "copies of The Complete Home Repair Guide" },
@@ -370,6 +393,7 @@
   },
   {
     "id": "mag_carpentry",
+    "proficiencies": [ { "proficiency": "prof_carpentry_basic", "time_factor": 0.2, "fail_factor": 0.1, "include_prereqs": true } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Birdhouse Monthly", "str_pl": "Birdhouse Monthlies" },
@@ -387,6 +411,10 @@
   },
   {
     "id": "manual_carpentry",
+    "proficiencies": [
+      { "proficiency": "prof_carpentry_basic", "time_factor": 0.1, "fail_factor": 0.4, "include_prereqs": true },
+      { "proficiency": "prof_plumbing", "time_factor": 0.1, "fail_factor": 0.2, "include_prereqs": true }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Building for Beginners", "str_pl": "copies of Building for Beginners" },

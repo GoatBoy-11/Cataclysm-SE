@@ -2627,6 +2627,9 @@ void Item_factory::load( islot_book &slot, const JsonObject &jo, const std::stri
     assign( jo, "skill", slot.skill, strict );
     assign( jo, "martial_art", slot.martial_art, strict );
     assign( jo, "chapters", slot.chapters, strict, 0 );
+    if( jo.has_array( "proficiencies" ) ) {
+        jo.read( "proficiencies", slot.proficiencies );
+    }
 }
 
 void Item_factory::load_book( const JsonObject &jo, const std::string &src )

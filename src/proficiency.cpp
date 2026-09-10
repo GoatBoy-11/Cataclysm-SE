@@ -1,6 +1,7 @@
 #include "proficiency.h"
 
 #include <algorithm>
+#include <cmath>
 #include <set>
 #include <utility>
 
@@ -527,6 +528,77 @@ void proficiency_set::deserialize( const JsonObject &jsobj )
 {
     jsobj.read( "known", known );
     jsobj.read( "learning", learning );
+}
+
+void book_proficiency_bonus::deserialize( const JsonObject &jo )
+{
+    mandatory( jo, was_loaded, "proficiency", id );
+    optional( jo, was_loaded, "fail_factor", fail_factor, 0.5f );
+    optional( jo, was_loaded, "time_factor", time_factor, 0.5f );
+    optional( jo, was_loaded, "include_prereqs", include_prereqs, true );
+    if( fail_factor < 0.0f || fail_factor >= 1.0f ) {
+        jo.throw_error( "fail_factor must be in range [0,1)" );
+    }
+    if( time_factor < 0.0f || time_factor >= 1.0f ) {
+        jo.throw_error( "time_factor must be in range [0,1)" );
+    }
+}
+
+void book_proficiency_bonuses::add( const book_proficiency_bonus &bonus )
+{
+    std::set<proficiency_id> seen;
+    add( bonus, seen );
+}
+
+void book_proficiency_bonuses::add( const book_proficiency_bonus &bonus,
+                                    std::set<proficiency_id> &already_included )
+{
+    bonuses.push_back( bonus );
+    if( !bonus.include_prereqs || !bonus.id.is_valid() ) {
+        return;
+    }
+    // A book that covers a proficiency implicitly covers what it is built on.
+    for( const proficiency_id &prereq : bonus.id->required_proficiencies() ) {
+        if( already_included.insert( prereq ).second ) {
+            book_proficiency_bonus inherited = bonus;
+            inherited.id = prereq;
+            add( inherited, already_included );
+        }
+    }
+}
+
+book_proficiency_bonuses &book_proficiency_bonuses::operator+=(
+    const book_proficiency_bonuses &rhs )
+{
+    for( const book_proficiency_bonus &bonus : rhs.bonuses ) {
+        add( bonus );
+    }
+    return *this;
+}
+
+/** Combine factors so two half-helpful books beat one, without ever reaching 1. */
+static float combine_factors( const std::vector<book_proficiency_bonus> &bonuses,
+                              const proficiency_id &id, const bool want_fail )
+{
+    double sum = 0.0;
+    for( const book_proficiency_bonus &bonus : bonuses ) {
+        if( id != bonus.id ) {
+            continue;
+        }
+        const double f = want_fail ? bonus.fail_factor : bonus.time_factor;
+        sum += std::pow( std::log( 1.0 - f ), 2 );
+    }
+    return static_cast<float>( 1.0 - std::exp( -std::sqrt( sum ) ) );
+}
+
+float book_proficiency_bonuses::fail_factor( const proficiency_id &id ) const
+{
+    return combine_factors( bonuses, id, true );
+}
+
+float book_proficiency_bonuses::time_factor( const proficiency_id &id ) const
+{
+    return combine_factors( bonuses, id, false );
 }
 
 void learning_proficiency::serialize( JsonOut &jsout ) const

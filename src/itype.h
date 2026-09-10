@@ -27,6 +27,7 @@
 #include "pldata.h" // add_type
 #include "shape.h"
 #include "stomach.h"
+#include "proficiency.h"
 #include "translations.h"
 #include "type_id.h"
 #include "units.h"
@@ -391,6 +392,10 @@ struct book_recipe {
 };
 
 struct islot_book {
+    /**
+     * Proficiencies this book can stand in for while it is to hand.
+     */
+    std::vector<book_proficiency_bonus> proficiencies;
     /**
      * Which skill it upgrades, if any. Can be @ref skill_id::NULL_ID.
      */

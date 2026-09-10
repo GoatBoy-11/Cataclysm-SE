@@ -1,6 +1,11 @@
 [
   {
     "id": "mag_animecon",
+    "proficiencies": [
+      { "proficiency": "prof_leatherworking_basic", "time_factor": 0.1, "fail_factor": 0.1 },
+      { "proficiency": "prof_elastics", "time_factor": 0.1, "fail_factor": 0.1 },
+      { "proficiency": "prof_plasticworking", "time_factor": 0.1, "fail_factor": 0.1 }
+    ],
     "copy-from": "mag_tailor",
     "type": "BOOK",
     "name": { "str": "Boston AnimeCon magazine" },
@@ -25,6 +30,10 @@
   },
   {
     "id": "mag_tailor",
+    "proficiencies": [
+      { "proficiency": "prof_knitting", "time_factor": 0.15, "fail_factor": 0.1 },
+      { "proficiency": "prof_closures", "time_factor": 0.2, "fail_factor": 0.1 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Sew Awesome Monthly", "str_pl": "Sew Awesome Monthlies" },
@@ -42,6 +51,10 @@
   },
   {
     "id": "manual_tailor",
+    "proficiencies": [
+      { "proficiency": "prof_closures", "time_factor": 0.2, "fail_factor": 0.25 },
+      { "proficiency": "prof_elastics", "time_factor": 0.2, "fail_factor": 0.15 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Sew What? Clothing!", "str_pl": "copies of Sew What? Clothing!" },
@@ -99,6 +112,7 @@
   },
   {
     "id": "recipe_fauxfur",
+    "proficiencies": [ { "proficiency": "prof_furriery", "time_factor": 0.2, "fail_factor": 0.2, "include_prereqs": false } ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Friendly, Humane Fashion", "str_pl": "copies of Friendly, Humane Fashion" },
@@ -118,6 +132,10 @@
   },
   {
     "id": "textbook_tailor",
+    "proficiencies": [
+      { "proficiency": "prof_closures", "time_factor": 0.1, "fail_factor": 0.25 },
+      { "proficiency": "prof_elastics", "time_factor": 0.1, "fail_factor": 0.25 }
+    ],
     "type": "BOOK",
     "copy-from": "base_book",
     "name": { "str": "Sewing Techniques for Designers", "str_pl": "copies of Sewing Techniques for Designers" },

@@ -231,3 +231,33 @@ TEST_CASE("weapon proficiencies make a familiar weapon cheaper to swing", "[prof
     you.lose_proficiency(knives_familiar, true);
     CHECK(you.get_melee_stamina_cost(*knife) == untrained);
 }
+
+TEST_CASE("books soften a proficiency you lack", "[proficiency]") {
+    // No books means no mitigation at all.
+    book_proficiency_bonuses none;
+    CHECK(none.time_factor(prof_familiar) == Approx(0.0f));
+    CHECK(none.fail_factor(prof_familiar) == Approx(0.0f));
+
+    book_proficiency_bonus half;
+    half.id = prof_familiar;
+    half.time_factor = 0.5f;
+    half.fail_factor = 0.5f;
+    half.include_prereqs = false;
+
+    book_proficiency_bonuses one;
+    one.add(half);
+    const float one_book = one.time_factor(prof_familiar);
+    CHECK(one_book > 0.0f);
+    CHECK(one_book < 1.0f);
+
+    // A second book helps more, but the mitigation never reaches whole.
+    book_proficiency_bonuses two;
+    two.add(half);
+    two.add(half);
+    const float two_books = two.time_factor(prof_familiar);
+    CHECK(two_books > one_book);
+    CHECK(two_books < 1.0f);
+
+    // A book about one proficiency says nothing about another.
+    CHECK(one.time_factor(prof_pro) == Approx(0.0f));
+}

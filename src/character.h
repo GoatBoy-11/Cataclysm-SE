@@ -57,6 +57,7 @@ class JsonOut;
 class SkillLevel;
 class SkillLevelMap;
 class proficiency_set;
+class book_proficiency_bonuses;
 struct display_proficiency;
 enum class proficiency_bonus_type : int;
 class bionic_collection;
@@ -1711,6 +1712,8 @@ class Character : public Creature, public location_visitable<Character>
          * @return true if this character learned one as a result.
          */
         bool craft_proficiency_gain( const item &craft, const time_duration &time );
+        /** Combined proficiency mitigation from books within crafting reach. */
+        book_proficiency_bonuses book_bonuses_nearby() const;
         /** Checks whether the character's skills meet the required */
         bool meets_skill_requirements( const std::map<skill_id, int> &req,
                                        const item *context = nullptr ) const;
