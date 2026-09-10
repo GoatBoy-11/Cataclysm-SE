@@ -955,6 +955,68 @@ void Character::craft_skill_gain( const item &craft, const int &multiplier )
     }
 }
 
+
+bool Character::craft_proficiency_gain( const item &craft, const time_duration &time )
+{
+    if( !craft.is_craft() ) {
+        debugmsg( "craft_proficiency_gain() called on non-craft %s", craft.tname() );
+        return false;
+    }
+    if( !get_option<bool>( "PROFICIENCY_SYSTEM" ) ) {
+        return false;
+    }
+
+    const recipe &making = craft.get_making();
+
+    struct learn_subject {
+        proficiency_id id;
+        float time_multiplier;
+    };
+
+    // Only proficiencies you could actually learn, and whose prerequisites you
+    // already hold.  Required ones gate the craft rather than being taught by it.
+    std::vector<learn_subject> subjects;
+    for( const recipe_proficiency &prof : making.proficiencies ) {
+        if( prof.required || !prof.id.is_valid() ) {
+            continue;
+        }
+        if( has_proficiency( prof.id ) || !prof.id->can_learn() || !has_prof_prereqs( prof.id ) ) {
+            continue;
+        }
+        const float mult = prof.time_multiplier.value_or( prof.id->default_time_multiplier() );
+        const float learn_rate = mult > 0.0f
+                                 ? prof.learning_time_multiplier / mult
+                                 : prof.learning_time_multiplier;
+        subjects.push_back( { prof.id, learn_rate } );
+    }
+
+    if( subjects.empty() ) {
+        return false;
+    }
+
+    // Attention is split between everything you are picking up at once.
+    const time_duration learn_time = time / subjects.size();
+
+    bool gained = false;
+    for( const learn_subject &subject : subjects ) {
+        // Someone helping who already knows it teaches you twice as fast.
+        int helper_bonus = 1;
+        for( const npc *other : character_funcs::get_crafting_helpers( *this ) ) {
+            if( other->has_proficiency( subject.id ) ) {
+                helper_bonus = 2;
+                break;
+            }
+        }
+
+        if( practice_proficiency( subject.id,
+                                  subject.time_multiplier * learn_time * helper_bonus ) ) {
+            gained = true;
+            add_msg_if_player( m_good, _( "You are now proficient: %s" ), subject.id->name() );
+        }
+    }
+    return gained;
+}
+
 double Character::crafting_success_roll( const recipe &making ) const
 {
     int secondary_dice = 0;

@@ -1706,6 +1706,11 @@ class Character : public Creature, public location_visitable<Character>
         std::vector<proficiency_id> learning_proficiencies() const;
         float get_proficiency_bonus( const std::string &category,
                                      proficiency_bonus_type prof_bonus ) const;
+        /**
+         * Practise the proficiencies @p craft's recipe names, for @p time of work.
+         * @return true if this character learned one as a result.
+         */
+        bool craft_proficiency_gain( const item &craft, const time_duration &time );
         /** Checks whether the character's skills meet the required */
         bool meets_skill_requirements( const std::map<skill_id, int> &req,
                                        const item *context = nullptr ) const;

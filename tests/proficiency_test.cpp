@@ -181,3 +181,32 @@ TEST_CASE("recipe proficiencies penalise a character who lacks them", "[proficie
         you.lose_proficiency(p, true);
     }
 }
+
+TEST_CASE("a character practises a proficiency until they know it", "[proficiency]") {
+    Character &you = get_avatar();
+    you.lose_proficiency(prof_familiar, true);
+    REQUIRE(!you.has_proficiency(prof_familiar));
+
+    const time_duration needed = prof_familiar->time_to_learn();
+
+    // Part-way there is progress, not knowledge.
+    CHECK(!you.practice_proficiency(prof_familiar, needed / 2));
+    CHECK(!you.has_proficiency(prof_familiar));
+    CHECK(you.get_proficiency_practice(prof_familiar) > 0.0f);
+
+    // Finishing the required time learns it, and it then shows in the display.
+    CHECK(you.practice_proficiency(prof_familiar, needed));
+    CHECK(you.has_proficiency(prof_familiar));
+    CHECK(you.get_proficiency_practice(prof_familiar) == Approx(1.0f));
+
+    bool listed = false;
+    for (const display_proficiency &d : you.display_proficiencies()) {
+        if (d.id == prof_familiar) {
+            listed = true;
+            CHECK(d.known);
+        }
+    }
+    CHECK(listed);
+
+    you.lose_proficiency(prof_familiar, true);
+}

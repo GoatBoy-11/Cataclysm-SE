@@ -2385,6 +2385,11 @@ void craft_activity_actor::do_turn( player_activity &act, Character &who )
 
     if( five_percent_steps > 0 ) {
         who.craft_skill_gain( *craft_item, five_percent_steps );
+        // Learning tracks work done rather than wall time, so a slow crafter
+        // does not pick things up faster than a quick one.
+        const time_duration step_time = time_duration::from_turns(
+                                            static_cast<int>( base_total_moves / 100.0 / 20.0 ) );
+        who.craft_proficiency_gain( *craft_item, step_time * five_percent_steps );
 
         if( !tools_prepaid && !who.craft_consume_tools( *craft_item, five_percent_steps, false ) ) {
             act.set_to_null();
