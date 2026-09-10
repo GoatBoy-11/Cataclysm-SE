@@ -35,6 +35,7 @@
 #include "catalua.h"
 #include "character.h"
 #include "character_functions.h"
+#include "climbing.h"
 #include "data_vars.h"
 #include "detached_ptr.h"
 #include "flag.h"
@@ -1375,7 +1376,7 @@ void iexamine::chainfence( player &p, const tripoint_bub_ms &examp )
         if( p.has_trait( trait_BADKNEES ) ) {
             climb = climb / 2;
         }
-        if( g->slip_down() ) {
+        if( g->slip_down( game::climb_maneuver::over_obstacle, climbing_aid_id( "furn_CLIMBABLE" ) ) ) {
             return;
         }
         p.moves += climb * 10;
@@ -5984,7 +5985,7 @@ void iexamine::ledge( player &p, const tripoint_bub_ms &examp_bub )
 {
     const auto examp = bub_to_abs( examp_bub );
     const auto dir = ( examp - p.abs_pos() ).xy();
-    enum ledge_action : int { jump_over, climb_down, pull_up_rope, spin_web_bridge };
+    enum ledge_action : int { jump_over, pull_up_rope, spin_web_bridge };
     if( p.in_vehicle ) {
         if( !character_funcs::can_fly( p ) &&
             !query_yn( _( "Do you really want to jump off the vehicle?" ) ) ) {
@@ -6022,7 +6023,7 @@ void iexamine::ledge( player &p, const tripoint_bub_ms &examp_bub )
     uilist cmenu;
     cmenu.text = _( "There is a ledge here.  What do you want to do?" );
     cmenu.addentry( ledge_action::jump_over, true, 'j', _( "Jump over." ) );
-    cmenu.addentry( ledge_action::climb_down, true, 'c', _( "Climb down." ) );
+    g->climb_down_menu_gen( examp_bub, cmenu );
     //if the tile below has a grappling hook, you can pull it up
     auto below_rope = examp;
     below_rope.z()--;
@@ -6038,94 +6039,12 @@ void iexamine::ledge( player &p, const tripoint_bub_ms &examp_bub )
     }
 
     cmenu.query();
+    if( g->climb_down_menu_pick( examp_bub, cmenu.ret ) ) {
+        return;
+    }
     switch( cmenu.ret ) {
         case ledge_action::jump_over: {
             iexamine::jump_over_tile( p, examp_bub );
-            break;
-        }
-        case ledge_action::climb_down: {
-            auto where = examp;
-            auto below = where + tripoint_rel_ms::below();
-            while( buffer.valid_move( where, below, { .flying = true } ) ) {
-                where += tripoint_rel_ms::below();
-                below += tripoint_rel_ms::below();
-            }
-
-            const int height = examp.z() - where.z();
-            if( height == 0 ) {
-                p.add_msg_if_player( _( "You can't climb down there." ) );
-                return;
-            }
-
-            const bool has_grapnel = p.has_amount( itype_grapnel, 1 );
-            const auto climb_cost = map_funcs::climbing_cost( buffer, where, examp );
-            const auto fall_mod = p.fall_damage_mod();
-            const std::string query_str = vgettext( "Looks like %d story.  Jump down?",
-                                                    "Looks like %d stories.  Jump down?",
-                                                    height );
-
-            if( height > 1 && !query_yn( query_str.c_str(), height ) ) {
-                return;
-            } else if( height == 1 ) {
-                enum class climb_result {
-                    one_way_dangerous, one_way_unclimbable,
-                    both_way_safe, both_way_grapnel, both_way_hard_to_climb,
-                };
-                const auto get_climb_result = [&]() {
-                    if( has_grapnel ) {
-                        return climb_result::both_way_grapnel;
-                    }
-                    if( climb_cost.has_value() ) {
-                        return climb_cost.value() < 200
-                               ? climb_result::both_way_safe
-                               : climb_result::both_way_hard_to_climb;
-                    } else {
-                        return fall_mod > 0.8
-                               ? climb_result::one_way_dangerous
-                               : climb_result::one_way_unclimbable;
-                    }
-                };
-                const auto get_message = []( climb_result res ) {
-                    switch( res ) {
-                        case climb_result::both_way_safe:
-                            return _( "You climb down." );
-                        case climb_result::both_way_grapnel:
-                            return _( "You tie the rope around your waist and begin to climb down." );
-                        case climb_result::both_way_hard_to_climb:
-                            return _( "You climb down but feel that it won't be easy to climb back up." );
-                        case climb_result::one_way_dangerous:
-                            return _( "You probably won't be able to get up and jumping down may hurt.  Jump?" );
-                        case climb_result::one_way_unclimbable:
-                            return _( "You probably won't be able to get back up.  Climb down?" );
-                    }
-                    cata::unreachable();
-                };
-                add_msg( m_debug, "climb_cost: %d", climb_cost.value_or( -1 ) );
-                const auto result = get_climb_result();
-                const auto message = get_message( result );
-                switch( result ) {
-                    case climb_result::both_way_safe:
-                    case climb_result::both_way_grapnel:
-                    case climb_result::both_way_hard_to_climb:
-                        p.add_msg_if_player( message );
-                        break;
-                    case climb_result::one_way_dangerous:
-                    case climb_result::one_way_unclimbable:
-                    default:
-                        if( !query_yn( message ) ) {
-                            return;
-                        }
-                }
-            }
-
-            p.moves -= to_moves<int>( 1_seconds + 1_seconds * fall_mod );
-            p.setpos( examp );
-
-            if( climb_cost > 0 || rng_float( 0.8, 1.0 ) > fall_mod ) {
-                // One tile of falling less (possibly zero)
-                g->vertical_move( -1, true );
-            }
-            buffer.creature_on_trap( p );
             break;
         }
         case ledge_action::pull_up_rope: {

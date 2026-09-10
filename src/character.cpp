@@ -12804,6 +12804,22 @@ float Character::fall_damage_mod() const
     return std::max( 0.0f, ret );
 }
 
+auto Character::climbing_cost( const tripoint_bub_ms &from, const tripoint_bub_ms &to ) const -> int
+{
+    map &here = get_map();
+    if( !here.valid_move( from, to, false, true ) ) {
+        return 0;
+    }
+
+    const int diff = here.climb_difficulty( from );
+
+    if( diff > 5 ) {
+        return 0;
+    }
+
+    return 50 + diff * 100;
+}
+
 // force is maximum damage to hp before scaling
 int Character::impact( const int force, const tripoint_bub_ms &p )
 {

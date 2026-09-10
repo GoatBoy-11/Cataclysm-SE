@@ -40,6 +40,7 @@
 
 class Character;
 class Creature_tracker;
+class uilist;
 class distribution_grid_tracker;
 class item;
 class monster;
@@ -1310,11 +1311,38 @@ class game : public submap_load_listener
         // called on map shifting
         void shift_destination_preview( const point_rel_ms &delta );
 
+        /** Passed to climbing-related functions to indicate the climbing action being attempted. */
+        enum class climb_maneuver {
+            down,
+            up,
+            over_obstacle,
+        };
+
         /**
         Checks if player is able to successfully climb to/from some terrain and not slip down
+        @param maneuver Type and direction of climbing maneuver.
+        @param aid Identifies the object, terrain or ability being used to climb.
+        @param show_chance_messages If true, adds explanatory messages to the log when calculating fall chance.
         @return whether player has slipped down
         */
-        bool slip_down();
+        auto slip_down(
+            climb_maneuver maneuver,
+            climbing_aid_id aid = climbing_aid_id::NULL_ID(),
+            bool show_chance_messages = true ) -> bool;
+
+        auto slip_down_chance(
+            climb_maneuver maneuver,
+            climbing_aid_id aid = climbing_aid_id::NULL_ID(),
+            bool show_chance_messages = true ) -> float;
+
+        auto open_air_climb_down() -> bool;
+        auto climb_down( const tripoint_bub_ms &examp ) -> void;
+        auto climb_down_menu_gen( const tripoint_bub_ms &examp, uilist &cmenu ) -> void;
+        auto climb_down_menu_pick( const tripoint_bub_ms &examp, int retval ) -> bool;
+        auto climb_down_using(
+            const tripoint_bub_ms &examp,
+            climbing_aid_id aid,
+            bool deploy_affordance = false ) -> void;
 
         // Set during dimension transitions to prevent temperature/weather code from
         // accessing partially-loaded map data. Reset to false at the start of the next turn.

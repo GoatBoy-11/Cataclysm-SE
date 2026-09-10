@@ -64,6 +64,7 @@
 #include "character_functions.h"
 #include "character_martial_arts.h"
 #include "character_turn.h"
+#include "climbing.h"
 #include "clzones.h"
 #include "color.h"
 #include "computer_session.h"
@@ -168,6 +169,8 @@
 #include "point_float.h"
 #include "popup.h"
 #include "profession.h"
+#include "proficiency.h"
+#include "proficiency.h"
 #include "profile.h"
 #include "ranged.h"
 #include "recipe.h"
@@ -415,6 +418,10 @@ static const itype_id itype_manhole_cover( "manhole_cover" );
 static const itype_id itype_rm13_armor_on( "rm13_armor_on" );
 static const itype_id itype_rope_30( "rope_30" );
 static const itype_id itype_swim_fins( "swim_fins" );
+
+static const climbing_aid_id climbing_aid_default( "default" );
+static const climbing_aid_id climbing_aid_furn_CLIMBABLE( "furn_CLIMBABLE" );
+static const proficiency_id proficiency_prof_parkour( "prof_parkour" );
 
 static const trait_id trait_BADKNEES( "BADKNEES" );
 static const trait_id trait_ILLITERATE( "ILLITERATE" );
@@ -14620,7 +14627,7 @@ void game::vertical_move( int movez, bool force, bool peeking )
         u.moves -= move_cost;
         // Risk of failing, simple stuff like ladders are exempt
         if( climbing && movez == 1 && m.climb_difficulty( u.bub_pos() ) > 1 ) {
-            if( g->slip_down() ) {
+            if( g->slip_down( climb_maneuver::down, climbing_aid_furn_CLIMBABLE ) ) {
                 return;
             }
         }
@@ -16767,22 +16774,394 @@ void game::shift_destination_preview( const point_rel_ms &delta )
     }
 }
 
-bool game::slip_down()
+namespace
 {
-    ///\EFFECT_DEX decreases chances of slipping while climbing
-    int climb = u.dex_cur;
-    // Parkour and Bad Knees affect it too, avoid division by zero
-    if( u.mutation_value( "movecost_obstacle_modifier" ) != 0.0f ) {
-        climb = climb / u.mutation_value( "movecost_obstacle_modifier" );
+auto climb_affordance_menu_encode( const climbing_aid_id &aid_id ) -> int
+{
+    return 0x1000 + int_id<climbing_aid>( aid_id ).to_i();
+}
+
+auto climb_affordance_menu_decode( const int retval, climbing_aid_id &aid_id ) -> bool
+{
+    const int_id<climbing_aid> as_int_id( retval - 0x1000 );
+    if( as_int_id.is_valid() ) {
+        aid_id = as_int_id.id();
+        return true;
     }
-    if( one_in( climb ) ) {
-        add_msg( m_bad, _( "You slip while climbing and fall down again." ) );
-        if( climb <= 1 ) {
+    return false;
+}
+} // namespace
+
+auto game::slip_down_chance( climb_maneuver /*maneuver*/, climbing_aid_id aid_id,
+                               const bool show_chance_messages ) -> float
+{
+    if( aid_id.is_null() ) {
+        aid_id = climbing_aid_default;
+    }
+
+    const climbing_aid &aid = aid_id.obj();
+
+    float slip = 100.0f;
+
+    const bool parkour = u.has_proficiency( proficiency_prof_parkour );
+    const bool badknees = u.has_trait( trait_BADKNEES );
+    const bool climb_flying = character_funcs::can_fly( u );
+
+    if( climb_flying ) {
+        slip = 0;
+    }
+
+    if( parkour && badknees ) {
+        if( show_chance_messages ) {
+            add_msg( m_info, _( "Your skill in parkour makes up for your bad knees while climbing." ) );
+        }
+    } else if( parkour ) {
+        slip /= 2;
+        if( show_chance_messages ) {
+            add_msg( m_info, _( "Your skill in parkour makes it easier to climb." ) );
+        }
+    } else if( badknees ) {
+        slip *= 2;
+        if( show_chance_messages ) {
+            add_msg( m_info, _( "Your bad knees make it difficult to climb." ) );
+        }
+    }
+
+    ///\EFFECT_DEX decreases chances of slipping while climbing
+    ///\EFFECT_STR decreases chances of slipping while climbing
+    slip /= std::max( 1, u.get_dex() + u.get_str() );
+
+    const double weight_ratio = static_cast<double>( units::to_gram( u.weight_carried() ) ) /
+                                units::to_gram( u.weight_capacity() );
+    slip += roll_remainder( 8.0 * weight_ratio );
+
+    const float stamina_ratio = static_cast<float>( u.get_stamina() ) / u.get_stamina_max();
+    if( stamina_ratio < 0.8f ) {
+        slip /= std::max( stamina_ratio, 0.1f );
+
+        if( show_chance_messages ) {
+            if( stamina_ratio > 0.6f ) {
+                add_msg( m_info, _( "You are winded, which makes climbing harder." ) );
+            } else if( stamina_ratio > 0.4f ) {
+                add_msg( m_info, _( "You are out of breath, which makes climbing much harder." ) );
+            } else if( stamina_ratio > 0.2f ) {
+                add_msg( m_info,
+                         _( "You can't catch your breath, which makes it much more difficult to climb." ) );
+            } else {
+                add_msg( m_info, _( "You feel faint and can't keep your balance." ) );
+            }
+        }
+    }
+
+    if( show_chance_messages ) {
+        if( weight_ratio >= 1 ) {
+            add_msg( m_info, _( "Your carried weight tries to drag you down." ) );
+        } else if( weight_ratio > 0.75 ) {
+            add_msg( m_info, _( "You strain to climb with the weight of your possessions." ) );
+        } else if( weight_ratio > 0.5 ) {
+            add_msg( m_info, _( "You feel the weight of your luggage makes it more difficult to climb." ) );
+        } else if( weight_ratio > 0.25 ) {
+            add_msg( m_info, _( "Your carried weight makes it a little harder to climb." ) );
+        }
+    }
+
+    slip += aid.slip_chance_mod;
+    if( show_chance_messages && aid.slip_chance_mod >= 0 ) {
+        add_msg( m_info, _( "There's nothing here to help you climb." ) );
+    }
+
+    return slip;
+}
+
+auto game::slip_down( const climb_maneuver maneuver, climbing_aid_id aid_id,
+                        const bool show_chance_messages ) -> bool
+{
+    map &here = get_map();
+
+    const float slip = slip_down_chance( maneuver, aid_id, show_chance_messages );
+
+    if( x_in_y( slip, 100 ) ) {
+        add_msg( m_bad, _( "You slip while climbing and fall down." ) );
+        if( slip >= 100 ) {
             add_msg( m_bad, _( "Climbing is impossible in your current state." ) );
+        }
+        if( maneuver != climb_maneuver::over_obstacle ) {
+            here.creature_on_trap( u );
         }
         return true;
     }
     return false;
+}
+
+auto game::climb_down_menu_gen( const tripoint_bub_ms &examp, uilist &cmenu ) -> void
+{
+    map &here = get_map();
+    Character &you = get_avatar();
+
+    if( !here.valid_move( you.bub_pos(), examp, false, true ) ) {
+        return;
+    }
+
+    const climbing_aid::fall_scan fall( examp );
+
+    if( fall.height == 0 ) {
+        you.add_msg_if_player( _( "You can't climb down there." ) );
+        return;
+    }
+
+    const std::string target_disp_name = here.disp_name( fall.pos_furniture_or_floor() );
+
+    const climbing_aid::condition_list conditions = climbing_aid::detect_conditions( you, examp );
+    const climbing_aid::aid_list aids = climbing_aid::list( conditions );
+
+    for( const climbing_aid *aid : aids ) {
+        bool enable_aid = true;
+        if( aid->down.deploys_furniture() &&
+            fall.height_until_furniture < std::min( fall.height, aid->down.max_height ) ) {
+            enable_aid = false;
+        }
+
+        if( !aid->down.allow_remaining_height && aid->down.max_height < fall.height ) {
+            enable_aid = false;
+        }
+
+        int hotkey = aid->down.menu_hotkey;
+        if( hotkey == 0 ) {
+            hotkey = 'c';
+        }
+
+        const std::string text_translated = enable_aid ?
+                                            aid->down.menu_text.translated() : aid->down.menu_cant.translated();
+        cmenu.addentry( climb_affordance_menu_encode( aid->id ), enable_aid, hotkey,
+                        string_format( text_translated, target_disp_name ) );
+    }
+}
+
+auto game::climb_down_menu_pick( const tripoint_bub_ms &examp, const int retval ) -> bool
+{
+    climbing_aid_id aid_id = climbing_aid_default;
+
+    if( climb_affordance_menu_decode( retval, aid_id ) ) {
+        climb_down_using( examp, aid_id );
+        return true;
+    }
+    return false;
+}
+
+auto game::open_air_climb_down() -> bool
+{
+    map &here = get_map();
+    Character &you = get_avatar();
+
+    if( here.has_flag( "GOES_DOWN", you.bub_pos() ) ) {
+        return false;
+    }
+
+    std::vector<tripoint_bub_ms> pts;
+
+    if( character_funcs::can_fly( you ) && here.has_flag( "NO_FLOOR", you.bub_pos() ) ) {
+        pts.push_back( you.bub_pos() );
+    }
+
+    if( pts.empty() ) {
+        for( const tripoint_bub_ms &p : here.points_in_radius( you.bub_pos(), 1 ) ) {
+            if( here.has_flag( "NO_FLOOR", p ) ) {
+                pts.push_back( p );
+            }
+        }
+    }
+
+    if( pts.empty() ) {
+        return false;
+    }
+
+    const std::optional<tripoint_bub_ms> pnt = point_selection_menu( pts );
+    if( !pnt ) {
+        return true;
+    }
+
+    climb_down( *pnt );
+    return true;
+}
+
+auto game::climb_down( const tripoint_bub_ms &examp ) -> void
+{
+    uilist cmenu;
+    cmenu.text = _( "How would you prefer to climb down?" );
+
+    climb_down_menu_gen( examp, cmenu );
+
+    if( cmenu.entries.size() == 1 ) {
+        climb_down_menu_pick( examp, cmenu.entries[0].retval );
+    } else {
+        cmenu.query();
+        climb_down_menu_pick( examp, cmenu.ret );
+    }
+}
+
+auto game::climb_down_using( const tripoint_bub_ms &examp, climbing_aid_id aid_id,
+                               const bool /*deploy_affordance*/ ) -> void
+{
+    const climbing_aid &aid = aid_id.obj();
+
+    map &here = get_map();
+    Character &you = get_avatar();
+
+    if( !you.move_effects( false ) ) {
+        you.set_moves( 0 );
+        return;
+    }
+
+    if( !here.valid_move( you.bub_pos(), examp, false, true ) ) {
+        return;
+    }
+
+    const climbing_aid::fall_scan fall( examp );
+
+    int estimated_climb_cost = you.climbing_cost( tripoint_bub_ms( fall.pos_bottom() ), examp );
+    const float fall_mod = you.fall_damage_mod();
+
+    const float slip_chance = slip_down_chance( climb_maneuver::down, aid_id, true );
+
+    int damage_estimate = 10 * fall.height;
+    if( damage_estimate <= 30 ) {
+        damage_estimate *= fall_mod;
+    } else {
+        damage_estimate *= std::pow( fall_mod, 30.f / damage_estimate );
+    }
+
+    const bool levitating = character_funcs::can_fly( you );
+    bool seems_perfectly_safe = slip_chance < -5 && aid.down.max_height >= fall.height;
+    std::string query;
+
+    if( !levitating ) {
+        if( seems_perfectly_safe ) {
+            query = _( "It <color_green>seems perfectly safe</color> to climb down like this." );
+        } else if( slip_chance < 3 ) {
+            query = _( "It <color_green>seems safe</color> to climb down like this." );
+        } else if( slip_chance < 8 ) {
+            query = _( "It <color_yellow>seems a bit tricky</color> to climb down like this." );
+        } else if( slip_chance < 20 ) {
+            query = _( "It <color_yellow>seems somewhat risky</color> to climb down like this." );
+        } else if( slip_chance < 50 ) {
+            query = _( "It <color_red>seems very risky</color> to climb down like this." );
+        } else if( slip_chance < 80 ) {
+            query = _( "It <color_pink>looks like you'll slip</color> if you climb down like this." );
+        } else {
+            query = _( "It <color_pink>doesn't seem possible to climb down safely</color>." );
+        }
+    }
+
+    if( !seems_perfectly_safe && !levitating ) {
+        std::string hint_fall_damage;
+        if( damage_estimate >= 100 ) {
+            hint_fall_damage = _( "Falling <color_pink>would kill you</color>." );
+        } else if( damage_estimate >= 60 ) {
+            hint_fall_damage = _( "Falling <color_pink>could cripple or kill you</color>." );
+        } else if( damage_estimate >= 30 ) {
+            hint_fall_damage = _( "Falling <color_pink>would break bones.</color>." );
+        } else if( damage_estimate >= 15 ) {
+            hint_fall_damage = _( "Falling <color_red>would hurt badly</color>." );
+        } else if( damage_estimate >= 5 ) {
+            hint_fall_damage = _( "Falling <color_red>would hurt</color>." );
+        } else {
+            hint_fall_damage = _( "Falling <color_green>wouldn't hurt much</color>." );
+        }
+        query += "\n";
+        query += hint_fall_damage;
+    }
+
+    if( fall.height > aid.down.max_height && !levitating ) {
+        const int remaining_height = fall.height - aid.down.max_height;
+        query += "\n";
+        query += string_format( vgettext(
+                                    "Even if you climb down safely, you will fall <color_yellow>at least %d story</color>.",
+                                    "Even if you climb down safely, you will fall <color_red>at least %d stories</color>.",
+                                    remaining_height ), remaining_height );
+    }
+
+    if( aid.down.easy_climb_back_up >= fall.height ) {
+        estimated_climb_cost = 50;
+    }
+
+    bool easy_climb_back_up = false;
+    if( !levitating ) {
+        std::string hint_climb_back;
+        if( estimated_climb_cost <= 0 ) {
+            hint_climb_back = _( "You <color_red>probably won't be able to climb back up</color>." );
+        } else if( estimated_climb_cost < 200 ) {
+            hint_climb_back = _( "You <color_green>should be easily able to climb back up</color>." );
+            easy_climb_back_up = true;
+        } else {
+            hint_climb_back = _( "You <color_yellow>may have problems trying to climb back up</color>." );
+        }
+        query += "\n";
+        query += hint_climb_back;
+    }
+
+    if( here.dangerous_field_at( fall.pos_bottom() ) ) {
+        query += "\n";
+        query += _( "There appears to be a dangerous field at your destination." );
+    }
+
+    std::string query_prompt = _( "Climb down?" );
+    if( !aid.down.confirm_text.empty() ) {
+        query_prompt = aid.down.confirm_text.translated();
+    }
+    query += "\n\n";
+    query += query_prompt;
+
+    if( !levitating && ( !seems_perfectly_safe || !easy_climb_back_up ) ) {
+        const std::string target_disp_name = here.disp_name( fall.pos_furniture_or_floor() );
+        if( !query_yn( query.c_str(), target_disp_name ) ) {
+            return;
+        }
+    }
+
+    you.mod_moves( -to_moves<int>( 1_seconds + 1_seconds * fall_mod ) );
+    you.setpos( examp );
+
+    if( !aid.down.msg_before.empty() ) {
+        you.add_msg_if_player( aid.down.msg_before.translated() );
+    }
+
+    tripoint_bub_ms descent_pos = examp;
+    for( int i = 0; i < fall.height && i < aid.down.max_height; ++i ) {
+        if( slip_down( climb_maneuver::down, aid_id, false ) ) {
+            return;
+        }
+        descent_pos.z()--;
+        if( aid.down.deploys_furniture() ) {
+            here.furn_set( descent_pos, aid.down.deploy_furn );
+        }
+    }
+
+    if( aid.base_condition.cat == climbing_aid::category::item && aid.base_condition.uses_item > 0 ) {
+        for( detached_ptr<item> &used_item : you.use_amount( itype_id( aid.base_condition.flag ),
+                aid.base_condition.uses_item ) ) {
+            used_item->spill_contents( you );
+        }
+    }
+
+    if( !aid.down.msg_after.empty() ) {
+        you.add_msg_if_player( aid.down.msg_after.translated() );
+    }
+
+    if( aid.down.cost.damage > 0 ) {
+        you.apply_damage( nullptr, bodypart_id( "torso" ), aid.down.cost.damage );
+    }
+    if( aid.down.cost.pain > 0 ) {
+        you.mod_pain( aid.down.cost.pain );
+    }
+    if( aid.down.cost.kcal > 0 ) {
+        you.mod_stored_kcal( -aid.down.cost.kcal );
+    }
+    if( aid.down.cost.thirst > 0 ) {
+        you.mod_thirst( aid.down.cost.thirst );
+    }
+
+    const int descended_levels = examp.z() - descent_pos.z();
+    vertical_move( -descended_levels, true );
 }
 item *game::add_fake_item( detached_ptr<item> &&it )
 {

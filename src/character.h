@@ -502,6 +502,7 @@ class Character : public Creature, public location_visitable<Character>
         void knock_back_to( const tripoint_bub_ms &to ) override;
         /** Returns multiplier on fall damage at low velocity (knockback/pit/1 z-level, not 5 z-levels) */
         float fall_damage_mod() const override;
+        auto climbing_cost( const tripoint_bub_ms &from, const tripoint_bub_ms &to ) const -> int;
         /** Deals falling/collision damage with terrain/creature at pos */
         int impact( int force, const tripoint_bub_ms &pos ) override;
         /** Returns overall % of HP remaining */

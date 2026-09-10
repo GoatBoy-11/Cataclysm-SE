@@ -52,6 +52,7 @@ MAKE_CLASS_NULL_ID( zone_type, "null" )
 MAKE_CLASS_NULL_ID( profession, "" )
 MAKE_CLASS_NULL_ID( vitamin, "" )
 MAKE_CLASS_NULL_ID( gun_mode, "" )
+MAKE_CLASS_NULL_ID( climbing_aid, "null" )
 MAKE_CLASS_NULL_ID( fault, "null" )
 MAKE_CLASS_NULL_ID( weapon_category, "" )
 

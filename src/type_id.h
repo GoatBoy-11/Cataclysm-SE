@@ -162,6 +162,9 @@ using overmap_special_id = string_id<overmap_special>;
 class profession;
 using profession_id = string_id<profession>;
 
+class climbing_aid;
+using climbing_aid_id = string_id<climbing_aid>;
+
 class proficiency;
 using proficiency_id = string_id<proficiency>;
 

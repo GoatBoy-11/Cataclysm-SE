@@ -2259,6 +2259,9 @@ bool game::handle_action()
                 if( controlled_vehicle != nullptr && controlled_vehicle->is_aircraft() ) {
                     pldrive( tripoint_rel_veh::below() );
                 } else if( !u.in_vehicle ) {
+                    if( open_air_climb_down() ) {
+                        break;
+                    }
                     vertical_move( -1, false );
                 } else if( get_map().has_rope_at( u.bub_pos() ) ) {
                     map &here = get_map();

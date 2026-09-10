@@ -30,6 +30,7 @@
 #include "lua_sidebar_widgets.h"
 #include "panels.h"
 #include "clothing_mod.h"
+#include "climbing.h"
 #include "clzones.h"
 #include "construction.h"
 #include "construction_category.h"
@@ -487,6 +488,7 @@ void DynamicDataLoader::initialize()
     add( "named_color", &RGBColor::load_named_color );
     add( "proficiency", &proficiency::load_proficiencies );
     add( "proficiency_category", &proficiency_category::load_proficiency_categories );
+    add( "climbing_aid", &climbing_aid::load_climbing_aid );
 #if defined(TILES)
     add( "mod_tileset", &load_mod_tileset );
 #else
@@ -665,6 +667,7 @@ void DynamicDataLoader::unload_data()
     VehicleSpawn::reset();
     proficiency::reset();
     proficiency_category::reset();
+    climbing_aid::reset();
     vitamin::reset();
     vpart_info::reset();
     weapon_category::reset();
@@ -754,6 +757,7 @@ void DynamicDataLoader::finalize_loaded_data( loading_ui &ui )
             { _( "Achievements" ), &achievement::finalize },
             { _( "Localization" ), &l10n_data::load_mod_catalogues },
             { _( "Enchantments" ), &enchantment::finalize_all },
+            { _( "Climbing aids" ), &climbing_aid::finalize_all },
 #if defined(TILES)
             { _( "Tileset" ), &load_tileset },
 #endif
@@ -787,6 +791,7 @@ void DynamicDataLoader::check_consistency( loading_ui &ui )
             },
             { _( "Vitamins" ), &vitamin::check_consistency },
             { _( "Proficiencies" ), &proficiency::check_consistency },
+            { _( "Climbing aids" ), &climbing_aid::check_consistency },
             { _( "Weather types" ), &weather_types::check_consistency },
             { _( "World types" ), &world_types::check_consistency },
             { _( "Field types" ), &field_types::check_consistency },

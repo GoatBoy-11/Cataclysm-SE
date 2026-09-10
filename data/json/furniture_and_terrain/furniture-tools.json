@@ -589,7 +589,7 @@
     "color": "brown",
     "move_cost_mod": 3,
     "required_str": 6,
-    "flags": [ "LADDER", "TRANSPARENT", "SEEN_FROM_ABOVE" ],
+    "flags": [ "LADDER", "TRANSPARENT", "SEEN_FROM_ABOVE", "ALLOW_ON_OPEN_AIR", "DIFFICULT_Z" ],
     "examine_action": "deployed_furniture",
     "deployed_item": "stepladder",
     "bash": {
@@ -1454,7 +1454,7 @@
     "color": "white",
     "move_cost_mod": 1,
     "required_str": -1,
-    "flags": [ "LADDER", "TRANSPARENT", "SEEN_FROM_ABOVE", "REMOVE_FROM_ABOVE" ],
+    "flags": [ "CLIMBABLE", "LADDER", "TRANSPARENT", "SEEN_FROM_ABOVE", "REMOVE_FROM_ABOVE", "ALLOW_ON_OPEN_AIR", "DIFFICULT_Z", "NOCOLLIDE" ],
     "examine_action": "deployed_furniture",
     "deployed_item": "grapnel",
     "bash": {
@@ -1483,6 +1483,48 @@
       "str_max": 40,
       "sound": "smash!",
       "sound_fail": "whump.",
+      "items": [ { "item": "rope_30", "count": [ 1, 1 ] } ]
+    }
+  },
+  {
+    "type": "furniture",
+    "id": "f_vine_up",
+    "name": "vine leading up",
+    "looks_like": "t_rope_up",
+    "description": "A thick vine is rigidly anchored to something above you.  It looks quite alive.  You could climb up or tear it down.",
+    "symbol": "<",
+    "color": "light_green",
+    "move_cost_mod": 1,
+    "required_str": -1,
+    "flags": [ "CLIMBABLE", "TRANSPARENT", "SEEN_FROM_ABOVE", "ALLOW_ON_OPEN_AIR", "DIFFICULT_Z", "NOCOLLIDE" ],
+    "examine_action": "deployed_furniture",
+    "deployed_item": "vine_30",
+    "bash": {
+      "str_min": 1,
+      "str_max": 10,
+      "sound": "rrrrip!",
+      "sound_fail": "twang.",
+      "items": [ { "item": "vine_6", "count": [ 2, 5 ] } ]
+    }
+  },
+  {
+    "type": "furniture",
+    "id": "f_web_up",
+    "name": "web leading up",
+    "looks_like": "fd_web",
+    "description": "A thick, dangling strand of slightly sticky web, the other end is tied securely to something above you.  You could use it to climb up.",
+    "symbol": "<",
+    "color": "white",
+    "move_cost_mod": 1,
+    "required_str": -1,
+    "flags": [ "CLIMBABLE", "TRANSPARENT", "SEEN_FROM_ABOVE", "ALLOW_ON_OPEN_AIR", "DIFFICULT_Z", "NOCOLLIDE" ],
+    "examine_action": "deployed_furniture",
+    "deployed_item": "rope_30",
+    "bash": {
+      "str_min": 1,
+      "str_max": 10,
+      "sound": "rrrrip!",
+      "sound_fail": "twang.",
       "items": [ { "item": "rope_30", "count": [ 1, 1 ] } ]
     }
   }
