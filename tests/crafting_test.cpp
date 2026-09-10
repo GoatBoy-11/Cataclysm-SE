@@ -1333,3 +1333,33 @@ TEST_CASE("a craft result no pocket will hold is put down", "[crafting][pocket]"
         underfoot, [&picklock](const item* it) { return it->typeId() == picklock; });
     CHECK(put_down);
 }
+
+TEST_CASE("practice recipes start a craft", "[crafting][practice]") {
+    clear_all_state();
+    const recipe_id rid("prac_athletics_beg");
+    REQUIRE(rid.is_valid());
+    REQUIRE(rid->is_practice());
+
+    std::vector<detached_ptr<item>> tools;
+    prep_craft(rid, tools, true);
+
+    REQUIRE(in_progress_crafts(g->u).empty());
+    g->u.make_craft(rid, 1);
+    CHECK(!in_progress_crafts(g->u).empty());
+}
+
+TEST_CASE("practice recipes train the skill and then end", "[crafting][practice]") {
+    clear_all_state();
+    const recipe_id rid("prac_athletics_beg");
+    REQUIRE(rid.is_valid());
+    REQUIRE(rid->is_practice());
+
+    avatar& you = get_avatar();
+    std::vector<detached_ptr<item>> tools;
+    actually_test_craft(rid, tools, 100000);
+
+    // The craft item must not be left behind: a practice recipe hands nothing back,
+    // so a stuck in-progress craft would be the only trace it ever ran.
+    CHECK(in_progress_crafts(you).empty());
+    CHECK(you.get_skill_level(rid->skill_used) > 0);
+}

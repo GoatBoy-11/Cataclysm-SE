@@ -72,7 +72,12 @@ class recipe
         recipe();
 
         operator bool() const {
-            return !result_.is_null();
+            // A practice recipe trains rather than producing, so it carries no result item.
+            // Judging it by the result alone made it read as an invalid recipe, and the
+            // craft was then refused without a word.  CDDA tests the id here instead.  The
+            // other resultless recipes are the nested categories, which are menu folders
+            // and genuinely not craftable, so they stay false.
+            return !result_.is_null() || is_practice();
         }
 
         const itype_id &result() const {
