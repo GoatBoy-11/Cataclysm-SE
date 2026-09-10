@@ -15,6 +15,7 @@
   {
     "type": "npc_class",
     "id": "NC_REFUGEE_Uyen",
+    "proficiencies": [ "prof_knitting" ],
     "name": { "str": "Refugee" },
     "job_description": "I'm just trying to survive.",
     "common": false,

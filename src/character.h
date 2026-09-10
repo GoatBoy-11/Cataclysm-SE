@@ -1714,6 +1714,8 @@ class Character : public Creature, public location_visitable<Character>
         bool craft_proficiency_gain( const item &craft, const time_duration &time );
         /** Combined proficiency mitigation from books within crafting reach. */
         book_proficiency_bonuses book_bonuses_nearby() const;
+        /** Proficiencies this character could teach @p guy, who lacks them. */
+        std::vector<proficiency_id> proficiencies_offered_to( const Character *guy ) const;
         /** Checks whether the character's skills meet the required */
         bool meets_skill_requirements( const std::map<skill_id, int> &req,
                                        const item *context = nullptr ) const;

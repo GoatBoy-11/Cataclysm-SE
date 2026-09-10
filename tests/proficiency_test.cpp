@@ -4,6 +4,7 @@
 #include "json.h"
 #include "avatar.h"
 #include "character.h"
+#include "npc_class.h"
 #include "profession.h"
 #include "proficiency.h"
 #include "recipe.h"
@@ -283,4 +284,41 @@ TEST_CASE("focus changes how fast a proficiency is picked up", "[proficiency]") 
 
     you.lose_proficiency(prof_familiar);
     you.focus_pool = saved_focus;
+}
+
+TEST_CASE("npc classes grant proficiencies", "[proficiency]") {
+    // Imported from the matching CDDA classes, so the grant lists are theirs.
+    const npc_class_id doctor("NC_DOCTOR");
+    REQUIRE(doctor.is_valid());
+
+    const std::vector<proficiency_id> &granted = doctor->get_proficiencies();
+    REQUIRE(!granted.empty());
+
+    bool teaches_wound_care = false;
+    for (const proficiency_id &p : granted) {
+        INFO("granted: " << p.str());
+        CHECK(p.is_valid());
+        if (p == proficiency_id("prof_wound_care")) {
+            teaches_wound_care = true;
+        }
+    }
+    CHECK(teaches_wound_care);
+}
+
+TEST_CASE("a teacher only offers what the student lacks", "[proficiency]") {
+    Character &you = get_avatar();
+    you.lose_proficiency(prof_familiar);
+    you.add_proficiency(prof_familiar, true);
+    REQUIRE(you.has_proficiency(prof_familiar));
+    REQUIRE(prof_familiar->is_teachable());
+
+    // Offered to nobody in particular, a known teachable proficiency is on the list.
+    const std::vector<proficiency_id> to_anyone = you.proficiencies_offered_to(nullptr);
+    CHECK(std::ranges::find(to_anyone, prof_familiar) != to_anyone.end());
+
+    // Offered to someone who already knows it, it is not.
+    const std::vector<proficiency_id> to_self = you.proficiencies_offered_to(&you);
+    CHECK(std::ranges::find(to_self, prof_familiar) == to_self.end());
+
+    you.lose_proficiency(prof_familiar);
 }

@@ -4507,6 +4507,17 @@ std::vector<display_proficiency> Character::display_proficiencies() const
     return _proficiencies->display();
 }
 
+std::vector<proficiency_id> Character::proficiencies_offered_to( const Character *guy ) const
+{
+    std::vector<proficiency_id> ret;
+    for( const proficiency_id &known : known_proficiencies() ) {
+        if( known->is_teachable() && ( !guy || !guy->has_proficiency( known ) ) ) {
+            ret.push_back( known );
+        }
+    }
+    return ret;
+}
+
 std::vector<proficiency_id> Character::known_proficiencies() const
 {
     return _proficiencies->known_profs();

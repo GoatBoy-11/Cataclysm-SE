@@ -60,6 +60,7 @@
 #include "mtype.h"
 #include "mutation.h"
 #include "npc_class.h"
+#include "proficiency.h"
 #include "options.h"
 #include "output.h"
 #include "overmap.h"
@@ -387,6 +388,13 @@ void npc::randomize( const npc_class_id &type )
         int level = myclass->roll_skill( skill.ident() );
 
         set_skill_level( skill.ident(), level );
+    }
+
+    // Class proficiencies are known outright, prerequisites included
+    for( const proficiency_id &prof : the_class.get_proficiencies() ) {
+        if( prof.is_valid() ) {
+            add_proficiency( prof, true );
+        }
     }
 
     if( type.is_null() ) { // Untyped; no particular specialization

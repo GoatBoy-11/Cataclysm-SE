@@ -21,6 +21,15 @@
   {
     "type": "npc_class",
     "id": "NC_BEGGAR_3",
+    "proficiencies": [
+      "prof_intro_chemistry",
+      "prof_intro_biology",
+      "prof_organic_chemistry",
+      "prof_biochemistry",
+      "prof_intro_chem_synth",
+      "prof_mycology",
+      "prof_mycology_advanced"
+    ],
     "name": { "str": "Beggar" },
     "job_description": "I'm just trying to survive.",
     "common": false,

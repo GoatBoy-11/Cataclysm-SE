@@ -58,6 +58,8 @@ class npc_class
         distribution bonus_per;
 
         std::map<skill_id, distribution> skills;
+        /** Proficiencies every member of this class knows. */
+        std::vector<proficiency_id> proficiencies;
         // Just for finalization
         std::map<skill_id, distribution> bonus_skills;
 
@@ -88,6 +90,10 @@ class npc_class
         int roll_perception() const;
 
         int roll_skill( const skill_id & ) const;
+        /** Proficiencies every member of this class knows. */
+        const std::vector<proficiency_id> &get_proficiencies() const {
+            return proficiencies;
+        }
 
         const item_group_id &get_shopkeeper_items() const;
 

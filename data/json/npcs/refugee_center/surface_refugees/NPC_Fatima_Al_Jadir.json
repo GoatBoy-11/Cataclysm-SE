@@ -15,6 +15,7 @@
   {
     "type": "npc_class",
     "id": "NC_REFUGEE_Fatima",
+    "proficiencies": [ "prof_metalworking", "prof_welding_basic", "prof_welding" ],
     "name": { "str": "Refugee" },
     "job_description": "I'm just trying to survive.",
     "common": false,

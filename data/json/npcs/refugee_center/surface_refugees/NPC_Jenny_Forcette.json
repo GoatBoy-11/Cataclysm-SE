@@ -2,6 +2,7 @@
   {
     "type": "npc_class",
     "id": "NC_REFUGEE_Jenny",
+    "proficiencies": [ "prof_elec_soldering", "prof_metalworking", "prof_welding_basic" ],
     "name": { "str": "Refugee" },
     "job_description": "I'm just trying to survive.",
     "common": false,

@@ -15,6 +15,7 @@
   {
     "type": "npc_class",
     "id": "NC_REFUGEE_Boris",
+    "proficiencies": [ "prof_carpentry_basic", "prof_carving", "prof_plumbing" ],
     "name": { "str": "Refugee" },
     "job_description": "I'm just trying to survive.",
     "common": false,

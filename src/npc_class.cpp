@@ -1,5 +1,7 @@
 #include "npc_class.h"
 
+#include "proficiency.h"
+
 #include <algorithm>
 #include <cstddef>
 #include <list>
@@ -228,6 +230,8 @@ void npc_class::load( const JsonObject &jo, const std::string & )
     mandatory( jo, was_loaded, "job_description", job_description );
 
     optional( jo, was_loaded, "common", common, true );
+    optional( jo, was_loaded, "proficiencies", proficiencies,
+              auto_flags_reader<proficiency_id> {} );
     bonus_str = load_distribution( jo, "bonus_str" );
     bonus_dex = load_distribution( jo, "bonus_dex" );
     bonus_int = load_distribution( jo, "bonus_int" );

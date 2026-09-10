@@ -56,6 +56,15 @@
   {
     "type": "npc_class",
     "id": "NC_DOCTOR",
+    "proficiencies": [
+      "prof_intro_chemistry",
+      "prof_intro_biology",
+      "prof_wound_care",
+      "prof_wound_care_expert",
+      "prof_burn_care",
+      "prof_dissect_humans",
+      "prof_physiology"
+    ],
     "name": { "str": "Doctor" },
     "job_description": "I'm looking for wounded to help.",
     "traits": [ { "group": "BG_survival_story_MEDICAL" }, { "group": "NPC_starting_traits" }, { "group": "Appearance_demographics" } ],
@@ -153,6 +162,14 @@
   {
     "type": "npc_class",
     "id": "NC_SCIENTIST",
+    "proficiencies": [
+      "prof_intro_chemistry",
+      "prof_intro_biology",
+      "prof_organic_chemistry",
+      "prof_biochemistry",
+      "prof_intro_chem_synth",
+      "prof_chem_synth"
+    ],
     "name": { "str": "Scientist" },
     "job_description": "I'm looking for clues concerning these monsters' origins…",
     "traits": [ { "group": "BG_survival_story_LAB" }, { "group": "NPC_starting_traits" }, { "group": "Appearance_demographics" } ],
@@ -334,6 +351,7 @@
   {
     "type": "npc_class",
     "id": "NC_SOLDIER",
+    "proficiencies": [ "prof_gunsmithing_basic", "prof_spotting" ],
     "name": { "str": "Soldier" },
     "job_description": "I'm just here for the paycheck.",
     "traits": [ { "group": "BG_survival_story_SOLDIER" }, { "group": "NPC_starting_traits" }, { "group": "Appearance_demographics" } ],
