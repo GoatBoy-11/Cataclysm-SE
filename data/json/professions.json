@@ -1106,6 +1106,7 @@
   {
     "type": "profession",
     "id": "vagabond",
+    "proficiencies": [ "prof_closures", "prof_carving", "prof_food_prep" ],
     "name": "Vagabond",
     "description": "Circumstances left you wandering, with no home, no family, no friends.  But the world you knew is gone, and maybe your experiences relying on yourself to survive could be useful in this new one.",
     "points": 1,
@@ -1146,6 +1147,7 @@
   {
     "type": "profession",
     "id": "bionic_prepper",
+    "proficiencies": [ "prof_butchering_basic", "prof_skinning_basic", "prof_carving", "prof_metalworking" ],
     "name": "Bionic Survivalist",
     "description": "You knew the end was coming.  You augmented yourself with some basic bionics and got additional survival training.  Now the end has come, and it is time to see if your efforts have paid off.",
     "points": 6,
@@ -1404,6 +1406,7 @@
   {
     "type": "profession",
     "id": "caveman",
+    "proficiencies": [ "prof_athlete_basic", "prof_knives_familiar" ],
     "name": "Prehistoric Hunter",
     "description": "An out-of-place living relic of prehistory, stranded in an unfamiliar and terrifying world.  Life as a hunter-gatherer was hard, but at least you didn't have to fight the living dead, and you had your kin to stand beside you.  Here, you're on your own.",
     "points": -4,
@@ -1437,6 +1440,7 @@
   {
     "type": "profession",
     "id": "prospector",
+    "proficiencies": [ "prof_butchering_basic", "prof_athlete_basic" ],
     "name": "Prospector",
     "description": "Yee haw!  Ye've struck it rich in the Cataclysm, findin' yerself a whole new world to pan fer gold in.  Just be sure to watch out fer them thar zombies and other varmints lookin' to make a meal outta ya!",
     "points": 4,
@@ -1474,6 +1478,7 @@
   {
     "type": "profession",
     "id": "frontiersman",
+    "proficiencies": [ "prof_butchering_basic", "prof_food_prep" ],
     "name": "Frontiersman",
     "starting_cash": 0,
     "description": "You set out on your first real frontier trail expecting nothing more than hard miles and open sky. Instead, a moment of blinding light stole the world you knew. Now you stand in a future ravaged by the Cataclysm, your gear outdated, your instincts untested, and your only choice to adapt fast or perish.",
@@ -1512,6 +1517,7 @@
   {
     "type": "profession",
     "id": "dogsledder",
+    "proficiencies": [ "prof_butchering_basic", "prof_traps", "prof_carving" ],
     "name": "Dogsledder",
     "starting_cash": 0,
     "description": "Fresh to the long northern trails, you began your first season guiding a small team through snowbound silence and bitter wind. You expected hard lessons, frozen fingers, and the slow rhythm of life on the ice—nothing more. But one night, a burst of impossible light swallowed the horizon, and the world you knew vanished beneath it. Now you stand in a future shattered by the Cataclysm, your dogs restless at your side, your skills untested, and the cold no longer the only danger you face.",
@@ -1560,6 +1566,7 @@
   {
     "type": "profession",
     "id": "big_game_hunter",
+    "proficiencies": [ "prof_butchering_basic" ],
     "name": "Big Game Hunter",
     "description": "You've bagged dangerous game on every continent, and had just set out on your latest expedition.  When you woke up in the morning, your campsite was gone.  At least you still have your trusty rifle by your side.",
     "//": "One more point over normal hunter professions due to starting with extra ammo and skills.",
@@ -1633,6 +1640,7 @@
   {
     "type": "profession",
     "id": "bionic_labtech",
+    "proficiencies": [ "prof_wound_care", "prof_elec_soldering", "prof_elec_circuits", "prof_food_prep" ],
     "name": "Bionic Lab-tech",
     "description": "You've spent your career keeping up with the latest advances in science, even enrolling as a subject yourself to benefit from cutting-edge bionics that would assist your own studies.  Now however, you're starting to wish they offered courses on xenobiology.",
     "points": 8,
@@ -1717,6 +1725,7 @@
   {
     "type": "profession",
     "id": "beekeeper",
+    "proficiencies": [ "prof_butchering_basic", "prof_skinning_basic", "prof_carving", "prof_metalworking" ],
     "name": "Beekeeper",
     "description": "You used to be a professional beekeeper.  You had to abandon your precious bees when the Cataclysm struck, but at least you managed to grab some utensils and honey.",
     "points": 2,
@@ -1818,6 +1827,7 @@
   {
     "type": "profession",
     "id": "professional_diver",
+    "proficiencies": [ "prof_athlete_basic", "prof_butchering_basic" ],
     "name": "Professional Diver",
     "traits": [ "PROF_SWIMMER" ],
     "description": "You spent a large part of your time exploring lakes and diving in the New England region, giving you lots of knowledge about the waters in the local area.",
@@ -1844,6 +1854,7 @@
   {
     "type": "profession",
     "id": "underwater_welder",
+    "proficiencies": [ "prof_athlete_basic", "prof_carving", "prof_metalworking", "prof_basic_engines" ],
     "name": "Underwater Welder",
     "traits": [ "PROF_SWIMMER" ],
     "description": "Through years of underwater welding, you've honed a deep understanding of submerged structures in the New England region.",
@@ -1876,6 +1887,7 @@
   {
     "type": "profession",
     "id": "bionic_diver",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care" ],
     "name": "Bionic Marine Biologist",
     "traits": [ "PROF_SWIMMER" ],
     "description": "You were a marine biologist who specialized in extended underwater research.  You have a bionic respirator for emergency situations where you run out of air unexpectedly, and additional implants that enable you to explore the depths easier and surgically examine marine life.",
@@ -1919,6 +1931,7 @@
   {
     "type": "profession",
     "id": "sharkboy",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Sharkboy",
     "description": "You were always infatuated with bodies of water, ocean or lake. You spent your days swimming, diving, and exploring the depths. Now, you find yourself transformed into a creature of the deep. Is this what you desired?",
     "points": 4,
@@ -1946,6 +1959,7 @@
   {
     "type": "profession",
     "id": "davy_jones",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Davy Jones",
     "description": "You were robbed, shot in the head and thrown into the sea just before the Cataclysm. Now you have risen undead from the depths, with a thirst for vengeance against those who wronged you, and a desire to reclaim your lost treasures.",
     "starting_cash": 0,
@@ -1980,6 +1994,7 @@
   {
     "type": "profession",
     "id": "lagoon_creature",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Creature of the Lagoon",
     "description": "Ascending from the muck, you've been granted a new life by the Cataclysm. A far cry from your previous existence, you now find yourself a creature of the deep, struggling to understand your new form and purpose.",
     "starting_cash": 0,
@@ -1992,6 +2007,7 @@
   {
     "type": "profession",
     "id": "soldier",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_knives_familiar", "prof_butchering_basic" ],
     "name": "Military Rifleman",
     "description": "You were hoping to see some action, only to get more than you bargained for deployed stateside responding to a national emergency.  As far as you can tell, military command abandoned you to this hellhole.",
     "age": { "min": 17, "max": 35 },
@@ -2261,6 +2277,7 @@
   {
     "type": "profession",
     "id": "prof_combat_engineer",
+    "proficiencies": [ "prof_carving", "prof_metalworking", "prof_plasticworking", "prof_basic_engines" ],
     "name": "Combat Engineer",
     "description": "Your military training focused on field fortifications and demolitions, along with the basics on modern autonomous defenses.  You never expected to need that training on the home front, not that it's helped so far given the bots are all on free-fire mode.",
     "age": { "min": 20, "max": 40 },
@@ -2321,6 +2338,7 @@
   {
     "type": "profession",
     "id": "prof_combat_medic",
+    "proficiencies": [ "prof_food_prep", "prof_preservation", "prof_athlete_basic", "prof_wound_care" ],
     "name": "Military Corpsman",
     "description": "You were trained to keep your platoon in top shape, while still having to lug all the same kit as any other soldier alongside your medical supplies.  Now you're on your own against the undead, and that rifle they saddled you with is your only line of defense.",
     "age": { "min": 20, "max": 40 },
@@ -2446,6 +2464,7 @@
   {
     "type": "profession",
     "id": "specops_frogman",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_butchering_basic", "prof_skinning_basic" ],
     "name": "Spec Ops Combat Diver",
     "description": "You were the best of the best, the military's finest.  Trained in underwater sabotage and boarding operations, you've survived where others became shark bait.  As far as you can tell, military command has left you high and dry.",
     "age": { "min": 20, "max": 40 },
@@ -2501,6 +2520,7 @@
   {
     "type": "profession",
     "id": "military_saboteur",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_knives_familiar", "prof_butchering_basic" ],
     "name": "Military Saboteur",
     "description": "You were transferred to the lab's security department in an advisory position.  In actuality, in the event things went wrong your orders were to locate and disable some sort of portal experiment, and issued a backpack nuke.  Unfortunately, you discovered too late that this facility doesn't contain the equipment you were looking for.",
     "age": { "min": 20, "max": 40 },
@@ -2555,6 +2575,7 @@
   {
     "type": "profession",
     "id": "power_armor_soldier",
+    "proficiencies": [ "prof_basic_engines", "prof_athlete_basic", "prof_wound_care", "prof_knives_familiar" ],
     "name": "Power Armor Soldier",
     "description": "Your unit received the latest generation of power armor plating, running off those new plutonium power banks they were rolling out and equipped with experimental energy weapons.  The rest of your squad has fallen, and your exoskeleton might be a bit out of date, but your gear might see you through.",
     "age": { "min": 20, "max": 40 },
@@ -2600,6 +2621,7 @@
   {
     "type": "profession",
     "id": "lifter_mech_pilot",
+    "proficiencies": [ "prof_basic_engines", "prof_elec_soldering", "prof_elec_circuits" ],
     "name": "Industrial Mech Pilot",
     "description": "You were recently certified to pilot an industrial and combat engineering model of the Mechanical Exoskeleton Suits the military had been developing.  It's not armed, but it might still be useful despite the heavy use its power cell has been through.",
     "points": 6,
@@ -2631,6 +2653,7 @@
   {
     "type": "profession",
     "id": "combat_mech_pilot",
+    "proficiencies": [ "prof_basic_engines", "prof_elec_soldering", "prof_athlete_basic", "prof_wound_care" ],
     "name": "Combat Mech Pilot",
     "description": "You were field-testing the latest in military firepower, with Mechanical Exoskeleton Suits planned to fill the niche left after power armor development shifted to lighter models.  Your mech's built to lay down heavy fire support, but the power cell the technicians provided has been mostly depleted from earlier tests.",
     "age": { "min": 20, "max": 40 },
@@ -2686,6 +2709,7 @@
   {
     "type": "profession",
     "id": "recon_mech_pilot",
+    "proficiencies": [ "prof_basic_engines", "prof_elec_soldering", "prof_athlete_basic", "prof_wound_care" ],
     "name": "Recon Mech Pilot",
     "description": "You were field-testing the latest in military firepower, with Mechanical Exoskeleton Suits planned to fill the niche left after power armor development shifted to lighter models.  Your mech's built for scouting and sniping, but the power cell the technicians provided has been mostly depleted from earlier tests.",
     "age": { "min": 20, "max": 40 },
@@ -2794,6 +2818,7 @@
   {
     "type": "profession",
     "id": "migo_escapee",
+    "proficiencies": [ "prof_butchering_basic" ],
     "name": "Escapee",
     "description": "You've been held in this alien hellhole for a couple days, picking at the walls until you found a loose piece you could fashion into a shiv.  You're getting dizzy from the stifling heat and fumes, it's now or never.",
     "points": 0,
@@ -2907,6 +2932,7 @@
   {
     "type": "profession",
     "id": "smuggler",
+    "proficiencies": [ "prof_athlete_basic", "prof_knives_familiar", "prof_driver" ],
     "name": "Smuggler",
     "description": "Ever since the heat (both climate and police presence) got too bad in Miami, you found a niche running all sorts of tax-free goods into New England.  You're used to outrunning the cops, but now both the pigs and your clientele want your brains instead of your product.",
     "points": 5,
@@ -3161,6 +3187,7 @@
   {
     "type": "profession",
     "id": "dumpster_diver",
+    "proficiencies": [ "prof_butchering_basic" ],
     "name": "Dumpster Diver",
     "//": "basically a luxury hobo",
     "description": "Before the Cataclysm, you lived off what others threw away. Now that the world has leveled the playing field, your eye for salvage makes you a survivor, not a beggar.",
@@ -3256,6 +3283,7 @@
   {
     "type": "profession",
     "id": "el_eng",
+    "proficiencies": [ "prof_elec_soldering", "prof_elec_circuits", "prof_carving" ],
     "name": "Electrical Engineer",
     "description": "Fresh out of college, you've got little in the way of practical engineering experience.  The Cataclysm might prove to be a rather complicated problem to solve even from an engineering perspective, and you're not sure if you can solder your way out of this one.",
     "points": 2,
@@ -3272,6 +3300,7 @@
   {
     "type": "profession",
     "id": "mech_eng",
+    "proficiencies": [ "prof_basic_engines", "prof_carving" ],
     "name": "Mechanical Engineer",
     "description": "Fresh out of college, you've got little in the way of practical engineering experience.  The Cataclysm might prove to be a rather complicated problem to solve even from an engineering perspective, and you're not sure if you will pass this stress test.",
     "points": 2,
@@ -3343,6 +3372,7 @@
   {
     "type": "profession",
     "id": "medic_pilot",
+    "proficiencies": [ "prof_wound_care", "prof_driver" ],
     "copy-from": "medic",
     "name": "Medevac Pilot",
     "description": "As a first responder piloting a medical chopper, you had a birds-eye view of how bad things were getting.  Just when you thought you'd seen the worst of it, patients that were DOA started clawing their way out of their body bags, and dispatch gave a panicked message about the hospitals being overrun before the radio went silent.",
@@ -3354,6 +3384,7 @@
   {
     "type": "profession",
     "id": "gyro_pilot",
+    "proficiencies": [ "prof_driver", "prof_carving", "prof_basic_engines" ],
     "name": "Gyrocopter Pilot",
     "description": "You always loved tinkering with flying machines as a hobby.  With your gyrocopter and what little flight gear you could scrounge up while the world was ending, the sky's the limit.",
     "vehicle": "helicopter_gyro",
@@ -3383,6 +3414,7 @@
   {
     "type": "profession",
     "id": "bird_pilot",
+    "proficiencies": [ "prof_driver", "prof_basic_engines" ],
     "name": "Avian Heli Pilot",
     "description": "When the world ended, you thought your piloting experience would keep you safe.  Then the feathers starting growing out.  You must've poked your nose (wait, beak!?) where it didn't belong during one of your stops to refuel.  At least now you have a backup plan if your ride fails you.",
     "vehicle": "SmallFlier3",
@@ -3452,6 +3484,7 @@
   {
     "type": "profession",
     "id": "dog_lover",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Dog Lover",
     "description": "You spent your days running around with your faithful dogs by your side.  When the world ended, you grabbed your companions along with some of their things to protect them.  The zombies could be nearby, but at least your canine friends shouldn't have to worry about the rain.",
     "points": 3,
@@ -4089,6 +4122,7 @@
   {
     "type": "profession",
     "id": "backpacker",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Backpacker",
     "description": "You've traveled for a living, sightseeing here and there, and living off your parents' trust fund.  But now they're gone, and the only thing between you and death is the open road and your backpack.",
     "points": 0,
@@ -4161,6 +4195,7 @@
   {
     "type": "profession",
     "id": "robot_tech",
+    "proficiencies": [ "prof_elec_soldering", "prof_elec_circuits", "prof_basic_engines", "prof_carving" ],
     "name": "Robot Technician",
     "description": "You worked as a robotics technician, keeping drones and machines running and once even slipped a control laptop out of the lab for yourself. After the world fell, your skill to repair and command broken robots makes you as valuable and dangerous as any weapon.",
     "points": 4,
@@ -4358,6 +4393,7 @@
   {
     "type": "profession",
     "id": "mutant_volunteer",
+    "proficiencies": [ "prof_food_prep", "prof_elec_soldering" ],
     "name": "Volunteer Mutant",
     "description": "Your dreams of becoming a super-human mutant through genetic alteration may have fallen a bit short, but when the Cataclysm struck, you and the scientists were ready to put your new body to the test.",
     "points": 1,
@@ -4425,6 +4461,7 @@
   {
     "type": "profession",
     "id": "bionic_worker",
+    "proficiencies": [ "prof_carving", "prof_metalworking", "prof_basic_engines" ],
     "name": "Industrial Cyborg",
     "description": "For better or for worse, bionic augmentation has turned you into a walking power tool.  Upgraded with a standard industrial-grade manual labor surgery and training package, you are augmented with bionic muscles and an integrated toolset, both powered by standard batteries.",
     "points": 6,
@@ -4459,6 +4496,7 @@
   {
     "type": "profession",
     "id": "bionic_athlete",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Bionic Athlete",
     "description": "It's a shame the apocalypse happened; you'll never get a shot at the Cyberolympics.  Now the only thing between you and death by zombie is your freakish cyborg strength.",
     "points": 5,
@@ -4484,6 +4522,7 @@
   {
     "type": "profession",
     "id": "bionic_runner",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Bionic Runner",
     "description": "You were that kind of sportsman who couldn't get off the track.  You love running, and you enhanced your body to do it even better.  Now there is plenty to run from, but this is your kind of game.",
     "points": 4,
@@ -4558,6 +4597,7 @@
   {
     "type": "profession",
     "id": "bionic_firefighter",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care" ],
     "name": "Bionic Firefighter",
     "description": "As a second-generation augmented firefighter, you have been cybernetically enhanced to operate in the most dire of emergency situations.  The end of the world definitely counts as a dire situation.",
     "points": 5,
@@ -4615,6 +4655,7 @@
   {
     "type": "profession",
     "id": "bio_soldier",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_knives_familiar", "prof_butchering_basic" ],
     "name": "Bionic Soldier",
     "description": "You are the result of one of the military's latest and final research programs, a prototype cyborg soldier.  You're still alive thanks to your augmentations, even after all your comrades fell to the undead.",
     "age": { "min": 20, "max": 40 },
@@ -4682,6 +4723,7 @@
   {
     "type": "profession",
     "id": "bio_sniper",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_knives_familiar", "prof_butchering_basic" ],
     "name": "Bionic Sniper",
     "description": "Your bionics, equipment, and extensive field training enable you to drop targets from implausible distances, even after weeks of total isolation in enemy territory.",
     "points": 8,
@@ -4755,6 +4797,7 @@
   {
     "type": "profession",
     "id": "bio_specops",
+    "proficiencies": [ "prof_athlete_basic", "prof_butchering_basic", "prof_skinning_basic", "prof_unarmed_familiar" ],
     "name": "Bionic Operator",
     "description": "You were the best of the best, the military's finest, and your bionics have only enhanced your abilities.  Specializing in close quarters combat, you were sent on the most dangerous and critical missions.",
     "age": { "min": 20, "max": 40 },
@@ -4816,6 +4859,7 @@
   {
     "type": "profession",
     "id": "bionic_spy",
+    "proficiencies": [ "prof_butchering_basic", "prof_traps" ],
     "name": "Bionic Agent",
     "description": "Your body has several bionics worth millions of dollars, paid for by public taxes.  The government has turned you into an infiltration and recon specialist: you have night vision, an alarm, an infolink, lock picking capabilities and a hacking module.  And a killswitch in case you went rogue, but with your handlers dead you're the only one left who knows its activation phrase.",
     "points": 4,
@@ -4841,6 +4885,7 @@
   {
     "type": "profession",
     "id": "bionic_hitman",
+    "proficiencies": [ "prof_unarmed_familiar" ],
     "name": "Bionic Assassin",
     "description": "The product of millions of dollars of clandestine research, you are a bionic sleeper agent capable of silently engaging your target while maintaining an innocuous appearance.  If compromised while hunting high-priority targets, you were also provided with a killswitch guaranteed to take them with you.",
     "points": 8,
@@ -4872,6 +4917,7 @@
   {
     "type": "profession",
     "id": "bio_gangster",
+    "proficiencies": [ "prof_unarmed_familiar", "prof_knives_familiar", "prof_driver" ],
     "name": "Bionic Gangster",
     "description": "You were the boss' favorite, their protege; they always counted on you to get the toughest jobs done.  Seeing your potential, they invested in \"basic\" augments and the best gear on the market to better aid you in your job.  After enjoying some period of freedom to do as you wanted, now you find yourself needing those skills to survive. ",
     "points": 8,
@@ -4978,6 +5024,7 @@
   {
     "type": "profession",
     "id": "bionic_customer",
+    "proficiencies": [ "prof_elec_soldering", "prof_carving" ],
     "name": "Commercial Cyborg",
     "description": "You always had to have the latest and best gadgets and gizmos, so is it any wonder that you upgraded your flesh along with your smart phone?  Only time will tell if your passion for electronics and your status as a marvel of bionic technology will be enough to ensure your survival after the apocalypse.",
     "points": 4,
@@ -5097,6 +5144,7 @@
   {
     "type": "profession",
     "id": "cosplay",
+    "proficiencies": [ "prof_closures" ],
     "name": "Otaku",
     "description": "Late nights with friends watching anime and eating snacks has prepared you for the premier anime convention in the Northeast.  It just had to be the day of the apocalypse.  At least you were ready in case your costume tore.",
     "points": 1,
@@ -5127,6 +5175,7 @@
   {
     "type": "profession",
     "id": "prof_fursuiter",
+    "proficiencies": [ "prof_carving", "prof_closures" ],
     "name": "Fursuiter",
     "description": "You had plans to attend a local convention after your custom order finally arrived, only to find the world is ending.  You're starting to wish the company you bought this from made something armored and scaly instead.",
     "points": 1,
@@ -5274,6 +5323,7 @@
   {
     "type": "profession",
     "id": "postman",
+    "proficiencies": [ "prof_driver" ],
     "name": "Mail Carrier",
     "description": "Your skill at avoiding dogs and discarded children's toys while delivering the mail gives you an edge in your new role as a survivor.",
     "points": 1,
@@ -5349,6 +5399,7 @@
   {
     "type": "profession",
     "id": "convict_drugs",
+    "proficiencies": [ "prof_food_prep", "prof_wound_care" ],
     "name": "Meth Cook",
     "description": "You clawed your way out of poverty by selling products everyone wanted, and they had the nerve to put you in jail for it.  Too bad you can't sell drugs to zombies or aliens.",
     "points": 0,
@@ -5431,6 +5482,7 @@
   {
     "type": "profession",
     "id": "razorgirl",
+    "proficiencies": [ "prof_athlete_basic", "prof_unarmed_familiar" ],
     "name": { "male": "Razor Boy", "female": "Razor Girl" },
     "description": "Through a series of painful and expensive surgeries you became a walking bionic weapon, your services as a mercenary available to the highest bidder.  Now that the world has ended, those bionic enhancements may spell the difference between life and death.",
     "points": 4,
@@ -5499,6 +5551,7 @@
   {
     "type": "profession",
     "id": "cykotic",
+    "proficiencies": [ "prof_unarmed_familiar", "prof_butchering_basic" ],
     "name": "Bionic Monster",
     "description": "Completely overtaken by bionic-induced psychosis, you are a deformed posthuman monster who had no place in society.  But now, where once you were forced to hide in the shadows, you find in this new desolation a world where even a creature such as yourself might find its niche.",
     "points": 2,
@@ -5580,6 +5633,7 @@
   {
     "type": "profession",
     "id": "shinto_priest",
+    "proficiencies": [ "prof_carving", "prof_closures" ],
     "name": "Kannushi",
     "description": "You were one of the maintainers of a Shinto shrine, performing rituals and sacred tasks.  You preferred it when only the spirits of the dead inhabited your shrine, and not their rotting corpses.",
     "points": 0,
@@ -5634,6 +5688,7 @@
   {
     "type": "profession",
     "id": "guru",
+    "proficiencies": [ "prof_butchering_basic" ],
     "name": "Guru",
     "description": "You spent many years traveling through the world, becoming wise and learned.  Normally, you can answer any question, but even you are not quite sure what to do about the ravenous undead.",
     "points": 1,
@@ -5662,6 +5717,7 @@
   {
     "type": "profession",
     "id": "preacher",
+    "proficiencies": [ "prof_driver" ],
     "name": "Preacher",
     "description": "You devoted your life to spreading the good word, always on the road, traveling from town to town.  Now, everything has gone to hell, you can't host your daily podcast and the undead listening to your sermons don't seem particularly moved.",
     "points": 1,
@@ -5744,6 +5800,7 @@
   {
     "type": "profession",
     "id": "worlds_greatest",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "World's Greatest Athlete",
     "description": "Your name reverberated across the world as you set record after record in the Olympics, becoming the greatest of all time. Alas, even with your face plastered across billboards and cereals, the zombies are still more interested in turning you into gold medalist goulash.",
     "points": 8,
@@ -5764,6 +5821,7 @@
   {
     "type": "profession",
     "id": "boxer",
+    "proficiencies": [ "prof_athlete_basic", "prof_unarmed_familiar" ],
     "name": "Boxer",
     "description": "You were training for the fight of your life before the Cataclysm struck.  Now you fight just to keep yourself alive.",
     "points": 2,
@@ -5795,6 +5853,7 @@
   {
     "type": "profession",
     "id": "pizzaboy",
+    "proficiencies": [ "prof_driver" ],
     "name": { "male": "Pizza Delivery Boy", "female": "Pizza Delivery Girl" },
     "description": "You were delivering the last pizza of the night to the local cryogenics lab when the Cataclysm hit.  Fleeing to the nearest shelter, you find yourself with only your wits and some leftover pizza.  And they didn't even leave a tip!",
     "points": 0,
@@ -5823,6 +5882,7 @@
   {
     "type": "profession",
     "id": "archaeologist",
+    "proficiencies": [ "prof_butchering_basic", "prof_skinning_basic" ],
     "name": "Archaeologist",
     "description": "While on your way to a long-lost temple following a clue from your dead grandfather's journal, the ground started to shake uncontrollably.  Getting a bad feeling about the situation, you head to the nearest shelter.",
     "points": 3,
@@ -5938,6 +5998,7 @@
   {
     "type": "profession",
     "id": "rollerderby",
+    "proficiencies": [ "prof_athlete_basic", "prof_unarmed_familiar" ],
     "name": "Roller Derby Player",
     "description": "You were hell on wheels prior to the apocalypse.  Now the rest of your team is dead, and you probably wouldn't have lived this long if not for your penchant for high-speed violence.  Things are looking grim; how long can you race laps around the undead before you get blocked for good?",
     "points": 2,
@@ -5971,6 +6032,7 @@
   {
     "type": "profession",
     "id": "farmer",
+    "proficiencies": [ "prof_butchering_basic", "prof_carving" ],
     "name": "Farmer",
     "description": "You were making a living by raising crops, when the Cataclysm struck.  Now, with your trusty hoe and some seeds it's time to rebuild the Earth, one plant at a time.",
     "points": 1,
@@ -6036,6 +6098,7 @@
   {
     "type": "profession",
     "id": "hardened_survivor",
+    "proficiencies": [ "prof_butchering_basic", "prof_skinning_basic", "prof_carving", "prof_metalworking" ],
     "name": "Hardened Survivor",
     "description": "One of the lucky few who escaped the cataclysm, you made a life for yourself living off nature's bounties and what you could get outside the death traps of the large cities.",
     "points": 6,
@@ -6128,6 +6191,7 @@
   {
     "type": "profession",
     "id": "road_warrior",
+    "proficiencies": [ "prof_driver", "prof_carving", "prof_basic_engines", "prof_closures" ],
     "name": "Road Warrior",
     "description": "You lived by your wheels during the first few months of the apocalypse, now you're running low on ammo and fuel, and your situation is dire.  You've been reduced to a scavenger, living off the corpse of the old world.",
     "points": 6,
@@ -6233,6 +6297,7 @@
   {
     "type": "profession",
     "id": "player_bandit",
+    "proficiencies": [ "prof_food_prep", "prof_preservation", "prof_basic_engines", "prof_driver" ],
     "name": "Veteran Bandit",
     "description": "After the cities exploded there was a whirlwind of looting; a firestorm of fear.  Men began to feed on men.  On the roads it was a white line nightmare.  Looting, killing, drug-running, one way or another you'll live and die on your bike.",
     "points": 6,
@@ -6356,6 +6421,7 @@
   {
     "type": "profession",
     "id": "monster_hunter",
+    "proficiencies": [ "prof_closures", "prof_leatherworking_basic", "prof_carving", "prof_metalworking" ],
     "name": "Monster Hunter",
     "description": "With the fall of civilization, you took to living off the land and grew into a competent hunter.  The abominations that thrive in this new world may not be good eating, but their hides and bones make for quite practical trophies.",
     "points": 6,
@@ -6400,6 +6466,7 @@
   {
     "type": "profession",
     "id": "monster_slayer",
+    "proficiencies": [ "prof_closures", "prof_leatherworking_basic", "prof_carving", "prof_metalworking" ],
     "name": "Monster Slayer",
     "description": "With the fall of civilization, you took to living off the land and honed your skills fending off undead and worse.  You wear the fruits of your labor proudly, bearing weapons and armor made from the bones of great beasts.",
     "points": 6,
@@ -6516,6 +6583,7 @@
   {
     "type": "profession",
     "id": "wanderer",
+    "proficiencies": [ "prof_athlete_basic", "prof_butchering_basic", "prof_carving", "prof_food_prep" ],
     "name": "Wanderer",
     "description": "You always preferred the comfort of the open sky, far from the complexities of modern life.  Though from the looks of it, things have changed since last time you've been anywhere near civilization.",
     "points": 3,
@@ -6554,6 +6622,7 @@
   {
     "type": "profession",
     "id": "castaway",
+    "proficiencies": [ "prof_food_prep", "prof_carving", "prof_basic_engines", "prof_closures" ],
     "name": "Castaway",
     "description": "You were shipwrecked out on an island in the lake.  No one sent a search party, so after weeks of trying to signal for help you salvaged every scrap of clothing you could to set sail on a makeshift raft.  Where is everyone, and why do the sharks look so hungry?",
     "points": 2,
@@ -6762,6 +6831,7 @@
   {
     "type": "profession",
     "id": "prof_pirate",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Pirate",
     "description": "Arr!  Your costume may be shipshape, but the end of the world's scuppered all your plans.  Strike up your Jolly Roger and hoist the Bloody Red, for no quarter shall be given.",
     "points": 3,
@@ -6800,6 +6870,7 @@
   {
     "type": "profession",
     "id": "prof_pirate_captain",
+    "proficiencies": [ "prof_athlete_basic", "prof_driver" ],
     "name": "Pirate Captain",
     "description": "Land ho!  Ye went all out on the reenactment, got your letters of marque in order and cast off in a fine sloop, to prowl the New England waters with.",
     "points": 5,
@@ -6841,6 +6912,7 @@
   {
     "type": "profession",
     "id": "drone_op",
+    "proficiencies": [ "prof_elec_soldering", "prof_elec_circuits", "prof_basic_engines", "prof_carving" ],
     "name": "Bionic Robot Technician",
     "description": "You had a job programming machines such as automatic street cleaners, newsbots and pizza delivery drones, and you were bionically augmented to do so hands-free.  Now all the drones carry guns instead of pizza.",
     "points": 4,
@@ -7062,6 +7134,7 @@
   {
     "type": "profession",
     "id": "science_club_mem",
+    "proficiencies": [ "prof_food_prep", "prof_basic_engines", "prof_carving" ],
     "name": "Science Club Member",
     "description": "You were a member of the school science club, and right now you're as upset as you've ever been that the school wouldn't let you play with the really fun chemicals that make things go boom.  At least now no one's around to tell you that you can't.",
     "points": 1,
@@ -7092,6 +7165,7 @@
   {
     "type": "profession",
     "id": "av_club_mem",
+    "proficiencies": [ "prof_elec_soldering" ],
     "name": "A/V Club Member",
     "description": "You were a member of the school A/V club.  You're sure there's some way you can use your technical skills to help stay alive.  You just haven't figured out how to make an awesome death ray yet.",
     "points": 1,
@@ -7166,6 +7240,7 @@
   {
     "type": "profession",
     "id": "gym_teacher",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Gym Teacher",
     "description": "After a career of teaching kids the art of sports they mostly hate, the zombies around you refuse to do laps, even at the blow of your whistle.",
     "points": 3,
@@ -7186,6 +7261,7 @@
   {
     "type": "profession",
     "id": "camper",
+    "proficiencies": [ "prof_butchering_basic", "prof_athlete_basic" ],
     "name": "Camper",
     "description": "You always enjoyed hiking and camping in the wilderness before everything fell apart, so it was a no-brainer to grab your bag and run when the sirens sounded.  The world may be ruined, but you're prepared to make a home wherever you may find yourself.",
     "points": 2,
@@ -7228,6 +7304,7 @@
   {
     "type": "profession",
     "id": "rv_camper",
+    "proficiencies": [ "prof_driver", "prof_basic_engines" ],
     "name": "RV Camper",
     "description": "You always enjoyed life on the road, driving across the country to see the wonders of nature.  Now nature seems a lot more hostile, and it's a lot harder to get your RV hooked up to shore power.",
     "points": 4,
@@ -7280,6 +7357,7 @@
   {
     "type": "profession",
     "id": "miner",
+    "proficiencies": [ "prof_athlete_basic", "prof_basic_engines" ],
     "name": "Miner",
     "description": "You're a miner, not a minor!  Your jackhammer may be gassed up, but your canteen is dry, and you're on your last pair of batteries for your mining helmet…",
     "points": 1,
@@ -7315,6 +7393,7 @@
   {
     "type": "profession",
     "id": "demolition_expert",
+    "proficiencies": [ "prof_carving", "prof_metalworking", "prof_food_prep" ],
     "name": "Demolition Expert",
     "description": "Before this all began you were having the time of your life at your dream job, blowing things up.  Now you're finally allowed to do it full time. ",
     "skills": [
@@ -7402,6 +7481,7 @@
   {
     "type": "profession",
     "id": "bionic_installer",
+    "proficiencies": [ "prof_wound_care", "prof_elec_soldering", "prof_elec_circuits" ],
     "name": "Augmentation Associate",
     "description": "When bionics first emerged, you were quick to make them into your career, and spent your days overseeing their installation.  As one of the few non-zombies in the world that can calibrate an Autodoc, your skills might come in handy now that the world is over.",
     "points": 4,
@@ -7461,6 +7541,7 @@
   {
     "type": "profession",
     "id": "bionic_game_master",
+    "proficiencies": [ "prof_butchering_basic" ],
     "name": "Bionic Game Master",
     "description": "You came into a large fortune, through luck or will, and hosted games for people that most of the world knew on a first-name basis.  You could afford to spoil your players, and so you did.  You invested in bionics to make you smarter, and memorized the entire handbook.  Let's hope that knowledge helps you now.",
     "points": 3,
@@ -7485,6 +7566,7 @@
   {
     "type": "profession",
     "id": "zoo_keeper",
+    "proficiencies": [ "prof_wound_care", "prof_butchering_basic", "prof_skinning_basic" ],
     "name": "Zoo Keeper",
     "description": "You were called in on your day off to feed the animals at the zoo because none of your coworkers showed up for work for one reason or another.",
     "points": 1,
@@ -7528,6 +7610,7 @@
   {
     "type": "profession",
     "id": "bio_medic",
+    "proficiencies": [ "prof_wound_care" ],
     "name": "Bionic Surgeon",
     "description": "As one of the top surgeons in the country, you were chosen for an augmentation program to expand the medical field.  With your expertise and augmentations, you can perform precise surgery with little assistance.",
     "points": 6,
@@ -7846,6 +7929,7 @@
   {
     "type": "profession",
     "id": "fighter_pilot",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_butchering_basic", "prof_skinning_basic" ],
     "name": "Fighter Pilot",
     "description": "They had you pushing your aircraft to the breaking point dropping ordinance on the undead.  After a mid-air collision forced you to eject, you were picked up by the unit you were providing air support for only for them to be wiped out to the last man.",
     "age": { "min": 20, "max": 40 },
@@ -8046,6 +8130,7 @@
   {
     "type": "profession",
     "id": "prof_feral_scientist",
+    "proficiencies": [ "prof_food_prep", "prof_preservation", "prof_elec_soldering", "prof_elec_circuits" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Scientist",
     "description": "You learned quite a few things back in those old labs.  You know now why the world ended.  You just need a better equipment and you can prove to whoever's left you were right all along.",
@@ -8131,6 +8216,7 @@
   {
     "type": "profession",
     "id": "prof_feral_firefighter",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Firefighter",
     "//": "Contains a Fahrenheit 451 reference.",
@@ -8170,6 +8256,7 @@
   {
     "type": "profession",
     "id": "prof_feral_mechanic",
+    "proficiencies": [ "prof_basic_engines" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Mechanic",
     "description": "You've always loved cars.  Now you'll never be wanting for materials.  The machine speaks to you, commanding you to build it.",
@@ -8203,6 +8290,7 @@
   {
     "type": "profession",
     "id": "prof_feral_biker",
+    "proficiencies": [ "prof_driver", "prof_basic_engines" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Biker",
     "description": "You lived on the open road with your motorcycle club.  They're dead and you're not.  Any bastard that tries to touch your ride will join them.",
@@ -8245,6 +8333,7 @@
   {
     "type": "profession",
     "id": "prof_feral_survivalist",
+    "proficiencies": [ "prof_butchering_basic", "prof_skinning_basic", "prof_carving", "prof_metalworking" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Survivalist",
     "description": "Your skills are quite likely to come in useful considering civilization is now full of monsters that want you dead.  The feeling's mutual, you'll kill whoever or whatever poses a threat to you.",
@@ -8297,6 +8386,7 @@
   {
     "type": "profession",
     "id": "prof_feral_soldier",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_knives_familiar", "prof_butchering_basic" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Soldier",
     "//": "Contains a Full Metal Jacket reference.",
@@ -8350,6 +8440,7 @@
   {
     "type": "profession",
     "id": "prof_feral_cyborg",
+    "proficiencies": [ "prof_unarmed_familiar", "prof_butchering_basic" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Cyborg",
     "description": "Completely overtaken by bionic-induced psychosis, you are a deformed posthuman monster who had no place in society.  Was that your excuse all along, was it the machine that drove you mad or were you always mad?  Or did it all start when the world ended?  You can't remember anymore.",
@@ -8391,6 +8482,7 @@
   {
     "type": "profession",
     "id": "prof_feral_mutant",
+    "proficiencies": [ "prof_food_prep", "prof_elec_soldering", "prof_unarmed_familiar" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Mutant",
     "//": "Contains a Powerwolf reference.  +2 points over volunteer mutant due to skills but balanced out by mixed bag of Chimera mutations.",
@@ -8412,6 +8504,7 @@
   {
     "type": "profession",
     "id": "prof_feral_maid",
+    "proficiencies": [ "prof_food_prep", "prof_driver", "prof_closures" ],
     "copy-from": "prof_feral_unemployed",
     "name": { "male": "Feral Butler", "female": "Feral Maid" },
     "description": "You worked in a wealthy household, but after the Cataclysm your employer had an unfortunate accident.  What a shame, they would've loved the tender flesh you've since learned to cook.",
@@ -8429,6 +8522,7 @@
   {
     "type": "profession",
     "id": "prof_feral_socialite",
+    "proficiencies": [ "prof_knives_familiar" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Socialite",
     "description": "Elegant as always, the end of the world hardly fazed you at all.  Your entourage is as lively as ever, just a bit peckish.  Best to not keep them waiting, let the hunt begin.",
@@ -8461,6 +8555,7 @@
   {
     "type": "profession",
     "id": "prof_feral_armored",
+    "proficiencies": [ "prof_athlete_basic", "prof_closures", "prof_carving" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Reenactor",
     "//": "Contains a (rearranged) Manowar reference.",
@@ -8485,6 +8580,7 @@
   {
     "type": "profession",
     "id": "prof_feral_lumberjack",
+    "proficiencies": [ "prof_athlete_basic" ],
     "copy-from": "prof_feral_unemployed",
     "name": "Feral Chainsaw Maniac",
     "//": "Contains a reference to The Texas Chainsaw Massacre.  One higher point cost due to included chainsaw and safety gear.",
@@ -8596,6 +8692,7 @@
   {
     "type": "profession",
     "id": "graffiti_crew",
+    "proficiencies": [ "prof_butchering_basic", "prof_athlete_basic" ],
     "name": "Graffiti Crew",
     "description": "You and your fellow street artists have survived the initial chaos by sticking together. Now there's much more pressing matters than being caught by the police.",
     "points": 4,
@@ -8622,6 +8719,7 @@
   {
     "type": "profession",
     "id": "heist_crew",
+    "proficiencies": [ "prof_driver", "prof_basic_engines" ],
     "name": "Heist Crew",
     "description": "For as long as you can remember, you have lived a double life: a normal driver by the day and a heist driver in the night.  Now you've got one last job.",
     "points": 5,
@@ -8655,6 +8753,7 @@
   {
     "type": "profession",
     "id": "neighborhood_watch",
+    "proficiencies": [ "prof_driver", "prof_basic_engines" ],
     "name": "Neighborhood Watch",
     "description": "You always knew the end was coming - maybe not zombies, but something bad. Between late-night doomsday movies, cheap beer, and greasy pizza, you talked your neighbors into taking it seriously. When it all went down, you grabbed the truck, called the boys, and swore you’d keep the neighborhood safe. Now it’s time to put those plans into action.",
     "points": 6,
@@ -8704,6 +8803,7 @@
   {
     "type": "profession",
     "id": "exterminator",
+    "proficiencies": [ "prof_food_prep", "prof_preservation", "prof_traps" ],
     "name": "Exterminator",
     "description": "Before the world fell apart, you were the first line of defense against roaches, rats, and worse. Armed with sprays, traps, and a healthy dose of stubbornness, you knew every trick in the book for clearing infestations. Now, your skills have never been more relevant - the pests are bigger, meaner, and sometimes hungry for you.",
     "points": 4,
@@ -8784,6 +8884,7 @@
   {
     "type": "profession",
     "id": "mili_burner",
+    "proficiencies": [ "prof_butchering_basic", "prof_wound_care", "prof_knives_familiar", "prof_athlete_basic" ],
     "name": "Military Corpse Disposal",
     "description": "In response to the outbreak, you were dispatched to contain the infection by burning the corpses.  With command consumed by the undead, your priorities have shifted to basic survival.",
     "age": { "min": 17, "max": 35 },
@@ -8885,6 +8986,7 @@
   {
     "type": "profession",
     "id": "mil_drone_operator",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_knives_familiar", "prof_butchering_basic" ],
     "name": "Military Drone Operator",
     "description": "You realized the difference between what the army and the air force considers a 'drone operator' a bit too late.  Still, you have a couple manhacks to stand between you and the undead.",
     "age": { "min": 20, "max": 40 },
@@ -8939,6 +9041,7 @@
   {
     "type": "profession",
     "id": "knight",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Knight",
     "description": "Chivalry! Daring! Honor! All traits that are useless in the Cataclysm. But you know how to fight with a sword and you have this armor so it could be worse.",
     "points": 4,
@@ -8958,6 +9061,7 @@
   {
     "type": "profession",
     "id": "airship_pilot",
+    "proficiencies": [ "prof_driver", "prof_basic_engines" ],
     "name": "Airship Captain",
     "description": "You once led a crew of skyfarers, traveling the skies for fame, bricks and sand.  Now you are on your own, and the ground is swarming with zombies.  At least this world has ground…",
     "starting_cash": 0,
@@ -9004,6 +9108,7 @@
   {
     "type": "profession",
     "id": "airboat_pilot",
+    "proficiencies": [ "prof_driver", "prof_basic_engines" ],
     "name": "Airboat Commander",
     "description": "You were part of a squadron of skyfarers, plying the vastness to protect trade routes from nefarious air pirates.  Now you're adrift and alone, one vessel against an alien world swarming with the undead…",
     "copy-from": "airship_pilot",
@@ -9039,6 +9144,7 @@
   {
     "type": "profession",
     "id": "aircanoe_pilot",
+    "proficiencies": [ "prof_driver", "prof_basic_engines", "prof_butchering_basic" ],
     "name": "Aircanoe Pilot",
     "description": "You're a lone skyfarer, scouting the endless blue for new routes across the sky.  Now you've caught sight of more land than you've seen in a lifetime, an unfamiliar land of monsters…",
     "copy-from": "airship_pilot",
@@ -9072,6 +9178,7 @@
   {
     "type": "profession",
     "id": "tankmod_driver",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_driver", "prof_basic_engines" ],
     "name": "Tank Driver",
     "description": "You were in charge of driving the tank, but without a commander it's a lot harder to get a clear picture of what's around you.",
     "points": 4,
@@ -9113,6 +9220,7 @@
   {
     "type": "profession",
     "id": "tankmod_gunner",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_basic_engines" ],
     "name": "Tank Gunner",
     "description": "You were responsible for aiming and firing the main gun, but now you have no one left to spot targets for you.",
     "points": 4,
@@ -9154,6 +9262,7 @@
   {
     "type": "profession",
     "id": "tankmod_loader",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_basic_engines" ],
     "name": "Tank Loader",
     "description": "Your job was to help the main gunner with loading, now you'll have to do all the work yourself.",
     "points": 3,
@@ -9195,6 +9304,7 @@
   {
     "type": "profession",
     "id": "tankmod_commander",
+    "proficiencies": [ "prof_athlete_basic", "prof_wound_care", "prof_driver", "prof_basic_engines" ],
     "name": "Tank Commander",
     "description": "Your role was to coordinate the tank crew's actions and spot targets, a job made significantly harder by everyone else being either dead or MIA.",
     "points": 5,
@@ -9240,6 +9350,7 @@
   {
     "type": "profession",
     "id": "irs",
+    "proficiencies": [ "prof_athlete_basic", "prof_unarmed_familiar", "prof_wound_care" ],
     "name": "IRS-CI Special Agent",
     "description": "After years of near-death encounters doing field work as a veteran special agent, nothing really fazes you anymore. You've been shot at, slashed at, swung on, and nearly run over while investigating tax fraud; this cataclysm is just a day in the life for you. With no one left to hold you accountable, taxes will be paid or capital punishment will be dispensed. You are inevitable.",
     "points": 6,
@@ -9296,6 +9407,7 @@
   {
     "type": "profession",
     "id": "elite_specops",
+    "proficiencies": [ "prof_athlete_basic", "prof_butchering_basic", "prof_skinning_basic", "prof_wound_care" ],
     "name": "Elite Operator",
     "description": "You were the best of the best, the military's finest, and among them you were better still.  Movies have been made about the missions you went on, and that's only the declassified ones. After getting back from yet another top secret mission, all you wanted to do was relax. Unfortunately, the Cataclysm had other plans, and now, stuck without your gear, you'll just have to show them what makes you tier one.",
     "age": { "min": 20, "max": 40 },
@@ -9433,6 +9545,7 @@
   {
     "type": "profession",
     "id": "RNG_SURVIVOR",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "RANDOMISED: Melee survivor",
     "description": "You've looted a random assortment of intact armor and a pristine weapon from the overly hungry folk, but will it be enough?  (Note: What you see in character creation does not reflect what it will select at game start.)",
     "skills": [ { "level": 3, "name": "swimming" }, { "level": 3, "name": "dodge" }, { "level": 3, "name": "melee" } ],
@@ -9457,6 +9570,7 @@
   {
     "type": "profession",
     "id": "mortician",
+    "proficiencies": [ "prof_wound_care" ],
     "name": "Mortician",
     "description": "Before the Cataclysm, you used to embalm and bury bodies. Nowadays, there is no more room in hell, so you're putting them down instead.",
     "points": 1,

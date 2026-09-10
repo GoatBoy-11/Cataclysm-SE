@@ -44,6 +44,11 @@ Everything below is CSE-only. Anything not listed here behaves as Bright Nights 
   **Choosing an item's pocket** adds a prompt at pickup. The organiser is bound to `o` and `P`.
 - **Mouse support.** Hover and click across menus, prompts, pickup and trade, plus the X1 and X2
   side buttons. Toggle with **Enable mouse**.
+- **Proficiencies.** Dark Days Ahead's proficiency system, ported to Bright Nights: knowing *how*
+  a thing is done, held apart from skill level. 235 proficiencies across 18 categories, granted by
+  189 professions and learned by crafting. Missing one a recipe calls for slows the work and hurts
+  the result. They have their own tab on the character screen, and `p` opens a browser. Turn the
+  crafting effects off per world with **Crafting proficiencies**.
 - **Images in game.** Items and Lua scripts can raise a modal image overlay, including animated
   GIFs and spritesheets.
 - **New traits.** New personality traits, with more planned to be added.
