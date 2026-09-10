@@ -57,6 +57,7 @@
 #include "pimpl.h"
 #include "pldata.h"
 #include "profession.h"
+#include "proficiency.h"
 #include "ranged.h"
 #include "recipe.h"
 #include "recipe_dictionary.h"
@@ -862,6 +863,11 @@ bool avatar::create( character_type type, const std::string &tempname )
     // We want to do this before the recipes
     for( const profession::StartingSkill &e : prof->skills() ) {
         mod_skill_level( e.first, e.second );
+    }
+
+    // Proficiencies are known outright, prerequisites included
+    for( const proficiency_id &e : prof->proficiencies() ) {
+        add_proficiency( e, true );
     }
 
     // setup staring bank money

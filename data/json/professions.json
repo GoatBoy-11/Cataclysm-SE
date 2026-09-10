@@ -1245,6 +1245,7 @@
   {
     "type": "profession",
     "id": "sheltered_survivor",
+    "proficiencies": [ "prof_fibers", "prof_knitting", "prof_carving" ],
     "name": "Sheltered Survivor",
     "description": "At the start of the Cataclysm, you hunkered down in a bomb shelter.  Now, it is winter, and you hope the rag-tag collection of skills you learned from all those books can help you survive.",
     "points": 3,
@@ -1270,6 +1271,7 @@
   {
     "type": "profession",
     "id": "sheltered_militia",
+    "proficiencies": [ "prof_gunsmithing_basic", "prof_gunsmithing_improv", "prof_gun_cleaning" ],
     "name": "Sheltered Militia",
     "description": "At the start of the Cataclysm, you hunkered down in a bomb shelter.  Now, it is winter, and you hope your guns and the skills you have acquired can help you survive.",
     "points": 4,
@@ -1307,6 +1309,16 @@
   {
     "type": "profession",
     "id": "tailor",
+    "proficiencies": [
+      "prof_fibers",
+      "prof_leatherworking_basic",
+      "prof_leatherworking",
+      "prof_furriery",
+      "prof_closures",
+      "prof_closures_waterproofing",
+      "prof_cobbling",
+      "prof_millinery"
+    ],
     "name": "Tailor",
     "description": "Tailoring may not seem like the most useful skill when the world has ended.  Most people wouldn't expect a simple tailor to live long.  This is your opportunity to prove them wrong.",
     "points": 2,
@@ -1337,6 +1349,16 @@
   {
     "type": "profession",
     "id": "chef",
+    "proficiencies": [
+      "prof_food_prep",
+      "prof_knife_skills",
+      "prof_baking",
+      "prof_baking_desserts_1",
+      "prof_frying",
+      "prof_knives_familiar",
+      "prof_butchering_basic",
+      "prof_skinning_basic"
+    ],
     "name": "Chef",
     "description": "Bork bork!  Years in the kitchen have left you carrying a prodigious bulk, but you managed to escape the carnage with a butchers knife and only a small collection of stains on your uniform.",
     "points": 1,
@@ -1353,6 +1375,7 @@
   {
     "type": "profession",
     "id": "churl",
+    "proficiencies": [ "prof_fibers", "prof_carving", "prof_leatherworking_basic", "prof_knives_familiar" ],
     "name": "Churl",
     "starting_cash": 0,
     "description": "What the deuyl?  Ye ne wist noo thing of this straunge plaas nor what wycked enchauntment brought ye hidder.  Wyth this accoustrement ye must needs underfongen to find newe lyflode in the most hidous Cataclysm man hath witnessed sithen that deluge Noe rood out in his greet schippe.",
@@ -1577,6 +1600,7 @@
   {
     "type": "profession",
     "id": "labtech",
+    "proficiencies": [ "prof_intro_chemistry", "prof_intro_biology" ],
     "name": "Lab Technician",
     "description": "Thanks to your time in the lab, you're familiar with the basics of conducting science.  Now that the world has ended, only one question remains: Can you undo the very Cataclysm you helped create?",
     "points": 3,
@@ -1635,6 +1659,7 @@
   {
     "type": "profession",
     "id": "mechanic",
+    "proficiencies": [ "prof_metalworking", "prof_welding_basic", "prof_elec_soldering", "prof_driver" ],
     "name": "Home Mechanic",
     "description": "You've always loved working on cars, and have been eager to tune up something special one of these days.  At least now you'll never be wanting for materials.",
     "points": 2,
@@ -1655,6 +1680,7 @@
   {
     "type": "profession",
     "id": "scoundrel",
+    "proficiencies": [ "prof_lockpicking", "prof_knives_familiar", "prof_unarmed_familiar" ],
     "name": "Scoundrel",
     "description": "Your flexible outlook on the law, the scuffles you've been in (and avoided) at the bar, and your impressive ability to weasel your way out of the consequences of your actions - all these skills have helped ensure your survival.  But how much longer will they hold out?",
     "points": 2,
@@ -1718,6 +1744,7 @@
   {
     "type": "profession",
     "id": "basketball_player",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Basketball Player",
     "description": "It was going to be your first major game, but then the Cataclysm struck.  Thanks to your quick feet, you were among the lucky few to survive and escape from the creatures.",
     "points": 3,
@@ -1762,6 +1789,7 @@
   {
     "type": "profession",
     "id": "cyclist",
+    "proficiencies": [ "prof_athlete_basic", "prof_athlete_expert", "prof_driver" ],
     "name": "Professional Cyclist",
     "description": "You were a promising young cyclist with a bright career in front of you before this all happened.  Perhaps you'll never get to participate in the grand tours now, but as the saying goes: Life is like riding a bicycle, you got to keep moving.",
     "points": 4,
@@ -2050,6 +2078,13 @@
   {
     "type": "profession",
     "id": "mil_auto_rifleman",
+    "proficiencies": [
+      "prof_gunsmithing_basic",
+      "prof_gun_cleaning",
+      "prof_knives_familiar",
+      "prof_auto_rifles_familiar",
+      "prof_auto_pistols_familiar"
+    ],
     "name": "Military Automatic Rifleman",
     "description": "You were trained to lay down suppressing fire, and are armed accordingly.  But they just seem to keep coming without end, you're not sure you have the firepower for this.",
     "age": { "min": 17, "max": 35 },
@@ -2102,6 +2137,13 @@
   {
     "type": "profession",
     "id": "mil_grenadier",
+    "proficiencies": [
+      "prof_gunsmithing_basic",
+      "prof_gun_cleaning",
+      "prof_knives_familiar",
+      "prof_auto_rifles_familiar",
+      "prof_auto_pistols_familiar"
+    ],
     "name": "Military Grenadier",
     "description": "You were the one assigned the team's grenade launcher, something you thought was overkill for a stateside deployment at first.  Now you're starting to wish you joined the Field Artillery Branch.",
     "age": { "min": 17, "max": 35 },
@@ -2154,6 +2196,14 @@
   {
     "type": "profession",
     "id": "mil_marksman",
+    "proficiencies": [
+      "prof_gunsmithing_basic",
+      "prof_gun_cleaning",
+      "prof_knives_familiar",
+      "prof_auto_rifles_familiar",
+      "prof_auto_pistols_familiar",
+      "prof_gross_anatomy"
+    ],
     "name": "Military Designated Marksman",
     "description": "You aren't a dedicated sniper, but every squad needs someone who can handle targets beyond their effective range.  Without the rest of your squad, things are getting too close quarters for your liking.",
     "age": { "min": 17, "max": 35 },
@@ -2329,6 +2379,16 @@
   {
     "type": "profession",
     "id": "specops",
+    "proficiencies": [
+      "prof_gunsmithing_basic",
+      "prof_traps",
+      "prof_disarming",
+      "prof_spotting",
+      "prof_gun_cleaning",
+      "prof_knives_familiar",
+      "prof_gross_anatomy",
+      "prof_auto_rifles_familiar"
+    ],
     "name": "Special Operator",
     "description": "You were the best of the best, the military's finest.  That's why you're still alive, even after all your comrades fell to the undead.  As far as you can tell, military command abandoned you in this hellhole when you missed the emergency evac.",
     "age": { "min": 20, "max": 40 },
@@ -2681,6 +2741,7 @@
   {
     "type": "profession",
     "id": "maid",
+    "proficiencies": [ "prof_food_prep", "prof_closures", "prof_knife_skills", "prof_knives_familiar" ],
     "name": { "male": "Butler", "female": "Maid" },
     "description": "You worked in a wealthy household, but after the Cataclysm they took a family vacation to an unknown place, leaving you to fend for yourself.",
     "points": 1,
@@ -2702,6 +2763,7 @@
   {
     "type": "profession",
     "id": "rescuer",
+    "proficiencies": [ "prof_auto_rifles_familiar", "prof_knives_familiar", "prof_auto_pistols_familiar" ],
     "name": { "male": "Rescuer", "female": "Rescuer" },
     "description": "You were ready.  You went in determined to find and rescue your friends.  But now as you walk through those strange corridors, the atmosphere grows heavy and you're not so sure anymore.  You might be the one in need of a rescue now.",
     "points": 3,
@@ -2759,6 +2821,17 @@
   {
     "type": "profession",
     "id": "medic",
+    "proficiencies": [
+      "prof_wound_care",
+      "prof_wound_care_expert",
+      "prof_intro_biology",
+      "prof_intro_chemistry",
+      "prof_physiology",
+      "prof_burn_care",
+      "prof_dissect_humans",
+      "prof_organic_chemistry",
+      "prof_gross_anatomy"
+    ],
     "name": "Medical Resident",
     "description": "Fresh out of med school, you've got little in the way of practical experience.  You just hope it will be enough if the old adage of 'Doctor, heal thyself' ends up being required.",
     "points": 2,
@@ -2790,6 +2863,7 @@
   {
     "type": "profession",
     "id": "gangster",
+    "proficiencies": [ "prof_knives_familiar", "prof_unarmed_familiar", "prof_shivs_familiar", "prof_gross_anatomy" ],
     "name": "Gangster",
     "description": "The boss always said he could rely on you to pull through on the tough jobs.  A shame he didn't manage it, himself.  No stranger to a spot of violence, you almost feel at home in this new world already.",
     "points": 3,
@@ -2913,6 +2987,7 @@
   {
     "type": "profession",
     "id": "groundskeeper",
+    "proficiencies": [ "prof_short_swords_familiar", "prof_short_swords_pro" ],
     "name": "Landscaper",
     "//": "A simple class for players who want to try some basic crafting immediately, or who want a machete because it's in-genre.",
     "description": "You used to mow lawns and trim hedges for the wealthy.  Contract work was getting scarce even before the zombies came, but now you've got nothing left but your tools and expertise.",
@@ -2945,6 +3020,7 @@
   {
     "type": "profession",
     "id": "homemaker",
+    "proficiencies": [ "prof_wound_care" ],
     "name": "Nursing Assistant",
     "//": "They don't have the doctor's passive bonus to surgery.  Nursing assistants aren't required to hold a doctorate.",
     "description": "You were providing in-home care for the elderly, even as the whole world fell apart around you.  You can only pray that you don't see your former clients among the walking dead…",
@@ -2974,6 +3050,22 @@
   {
     "type": "profession",
     "id": "survivalist",
+    "proficiencies": [
+      "prof_gunsmithing_basic",
+      "prof_gunsmithing_improv",
+      "prof_bowyery",
+      "prof_fibers",
+      "prof_fibers_rope",
+      "prof_leatherworking_basic",
+      "prof_metalworking",
+      "prof_lockpicking",
+      "prof_bow_basic",
+      "prof_bow_expert",
+      "prof_fletching",
+      "prof_carving",
+      "prof_gun_cleaning",
+      "prof_knives_familiar"
+    ],
     "name": "Survivalist",
     "description": "Skilled at surviving off the land far from civilization, your skills are quite likely to come in useful considering civilization is now full of monsters that want you dead.  Your equipment is basic, but versatile - and with your skills, more than you need…  except your canteen's run out!",
     "points": 5,
@@ -3196,6 +3288,7 @@
   {
     "type": "profession",
     "id": "heli_pilot",
+    "proficiencies": [ "prof_helicopter_pilot" ],
     "name": "Pilot",
     "description": "You’ve spent years in the cockpit, guiding passengers, cargo, or your own craft through the skies. The Cataclysm has grounded you, but the thrill of flight still calls…",
     "points": 2,
@@ -3314,6 +3407,7 @@
   {
     "type": "profession",
     "id": "k9_cop",
+    "proficiencies": [ "prof_spotting", "prof_gun_cleaning", "prof_batons_familiar", "prof_auto_pistols_familiar" ],
     "name": "K9 Officer",
     "description": "You spent your career busting drug smugglers with your faithful canine companion.  Now the world has ended and none of that matters anymore.  But at least you have a loyal friend.",
     "points": 4,
@@ -3377,6 +3471,7 @@
   {
     "type": "profession",
     "id": "crazy_cat_lady",
+    "proficiencies": [ "prof_knitting", "prof_knitting_speed" ],
     "name": { "male": "Crazy Cat Dude", "female": "Crazy Cat Lady" },
     "description": "Everyone is dead?  Well, it doesn't matter… your cats are all the friends you need!",
     "points": 5,
@@ -3404,6 +3499,7 @@
   {
     "type": "profession",
     "id": "cop",
+    "proficiencies": [ "prof_spotting", "prof_gun_cleaning", "prof_batons_familiar", "prof_auto_pistols_familiar" ],
     "name": "Police Officer",
     "description": "Just a small-town deputy when you got the call, you were still ready to come to the rescue.  Except that soon it was you who needed rescuing - you were lucky to escape with your life.  Who's going to respect your authority when the government this badge represents might not even exist anymore?",
     "points": 3,
@@ -3446,6 +3542,7 @@
   {
     "type": "profession",
     "id": "detective",
+    "proficiencies": [ "prof_spotting", "prof_gun_cleaning" ],
     "name": "Police Detective",
     "description": "You were on the brink of a major breakthrough in your last homicide case when the Cataclysm struck.  Now that suspect is dead.  Everyone's dead.  You need a smoke.",
     "points": 4,
@@ -3530,6 +3627,7 @@
   {
     "type": "profession",
     "id": "swat",
+    "proficiencies": [ "prof_gunsmithing_basic", "prof_spotting", "prof_gun_cleaning", "prof_auto_pistols_familiar", "prof_batons_familiar" ],
     "name": "SWAT Officer",
     "description": "As a member of the police force's most elite division, you are more than adequately trained and equipped to survive the brutal onslaught of the apocalypse.  Unfortunately, the breakdown of society has brought you to your current state of affairs; you now fight to simply stay alive.",
     "points": 6,
@@ -3580,6 +3678,16 @@
   {
     "type": "profession",
     "id": "swat_heavy",
+    "proficiencies": [
+      "prof_spotting",
+      "prof_gun_cleaning",
+      "prof_batons_familiar",
+      "prof_batons_pro",
+      "prof_unarmed_familiar",
+      "prof_unarmed_pro",
+      "prof_auto_pistols_familiar",
+      "prof_gross_anatomy"
+    ],
     "name": "SWAT CQC Specialist",
     "description": "A member of the police force's most elite division, your close quarters combat training has kept you alive thus far.  Unfortunately, the breakdown of society has brought you to your current state of affairs; you now fight to simply stay alive.",
     "points": 7,
@@ -3629,6 +3737,14 @@
   {
     "type": "profession",
     "id": "sniper_police",
+    "proficiencies": [
+      "prof_gunsmithing_basic",
+      "prof_spotting",
+      "prof_gun_cleaning",
+      "prof_auto_rifles_familiar",
+      "prof_auto_pistols_familiar",
+      "prof_gross_anatomy"
+    ],
     "name": "Police Sniper",
     "description": "Your skill as a sharpshooter served you well in the line of duty, protecting the innocent with a single, well placed bullet.  Now survival itself is on the line, and you can't afford to miss if you don't want to end up as something's dinner.",
     "points": 6,
@@ -3674,6 +3790,7 @@
   {
     "type": "profession",
     "id": "riot_police",
+    "proficiencies": [ "prof_spotting", "prof_gun_cleaning", "prof_batons_familiar", "prof_gross_anatomy", "prof_auto_pistols_familiar" ],
     "name": "Riot Control Officer",
     "description": "The riots were brutal, and that's before the dead rose and started to devour the living.  Soon it became apparent that the line you were holding was about to break - it was only through a bit of luck and a lot of head-bashing that you got away in one piece, and the worst is yet to come.",
     "points": 5,
@@ -3735,6 +3852,15 @@
   {
     "type": "profession",
     "id": "bow_hunter",
+    "proficiencies": [
+      "prof_bow_basic",
+      "prof_bowyery",
+      "prof_knives_familiar",
+      "prof_butchering_basic",
+      "prof_skinning_basic",
+      "prof_gross_anatomy",
+      "prof_wp_ungulate"
+    ],
     "name": "Bow Hunter",
     "description": "Ever since you were a child you loved hunting, and you soon took a liking to the challenge of hunting with a bow.  Why, if the world ended there's nothing you'd want at your side more than your trusty bow.  So when it did, you made sure to bring it along.",
     "points": 2,
@@ -3767,6 +3893,15 @@
   {
     "type": "profession",
     "id": "crossbow_hunter",
+    "proficiencies": [
+      "prof_bow_basic",
+      "prof_gunsmithing_spring",
+      "prof_knives_familiar",
+      "prof_butchering_basic",
+      "prof_skinning_basic",
+      "prof_gross_anatomy",
+      "prof_wp_ungulate"
+    ],
     "name": "Crossbow Hunter",
     "description": "Ever since you were a child you loved hunting, and you soon took a liking to the challenge of hunting with a crossbow.  Why, if the world ended there's nothing you'd want at your side more than your trusty crossbow.  So when it did, you made sure to bring it along.",
     "points": 2,
@@ -3802,6 +3937,15 @@
   {
     "type": "profession",
     "id": "shotgun_hunter",
+    "proficiencies": [
+      "prof_gun_cleaning",
+      "prof_knives_familiar",
+      "prof_gross_anatomy",
+      "prof_butchering_basic",
+      "prof_skinning_basic",
+      "prof_wp_basic_bird",
+      "prof_wp_ungulate"
+    ],
     "name": "Shotgun Hunter",
     "description": "Ever since you were a child you loved hunting, and you soon took a liking to the challenge of hunting with a shotgun.  Why, if the world ended there's nothing you'd want at your side more than your trusty shotgun.  So when it did, you made sure to bring it along.",
     "points": 2,
@@ -3833,6 +3977,14 @@
   {
     "type": "profession",
     "id": "rifle_hunter",
+    "proficiencies": [
+      "prof_gun_cleaning",
+      "prof_knives_familiar",
+      "prof_butchering_basic",
+      "prof_skinning_basic",
+      "prof_gross_anatomy",
+      "prof_wp_ungulate"
+    ],
     "name": "Rifle Hunter",
     "description": "Ever since you were a child you loved hunting, and you soon took a liking to the challenge of hunting with a rifle.  Why, if the world ended there's nothing you'd want at your side more than your trusty rifle.  So when it did, you made sure to bring it along.",
     "points": 2,
@@ -3864,6 +4016,14 @@
   {
     "type": "profession",
     "id": "construction_worker",
+    "proficiencies": [
+      "prof_plumbing",
+      "prof_elec_soldering",
+      "prof_metalworking",
+      "prof_lockpicking",
+      "prof_carpentry_basic",
+      "prof_appliance_repair"
+    ],
     "name": { "male": "Handy Man", "female": "Handy Woman" },
     "description": "You used to work at a local hardware store, and you did a lot of home renovations yourself.  Now you look out at the horizon of a ruined world, and wonder - are your meager skills, and the few supplies you grabbed on the way out, sufficient to help it rebuild?",
     "points": 1,
@@ -3884,6 +4044,7 @@
   {
     "type": "profession",
     "id": "trucker",
+    "proficiencies": [ "prof_driver" ],
     "name": "Trucker",
     "description": "You ruled the road in your big rig and managed to drive it somewhere you hoped was safe when the riots hit.  Now it's just you and your trusty truck cab.",
     "points": 4,
@@ -3900,6 +4061,7 @@
   {
     "type": "profession",
     "id": "lumberjack",
+    "proficiencies": [ "prof_great_axes_familiar", "prof_great_axes_pro", "prof_hand_axes_familiar", "prof_hand_axes_pro" ],
     "name": "Lumberjack",
     "description": "You're a lumberjack, and you're okay.  You felled trees before the world ended, but suspect the undead aren't nearly as tough.",
     "points": 1,
@@ -3952,6 +4114,7 @@
   {
     "type": "profession",
     "id": "fastfoodcook",
+    "proficiencies": [ "prof_frying", "prof_knives_familiar" ],
     "name": "Fast Food Cook",
     "description": "You used to work at a fancy fast food joint a week ago, but now you show the meaning of \"fast\" food by running for your life.",
     "points": 0,
@@ -3965,6 +4128,7 @@
   {
     "type": "profession",
     "id": "electrician",
+    "proficiencies": [ "prof_elec_soldering", "prof_appliance_repair" ],
     "name": "Electrician",
     "description": "You used to work for some small-time business owners doing minor electrical work, and were on your way to another trivial job when the Cataclysm struck.  The power's out, but if you survive long enough you might be able to improvise.",
     "points": 1,
@@ -4091,6 +4255,7 @@
   {
     "type": "profession",
     "id": "biker",
+    "proficiencies": [ "prof_driver" ],
     "name": "Biker",
     "description": "You spent most of your life on a Harley, out on the open road with your club.  Now they're all dead.  Time to ride or die.",
     "points": 3,
@@ -4839,6 +5004,15 @@
   {
     "type": "profession",
     "id": "trapper",
+    "proficiencies": [
+      "prof_fibers",
+      "prof_fibers_rope",
+      "prof_traps",
+      "prof_trapsetting",
+      "prof_knives_familiar",
+      "prof_butchering_basic",
+      "prof_skinning_basic"
+    ],
     "name": "Trapper",
     "description": "You spent most of your life trapping with your father.  Both of you made a decent living off of your catches, and trapping tutorials.  Hopefully, your skills will come in useful against less conventional game.",
     "points": 2,
@@ -4869,6 +5043,7 @@
   {
     "type": "profession",
     "id": "blacksmith",
+    "proficiencies": [ "prof_metalworking", "prof_blacksmithing" ],
     "name": "Blacksmith",
     "description": "You were going through your community college's metalsmithing program when the world ended.  You ran into trouble coming out of class - but managed to keep ahold of the equipment you were carrying at the time.",
     "points": 1,
@@ -4896,6 +5071,7 @@
   {
     "type": "profession",
     "id": "lost_sub",
+    "proficiencies": [ "prof_fibers", "prof_fibers_rope" ],
     "name": "Lost Submissive",
     "description": "Early in the rush to safety, you were separated from your master by cruel fate.  Now you are on your own with nothing to your name but a suit of really kinky black leather.  Unfortunately, there's no safewords in the apocalypse.",
     "points": -1,
@@ -4904,6 +5080,7 @@
   {
     "type": "profession",
     "id": "senior",
+    "proficiencies": [ "prof_knitting" ],
     "name": "Senior Citizen",
     "description": "You haven't seen this much blood since the war.  The whole world's gone crazy!  They ate your grandkids!  But dagnabbit, you'll make them all pay for what they've done.",
     "points": 0,
@@ -5006,6 +5183,7 @@
   {
     "type": "profession",
     "id": "firefighter",
+    "proficiencies": [ "prof_burn_care", "prof_wound_care" ],
     "name": "Firefighter",
     "description": "As a first responder you were direct witness to the gut-wrenching horrors of the apocalypse.  Separated from most of your equipment and your unit while on call, you were forced to fight your way to safety with little more than your trusty iron and bunker gear to protect you.",
     "points": 2,
@@ -5138,6 +5316,7 @@
   {
     "type": "profession",
     "id": "death_row_convict",
+    "proficiencies": [ "prof_knives_familiar", "prof_unarmed_familiar", "prof_shivs_familiar" ],
     "name": "Death Row Convict",
     "description": "You were a serial killer ready to walk the green mile, but now everyone else is dead, and since true death comes only from your hands, you're in for a job.",
     "points": 1,
@@ -5223,6 +5402,7 @@
   {
     "type": "profession",
     "id": "burglar",
+    "proficiencies": [ "prof_lockpicking", "prof_safecracking" ],
     "name": "Burglar",
     "description": "You thought this would be your lucky break.  Does it count as breaking and entering if everyone in town is undead?",
     "points": 2,
@@ -5511,6 +5691,7 @@
   {
     "type": "profession",
     "id": "blackbelt_novice",
+    "proficiencies": [ "prof_unarmed_familiar" ],
     "name": "Novice Martial Artist",
     "description": "You were on your way to the dojo for your first lesson when the world ended.  And you really wanted to learn how to swim, too.",
     "points": -1,
@@ -5523,6 +5704,7 @@
   {
     "type": "profession",
     "id": "blackbelt_intermediate",
+    "proficiencies": [ "prof_unarmed_familiar", "prof_unarmed_pro", "prof_gross_anatomy" ],
     "name": "Martial Artist",
     "description": "'Drop the martial arts!', they said.  'Learn a skill for the REAL world!', they said.  Well, you're about to show them!  SHOW THEM ALL!",
     "points": 3,
@@ -5542,6 +5724,7 @@
   {
     "type": "profession",
     "id": "blackbelt",
+    "proficiencies": [ "prof_unarmed_familiar", "prof_unarmed_pro", "prof_unarmed_master", "prof_gross_anatomy" ],
     "name": "Blackbelt",
     "description": "As the world ends, you alone stand against the coming darkness with your fists of steel.",
     "points": 8,
@@ -5715,6 +5898,7 @@
   {
     "type": "profession",
     "id": "paperboy",
+    "proficiencies": [ "prof_athlete_basic", "prof_driver" ],
     "name": { "male": "Paperboy", "female": "Papergirl" },
     "description": "You were delivering the morning paper along your usual route when the Cataclysm struck.  The undead hordes don't seem to value the latest news, but at least your trusty bicycle is still in working order.",
     "points": 3,
@@ -5826,6 +6010,7 @@
   {
     "type": "profession",
     "id": "national_guard",
+    "proficiencies": [ "prof_wound_care", "prof_gun_cleaning" ],
     "name": "National Guard",
     "description": "Your National Guard unit was activated when the epidemic struck.  Despite your best efforts you did not manage to meet up with them before all communications ceased and you found yourself alone amongst the dead.",
     "age": { "min": 17, "max": 35 },
@@ -5893,6 +6078,17 @@
   {
     "type": "profession",
     "id": "winter_scavenger",
+    "proficiencies": [
+      "prof_fibers",
+      "prof_fibers_rope",
+      "prof_knitting",
+      "prof_closures",
+      "prof_long_swords_familiar",
+      "prof_auto_rifles_familiar",
+      "prof_gross_anatomy",
+      "prof_butchering_basic",
+      "prof_skinning_basic"
+    ],
     "name": "Hardened Scavenger",
     "description": "One of the lucky few who escaped the Cataclysm, you made a life for yourself on the ruins of others.  Whether by force, guile, or luck, you've obtained the best gear you could find.",
     "points": 8,
@@ -6090,6 +6286,13 @@
   {
     "type": "profession",
     "id": "winter_army",
+    "proficiencies": [
+      "prof_gunsmithing_basic",
+      "prof_gun_cleaning",
+      "prof_knives_familiar",
+      "prof_auto_rifles_familiar",
+      "prof_auto_pistols_familiar"
+    ],
     "name": "Military Holdout",
     "description": "You must have paid attention to your survival training in boot camp, otherwise you would never have lived long enough to outlast the chain of command and find yourself in this predicament.  The only mission left now is to survive.",
     "age": { "min": 18, "max": 36 },
@@ -6252,6 +6455,22 @@
   {
     "type": "profession",
     "id": "naturalist",
+    "proficiencies": [
+      "prof_bowyery",
+      "prof_fibers",
+      "prof_fibers_rope",
+      "prof_knapping",
+      "prof_pottery",
+      "prof_leatherworking_basic",
+      "prof_furriery",
+      "prof_bow_basic",
+      "prof_bow_expert",
+      "prof_fletching",
+      "prof_carving",
+      "prof_knives_familiar",
+      "prof_butchering_basic",
+      "prof_skinning_basic"
+    ],
     "name": "Naturalist",
     "description": "You have come to an understanding with Mother Nature over long years of self-imposed exile in the wilderness.  The world as they knew it might have ended for your forsaken species, but you can hardly tell the difference.",
     "points": 5,
@@ -6368,6 +6587,7 @@
   {
     "type": "profession",
     "id": "fisher",
+    "proficiencies": [ "prof_fibers", "prof_knives_familiar", "prof_butchering_basic" ],
     "name": "Fisher",
     "description": "You spent most of your days just fishing in the swamps getting by quietly on what you caught.  You found the buzzing of insects enjoyable, but they got bigger and more mean.  Now their horrible noises have you spooked- you just hope the fish aren't as nasty.",
     "points": 2,
@@ -6401,6 +6621,7 @@
   {
     "type": "profession",
     "id": "reenactor",
+    "proficiencies": [ "prof_gunsmithing_basic", "prof_metalworking", "prof_gunsmithing_antique", "prof_gun_cleaning" ],
     "name": "Historical Reenactor",
     "description": "You were on your way to the Annual All New England Revolutionary War Living History exhibition when the end of the world permanently derailed your plans.",
     "points": 3,
@@ -6451,6 +6672,7 @@
   {
     "type": "profession",
     "id": "reenactor2",
+    "proficiencies": [ "prof_spinning", "prof_closures", "prof_knitting", "prof_gun_cleaning" ],
     "name": "Ahistorical Reenactor",
     "description": "You were on your way to the Annual All New England Revolutionary War Living History exhibition when the end of the world made traditional gender roles obsolete.",
     "points": 3,
@@ -6638,6 +6860,7 @@
   {
     "type": "profession",
     "id": "skaterkid",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Rollerblader",
     "description": "You love to skate!  At least now the grown-ups aren't telling you where you can't roll.",
     "points": 1,
@@ -6670,6 +6893,7 @@
   {
     "type": "profession",
     "id": "skaterkid_board",
+    "proficiencies": [ "prof_driver", "prof_athlete_basic" ],
     "name": "Skateboarder",
     "description": "You love to skate!  You've probably spent more time on a skateboard than off.  Things have gotten pretty bad, but at least the grown-ups aren't telling you where you can't roll.",
     "points": 1,
@@ -6703,6 +6927,7 @@
   {
     "type": "profession",
     "id": "jdelinquent",
+    "proficiencies": [ "prof_unarmed_familiar" ],
     "name": "Juvenile Delinquent",
     "description": "You never cared for grown-ups telling you what to do, and that's how you ended up spending most of your days in the principal's office.  Now, not needing grown-ups to tell you what to do is the only reason you're alive.  Man, you really should've played hooky today.",
     "points": 1,
@@ -6747,6 +6972,7 @@
   {
     "type": "profession",
     "id": "jr_survivalist",
+    "proficiencies": [ "prof_fibers", "prof_fibers_rope", "prof_lockpicking", "prof_gun_cleaning" ],
     "name": "Survivalist Jr.",
     "description": "Your parents were crazy preppers who thought some \"Cataclysm\" was coming, and insisted on preparing you for it.  Turns out they were right.  You didn't get a chance to thank them.  The only thing you can do for them now is what they always hoped you would do in the dark days ahead: survive to see bright nights again.",
     "points": 1,
@@ -6819,6 +7045,7 @@
   {
     "type": "profession",
     "id": "dodgeball_player",
+    "proficiencies": [ "prof_athlete_basic" ],
     "name": "Dodgeball Player",
     "description": "You liked to play dodgeball, where failing to dodge the ball meant you were out.  Now failing to dodge threatens your life.  Don't slip up.",
     "points": 1,
@@ -6930,10 +7157,7 @@
     "items": {
       "both": {
         "items": [ "pants", "dress_shirt", "smart_phone", "blazer", "socks", "dress_shoes", "wristwatch", "pen", "mbag" ],
-        "entries": [
-          { "item": "camera_pro" },
-          { "item": "light_disposable_cell", "ammo-item": "battery", "charges": 300 }
-        ]
+        "entries": [ { "item": "camera_pro" }, { "item": "light_disposable_cell", "ammo-item": "battery", "charges": 300 } ]
       },
       "male": [ "boxer_shorts" ],
       "female": [ "boy_shorts", "bra" ]
@@ -7125,6 +7349,7 @@
   {
     "type": "profession",
     "id": "parkour_practitioner",
+    "proficiencies": [ "prof_parkour", "prof_athlete_basic" ],
     "name": { "male": "Traceur", "female": "Traceuse" },
     "description": "You've practiced parkour for many years, and made the world your playground.  It wouldn't be a lie to say that running is your life.  Which is good, because now that the end has come, you're running for your life.",
     "points": 3,
@@ -7351,6 +7576,7 @@
   {
     "type": "profession",
     "id": "fencer",
+    "proficiencies": [ "prof_fencing_weapons_familiar", "prof_fencing_weapons_pro", "prof_gross_anatomy" ],
     "name": "Competitive Fencer",
     "description": "You were an avid sport fencer, always practicing at local clubs and competing in tournaments.  You were on your way to have a few bouts at the club when the world ended.  Now you're in your most important tournament, the refs are all dead, and none of your opponents follow the rules.",
     "points": 4,
@@ -7411,6 +7637,7 @@
   {
     "type": "profession",
     "id": "rancher",
+    "proficiencies": [ "prof_gross_anatomy", "prof_wp_ungulate", "prof_whips_familiar", "prof_whips_pro" ],
     "name": "Rancher",
     "description": "You've spent your life tending to cows, but the world has bigger plans for you now. Time to see where your skills - and a little luck - will take you next.",
     "points": 2,
@@ -7442,6 +7669,7 @@
   {
     "type": "profession",
     "id": "roadie",
+    "proficiencies": [ "prof_appliance_repair" ],
     "name": "Roadie",
     "description": "You worked just outside of the limelight, ensuring that the performers got what they needed and that everything ran smoothly.  The stakes are higher these days, but the show must go on.",
     "points": 1,
@@ -7508,6 +7736,7 @@
   {
     "type": "profession",
     "id": "gunslinger",
+    "proficiencies": [ "prof_gunsmithing_basic", "prof_gun_cleaning" ],
     "name": "Wild West Gunslinger",
     "description": "You made your living on Wild West exhibitions and shows, impressing tourists with your displays of marksmanship.  But that world has ended, so you took your trusty 6-shooter and wandered into a world where it's always high noon.",
     "points": 4,
@@ -7546,6 +7775,7 @@
   {
     "type": "profession",
     "id": "frat",
+    "proficiencies": [ "prof_driver" ],
     "name": { "male": "Frat Boy", "female": "Sorority Girl" },
     "description": "You were living the high life, spending your parents money without a care in the world.  You were at one of your usual crazy parties when the guests became hungry for more than your drugs.  You still have a chance to use the last symbol of your luxurious life - your sports car - and get far away.",
     "points": 3,
@@ -7561,6 +7791,7 @@
   {
     "type": "profession",
     "id": "mili_pilot",
+    "proficiencies": [ "prof_helicopter_pilot", "prof_spotting", "prof_gun_cleaning", "prof_auto_pistols_familiar" ],
     "name": "Military Pilot",
     "description": "You got to see things fall apart from the sky, transporting soldiers and survivors from one holdout to the next.  You knew it was only a matter of time before the horrors patrolling the skies shot you down.",
     "age": { "min": 20, "max": 40 },
@@ -7688,6 +7919,7 @@
   {
     "type": "profession",
     "id": "hitman",
+    "proficiencies": [ "prof_auto_pistols_familiar", "prof_driver" ],
     "name": { "male": "Hitman", "female": "Hitwoman" },
     "description": "You were a killer for hire, trained and equipped to efficiently eliminate your target while keeping a low profile.  No one's hiring now that the world's ended, but your skills may prove useful for staying alive.",
     "points": 5,
@@ -7737,6 +7969,14 @@
   {
     "type": "profession",
     "id": "assassin",
+    "proficiencies": [
+      "prof_spotting",
+      "prof_wp_syn_armored",
+      "prof_knives_familiar",
+      "prof_knives_pro",
+      "prof_knives_master",
+      "prof_gross_anatomy"
+    ],
     "name": "Assassin",
     "description": "You were the best undercover agent they had, sent on missions so vital that you had to take it even with the riots going on.  You've lost contact with your handler, you are all alone now.",
     "points": 6,
@@ -8276,6 +8516,7 @@
   {
     "type": "profession",
     "id": "urbex",
+    "proficiencies": [ "prof_lockpicking" ],
     "name": "Urban Explorer",
     "description": "You've always admired the beauty of urban desolation, and were ready for your next trip into town when the end of the world made your hobby much more relevant.",
     "points": 1,
@@ -8506,6 +8747,17 @@
   {
     "type": "profession",
     "id": "hazmat_unit",
+    "proficiencies": [
+      "prof_wound_care",
+      "prof_wound_care_expert",
+      "prof_intro_biology",
+      "prof_intro_chemistry",
+      "prof_physiology",
+      "prof_burn_care",
+      "prof_dissect_humans",
+      "prof_organic_chemistry",
+      "prof_gross_anatomy"
+    ],
     "name": "Hazmat Unit",
     "description": "You were deployed to autopsy one of the rioters showing feral behavior before being put down.  When they got back up, you knew this was out of your pay grade.",
     "points": 2,
@@ -8585,6 +8837,7 @@
   {
     "type": "profession",
     "id": "major-general",
+    "proficiencies": [ "prof_gunsmithing_basic", "prof_gun_cleaning" ],
     "name": "Major General",
     "description": "You worked your way up through the ranks from a no-name private to a big shot Major General, respected and decorated.  On the downside, years of desk duty have left your shooting skills rusty, and all the medals in the world won't protect you now.",
     "age": { "min": 30, "max": 62 },

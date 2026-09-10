@@ -195,3 +195,6 @@ class proficiency_set
         void serialize( JsonOut &jsout ) const;
         void deserialize( const JsonObject &jsobj );
 };
+
+/** Browse the proficiencies @p u knows and is learning.  Read-only. */
+void show_proficiencies_window( const Character &u );

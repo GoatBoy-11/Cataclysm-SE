@@ -69,6 +69,7 @@ class profession
         std::vector<addiction> _starting_addictions;
         std::vector<bionic_id> _starting_CBMs;
         std::vector<trait_id> _starting_traits;
+        std::vector<proficiency_id> _starting_proficiencies;
         std::set<trait_id> _forbidden_traits;
         std::set<bionic_id> _forbidden_bionics;
         std::set<spell_id> _forbidden_spells;
@@ -122,6 +123,8 @@ class profession
         std::vector<mtype_id> pets() const;
         std::vector<bionic_id> CBMs() const;
         StartingSkillList skills() const;
+        /** Proficiencies this profession starts knowing. */
+        const std::vector<proficiency_id> &proficiencies() const;
         const std::vector<mission_type_id> &missions() const;
         std::vector<npc_class_id> npcs() const;
 

@@ -27,6 +27,7 @@
 #include "output.h"
 #include "pldata.h"
 #include "profession.h"
+#include "proficiency.h"
 #include "ranged.h"
 #include "skill.h"
 #include "string_formatter.h"
@@ -1251,6 +1252,8 @@ static bool handle_player_display_action( Character &you, unsigned int &line,
                 break;
             }
         }
+    } else if( action == "VIEW_PROFICIENCIES" ) {
+        show_proficiencies_window( you );
     } else if( action == "CHANGE_PROFESSION_NAME" ) {
         string_input_popup popup;
         popup.title( _( "Profession Name: " ) )
@@ -1466,6 +1469,7 @@ void character_display::disp_info( Character &ch )
     ctxt.register_action( "CONFIRM", to_translation( "Toggle skill training / Upgrade stat" ) );
     ctxt.register_action( "CHANGE_PROFESSION_NAME", to_translation( "Change profession name" ) );
     ctxt.register_action( "CHANGE_NAME", to_translation( "Change name" ) );
+    ctxt.register_action( "VIEW_PROFICIENCIES", to_translation( "View proficiencies" ) );
     ctxt.register_action( "HELP_KEYBINDINGS" );
 
     std::map<std::string, int> speed_effects;

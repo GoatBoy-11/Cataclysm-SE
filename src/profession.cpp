@@ -1,4 +1,5 @@
 #include "profession.h"
+#include "proficiency.h"
 
 #include <algorithm>
 #include <cmath>
@@ -240,6 +241,8 @@ void profession::load( const JsonObject &jo, const std::string & )
     optional( jo, was_loaded, "CBMs", _starting_CBMs, auto_flags_reader<bionic_id> {} );
     // TODO: use string_id<mutation_branch> or so
     optional( jo, was_loaded, "traits", _starting_traits, auto_flags_reader<trait_id> {} );
+    optional( jo, was_loaded, "proficiencies", _starting_proficiencies,
+              auto_flags_reader<proficiency_id> {} );
     optional( jo, was_loaded, "forbidden_traits", _forbidden_traits, auto_flags_reader<trait_id> {} );
     optional( jo, was_loaded, "forbidden_bionics", _forbidden_bionics, auto_flags_reader<bionic_id> {} );
     optional( jo, was_loaded, "forbidden_spells", _forbidden_spells, auto_flags_reader<spell_id> {} );
@@ -604,6 +607,11 @@ bool profession::forbids_spells() const
 {
     return _forbids_spells;
 }
+const std::vector<proficiency_id> &profession::proficiencies() const
+{
+    return _starting_proficiencies;
+}
+
 profession::StartingSkillList profession::skills() const
 {
     return _starting_skills;

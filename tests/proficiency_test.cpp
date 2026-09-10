@@ -2,6 +2,7 @@
 
 #include "calendar.h"
 #include "json.h"
+#include "profession.h"
 #include "proficiency.h"
 #include "type_id.h"
 
@@ -123,4 +124,23 @@ TEST_CASE("a save with no proficiencies loads as an empty set", "[proficiency]")
 
     CHECK(profs.known_profs().empty());
     CHECK(profs.learning_profs().empty());
+}
+
+TEST_CASE("professions grant proficiencies", "[proficiency]") {
+    // Imported from the matching CDDA professions, so the grant lists are theirs.
+    const string_id<profession> smith("blacksmith");
+    REQUIRE(smith.is_valid());
+
+    const std::vector<proficiency_id> &granted = smith->proficiencies();
+    REQUIRE(!granted.empty());
+
+    bool has_blacksmithing = false;
+    for (const proficiency_id &p : granted) {
+        INFO("granted: " << p.str());
+        CHECK(p.is_valid());
+        if (p == proficiency_id("prof_blacksmithing")) {
+            has_blacksmithing = true;
+        }
+    }
+    CHECK(has_blacksmithing);
 }

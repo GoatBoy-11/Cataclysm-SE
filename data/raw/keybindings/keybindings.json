@@ -3622,6 +3622,12 @@
     "bindings": [ { "input_method": "keyboard", "key": "&" } ]
   },
   {
+    "type": "keybinding",
+    "id": "VIEW_PROFICIENCIES",
+    "name": "View proficiencies",
+    "bindings": [ { "input_method": "keyboard", "key": "p" } ]
+  },
+  {
     "id": "ACTIVATE",
     "type": "keybinding",
     "category": "INVENTORY_ITEM",
