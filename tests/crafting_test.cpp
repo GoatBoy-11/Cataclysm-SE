@@ -1363,3 +1363,87 @@ TEST_CASE("practice recipes train the skill and then end", "[crafting][practice]
     CHECK(in_progress_crafts(you).empty());
     CHECK(you.get_skill_level(rid->skill_used) > 0);
 }
+
+TEST_CASE("practice recipes carry what the info panel prints", "[crafting][practice]") {
+    clear_all_state();
+    int checked = 0;
+    for (const std::pair<const recipe_id, recipe>& entry : recipe_dict) {
+        const recipe& r = entry.second;
+        if (!r.is_practice()) { continue; }
+        ++checked;
+        INFO("practice recipe: " << r.ident().str());
+        // The panel has no result item to fall back on, so a recipe missing any of
+        // these would render as an empty box, which is what sent us here.
+        CHECK(!r.practice_name.empty());
+        CHECK(!r.description.empty());
+        CHECK(r.practice_data.has_value());
+        CHECK(!r.skill_used.is_null());
+        CHECK(r.practice_data->skill_limit > r.practice_data->min_difficulty);
+        CHECK(r.practice_data->max_difficulty >= r.practice_data->min_difficulty);
+    }
+    CHECK(checked > 0);
+}
+
+TEST_CASE("a practice recipe below its minimum skill is out of reach", "[crafting][practice]") {
+    clear_all_state();
+    const recipe& beginner = recipe_id("prac_athletics_beg").obj();
+    const recipe& harder = recipe_id("prac_athletics_int").obj();
+    REQUIRE(harder.practice_data->min_difficulty == 2);
+
+    avatar& you = get_avatar();
+    clear_avatar();
+    you.set_skill_level(harder.skill_used, 0);
+    CHECK(beginner.practice_is_within_reach(you));
+    CHECK(!harder.practice_is_within_reach(you));
+
+    you.set_skill_level(harder.skill_used, 2);
+    CHECK(harder.practice_is_within_reach(you));
+
+    // An ordinary recipe is never out of reach on these grounds.
+    CHECK(recipe_id("brew_rum")->practice_is_within_reach(you));
+}
+
+TEST_CASE("a practice recipe caps the skill it teaches", "[crafting][practice]") {
+    clear_all_state();
+    // The cap is the last level that still earns experience, so a cap of one
+    // carries a student to two, which is what the JSON states as the limit.
+    CHECK(recipe_id("prac_athletics_beg")->get_skill_cap() == 1);
+    CHECK(recipe_id("prac_athletics_int")->get_skill_cap() == 4);
+
+    const recipe& rum = recipe_id("brew_rum").obj();
+    CHECK(rum.get_skill_cap() == static_cast<int>(rum.difficulty * 1.25));
+}
+
+TEST_CASE("drilling cannot carry you past the stated limit", "[crafting][practice]") {
+    clear_all_state();
+    // The intermediate drill is the discriminating one: its limit of 5 sits exactly
+    // where a cap derived from the floating difficulty would have allowed a 6.
+    const recipe_id rid("prac_athletics_int");
+    const recipe& rec = rid.obj();
+    avatar& you = get_avatar();
+    std::vector<detached_ptr<item>> tools;
+    // The intermediate drill wants equipment; the pseudo tool stands in for the
+    // treadmill a player would be standing at.
+    add_tool(tools, "pseudo_treadmill_mechanical");
+    prep_craft(rid, tools, true);
+    set_time(midday);
+    you.set_skill_level(rec.skill_used, rec.practice_data->min_difficulty);
+    REQUIRE(rec.practice_is_within_reach(you));
+    you.learn_recipe(&rec);
+
+    for (int session = 0; session < 40; ++session) {
+        you.focus_pool = 100;
+        you.make_craft(rid, 1);
+        REQUIRE(you.activity);
+        int turns = 0;
+        while (you.activity->id() == activity_id("ACT_CRAFT") && turns < 100000) {
+            ++turns;
+            you.moves = 100;
+            you.activity->do_turn(you);
+        }
+        REQUIRE(turns < 100000);
+    }
+
+    CHECK(you.get_skill_level(rec.skill_used) > 0);
+    CHECK(you.get_skill_level(rec.skill_used) <= rec.practice_data->skill_limit);
+}

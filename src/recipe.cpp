@@ -154,6 +154,27 @@ int recipe::difficulty_for( const Character &c ) const
                        practice_data->max_difficulty );
 }
 
+int recipe::get_skill_cap() const
+{
+    // A practice recipe carries its own ceiling, and it is the ceiling that decides,
+    // not the floating difficulty: deriving the cap from the latter let the advanced
+    // drills carry a student one level past the limit their JSON states.
+    if( is_practice() ) {
+        return practice_data->skill_limit - 1;
+    }
+    return static_cast<int>( difficulty * 1.25 );
+}
+
+bool recipe::practice_is_within_reach( const Character &c ) const
+{
+    if( !is_practice() || !skill_used ) {
+        return true;
+    }
+    // The drill states the skill it starts from.  Below that the student has nothing
+    // to build on, so the recipe stays out of reach rather than teaching nothing.
+    return c.get_skill_level( skill_used ) >= practice_data->min_difficulty;
+}
+
 int recipe::batch_time( int batch, float multiplier, size_t assistants ) const
 {
     // 1.0f is full speed

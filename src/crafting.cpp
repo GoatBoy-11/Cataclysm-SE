@@ -855,7 +855,9 @@ item *Character::start_craft( craft_command &command, const tripoint_bub_ms & )
         return nullptr;
     }
     const recipe &making = craft->get_making();
-    if( get_skill_level( command.get_skill_id() ) > making.difficulty * 1.25 ) {
+    // difficulty_for, not difficulty: a practice recipe leaves the latter at zero, so
+    // the flat form announced that every drill above beginner was already trivial.
+    if( get_skill_level( command.get_skill_id() ) > making.difficulty_for( *this ) * 1.25 ) {
         character_funcs::show_skill_capped_notice( *this, command.get_skill_id() );
     }
 
@@ -921,10 +923,7 @@ void Character::craft_skill_gain( const item &craft, const int &multiplier )
         const int effective_difficulty = making.difficulty_for( *this );
         const int base_practice = roll_remainder( ( effective_difficulty * 15 + 10 ) * batch_mult /
                                   20.0 ) * multiplier;
-        int skill_cap = static_cast<int>( effective_difficulty * 1.25 );
-        if( making.is_practice() ) {
-            skill_cap = std::min( skill_cap, making.practice_data->skill_limit );
-        }
+        const int skill_cap = making.get_skill_cap();
         practice( making.skill_used, base_practice, skill_cap, true );
         // Subskills gain half the experience as primary skill
         for( const auto &pr : making.required_skills ) {

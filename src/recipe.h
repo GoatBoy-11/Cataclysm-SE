@@ -196,6 +196,12 @@ class recipe
         bool is_practice() const;
         /** Difficulty for @p c, which floats with skill on a practice recipe. */
         int difficulty_for( const Character &c ) const;
+
+        /** Primary-skill ceiling this recipe can train towards. */
+        int get_skill_cap() const;
+
+        /** False when a practice recipe sits above the skill it starts teaching from. */
+        bool practice_is_within_reach( const Character &c ) const;
         /** Mandatory to craft at all. */
         std::vector<proficiency_id> required_proficiencies() const;
         /** Not mandatory, but missing them impedes the craft. */
