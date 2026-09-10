@@ -185,6 +185,10 @@ TEST_CASE("recipe proficiencies penalise a character who lacks them", "[proficie
 
 TEST_CASE("a character practises a proficiency until they know it", "[proficiency]") {
     Character &you = get_avatar();
+    // Learning tracks attention, so a test that ran earlier and drained focus would
+    // leave this one learning far less than the time it thinks it is spending.
+    const int saved_focus = you.focus_pool;
+    you.focus_pool = 100;
     you.lose_proficiency(prof_familiar, true);
     REQUIRE(!you.has_proficiency(prof_familiar));
 
@@ -210,6 +214,7 @@ TEST_CASE("a character practises a proficiency until they know it", "[proficienc
     CHECK(listed);
 
     you.lose_proficiency(prof_familiar, true);
+    you.focus_pool = saved_focus;
 }
 
 TEST_CASE("weapon proficiencies make a familiar weapon cheaper to swing", "[proficiency]") {
