@@ -1,0 +1,12 @@
+[
+  {
+    "type": "tool_quality",
+    "id": "HAMMER_SOFT",
+    "name": { "str": "soft hammering" }
+  },
+  {
+    "type": "tool_quality",
+    "id": "PUNCH",
+    "name": { "str": "punching" }
+  }
+]

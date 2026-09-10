@@ -12,7 +12,6 @@
       "CSC_PRACTICE_FABRICATION",
       "CSC_PRACTICE_HEALTH",
       "CSC_PRACTICE_MELEE",
-      "CSC_PRACTICE_RANGED",
       "CSC_PRACTICE_SOCIAL",
       "CSC_PRACTICE_SURVIVAL",
       "CSC_PRACTICE_TAILORING"
@@ -31,6 +30,75 @@
     "practice_data": { "min_difficulty": 0, "max_difficulty": 1, "skill_limit": 2 },
     "autolearn": [ [ "swimming", 0 ] ],
     "flags": [ "BLIND_EASY" ]
+  },
+  {
+    "id": "prac_athletics_int",
+    "type": "practice",
+    "activity_level": "BRISK_EXERCISE",
+    "category": "CC_PRACTICE",
+    "subcategory": "CSC_PRACTICE_ATHLETICS",
+    "name": "athletics (intermediate)",
+    "description": "Practice calisthenics using specialized equipment.",
+    "skill_used": "swimming",
+    "time": "1 h",
+    "practice_data": { "min_difficulty": 2, "max_difficulty": 4, "skill_limit": 5 },
+    "proficiencies": [ { "proficiency": "prof_athlete_basic", "time_multiplier": 1.5, "skill_penalty": 0 } ],
+    "autolearn": [ [ "swimming", 2 ] ],
+    "flags": [ "BLIND_EASY" ],
+    "tools": [
+      [
+        "fake_training_exercise_machine",
+        "fake_training_punching_bag",
+        "pseudo_ergometer_mechanical",
+        "pseudo_treadmill_mechanical"
+      ]
+    ]
+  },
+  {
+    "id": "prac_athletic_form",
+    "type": "practice",
+    "activity_level": "BRISK_EXERCISE",
+    "category": "CC_PRACTICE",
+    "subcategory": "CSC_PRACTICE_ATHLETICS",
+    "name": "athlete's form (expert)",
+    "description": "Improve your athletic form using workout equipment.",
+    "skill_used": "swimming",
+    "time": "1 h",
+    "practice_data": { "min_difficulty": 2, "max_difficulty": 3, "skill_limit": 4 },
+    "proficiencies": [
+      { "proficiency": "prof_athlete_basic", "required": true },
+      { "proficiency": "prof_athlete_expert", "time_multiplier": 2, "skill_penalty": 0 }
+    ],
+    "autolearn": [ [ "swimming", 3 ] ],
+    "flags": [ "BLIND_EASY" ],
+    "tools": [
+      [
+        "fake_training_exercise_machine",
+        "fake_training_punching_bag",
+        "pseudo_ergometer_mechanical",
+        "pseudo_treadmill_mechanical"
+      ]
+    ]
+  },
+  {
+    "id": "prac_master_athletic_form",
+    "type": "practice",
+    "activity_level": "ACTIVE_EXERCISE",
+    "category": "CC_PRACTICE",
+    "subcategory": "CSC_PRACTICE_ATHLETICS",
+    "name": "athlete's form (master)",
+    "description": "Refine your athletic form with a high-intensity workout.",
+    "skill_used": "swimming",
+    "time": "1 h",
+    "practice_data": { "min_difficulty": 3, "max_difficulty": 4, "skill_limit": 5 },
+    "proficiencies": [
+      { "proficiency": "prof_athlete_basic", "required": true },
+      { "proficiency": "prof_athlete_expert", "required": true },
+      { "proficiency": "prof_athlete_master", "time_multiplier": 2, "skill_penalty": 0 }
+    ],
+    "autolearn": [ [ "swimming", 4 ] ],
+    "flags": [ "BLIND_EASY" ],
+    "tools": [ [ "fake_training_exercise_machine", "pseudo_ergometer_mechanical" ] ]
   },
   {
     "id": "prac_computer_beg",
@@ -318,6 +386,24 @@
     "proficiencies": [ { "proficiency": "prof_unarmed_familiar", "time_multiplier": 1.5, "skill_penalty": 0 } ]
   },
   {
+    "id": "prac_unarmed_int",
+    "type": "practice",
+    "activity_level": "BRISK_EXERCISE",
+    "category": "CC_PRACTICE",
+    "subcategory": "CSC_PRACTICE_MELEE",
+    "name": "unarmed (intermediate)",
+    "description": "Learn how to throw a punch with the help of a punching bag or training dummy.",
+    "skill_used": "unarmed",
+    "time": "1 h",
+    "practice_data": { "min_difficulty": 1, "max_difficulty": 2, "skill_limit": 3 },
+    "autolearn": [ [ "unarmed", 3 ] ],
+    "proficiencies": [
+      { "proficiency": "prof_unarmed_familiar", "required": true },
+      { "proficiency": "prof_unarmed_pro", "time_multiplier": 2, "skill_penalty": 0 }
+    ],
+    "tools": [ [ "pseudo_training_dummy_light", "pseudo_training_dummy_heavy", "fake_training_punching_bag" ] ]
+  },
+  {
     "id": "prac_speech_beg",
     "type": "practice",
     "activity_level": "NO_EXERCISE",
@@ -344,6 +430,49 @@
     "practice_data": { "min_difficulty": 3, "max_difficulty": 5, "skill_limit": 6 },
     "autolearn": [ [ "speech", 5 ] ],
     "tools": [ [ [ "mirror", -1 ], [ "laptop", 10 ], [ "smart_phone", 5 ] ] ]
+  },
+  {
+    "id": "prac_knapping",
+    "type": "practice",
+    "activity_level": "MODERATE_EXERCISE",
+    "category": "CC_PRACTICE",
+    "subcategory": "CSC_PRACTICE_SURVIVAL",
+    "name": "basic knapping",
+    "description": "Practice basic knapping by hammering some rocks into rough shapes.",
+    "skill_used": "survival",
+    "skills_required": [ [ "fabrication", 1 ] ],
+    "practice_data": { "min_difficulty": 0, "max_difficulty": 1, "skill_limit": 2 },
+    "proficiencies": [ { "proficiency": "prof_knapping", "time_multiplier": 1, "skill_penalty": 0 } ],
+    "time": "1 h",
+    "qualities": [ { "id": "HAMMER", "level": 1 }, { "id": "HAMMER_SOFT", "level": 1 } ],
+    "//": "You destroy the rocks with your practice, leaving you with some pebbles.",
+    "components": [ [ [ "rock", 2 ], [ "sharp_rock", 2 ] ] ],
+    "autolearn": [ [ "survival", 2 ] ]
+  },
+  {
+    "id": "prac_knapping_speed",
+    "type": "practice",
+    "activity_level": "MODERATE_EXERCISE",
+    "category": "CC_PRACTICE",
+    "subcategory": "CSC_PRACTICE_SURVIVAL",
+    "name": "speed knapping",
+    "description": "Practice more advanced knapping by shaping some rocks into precise forms and shapes.",
+    "skill_used": "survival",
+    "skills_required": [ [ "fabrication", 2 ] ],
+    "practice_data": { "min_difficulty": 1, "max_difficulty": 2, "skill_limit": 3 },
+    "proficiencies": [
+      { "proficiency": "prof_knapping", "required": true },
+      { "proficiency": "prof_knapping_speed", "time_multiplier": 1, "skill_penalty": 0 }
+    ],
+    "time": "1 h",
+    "qualities": [
+      { "id": "HAMMER", "level": 2 },
+      { "id": "HAMMER_SOFT", "level": 1 },
+      { "id": "CUT", "level": 1 },
+      { "id": "PUNCH", "level": 1 }
+    ],
+    "components": [ [ [ "rock", 3 ], [ "sharp_rock", 3 ] ] ],
+    "autolearn": [ [ "survival", 3 ] ]
   },
   {
     "id": "prac_leather_adv",

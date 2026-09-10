@@ -1,0 +1,50 @@
+[
+  {
+    "id": "pseudo_archery_target_bale",
+    "type": "TOOL",
+    "copy-from": "fake_item",
+    "name": { "str": "bale archery target" },
+    "symbol": "@",
+    "color": "yellow"
+  },
+  {
+    "id": "pseudo_archery_target_box",
+    "type": "TOOL",
+    "copy-from": "fake_item",
+    "name": { "str": "box archery target" },
+    "symbol": "@",
+    "color": "brown"
+  },
+  {
+    "id": "pseudo_ergometer_mechanical",
+    "type": "TOOL",
+    "copy-from": "fake_item",
+    "name": { "str": "mechanical ergometer" },
+    "symbol": "5",
+    "color": "dark_gray"
+  },
+  {
+    "id": "pseudo_training_dummy_heavy",
+    "type": "TOOL",
+    "copy-from": "fake_item",
+    "name": { "str": "armored training dummy", "str_pl": "armored training dummies" },
+    "symbol": "@",
+    "color": "brown"
+  },
+  {
+    "id": "pseudo_training_dummy_light",
+    "type": "TOOL",
+    "copy-from": "fake_item",
+    "name": { "str": "training dummy", "str_pl": "training dummies" },
+    "symbol": "@",
+    "color": "brown"
+  },
+  {
+    "id": "pseudo_treadmill_mechanical",
+    "type": "TOOL",
+    "copy-from": "fake_item",
+    "name": { "str": "gravity treadmill" },
+    "symbol": "L",
+    "color": "dark_gray"
+  }
+]
