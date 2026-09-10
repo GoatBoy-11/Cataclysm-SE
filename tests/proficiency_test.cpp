@@ -322,3 +322,35 @@ TEST_CASE("a teacher only offers what the student lacks", "[proficiency]") {
 
     you.lose_proficiency(prof_familiar);
 }
+
+TEST_CASE("practice recipes train instead of producing", "[proficiency]") {
+    const recipe_id prac("prac_computer_int");
+    REQUIRE(prac.is_valid());
+    const recipe &rec = *prac;
+
+    CHECK(rec.is_practice());
+    REQUIRE(rec.practice_data.has_value());
+    CHECK(rec.practice_data->skill_limit == 5);
+
+    Character &you = get_avatar();
+    const int saved = you.get_skill_level(rec.skill_used);
+
+    // Difficulty floats with the student, between the recipe's own bounds.
+    you.set_skill_level(rec.skill_used, 0);
+    CHECK(rec.difficulty_for(you) == rec.practice_data->min_difficulty);
+
+    you.set_skill_level(rec.skill_used, 10);
+    CHECK(rec.difficulty_for(you) == rec.practice_data->max_difficulty);
+
+    you.set_skill_level(rec.skill_used, 3);
+    CHECK(rec.difficulty_for(you) == 3);
+
+    you.set_skill_level(rec.skill_used, saved);
+}
+
+TEST_CASE("an ordinary recipe is not a practice recipe", "[proficiency]") {
+    const recipe_id rid("arrow_small_game_fletched");
+    REQUIRE(rid.is_valid());
+    CHECK(!rid->is_practice());
+    CHECK(!rid->practice_data.has_value());
+}

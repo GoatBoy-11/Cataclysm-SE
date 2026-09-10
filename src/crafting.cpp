@@ -916,9 +916,15 @@ void Character::craft_skill_gain( const item &craft, const int &multiplier )
         const double batch_mult = batch_size + base_time_to_craft( making, batch_size ) / 30000.0;
         // This is called after every 5% crafting progress, so divide by 20
         // TODO: Don't multiply, instead divide the crafting time into more "learn bits"
-        const int base_practice = roll_remainder( ( making.difficulty * 15 + 10 ) * batch_mult /
+        // A practice recipe's difficulty floats with the student, and it carries its
+        // own ceiling so drilling the basics cannot take you all the way up.
+        const int effective_difficulty = making.difficulty_for( *this );
+        const int base_practice = roll_remainder( ( effective_difficulty * 15 + 10 ) * batch_mult /
                                   20.0 ) * multiplier;
-        const int skill_cap = static_cast<int>( making.difficulty * 1.25 );
+        int skill_cap = static_cast<int>( effective_difficulty * 1.25 );
+        if( making.is_practice() ) {
+            skill_cap = std::min( skill_cap, making.practice_data->skill_limit );
+        }
         practice( making.skill_used, base_practice, skill_cap, true );
         // Subskills gain half the experience as primary skill
         for( const auto &pr : making.required_skills ) {
@@ -1272,6 +1278,15 @@ void complete_craft( Character &who, item &craft )
     }
 
     const recipe &making = craft.get_making();
+
+    // Practice recipes train instead of producing.  Components are still spent,
+    // but there is nothing to hand back and no result to name.
+    if( making.is_practice() ) {
+        craft.remove_components();
+        who.add_msg_if_player( m_good, _( "You finish practicing %s." ), making.result_name() );
+        return;
+    }
+
     const int batch_size = craft.charges;
     std::vector<detached_ptr<item>> used = craft.remove_components();
     std::vector<item *> used_items;

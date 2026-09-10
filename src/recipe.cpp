@@ -128,6 +128,32 @@ float recipe::proficiency_skill_maluses( const Character &c ) const
     return proficiency_skill_maluses( c, c.book_bonuses_nearby() );
 }
 
+void practice_recipe_data::deserialize( const JsonObject &jo )
+{
+    jo.read( "min_difficulty", min_difficulty );
+    if( !jo.read( "max_difficulty", max_difficulty ) ) {
+        max_difficulty = MAX_SKILL - 1;
+    }
+    if( !jo.read( "skill_limit", skill_limit ) ) {
+        skill_limit = MAX_SKILL;
+    }
+}
+
+bool recipe::is_practice() const
+{
+    return practice_data.has_value();
+}
+
+int recipe::difficulty_for( const Character &c ) const
+{
+    if( !is_practice() || !skill_used ) {
+        return difficulty;
+    }
+    // Practice scales to the student: easy while they are green, harder later.
+    return std::clamp( c.get_skill_level( skill_used ), practice_data->min_difficulty,
+                       practice_data->max_difficulty );
+}
+
 int recipe::batch_time( int batch, float multiplier, size_t assistants ) const
 {
     // 1.0f is full speed
@@ -190,6 +216,13 @@ void recipe::load( const JsonObject &jo, const std::string &src )
         ident_ = recipe_id( jo.get_string( "id" ) );
         if( jo.has_member( "result" ) ) {
             jo.throw_error( "nested category should not have result" );
+        }
+    } else if( type == "practice" ) {
+        // Practice recipes train rather than produce, so they are named in their
+        // own right instead of borrowing the name of a result.
+        ident_ = recipe_id( jo.get_string( "id" ) );
+        if( jo.has_member( "result" ) ) {
+            jo.throw_error( "practice recipe should not have result" );
         }
     } else {
         jo.read( "result", result_, true );
@@ -340,6 +373,25 @@ void recipe::load( const JsonObject &jo, const std::string &src )
         }
     } else if( type == "uncraft" ) {
         reversible = true;
+    } else if( type == "practice" ) {
+        assign( jo, "name", practice_name );
+        // Parsed for data compatibility; Bright Nights has no exertion model.
+        if( jo.has_member( "activity_level" ) ) {
+            jo.get_member( "activity_level" );
+        }
+        assign( jo, "category", category, strict );
+        assign( jo, "subcategory", subcategory, strict );
+        assign( jo, "description", description, strict );
+        if( jo.has_member( "difficulty" ) ) {
+            jo.throw_error( "practice recipes take practice_data, not difficulty", "difficulty" );
+        }
+        if( jo.has_object( "practice_data" ) ) {
+            practice_recipe_data pd;
+            pd.deserialize( jo.get_object( "practice_data" ) );
+            practice_data = pd;
+        } else if( !practice_data ) {
+            jo.throw_error( "practice recipe requires practice_data" );
+        }
     } else if( type == "nested_category" ) {
         assign( jo, "nested_name", nested_name );
         assign( jo, "category", category );
@@ -630,7 +682,14 @@ std::string recipe::batch_savings_string() const
 
 auto recipe::result_name( const bool decorated ) const -> std::string
 {
-    auto name = nested_name.empty() ? item::nname( result_ ) : nested_name;
+    std::string name;
+    if( is_practice() ) {
+        name = practice_name.translated();
+    } else if( nested_name.empty() ) {
+        name = item::nname( result_ );
+    } else {
+        name = nested_name;
+    }
     if( decorated && uistate.favorite_recipes.contains( this->ident() ) ) {
         name = "* " + name;
     }

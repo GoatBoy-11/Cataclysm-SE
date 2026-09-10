@@ -47,6 +47,20 @@ struct recipe_proficiency {
     void deserialize( const JsonObject &jo );
 };
 
+/**
+ * A practice recipe trains rather than produces.  Its difficulty floats with the
+ * character's skill between the two bounds, and the primary skill cannot be
+ * pushed past @ref skill_limit however easy the recipe gets.
+ */
+struct practice_recipe_data {
+    int min_difficulty = 0;
+    // Zero means unset; deserialize fills in the MAX_SKILL-based defaults.
+    int max_difficulty = 0;
+    int skill_limit = 0;
+
+    void deserialize( const JsonObject &jo );
+};
+
 class recipe
 {
         friend class recipe_dictionary;
@@ -122,6 +136,8 @@ class recipe
         auto result_name( bool decorated = false ) const -> std::string;
 
         std::string nested_name;
+        /** Display name for a practice recipe, which has no result to name it. */
+        translation practice_name;
 
         std::map<itype_id, int> byproducts;
 
@@ -169,6 +185,12 @@ class recipe
 
         /** Proficiencies this recipe names.  Empty unless the JSON says otherwise. */
         std::vector<recipe_proficiency> proficiencies;
+
+        /** Set only on practice recipes, which train instead of producing. */
+        std::optional<practice_recipe_data> practice_data;
+        bool is_practice() const;
+        /** Difficulty for @p c, which floats with skill on a practice recipe. */
+        int difficulty_for( const Character &c ) const;
         /** Mandatory to craft at all. */
         std::vector<proficiency_id> required_proficiencies() const;
         /** Not mandatory, but missing them impedes the craft. */

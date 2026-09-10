@@ -409,6 +409,7 @@ void DynamicDataLoader::initialize()
     add( "monster_adjustment", &load_monster_adjustment );
     add( "recipe_category", &load_recipe_category );
     add( "recipe",  &recipe_dictionary::load_recipe );
+    add( "practice", &recipe_dictionary::load_practice );
     add( "uncraft", &recipe_dictionary::load_uncraft );
     add( "nested_category", &recipe_dictionary::load_nested_category );
     add( "recipe_group",  &recipe_group::load );
