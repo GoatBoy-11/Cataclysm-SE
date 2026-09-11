@@ -179,6 +179,7 @@
     "type": "climbing_aid",
     "id": "ability_WALL_CLING",
     "//": "Allows players to safely climb up/down or hold position against a wall.",
+    "//2": "Inert in CSE: no mutation here grants the WALL_CLING character flag yet.  Kept so the aid lights up on its own if one ever does.",
     "copy-from": "generic_superpower",
     "down": {
       "menu_text": "Crawl down the wall.",

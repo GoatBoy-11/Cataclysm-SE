@@ -14653,7 +14653,7 @@ void game::vertical_move( int movez, bool force, bool peeking )
         u.moves -= move_cost;
         // Risk of failing, simple stuff like ladders are exempt
         if( climbing && movez == 1 && m.climb_difficulty( u.bub_pos() ) > 1 ) {
-            if( g->slip_down( climb_maneuver::down, climbing_aid_furn_CLIMBABLE ) ) {
+            if( g->slip_down( climb_maneuver::up, climbing_aid_furn_CLIMBABLE ) ) {
                 return;
             }
         }
@@ -16953,6 +16953,8 @@ auto game::climb_down_menu_gen( const tripoint_bub_ms &examp, uilist &cmenu ) ->
 
         int hotkey = aid->down.menu_hotkey;
         if( hotkey == 0 ) {
+            // Not a collision: every deployable aid declares its own hotkey, and only one
+            // non-deployable is ever listed, so 'c' is claimed at most once.
             hotkey = 'c';
         }
 
