@@ -888,6 +888,20 @@ set(CSE_UNBUNDLED_MODS
     rocky_zombies
     rpg_system
     skills_through_kills
+    stats_through_kills
+    StatsThroughSkills
+
+    # Fixtures for the Lua hooks and the test suite.  Useful from a checkout,
+    # noise in a player's mod list.
+    NPC_lua_hook_test
+    Spawn_Hook_Test
+    TEST_DATA
+    Test_for_Lua_hooks
+    callback_lua_test
+    lua_ai_attitude_debug
+    saveload_lua_test
+    test_lua_conditions
+    test_lua_require
 )
 
 add_subdirectory(data)
