@@ -861,6 +861,16 @@ if (CCACHE_FOUND AND CATA_CCACHE)
 endif ()
 
 add_subdirectory(src)
+# Editable source art lives beside the exported sprites.  A release only needs the
+# exports, so keep the working files out of every package.
+set(CSE_SOURCE_ART_EXCLUDES
+    PATTERN "*.psd" EXCLUDE
+    PATTERN "*.xcf" EXCLUDE
+    PATTERN "*.kra" EXCLUDE
+    PATTERN "*.ase" EXCLUDE
+    PATTERN "*.aseprite" EXCLUDE
+)
+
 # Mods kept in the repository for Bright Nights compatibility, but not shipped in a
 # CSE release.  They stay in data/mods so a source checkout can still play them;
 # every packaging path below leaves them out.  Names are directory names.
@@ -946,10 +956,12 @@ if (RELEASE)
     if (TILES)
         if (USE_PREFIX_DATA_DIR)
             install(DIRECTORY ${CMAKE_SOURCE_DIR}/gfx
-                TYPE DATA)
+                TYPE DATA
+                ${CSE_SOURCE_ART_EXCLUDES})
         else()
             install(DIRECTORY ${CMAKE_SOURCE_DIR}/gfx
-                DESTINATION .)
+                DESTINATION .
+                ${CSE_SOURCE_ART_EXCLUDES})
         endif()
     endif()
     # Install cataclysm-launcher for portable Linux builds
@@ -960,7 +972,8 @@ if (RELEASE)
     if ( NOT USE_XDG_DIR AND NOT USE_HOME_DIR )
         install(DIRECTORY ${CMAKE_SOURCE_DIR}/mods
             DESTINATION .
-            PATTERN "civilian_variety" EXCLUDE)
+            PATTERN "civilian_variety" EXCLUDE
+            ${CSE_SOURCE_ART_EXCLUDES})
     endif()
 endif()
 

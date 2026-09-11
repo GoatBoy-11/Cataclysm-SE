@@ -13,6 +13,10 @@ if (RELEASE)
                 PATTERN "XDG" EXCLUDE
                 PATTERN "external_tileset/README.md" EXCLUDE
                 PATTERN "mapgen/lab/README.md" EXCLUDE
+                # Bright Nights' release history.  Nothing reads it, and it is not
+                # CSE's changelog, so it has no business in a CSE package.
+                PATTERN "changelog.txt" EXCLUDE
+                ${CSE_SOURCE_ART_EXCLUDES}
                 ${CSE_MOD_EXCLUDES})
     else()
         install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
@@ -21,6 +25,10 @@ if (RELEASE)
                 PATTERN "XDG" EXCLUDE
                 PATTERN "external_tileset/README.md" EXCLUDE
                 PATTERN "mapgen/lab/README.md" EXCLUDE
+                # Bright Nights' release history.  Nothing reads it, and it is not
+                # CSE's changelog, so it has no business in a CSE package.
+                PATTERN "changelog.txt" EXCLUDE
+                ${CSE_SOURCE_ART_EXCLUDES}
                 ${CSE_MOD_EXCLUDES})
     endif()
 endif ()
