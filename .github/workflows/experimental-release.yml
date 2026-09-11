@@ -12,6 +12,12 @@ on:
   #   paths-ignore: [docs/**, scripts/**, "**.md", "**.mdx"]
   workflow_dispatch:
 
+# The repository's default token is read-only.  Creating a release and uploading
+# its assets both need write access to contents, so ask for it explicitly rather
+# than loosening the default for every workflow.
+permissions:
+  contents: write
+
 jobs:
   build-translations:
     uses: ./.github/workflows/build-translations.yml

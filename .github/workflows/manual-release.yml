@@ -11,6 +11,12 @@ on:
       patch:
         { description: SemVer patch, required: true, type: number, default: 0 }
 
+# The repository's default token is read-only.  Creating a release and uploading
+# its assets both need write access to contents, so ask for it explicitly rather
+# than loosening the default for every workflow.
+permissions:
+  contents: write
+
 env:
   VERSION: "v${{ inputs.major }}.${{ inputs.minor }}.${{ inputs.patch }}"
 
