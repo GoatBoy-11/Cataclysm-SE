@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <chrono>
 #include <climits>
 #include <cmath>
 #include <cstdint>
@@ -68,6 +69,7 @@
 #include "sdl_utils.h"
 #include "sdl_font.h"
 #include "sdlsound.h"
+#include "speech_bubble.h"
 #include "string_formatter.h"
 #include "uistate.h"
 #include "ui_manager.h"
@@ -1604,6 +1606,154 @@ static bool draw_window( Font_Ptr &font, const catacurses::window &w )
     return draw_window( font, w, point( win->pos.x * ::fontwidth, win->pos.y * ::fontheight ) );
 }
 
+static void draw_speech_bubbles( const cata_cursesport::WINDOW *const win )
+{
+    if( !use_tiles || !tilecontext || !map_font || !g ) {
+        return;
+    }
+    speech_bubbles::cull();
+    const auto &list = speech_bubbles::entries();
+    if( list.empty() ) {
+        return;
+    }
+
+    const int clip_x = win->pos.x * fontwidth;
+    const int clip_y = win->pos.y * fontheight;
+    const int clip_w = TERRAIN_WINDOW_TERM_WIDTH * font->width;
+    const int clip_h = TERRAIN_WINDOW_TERM_HEIGHT * font->height;
+    const SDL_Rect clip_rect{ clip_x, clip_y, clip_w, clip_h };
+    printErrorIf( !SDL_SetRenderClipRect( renderer.get(), &clip_rect ),
+                  "SDL_SetRenderClipRect failed" );
+
+    SDL_BlendMode old_blend = SDL_BLENDMODE_NONE;
+    GetRenderDrawBlendMode( renderer, old_blend );
+    SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
+
+    constexpr int padding = 4;
+    constexpr int pointer_h = 6;
+    const int fw = map_font->width;
+    const int fh = map_font->height;
+    const int tile_w = tilecontext->get_tile_width();
+    const auto now = std::chrono::steady_clock::now();
+    const int view_z = g->ter_view_p.z();
+
+    struct drawn_box {
+        SDL_FRect box;
+        float fade = 1.0f;
+        std::vector<std::string> lines;
+        point text_origin;
+        point pointer_tip;
+    };
+    std::vector<drawn_box> laid_out;
+
+    for( const auto &bubble : list ) {
+        const auto loc = speech_bubbles::speaker_location( bubble );
+        if( !loc || loc->z() != view_z ) {
+            continue;
+        }
+        const point tile_px = tilecontext->player_to_screen( loc->xy() );
+        const int sprite_cx = tile_px.x + tile_w / 2;
+        const int sprite_top = tile_px.y;
+
+        auto lines = speech_bubbles::wrap_text( bubble.text );
+        if( lines.empty() ) {
+            continue;
+        }
+        int text_w = 0;
+        for( const auto &line : lines ) {
+            text_w = std::max( text_w, utf8_width( line ) );
+        }
+        const int box_w = text_w * fw + padding * 2;
+        const int box_h = static_cast<int>( lines.size() ) * fh + padding * 2;
+        int box_x = sprite_cx - box_w / 2;
+        int box_y = sprite_top - pointer_h - box_h;
+        box_x = std::clamp( box_x, clip_x + 1, std::max( clip_x + 1, clip_x + clip_w - box_w - 1 ) );
+        box_y = std::max( clip_y + 1, box_y );
+
+        auto remaining = bubble.born + bubble.duration - now;
+        float fade = 1.0f;
+        if( remaining < speech_bubbles::fade_duration && remaining.count() > 0 ) {
+            fade = static_cast<float>( remaining.count() ) /
+                   static_cast<float>( speech_bubbles::fade_duration.count() );
+        }
+
+        laid_out.push_back( drawn_box{
+            .box = SDL_FRect{ static_cast<float>( box_x ), static_cast<float>( box_y ),
+                              static_cast<float>( box_w ), static_cast<float>( box_h ) },
+            .fade = fade,
+            .lines = std::move( lines ),
+            .text_origin = point( box_x + padding, box_y + padding ),
+            .pointer_tip = point( sprite_cx, sprite_top )
+        } );
+    }
+
+    for( size_t i = 1; i < laid_out.size(); ++i ) {
+        for( size_t j = 0; j < i; ++j ) {
+            auto &a = laid_out[i].box;
+            const auto &b = laid_out[j].box;
+            const bool overlap = a.x < b.x + b.w && a.x + a.w > b.x &&
+                                 a.y < b.y + b.h && a.y + a.h > b.y;
+            if( overlap ) {
+                const auto dy = ( b.y - a.h - 4.0f ) - a.y;
+                if( dy < 0.0f ) {
+                    a.y += dy;
+                    laid_out[i].text_origin.y += static_cast<int>( dy );
+                }
+            }
+        }
+    }
+
+    const auto fill_rect = []( const SDL_FRect & rect, const Uint8 red, const Uint8 green,
+    const Uint8 blue, const Uint8 alpha ) {
+        SetRenderDrawColor( renderer, red, green, blue, alpha );
+        RenderFillRect( renderer, &rect );
+    };
+
+    for( const auto &item : laid_out ) {
+        const auto fill_a = static_cast<Uint8>( 204 * item.fade );
+        const auto border_a = static_cast<Uint8>( 230 * item.fade );
+        fill_rect( item.box, 0, 0, 0, fill_a );
+        fill_rect( SDL_FRect{ item.box.x, item.box.y, item.box.w, 1.0f }, 220, 220, 220, border_a );
+        fill_rect( SDL_FRect{ item.box.x, item.box.y + item.box.h - 1.0f, item.box.w, 1.0f },
+                   220, 220, 220, border_a );
+        fill_rect( SDL_FRect{ item.box.x, item.box.y, 1.0f, item.box.h }, 220, 220, 220, border_a );
+        fill_rect( SDL_FRect{ item.box.x + item.box.w - 1.0f, item.box.y, 1.0f, item.box.h },
+                   220, 220, 220, border_a );
+
+        const int tip_x = item.pointer_tip.x;
+        const int box_bottom = static_cast<int>( item.box.y + item.box.h );
+        const int tip_y = item.pointer_tip.y;
+        const int steps = std::clamp( tip_y - box_bottom, 1, pointer_h + 2 );
+        for( int step = 0; step < steps; ++step ) {
+            const int half = std::max( 1, pointer_h - step );
+            fill_rect( SDL_FRect{
+                static_cast<float>( tip_x - half ),
+                static_cast<float>( box_bottom + step ),
+                static_cast<float>( half * 2 + 1 ),
+                1.0f
+            }, 0, 0, 0, fill_a );
+        }
+
+        int ty = item.text_origin.y;
+        for( const auto &line : item.lines ) {
+            point p( item.text_origin.x, ty );
+            const char *cstr = line.c_str();
+            int len = static_cast<int>( line.length() );
+            while( len > 0 ) {
+                const uint32_t ch32 = UTF8_getch( &cstr, &len );
+                const std::string ch = utf32_to_utf8( ch32 );
+                map_font->OutputChar( renderer, geometry, ch, p, catacurses::white, item.fade );
+                p.x += mk_wcwidth( ch32 ) * fw;
+            }
+            ty += fh;
+        }
+    }
+
+    SetRenderDrawBlendMode( renderer, old_blend );
+    printErrorIf( !SDL_SetRenderClipRect( renderer.get(), nullptr ),
+                  "SDL_SetRenderClipRect failed" );
+}
+
 void cata_cursesport::curses_drawwindow( const catacurses::window &w )
 {
     if( clear_display_buffer_before_redraw ) {
@@ -1717,6 +1867,8 @@ void cata_cursesport::curses_drawwindow( const catacurses::window &w )
             prev_coord = coord;
             x_offset = width;
         }
+
+        draw_speech_bubbles( win );
 
         invalidate_framebuffer( terminal_framebuffer, win->pos,
                                 TERRAIN_WINDOW_TERM_WIDTH, TERRAIN_WINDOW_TERM_HEIGHT );

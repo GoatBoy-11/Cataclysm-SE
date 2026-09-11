@@ -6,6 +6,7 @@
 #include "map_helpers.h"
 #include "name.h"
 #include "player_helpers.h"
+#include "speech_bubble.h"
 #include "weather.h"
 
 namespace {
@@ -40,6 +41,8 @@ auto clear_states(const enum_bitset<test_state>& states) -> void {
     }
 
     if (normalized_states.test(state::avatar)) { clear_avatar(); }
+
+    speech_bubbles::clear();
 
     if (normalized_states.test(state::map)) {
         clear_map();

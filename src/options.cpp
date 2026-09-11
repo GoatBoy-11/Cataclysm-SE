@@ -2015,6 +2015,11 @@ void options_manager::add_options_graphics()
 
     get_option( "ANIMATION_SCT_USE_FONT" ).setPrerequisite( "ANIMATION_SCT" );
 
+    add( "SPEECH_BUBBLES", graphics, translate_marker( "Speech bubbles" ),
+         translate_marker( "If true, quoted speech and yells appear in a bubble above the speaker.  The sidebar log is unchanged." ),
+         true
+       );
+
     add( "ANIMATION_DELAY", graphics, translate_marker( "Animation delay" ),
          translate_marker( "The amount of time to pause between animation frames in ms." ),
          0, 100, 10

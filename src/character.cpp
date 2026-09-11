@@ -103,6 +103,7 @@
 #include "skill.h"
 #include "skill_boost.h"
 #include "sounds.h"
+#include "speech_bubble.h"
 #include "stomach.h"
 #include "string_formatter.h"
 #include "string_id.h"
@@ -9258,7 +9259,9 @@ void Character::shout( std::string msg, bool order )
         return;
     }
 
-    // Mutations make shouting louder, they also define the default message
+    // Mutations make shouting louder, they also define the default message.
+    // Quoted custom yells get a balloon; wordless howls/screams do not.
+    std::string bubble_text;
     if( msg.empty() ) {
         if( has_trait( trait_SHOUT3 ) ) {
             base = 80;
@@ -9276,6 +9279,7 @@ void Character::shout( std::string msg, bool order )
             shout = "default";
         }
     } else {
+        bubble_text = msg;
         add_msg_if_player( m_info, _( string_format( "You yell \"%s\"", msg ) ) );
         msg = is_player() ? _( string_format( "yourself yell \"%s\"",
                                               msg ) ) : _( string_format( "yell \"%s\"", msg ) );
@@ -9324,6 +9328,10 @@ void Character::shout( std::string msg, bool order )
     se.id = "shout";
     se.variant = shout;
     sounds::sound( se );
+
+    if( !bubble_text.empty() ) {
+        speech_bubbles::try_add( *this, bubble_text );
+    }
 }
 
 void Character::signal_nemesis()

@@ -74,6 +74,7 @@
 #include "rng.h"
 #include "skill.h"
 #include "sounds.h"
+#include "speech_bubble.h"
 #include "string_formatter.h"
 #include "string_utils.h"
 #include "text_snippets.h"
@@ -1797,6 +1798,8 @@ void npc::say( const std::string &line, const sounds::sound_t spriority ) const
     if( has_trait( trait_MUTE ) ) {
         return;
     }
+
+    speech_bubbles::try_add( *this, formatted_line );
 
     std::string sound = string_format( _( "%1$s saying \"%2$s\"" ), name, formatted_line );
     if( g->u.sees( *this ) && g->u.is_deaf() ) {

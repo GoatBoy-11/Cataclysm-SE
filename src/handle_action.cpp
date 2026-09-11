@@ -24,6 +24,7 @@
 #include "bodypart.h"
 #include "bionics.h"
 #include "bionics_ui.h"
+#include "cached_options.h"
 #include "calendar.h"
 #include "catalua.h"
 #include "catacharset.h"
@@ -89,6 +90,7 @@
 #include "salvage.h"
 #include "scores_ui.h"
 #include "sounds.h"
+#include "speech_bubble.h"
 #include "string_formatter.h"
 #include "string_utils.h"
 #include "string_id.h"
@@ -472,8 +474,13 @@ input_context game::get_player_input( std::string &action )
                 //       (update only part of the screen? draw static parts into a texture?)
                 invalidate_main_ui_adaptor();
             }
+            const bool bubbles_need_poll = use_tiles && speech_bubbles::active();
+            if( bubbles_need_poll ) {
+                invalidate_main_ui_adaptor();
+            }
             const auto needs_timed_poll = realtime_turns || animate_weather || animate_sct ||
-                                          needs_map_animation || uquit == QUIT_WATCH;
+                                          needs_map_animation || uquit == QUIT_WATCH ||
+                                          bubbles_need_poll;
             TracyPlot( "Input Timed Polling", static_cast<int64_t>( needs_timed_poll ? 1 : 0 ) );
 
             std::unique_ptr<static_popup> deathcam_msg_popup;
@@ -513,18 +520,26 @@ input_context game::get_player_input( std::string &action )
         }
         SCT.vSCT.clear();
 
-        if( realtime_turns || uquit == QUIT_WATCH ) {
+        if( realtime_turns || uquit == QUIT_WATCH || ( use_tiles && speech_bubbles::active() ) ) {
             ctxt.set_timeout( 125 );
             while( true ) {
                 auto keep_waiting = false;
                 {
                     ZoneScopedN( "get_player_input_noanim_handle_mouseview" );
+                    if( use_tiles && speech_bubbles::active() ) {
+                        invalidate_main_ui_adaptor();
+                        ui_manager::redraw_invalidated();
+                    }
                     keep_waiting = handle_mouseview( ctxt, action );
                 }
                 if( !keep_waiting ) {
                     break;
                 }
                 if( action == "TIMEOUT" && current_turn.has_timeout_elapsed() ) {
+                    break;
+                }
+                if( action == "TIMEOUT" && !realtime_turns && uquit != QUIT_WATCH &&
+                    !( use_tiles && speech_bubbles::active() ) ) {
                     break;
                 }
             }
