@@ -17,7 +17,7 @@ env:
 jobs:
   release:
     name: Create Release
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,7 +32,7 @@ jobs:
           else
             echo "Release does not exist, creating a new one" >> "$GITHUB_STEP_SUMMARY"
             gh release create ${{ env.VERSION }} \
-              --title "Cataclysm-BN ${{ env.VERSION }}" \
+              --title "Cataclysm: Slop Edition ${{ env.VERSION }}" \
               --draft \
               --prerelease \
               --generate-notes \

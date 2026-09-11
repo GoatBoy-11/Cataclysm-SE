@@ -3,10 +3,14 @@ name: "Experimental Release"
 concurrency: experimental-release
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore: [docs/**, scripts/**, "**.md", "**.mdx"]
+  # Upstream rebuilds this on every push to main.  A personal fork does not want an
+  # hour of multi-platform builds standing behind every commit, so it is run on
+  # demand instead.  Restore the push trigger below to get the upstream behaviour.
+  # push:
+  #   branches:
+  #     - main
+  #   paths-ignore: [docs/**, scripts/**, "**.md", "**.mdx"]
+  workflow_dispatch:
 
 jobs:
   build-translations:

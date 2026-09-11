@@ -1,8 +1,10 @@
 name: "Nightly Release"
 concurrency: release
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  # Nightly builds are upstream's cadence.  Uncomment to have CSE build one every
+  # midnight UTC; until then the workflow is run by hand.
+  # schedule:
+  #   - cron: "0 0 * * *"
   workflow_dispatch:
     inputs:
       date:
@@ -16,7 +18,7 @@ env:
 
 jobs:
   metadata:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     outputs:
       count: ${{ steps.env_vars.outputs.count }}
       tag_name: ${{ steps.env_vars.outputs.tag_name }}
@@ -74,7 +76,7 @@ jobs:
   release:
     needs: metadata
     name: Create Release
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
 
     if: github.event_name == 'workflow_dispatch' || fromJson(needs.metadata.outputs.count) > 0
     outputs:
@@ -126,7 +128,7 @@ jobs:
           echo "These are the outputs for the build of commit [${{ needs.metadata.outputs.source_sha }}](https://github.com/${{ github.repository }}/commit/${{ needs.metadata.outputs.source_sha }})" >> "$release_body"
 
           gh release create "${{ needs.metadata.outputs.tag_name }}" \
-            --title "Nightly ${{ needs.metadata.outputs.tag_name }}" \
+            --title "Cataclysm: Slop Edition nightly ${{ needs.metadata.outputs.tag_name }}" \
             --notes-file "$release_body" \
             --prerelease \
             --target "${{ needs.metadata.outputs.source_sha }}"

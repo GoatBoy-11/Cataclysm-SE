@@ -438,15 +438,15 @@ jobs:
         if: runner.os == 'Linux' && (matrix.android == '' || matrix.android == 'none') && inputs.package-artifacts && (!inputs.upload-artifacts || matrix.upload-artifact == true)
         run: |
           mkdir -p lang/mo
-          cmake --install build --prefix cataclysmbn-${{ inputs.version-label }}
-          tar -czvf cbn-${{ matrix.artifact }}-${{ inputs.version-label }}.tar.gz \
-            cataclysmbn-${{ inputs.version-label }}
+          cmake --install build --prefix cataclysm-cse-${{ inputs.version-label }}
+          tar -czvf cse-${{ matrix.artifact }}-${{ inputs.version-label }}.tar.gz \
+            cataclysm-cse-${{ inputs.version-label }}
 
       - name: Verify bundled SDL runtime (Linux)
         if: runner.os == 'Linux' && (matrix.android == '' || matrix.android == 'none') && inputs.package-artifacts && (!inputs.upload-artifacts || matrix.upload-artifact == true)
         run: |
           set -euo pipefail
-          dist="cataclysmbn-${{ inputs.version-label }}"
+          dist="cataclysm-cse-${{ inputs.version-label }}"
           exe="$dist/cataclysm-bn"
           if [ "${{ matrix.tiles }}" = "true" ]; then
             exe="$dist/cataclysm-bn-tiles"
@@ -537,21 +537,21 @@ jobs:
       - name: Create distribution package (windows msvc)
         if: runner.os == 'Windows' && inputs.package-artifacts && (!inputs.upload-artifacts || matrix.upload-artifact == true)
         run: |
-          $dist = "cataclysmbn-${{ inputs.version-label }}"
+          $dist = "cataclysm-cse-${{ inputs.version-label }}"
           Remove-Item -Recurse -Force $dist -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Force lang/mo
           cmake --install out/build/windows-tiles-sounds-x64-msvc --prefix $dist --config Release
           if ("${{ matrix.tiles }}" -eq "true" -and "${{ matrix.sound }}" -eq "true" -and "${{ inputs.bundle-registry-mods }}" -eq "true") {
-            Compress-Archive -Force -Path $dist/* -DestinationPath cbn-${{ matrix.artifact }}-no-soundpack-${{ inputs.version-label }}.zip
+            Compress-Archive -Force -Path $dist/* -DestinationPath cse-${{ matrix.artifact }}-no-soundpack-${{ inputs.version-label }}.zip
             deno run --allow-read --allow-write --allow-net build-scripts/bundle-registry-mods.ts
             cmake --install out/build/windows-tiles-sounds-x64-msvc --prefix $dist --config Release
           }
-          Compress-Archive -Force -Path $dist/* -DestinationPath cbn-${{ matrix.artifact }}-${{ inputs.version-label }}.zip
+          Compress-Archive -Force -Path $dist/* -DestinationPath cse-${{ matrix.artifact }}-${{ inputs.version-label }}.zip
 
       - name: Verify statically linked SDL runtime (windows msvc)
         if: runner.os == 'Windows' && inputs.package-artifacts && (!inputs.upload-artifacts || matrix.upload-artifact == true)
         run: |
-          $dist = "cataclysmbn-${{ inputs.version-label }}"
+          $dist = "cataclysm-cse-${{ inputs.version-label }}"
           $exe = Join-Path $dist "cataclysm-bn-tiles.exe"
           if (!(Test-Path $exe)) {
             throw "Missing Windows release executable: $exe"
@@ -571,7 +571,7 @@ jobs:
         if: runner.os == 'Windows' && inputs.package-artifacts && (!inputs.upload-artifacts || matrix.upload-artifact == true)
         run: |
           $pdb = "${{ github.workspace }}/out/build/windows-tiles-sounds-x64-msvc/src/cataclysm-bn-tiles.pdb"
-          $archive = "cbn-${{ matrix.artifact }}-${{ inputs.version-label }}-pdb.zip"
+          $archive = "cse-${{ matrix.artifact }}-${{ inputs.version-label }}-pdb.zip"
           if (!(Test-Path $pdb)) {
             throw "Missing Windows release PDB: $pdb"
           }
@@ -591,15 +591,15 @@ jobs:
       - name: Create distribution package with soundpacks (macOS)
         if: runner.os == 'macOS' && matrix.tiles == true && matrix.sound == true && inputs.bundle-registry-mods && inputs.package-artifacts && (!inputs.upload-artifacts || matrix.upload-artifact == true)
         run: |
-          mv CataclysmBN-*.dmg cbn-${{ matrix.artifact }}-no-soundpack-${{ inputs.version-label }}.dmg
+          mv CataclysmBN-*.dmg cse-${{ matrix.artifact }}-no-soundpack-${{ inputs.version-label }}.dmg
           deno run --allow-read --allow-write --allow-net build-scripts/bundle-registry-mods.ts
           cmake -E copy_directory data/mods Cataclysm.app/Contents/Resources/data/mods
           cmake -E copy_directory data/sound Cataclysm.app/Contents/Resources/data/sound
-          dmgbuild -s build-data/osx/dmgsettings.py "Cataclysm BN" cbn-${{ matrix.artifact }}-${{ inputs.version-label }}.dmg
+          dmgbuild -s build-data/osx/dmgsettings.py "Cataclysm SE" cse-${{ matrix.artifact }}-${{ inputs.version-label }}.dmg
 
       - name: Rename distribution package (macOS)
         if: runner.os == 'macOS' && !(matrix.tiles == true && matrix.sound == true && inputs.bundle-registry-mods) && inputs.package-artifacts && (!inputs.upload-artifacts || matrix.upload-artifact == true)
-        run: mv CataclysmBN-*.dmg cbn-${{ matrix.artifact }}-${{ inputs.version-label }}.dmg
+        run: mv CataclysmBN-*.dmg cse-${{ matrix.artifact }}-${{ inputs.version-label }}.dmg
 
       - name: Verify bundled SDL runtime (macOS)
         if: runner.os == 'macOS' && inputs.package-artifacts && (!inputs.upload-artifacts || matrix.upload-artifact == true)
@@ -747,9 +747,9 @@ jobs:
 
           move_android_artifact() {
             suffix="$1"
-            artifact="../cbn-${{ matrix.artifact }}-${{ inputs.version-label }}.${{ matrix.ext }}"
+            artifact="../cse-${{ matrix.artifact }}-${{ inputs.version-label }}.${{ matrix.ext }}"
             if [ -n "$suffix" ]; then
-              artifact="../cbn-${{ matrix.artifact }}-$suffix-${{ inputs.version-label }}.${{ matrix.ext }}"
+              artifact="../cse-${{ matrix.artifact }}-$suffix-${{ inputs.version-label }}.${{ matrix.ext }}"
             fi
             if [ "${{ matrix.android }}" = arm64 ]; then
               mv ./app/build/outputs/apk/${VARIANT_LOWER}/release/*.apk "$artifact"
@@ -792,7 +792,7 @@ jobs:
         if: runner.os == 'Linux' && matrix.android != '' && matrix.android != 'none'
         run: |
           set -euo pipefail
-          artifact="cbn-${{ matrix.artifact }}-${{ inputs.version-label }}.${{ matrix.ext }}"
+          artifact="cse-${{ matrix.artifact }}-${{ inputs.version-label }}.${{ matrix.ext }}"
           test -f "$artifact"
           unzip -l "$artifact" | tee bundled-deps.txt
           grep -E 'libSDL3\.so' bundled-deps.txt
@@ -800,7 +800,7 @@ jobs:
           grep -E 'libSDL3_mixer\.so' bundled-deps.txt
           grep -E 'libSDL3_ttf\.so' bundled-deps.txt
           if [ "${{ inputs.upload-to-release }}" = "true" ] && [ "${{ inputs.bundle-registry-mods }}" = "true" ]; then
-            no_soundpack_artifact="cbn-${{ matrix.artifact }}-no-soundpack-${{ inputs.version-label }}.${{ matrix.ext }}"
+            no_soundpack_artifact="cse-${{ matrix.artifact }}-no-soundpack-${{ inputs.version-label }}.${{ matrix.ext }}"
             test -f "$no_soundpack_artifact"
             unzip -l "$no_soundpack_artifact" | tee bundled-deps-no-soundpack.txt
             if grep -F 'data/sound/Otopack+ModsUpdates BN/' bundled-deps-no-soundpack.txt; then
@@ -865,7 +865,7 @@ jobs:
         uses: actions/upload-artifact@v4.6.0
         with:
           name: ${{ inputs.artifact-label != '' && format('{0}-{1}', matrix.artifact, inputs.artifact-label) || matrix.artifact }}
-          path: ${{ runner.os == 'Windows' && format('cataclysmbn-{0}/', inputs.version-label) || format('cbn-{0}-{1}.{2}', matrix.artifact, inputs.version-label, matrix.ext) }}
+          path: ${{ runner.os == 'Windows' && format('cataclysm-cse-{0}/', inputs.version-label) || format('cse-{0}-{1}.{2}', matrix.artifact, inputs.version-label, matrix.ext) }}
           if-no-files-found: error
 
       - name: Upload to release
@@ -879,9 +879,9 @@ jobs:
             release=experimental
             gh release edit experimental --title "Experimental @ $TIMESTAMP ($SHA_SHORT)" --notes "Experimental build for commit $SHA_SHORT ($COMMIT_SUBJECT) on $TIMESTAMP"
           fi
-          extra="cbn-${{ matrix.artifact }}-no-soundpack-${{ inputs.version-label }}.${{ matrix.ext }}"
+          extra="cse-${{ matrix.artifact }}-no-soundpack-${{ inputs.version-label }}.${{ matrix.ext }}"
           [ -f "$extra" ] && gh release upload "$release" --clobber "$extra"
-          gh release upload "$release" --clobber cbn-${{ matrix.artifact }}-${{ inputs.version-label }}.${{ matrix.ext }}
+          gh release upload "$release" --clobber cse-${{ matrix.artifact }}-${{ inputs.version-label }}.${{ matrix.ext }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
@@ -890,9 +890,9 @@ jobs:
         if: runner.os == 'Windows' && inputs.upload-to-release
         run: |
           if [ "${{ inputs.version-label }}" = "experimental" ]; then
-            gh release upload experimental --clobber "cbn-${{ matrix.artifact }}-${{ inputs.version-label }}-pdb.zip"
+            gh release upload experimental --clobber "cse-${{ matrix.artifact }}-${{ inputs.version-label }}-pdb.zip"
           else
-            gh release upload ${{ inputs.release-tag }} --clobber "cbn-${{ matrix.artifact }}-${{ inputs.version-label }}-pdb.zip"
+            gh release upload ${{ inputs.release-tag }} --clobber "cse-${{ matrix.artifact }}-${{ inputs.version-label }}-pdb.zip"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
