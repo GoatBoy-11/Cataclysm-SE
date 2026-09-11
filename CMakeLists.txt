@@ -861,6 +861,35 @@ if (CCACHE_FOUND AND CATA_CCACHE)
 endif ()
 
 add_subdirectory(src)
+# Mods kept in the repository for Bright Nights compatibility, but not shipped in a
+# CSE release.  They stay in data/mods so a source checkout can still play them;
+# every packaging path below leaves them out.  Names are directory names.
+set(CSE_UNBUNDLED_MODS
+    Aftershock
+    Arcana_BN
+    BN_Arcana_Aftershock_Patch
+    BN_Arcana_Crit_Patch
+    BN_Arcana_Dinomod_Patch
+    BN_Arcana_MagicalNights_Patch
+    CRT_EXPANSION
+    CheesyInnaWoodsFixes
+    Civilians
+    CrazyCataclysm
+    DinoMod
+    Fuji_Mil_Prof
+    JP_Weather_Variants
+    MagicalNights
+    ManualBionicInstall
+    Monster_Girls
+    My_Sweet_Cataclysm
+    exotic_ammo
+    gunchair
+    innawoods
+    rocky_zombies
+    rpg_system
+    skills_through_kills
+)
+
 add_subdirectory(data)
 
 if (UNIX AND DYNAMIC_LINKING)
@@ -916,7 +945,8 @@ if (RELEASE)
     endif()
     if ( NOT USE_XDG_DIR AND NOT USE_HOME_DIR )
         install(DIRECTORY ${CMAKE_SOURCE_DIR}/mods
-            DESTINATION .)
+            DESTINATION .
+            PATTERN "civilian_variety" EXCLUDE)
     endif()
 endif()
 
@@ -996,6 +1026,17 @@ if (APPLE AND RELEASE AND (TILES OR CURSES))
                 -p "@executable_path/lib/")
     endif()
 
+    # copy_directory takes no filter, so drop the unbundled mods afterwards.
+    set(CATA_OSX_PRUNE_MODS_COMMANDS)
+    if (CSE_UNBUNDLED_MODS)
+        set(CATA_OSX_PRUNE_MODS_PATHS)
+        foreach(_cse_mod IN LISTS CSE_UNBUNDLED_MODS)
+            list(APPEND CATA_OSX_PRUNE_MODS_PATHS "${CATA_OSX_DATA_DIR}/mods/${_cse_mod}")
+        endforeach()
+        set(CATA_OSX_PRUNE_MODS_COMMANDS
+            COMMAND ${CMAKE_COMMAND} -E rm -rf ${CATA_OSX_PRUNE_MODS_PATHS})
+    endif()
+
     add_custom_target(osx-app
         COMMAND ${CMAKE_COMMAND} -E rm -rf "${CATA_OSX_APP_DIR}"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CATA_OSX_CONTENTS_DIR}/MacOS"
@@ -1009,6 +1050,7 @@ if (APPLE AND RELEASE AND (TILES OR CURSES))
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/data/font" "${CATA_OSX_DATA_DIR}/font"
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/data/json" "${CATA_OSX_DATA_DIR}/json"
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/data/mods" "${CATA_OSX_DATA_DIR}/mods"
+        ${CATA_OSX_PRUNE_MODS_COMMANDS}
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/data/names" "${CATA_OSX_DATA_DIR}/names"
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/data/raw" "${CATA_OSX_DATA_DIR}/raw"
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/data/motd" "${CATA_OSX_DATA_DIR}/motd"
