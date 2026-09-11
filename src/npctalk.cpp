@@ -73,6 +73,7 @@
 #include "rng.h"
 #include "skill.h"
 #include "sounds.h"
+#include "speech_bubble.h"
 #include "string_formatter.h"
 #include "string_id.h"
 #include "string_input_popup.h"
@@ -846,6 +847,7 @@ void game::chat()
         std::string lower = monologue_msg;
         std::transform( lower.begin(), lower.end(), lower.begin(), ::tolower );
 
+        std::string displayed_text = monologue_msg;
         bool matched = false;
         const auto &type_list = msg_type_and_names();
 
@@ -863,14 +865,14 @@ void game::chat()
 
             if( lower.rfind( lower_prefix, 0 ) == 0 ) {
                 // Match found: remove prefix
-                std::string text = monologue_msg.substr( prefix.size() );
+                displayed_text = monologue_msg.substr( prefix.size() );
 
                 // Trim a leading space if present
-                if( !text.empty() && text[0] == ' ' ) {
-                    text = text.substr( 1 );
+                if( !displayed_text.empty() && displayed_text[0] == ' ' ) {
+                    displayed_text = displayed_text.substr( 1 );
                 }
 
-                add_msg( entry.first, _( "%s" ), text );
+                add_msg( entry.first, _( "%s" ), displayed_text );
                 matched = true;
                 break;
             }
@@ -880,6 +882,8 @@ void game::chat()
             // No prefix: just show plain text
             add_msg( _( "%s" ), monologue_msg );
         }
+
+        speech_bubbles::try_add( u, displayed_text );
     }
 
     u.moves -= 100;
