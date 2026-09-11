@@ -93,7 +93,29 @@ auto try_add( const Character &speaker, const std::string &text ) -> void
     if( !speaker.is_avatar() && !get_avatar().sees( speaker ) ) {
         return;
     }
+    // A balloon shows what was said out loud, so a deaf player must not read it.
+    // Their own words are theirs to know, and the sidebar already tells them that
+    // someone else said something they could not hear.
+    if( !speaker.is_avatar() && get_avatar().is_deaf() ) {
+        return;
+    }
     add( speaker, text );
+}
+
+auto fade_for( const speech_bubble &bubble, std::chrono::steady_clock::time_point now ) -> float
+{
+    // Both sides have to be in the same unit.  steady_clock ticks in nanoseconds, so
+    // dividing its raw count by a count of milliseconds overshot by a factor of a
+    // million and handed an out-of-range float to the caller's Uint8 alpha cast.
+    const auto remaining = std::chrono::duration_cast<std::chrono::milliseconds>(
+                               bubble.born + bubble.duration - now );
+    if( remaining.count() <= 0 ) {
+        return 0.0f;
+    }
+    if( remaining >= fade_duration ) {
+        return 1.0f;
+    }
+    return static_cast<float>( remaining.count() ) / static_cast<float>( fade_duration.count() );
 }
 
 auto cull( std::chrono::steady_clock::time_point now ) -> void

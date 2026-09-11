@@ -40,8 +40,13 @@ auto wrap_text( const std::string &text ) -> std::vector<std::string>;
 auto add( const Character &speaker, const std::string &text,
           std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now() ) -> void;
 
-/// add() gated on SPEECH_BUBBLES, use_tiles, and the player seeing the speaker.
+/// add() gated on SPEECH_BUBBLES, use_tiles, and the player both seeing and being
+/// able to hear the speaker.
 auto try_add( const Character &speaker, const std::string &text ) -> void;
+
+/// Alpha multiplier in [0,1]: solid until the last fade_duration, then linear to zero.
+auto fade_for( const speech_bubble &bubble,
+               std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now() ) -> float;
 
 auto cull( std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now() ) -> void;
 auto clear() -> void;

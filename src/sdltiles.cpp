@@ -1670,12 +1670,7 @@ static void draw_speech_bubbles( const cata_cursesport::WINDOW *const win )
         box_x = std::clamp( box_x, clip_x + 1, std::max( clip_x + 1, clip_x + clip_w - box_w - 1 ) );
         box_y = std::max( clip_y + 1, box_y );
 
-        auto remaining = bubble.born + bubble.duration - now;
-        float fade = 1.0f;
-        if( remaining < speech_bubbles::fade_duration && remaining.count() > 0 ) {
-            fade = static_cast<float>( remaining.count() ) /
-                   static_cast<float>( speech_bubbles::fade_duration.count() );
-        }
+        const float fade = speech_bubbles::fade_for( bubble, now );
 
         laid_out.push_back( drawn_box{
             .box = SDL_FRect{ static_cast<float>( box_x ), static_cast<float>( box_y ),
