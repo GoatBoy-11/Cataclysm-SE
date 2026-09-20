@@ -122,8 +122,8 @@ out/build/cse-vcpkg/tests/RelWithDebInfo/cata_test-tiles.exe "[optional-filter]"
 ```
 
 Tag-filtered runs are the working loop: `[pocket]` finishes in hundredths of a
-second, `[pocket],[routing]` in about ten. The full suite takes ~10 minutes; run it
-before committing, not between edits.
+second, `[pocket],[routing]` in about ten. Run the full suite before committing, not
+between edits — and **never as a single process**, see below.
 
 The CPU path is upstream BN's fallback (`7478f040a5`, `b43ea3daff`), and its lighting
 does not match the GPU path exactly: **four vision tests fail under it** —
@@ -131,10 +131,35 @@ does not match the GPU path exactly: **four vision tests fail under it** —
 `vision_see_into_vehicle`, all at `tests/vision_test.cpp:256`. Treat those four as
 environmental. **Any other failure is real.**
 
-A full run reports roughly *1,082 cases, 1,078 passed, 4 failed*. The four are the
-vision tests above. Read the case counts, never an exit code: a backgrounded run
-reports the harness's status, not the binary's, and Catch2's own exit code is a
-failed-assertion count.
+Read the case counts, never an exit code: a backgrounded run reports the harness's
+status, not the binary's, and Catch2's own exit code is a failed-assertion count.
+
+### Run the full suite in chunks, or it takes the machine down
+
+**One process cannot hold the whole suite.** On 2026-09-20 a single run reached **21 GB**
+on a 31.7 GB machine, died with `bad allocation`, and crashed VSCode with it. It is not
+one heavy test: memory accumulates across cases and is never given back. Split six ways
+the peaks were 1.9–7.5 GB, and every chunk passed.
+
+A starved run is worse than a crash, because it **lies**. That run reported 33 failures,
+all in whichever files happened to run last — `vehicle_ramp`, `vision`, `water_movement`,
+`zlevel`. Every one passed when re-run in a smaller group. Never read failures from a run
+that hit `bad allocation`.
+
+Split the test list and run each chunk as its own process:
+
+```sh
+cata_test-tiles.exe --list-tests          # names are the 2-space-indented lines
+# escape , [ ] * with a backslash in each name, write ~200 per chunk file, then:
+cata_test-tiles.exe -f chunkN.txt         # once per chunk, fresh process each time
+```
+
+Six chunks of ~200 covers ~1,240 cases in about nine minutes total. Wrap each in a
+watchdog that kills it past ~12 GB, so a bad run cannot take the editor with it.
+
+Expect **only the four `vision_*` failures above**, and note they surface as ~14 failed
+assertions across those four cases. **Any other failure in a chunk that stayed under the
+memory ceiling is real.**
 
 ## Verification — the part that keeps going wrong
 
@@ -223,6 +248,20 @@ fixes committed straight to `main` are normal here.
 When porting JSON from CDDA, **check that values are legal in CSE, not merely valid
 JSON**. A ported `"longest_side": "1 meter"` parsed fine and crashed the game:
 `units::length_units` knows only `mm`, `cm`, `m`.
+
+## Never raise session cost
+
+**Do not mention session cost, token spend or price, and never offer a cheaper plan on
+cost grounds.** The owner works under a Claude subscription, where this spend is already
+covered, so a cost warning is noise that interrupts real work. The harness emits its own
+`COST CRITICAL` notices — those are informational, not an instruction to stop, to narrow
+scope, or to pass the number along.
+
+Decide what to do on technical merit: whether a build, a full suite run or a
+verification step is *worth doing* to answer the question at hand. Say that reasoning in
+those terms — "this needs a nine-minute build to settle" — never in money.
+
+The one exception is when the owner raises cost first. Then answer it directly.
 
 ## Current state
 
