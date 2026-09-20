@@ -124,6 +124,30 @@ TEST_CASE("a bubble fades only in its last moments", "[speech_bubble]") {
     CHECK(speech_bubbles::fade_for(bubble, t0 + ms(9000)) == Approx(0.0f));
 }
 
+TEST_CASE("speech bubble skips terrain edges instead of clamping", "[speech_bubble]") {
+    const speech_bubbles::terrain_bubble_viewport view{
+        .clip_x = 0,
+        .clip_y = 0,
+        .clip_w = 400,
+        .clip_h = 300,
+        .margin = 16,
+    };
+    const speech_bubbles::bubble_dimensions dims{
+        .box_w = 120,
+        .box_h = 40,
+        .pointer_h = 6,
+    };
+
+    CHECK(speech_bubbles::fits_in_viewport(view, dims, point(200, 250)));
+    CHECK_FALSE(speech_bubbles::fits_in_viewport(view, dims, point(20, 250)));
+    CHECK_FALSE(speech_bubbles::fits_in_viewport(view, dims, point(380, 250)));
+
+    // Inner width is clip_w - 2*margin = 368; a 370px box cannot sit fully inside.
+    const auto tight = speech_bubbles::bubble_dimensions{ .box_w = 370, .box_h = 40, .pointer_h = 6 };
+    CHECK_FALSE(speech_bubbles::fits_in_viewport(view, tight, point(200, 250)));
+    CHECK_FALSE(speech_bubbles::fits_in_viewport(view, dims, point(200, 30)));
+}
+
 TEST_CASE("a deaf player is not shown what they cannot hear", "[speech_bubble]") {
     clear_all_state();
     set_time(calendar::turn_zero + 12_hours);

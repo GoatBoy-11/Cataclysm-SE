@@ -7,6 +7,7 @@
 
 #include "character_id.h"
 #include "coordinates.h"
+#include "point.h"
 
 class Character;
 
@@ -56,5 +57,31 @@ auto active() -> bool;
 auto entries() -> const std::vector<speech_bubble> &;
 
 auto speaker_location( const speech_bubble &bubble ) -> std::optional<tripoint_bub_ms>;
+
+struct terrain_bubble_viewport {
+    int clip_x = 0;
+    int clip_y = 0;
+    int clip_w = 0;
+    int clip_h = 0;
+    int margin = 0;
+};
+
+struct bubble_dimensions {
+    int box_w = 0;
+    int box_h = 0;
+    int pointer_h = 6;
+};
+
+struct bubble_layout {
+    int box_x = 0;
+    int box_y = 0;
+};
+
+/// Box centered above the sprite, before any edge clamping.
+auto layout_above_sprite( const bubble_dimensions &dims, point sprite_anchor ) -> bubble_layout;
+
+/// False when the speaker or bubble would sit on or past the terrain window margin.
+auto fits_in_viewport( const terrain_bubble_viewport &view, const bubble_dimensions &dims,
+                       point sprite_anchor ) -> bool;
 
 } // namespace speech_bubbles

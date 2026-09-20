@@ -1666,10 +1666,26 @@ static void draw_speech_bubbles( const cata_cursesport::WINDOW *const win )
         }
         const int box_w = text_w * fw + padding * 2;
         const int box_h = static_cast<int>( lines.size() ) * fh + padding * 2;
-        int box_x = sprite_cx - box_w / 2;
-        int box_y = sprite_top - pointer_h - box_h;
-        box_x = std::clamp( box_x, clip_x + 1, std::max( clip_x + 1, clip_x + clip_w - box_w - 1 ) );
-        box_y = std::max( clip_y + 1, box_y );
+        const int edge_margin = std::max( tile_w / 2, fw * 2 );
+        const speech_bubbles::terrain_bubble_viewport view{
+            .clip_x = clip_x,
+            .clip_y = clip_y,
+            .clip_w = clip_w,
+            .clip_h = clip_h,
+            .margin = edge_margin,
+        };
+        const speech_bubbles::bubble_dimensions dims{
+            .box_w = box_w,
+            .box_h = box_h,
+            .pointer_h = pointer_h,
+        };
+        const point sprite_anchor( sprite_cx, sprite_top );
+        if( !speech_bubbles::fits_in_viewport( view, dims, sprite_anchor ) ) {
+            continue;
+        }
+        const auto layout = speech_bubbles::layout_above_sprite( dims, sprite_anchor );
+        const int box_x = layout.box_x;
+        const int box_y = layout.box_y;
 
         const float fade = speech_bubbles::fade_for( bubble, now );
 

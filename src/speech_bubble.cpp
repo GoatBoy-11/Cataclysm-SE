@@ -141,6 +141,42 @@ auto entries() -> const std::vector<speech_bubble> &
     return bubbles();
 }
 
+auto layout_above_sprite( const bubble_dimensions &dims, point sprite_anchor ) -> bubble_layout
+{
+    return bubble_layout{
+        .box_x = sprite_anchor.x - dims.box_w / 2,
+        .box_y = sprite_anchor.y - dims.pointer_h - dims.box_h,
+    };
+}
+
+auto fits_in_viewport( const terrain_bubble_viewport &view, const bubble_dimensions &dims,
+                       point sprite_anchor ) -> bool
+{
+    if( view.clip_w <= 0 || view.clip_h <= 0 ) {
+        return false;
+    }
+
+    const auto layout = layout_above_sprite( dims, sprite_anchor );
+    const int left = view.clip_x + view.margin;
+    const int right = view.clip_x + view.clip_w - view.margin;
+    const int top = view.clip_y + view.margin;
+    const int bottom = view.clip_y + view.clip_h - view.margin;
+
+    if( sprite_anchor.x < left || sprite_anchor.x > right ) {
+        return false;
+    }
+    if( sprite_anchor.y < top || sprite_anchor.y > bottom ) {
+        return false;
+    }
+    if( layout.box_x < left || layout.box_x + dims.box_w > right ) {
+        return false;
+    }
+    if( layout.box_y < top ) {
+        return false;
+    }
+    return true;
+}
+
 auto speaker_location( const speech_bubble &bubble ) -> std::optional<tripoint_bub_ms>
 {
     if( !g ) {
