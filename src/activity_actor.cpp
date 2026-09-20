@@ -1,13 +1,7 @@
 #include "activity_actor.h"
-#include "activity_actor_definitions.h"
-
-#include <cmath>
-#include <list>
-#include <memory>
-#include <string>
-#include <utility>
 
 #include "action_time_scale.h"
+#include "activity_actor_definitions.h"
 #include "activity_handlers.h" // put_into_vehicle_or_drop and drop_on_map
 #include "activity_speed.h"
 #include "advanced_inv.h"
@@ -20,12 +14,12 @@
 #include "construction_partial.h"
 #include "craft_command.h"
 #include "crafting.h"
+#include "crafting_quality.h"
 #include "debug.h"
 #include "enchantments/enchanter.h"
 #include "enums.h"
 #include "event.h"
 #include "event_bus.h"
-#include "field_type.h"
 #include "flag.h"
 #include "game.h"
 #include "gates.h"
@@ -37,10 +31,11 @@
 #include "json.h"
 #include "line.h"
 #include "locations.h"
-#include "map.h"
+#include "map/field_type.h"
+#include "map/map.h"
+#include "map/map_selector.h"
+#include "map/mapdata.h"
 #include "map_iterator.h"
-#include "map_selector.h"
-#include "mapdata.h"
 #include "messages.h"
 #include "npc.h"
 #include "options.h"
@@ -48,9 +43,8 @@
 #include "player.h"
 #include "player_activity.h"
 #include "point.h"
-#include "ranged.h"
-#include "crafting_quality.h"
 #include "proficiency.h"
+#include "ranged.h"
 #include "recipe.h"
 #include "recipe_dictionary.h"
 #include "rng.h"
@@ -58,9 +52,15 @@
 #include "timed_event.h"
 #include "translations.h"
 #include "uistate.h"
-#include "vehicle.h"
-#include "vehicle_part.h"
-#include "vpart_position.h"
+#include "vehicle/vehicle.h"
+#include "vehicle/vehicle_part.h"
+#include "vehicle/vpart_position.h"
+
+#include <cmath>
+#include <list>
+#include <memory>
+#include <string>
+#include <utility>
 
 #define dbg(x) DebugLog((x),DC::Game)
 

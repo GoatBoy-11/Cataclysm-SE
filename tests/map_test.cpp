@@ -1,3 +1,6 @@
+#include "../src/map/map.h"
+#include "../src/map/submap.h"
+#include "../src/map/submap_load_manager.h"
 #include "avatar.h"
 #include "avatar_action.h"
 #include "cata_utility.h"
@@ -7,16 +10,15 @@
 #include "coordinates.h"
 #include "data_vars.h"
 #include "enums.h"
-#include "field_type.h"
 #include "game.h"
 #include "game_constants.h"
 #include "iexamine.h"
 #include "item.h"
-#include "map.h"
+#include "map/field_type.h"
+#include "map/mapbuffer.h"
+#include "map/mapbuffer_registry.h"
 #include "map_helpers.h"
-#include "mapbuffer.h"
-#include "mapbuffer_registry.h"
-#include "mapgen_constructor.h"
+#include "mapgen/mapgen_constructor.h"
 #include "messages.h"
 #include "monster.h"
 #include "npc.h"
@@ -24,11 +26,9 @@
 #include "options_helpers.h"
 #include "player_helpers.h"
 #include "state_helpers.h"
-#include "submap.h"
-#include "submap_load_manager.h"
 #include "type_id.h"
 #include "units.h"
-#include "vehicle.h"
+#include "vehicle/vehicle.h"
 
 #include <memory>
 #include <ranges>
@@ -1074,7 +1074,7 @@ TEST_CASE("placed_monsters_inherit_bound_dimension") {
     CHECK(mon->get_dimension() == test_dim);
 }
 
-static std::ostream& operator<<(std::ostream& os, const ter_id& tid) {
+static auto operator<<(std::ostream& os, const ter_id& tid) -> std::ostream& { // *NOPAD*
     os << tid.id().c_str();
     return os;
 }

@@ -1,43 +1,26 @@
-#include "npc.h" // IWYU pragma: associated
-
-#include <algorithm>
-#include <cfloat>
-#include <climits>
-#include <cmath>
-#include <cstdlib>
-#include <iterator>
-#include <memory>
-#include <numeric>
-#include <ostream>
-#include <tuple>
-#include <unordered_set>
-#include <unordered_map>
-
 #include "action_time_scale.h"
 #include "active_item_cache.h"
 #include "activity_handlers.h"
-#include "creature_tracker.h"
 #include "bionics.h"
 #include "bodypart.h"
-#include "utils/algo.h"
+#include "calendar.h"
+#include "catalua.h"
 #include "catalua_coord.h"
 #include "catalua_hooks.h"
+#include "catalua_impl.h"
 #include "catalua_sol.h"
 #include "character.h"
 #include "character_functions.h"
-#include "character_turn.h"
 #include "character_id.h"
+#include "character_turn.h"
 #include "clzones.h"
-#include "catalua.h"
-#include "catalua_impl.h"
+#include "creature_tracker.h"
 #include "damage.h"
 #include "debug.h"
 #include "dispersion.h"
 #include "effect.h"
 #include "enums.h"
 #include "explosion.h"
-#include "field.h"
-#include "field_type.h"
 #include "flag.h"
 #include "game.h"
 #include "game_constants.h"
@@ -51,13 +34,16 @@
 #include "iuse.h"
 #include "iuse_actor.h"
 #include "line.h"
-#include "map.h"
+#include "map/field.h"
+#include "map/field_type.h"
+#include "map/map.h"
+#include "map/mapdata.h"
 #include "map_iterator.h"
-#include "mapdata.h"
 #include "messages.h"
 #include "mission.h"
 #include "monster.h"
 #include "mtype.h"
+#include "npc.h" // IWYU pragma: associated
 #include "npc_class.h"
 #include "npctalk.h"
 #include "options.h"
@@ -65,7 +51,6 @@
 #include "overmap_location.h"
 #include "overmapbuffer.h"
 #include "overmapbuffer_registry.h"
-#include "calendar.h"
 #include "player_activity.h"
 #include "pldata.h"
 #include "profile.h"
@@ -78,13 +63,27 @@
 #include "translations.h"
 #include "type_id.h"
 #include "units.h"
+#include "utils/algo.h"
 #include "value_ptr.h"
-#include "veh_type.h"
-#include "vehicle.h"
-#include "vehicle_part.h"
+#include "vehicle/veh_type.h"
+#include "vehicle/vehicle.h"
+#include "vehicle/vehicle_part.h"
+#include "vehicle/vpart_position.h"
+#include "vehicle/vpart_range.h"
 #include "visitable.h"
-#include "vpart_position.h"
-#include "vpart_range.h"
+
+#include <algorithm>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <cstdlib>
+#include <iterator>
+#include <memory>
+#include <numeric>
+#include <ostream>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace
 {
@@ -123,8 +122,7 @@ auto run_lua_npc_ai( npc &who ) -> bool
         return false;
     }
 
-    std::unique_lock lock( cata::lua_lock );
-    auto *lua_state = cata::get_active_lua_state();
+    auto *lua_state = DynamicDataLoader::get_instance().lua.get();
     if( lua_state == nullptr ) {
         return false;
     }
@@ -2661,44 +2659,41 @@ void npc::move_to( const tripoint_bub_ms &pt, bool no_bashing, std::set<tripoint
 {
     auto p = pt;
 
-    {
-        std::unique_lock lock( cata::lua_lock );
-        const auto hook_results = cata::run_hooks(
-                                      "on_npc_try_move",
-        [ &, this]( sol::table & params ) {
-            params["npc"] = this;
-            params["from"] = cata::detail::lua_coords::to_lua( bub_pos() );
-            params["to"] = cata::detail::lua_coords::to_lua( p );
-            params["movement_mode"] = get_movement_mode();
-            params["via_ramp"] = false;
-            if( is_mounted() ) {
-                params["mounted"] = true;
-                params["mount"] = mounted_creature.get();
-            } else {
-                params["mounted"] = false;
-            }
-        } );
-
-        const auto char_hook_results = cata::run_hooks(
-                                           "on_character_try_move",
-        [ &, this]( sol::table & params ) {
-            params["char"] = static_cast<Character *>( this );
-            params["from"] = cata::detail::lua_coords::to_lua( bub_pos() );
-            params["to"] = cata::detail::lua_coords::to_lua( p );
-            params["movement_mode"] = get_movement_mode();
-            params["via_ramp"] = false;
-            if( is_mounted() ) {
-                params["mounted"] = true;
-                params["mount"] = mounted_creature.get();
-            } else {
-                params["mounted"] = false;
-            }
-        } );
-
-        if( !hook_results.get_or( "allowed", true ) ||
-            !char_hook_results.get_or( "allowed", true ) ) {
-            return;
+    const auto hook_results = cata::run_hooks(
+                                  "on_npc_try_move",
+    [ &, this]( sol::table & params ) {
+        params["npc"] = this;
+        params["from"] = cata::detail::lua_coords::to_lua( bub_pos() );
+        params["to"] = cata::detail::lua_coords::to_lua( p );
+        params["movement_mode"] = get_movement_mode();
+        params["via_ramp"] = false;
+        if( is_mounted() ) {
+            params["mounted"] = true;
+            params["mount"] = mounted_creature.get();
+        } else {
+            params["mounted"] = false;
         }
+    } );
+
+    const auto char_hook_results = cata::run_hooks(
+                                       "on_character_try_move",
+    [ &, this]( sol::table & params ) {
+        params["char"] = static_cast<Character *>( this );
+        params["from"] = cata::detail::lua_coords::to_lua( bub_pos() );
+        params["to"] = cata::detail::lua_coords::to_lua( p );
+        params["movement_mode"] = get_movement_mode();
+        params["via_ramp"] = false;
+        if( is_mounted() ) {
+            params["mounted"] = true;
+            params["mount"] = mounted_creature.get();
+        } else {
+            params["mounted"] = false;
+        }
+    } );
+
+    if( !hook_results.get_or( "allowed", true ) ||
+        !char_hook_results.get_or( "allowed", true ) ) {
+        return;
     }
 
     map &here = get_map();

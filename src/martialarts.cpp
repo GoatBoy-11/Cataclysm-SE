@@ -1,16 +1,5 @@
 #include "martialarts.h"
 
-#include "proficiency.h"
-
-#include <algorithm>
-#include <cstdlib>
-#include <iterator>
-#include <map>
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <utility>
-
 #include "avatar.h"
 #include "character.h"
 #include "character_martial_arts.h"
@@ -27,7 +16,7 @@
 #include "item_factory.h"
 #include "itype.h"
 #include "json.h"
-#include "map.h"
+#include "map/map.h"
 #include "messages.h"
 #include "mutation.h"
 #include "output.h"
@@ -35,6 +24,7 @@
 #include "player.h"
 #include "pldata.h"
 #include "point.h"
+#include "proficiency.h"
 #include "skill.h"
 #include "string_formatter.h"
 #include "string_id.h"
@@ -43,6 +33,15 @@
 #include "type_id_implement.h"
 #include "ui_manager.h"
 #include "value_ptr.h"
+
+#include <algorithm>
+#include <cstdlib>
+#include <iterator>
+#include <map>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <utility>
 
 static const skill_id skill_unarmed( "unarmed" );
 

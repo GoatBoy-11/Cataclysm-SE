@@ -4,7 +4,7 @@
 #include "game.h"
 #include "item.h"
 #include "loot_pocket_nesting.h"
-#include "map.h"
+#include "../src/map/map.h"
 #include "options_helpers.h"
 #include "rng.h"
 #include "state_helpers.h"

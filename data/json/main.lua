@@ -12,7 +12,6 @@ local robofac = require("lua/robofac")
 local nuclear_tear = require("lua/nuclear_tear")
 local minirose = require("lua/minirose")
 local plumbing = require("lua/plumbing")
-local genome = require("lua/itemgroup_modifiers/genome")
 local wool = require("lua/traits/wool_allergy")
 local comfort_items = require("lua/iuse/comfort_items")
 
@@ -33,7 +32,6 @@ mod.spray_can = spray_can
 mod.robofac = robofac
 mod.nuclear_tear = nuclear_tear
 mod.minirose = minirose
-mod.genome = genome
 mod.cvd_machine = cvd_machine
 mod.wool = wool
 mod.comfort_items = comfort_items

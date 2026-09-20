@@ -1,14 +1,5 @@
 #include "item_contents.h"
 
-#include <algorithm>
-#include <limits>
-#include <memory>
-#include <utility>
-
-#include <set>
-#include <string>
-#include <vector>
-
 #include "character.h"
 #include "enums.h"
 #include "handle_liquid.h"
@@ -16,13 +7,21 @@
 #include "item_category.h"
 #include "itype.h"
 #include "locations.h"
-#include "map.h"
+#include "map/map.h"
 #include "output.h"
 #include "string_input_popup.h"
 #include "translations.h"
 #include "type_id.h"
 #include "ui.h"
 #include "units_utility.h"
+
+#include <algorithm>
+#include <limits>
+#include <memory>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
 
 struct tripoint;
 

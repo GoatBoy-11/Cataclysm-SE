@@ -535,7 +535,7 @@
     "color": "dark_gray",
     "move_cost": 0,
     "coverage": 65,
-    "flags": [ "PLACE_ITEM" ],
+    "flags": [ "PLACE_ITEM", "NANOFAB_BODY" ],
     "bash": {
       "str_min": 120,
       "str_max": 150,
@@ -602,7 +602,7 @@
     "color": "dark_gray",
     "move_cost": 0,
     "coverage": 65,
-    "flags": [ "PLACE_ITEM" ],
+    "flags": [ "PLACE_ITEM", "NANOFORGE_BODY" ],
     "bash": {
       "str_min": 120,
       "str_max": 150,

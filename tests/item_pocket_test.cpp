@@ -14,7 +14,7 @@
 #include "npc.h"
 #include "pickup_token.h"
 #include "pickup.h"
-#include "map.h"
+#include "../src/map/map.h"
 #include "game.h"
 #include "avatar.h"
 #include "avatar_functions.h"
@@ -28,8 +28,8 @@
 #include "ret_val.h"
 #include "type_id.h"
 #include "units.h"
-#include "vehicle.h"
-#include "veh_type.h"
+#include "../src/vehicle/vehicle.h"
+#include "../src/vehicle/veh_type.h"
 
 TEST_CASE( "empty_pocket_reports_empty_and_full_remaining_volume", "[item][pocket]" )
 {

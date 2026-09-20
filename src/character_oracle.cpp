@@ -1,21 +1,22 @@
-#include <array>
-#include <functional>
-#include <list>
-#include <memory>
-#include <string>
+#include "character_oracle.h"
 
 #include "behavior.h"
 #include "bodypart.h"
 #include "character.h"
-#include "character_oracle.h"
 #include "inventory.h"
 #include "item.h"
 #include "item_contents.h"
 #include "item_pocket.h"
 #include "itype.h"
-#include "player.h"
 #include "make_static.h"
-#include "weather.h"
+#include "player.h"
+#include "weather/weather.h"
+
+#include <array>
+#include <functional>
+#include <list>
+#include <memory>
+#include <string>
 
 namespace behavior
 {

@@ -1,16 +1,5 @@
 #include "monster.h"
 
-#include <algorithm>
-#include <cmath>
-#include <iterator>
-#include <limits>
-#include <memory>
-#include <optional>
-#include <ranges>
-#include <tuple>
-#include <unordered_map>
-#include <unordered_set>
-
 #include "action_time_scale.h"
 #include "avatar.h"
 #include "bodypart.h"
@@ -27,28 +16,30 @@
 #include "debug.h"
 #include "effect.h"
 #include "enums.h"
-#include "event_bus.h"
 #include "event.h"
+#include "event_bus.h"
 #include "explosion.h"
-#include "field_type.h"
 #include "flag.h"
 #include "flat_set.h"
-#include "game_constants.h"
 #include "game.h"
-#include "int_id.h"
+#include "game_constants.h"
 #include "init.h"
-#include "item_group.h"
-#include "item_factory.h"
+#include "int_id.h"
 #include "item.h"
 #include "item_category.h"
+#include "item_factory.h"
+#include "item_group.h"
 #include "itype.h"
 #include "line.h"
 #include "locations.h"
 #include "make_static.h"
-#include "mapdata.h"
-#include "map.h"
-#include "mapbuffer.h"
+#include "map/field_type.h"
+#include "map/map.h"
+#include "map/mapbuffer.h"
+#include "map/mapdata.h"
+#include "map/submap.h"
 #include "map_iterator.h"
+#include "mattack_actors.h"
 #include "mattack_common.h"
 #include "melee.h"
 #include "messages.h"
@@ -58,7 +49,6 @@
 #include "mondefense.h"
 #include "monfaction.h"
 #include "mongroup.h"
-#include "mattack_actors.h"
 #include "morale_types.h"
 #include "mtype.h"
 #include "mutation.h"
@@ -68,20 +58,30 @@
 #include "overmapbuffer.h"
 #include "pimpl.h"
 #include "player.h"
+#include "profile.h"
 #include "projectile.h"
 #include "rng.h"
 #include "sounds.h"
 #include "string_formatter.h"
 #include "string_id.h"
 #include "string_utils.h"
-#include "submap.h"
 #include "text_snippets.h"
 #include "translations.h"
 #include "trap.h"
 #include "type_id.h"
-#include "weather.h"
-#include "profile.h"
 #include "units_utility.h"
+#include "weather/weather.h"
+
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <limits>
+#include <memory>
+#include <optional>
+#include <ranges>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 
 static const ammo_effect_str_id ammo_effect_WHIP( "WHIP" );
 
@@ -245,8 +245,7 @@ auto get_lua_monster_attitude( const monster &mon,
         return std::nullopt;
     }
 
-    std::unique_lock lock( cata::lua_lock );
-    auto *lua_state = cata::get_active_lua_state();
+    auto *lua_state = DynamicDataLoader::get_instance().lua.get();
     if( lua_state == nullptr ) {
         return std::nullopt;
     }
@@ -2537,14 +2536,11 @@ void monster::melee_attack( Creature &target, float accuracy )
 
     target.check_dead_state();
 
-    {
-        std::unique_lock lock( cata::lua_lock );
-        cata::run_hooks( "on_creature_melee_attacked", [ &, this]( auto & params ) {
-            params["char"] = this;
-            params["target"] = &target;
-            params["success"] = attack_success;
-        } );
-    }
+    cata::run_hooks( "on_creature_melee_attacked", [ &, this]( auto & params ) {
+        params["char"] = this;
+        params["target"] = &target;
+        params["success"] = attack_success;
+    } );
 
     if( is_hallucination() ) {
         if( one_in( 7 ) ) {
@@ -3644,7 +3640,6 @@ void monster::die( Creature *nkiller )
             }
         }
     }
-    std::unique_lock lock( cata::lua_lock );
     cata::run_hooks( "on_mon_death", [ &, this]( auto & params ) {
         params["mon"] = this;
         params["killer"] = get_killer();
@@ -3866,8 +3861,8 @@ void monster::process_one_effect( effect &it, bool is_new )
         }
     } else if( id == effect_bleed ) {
         int intense = it.get_intensity();
-        if( one_in( 36 / intense ) ) {
-            apply_damage( nullptr, bodypart_id( "torso" ), 1 );
+        if( one_in( 9 / intense ) ) {
+            apply_damage( nullptr, bodypart_id( "torso" ), 3 );
             bleed();
         }
     } else if( id == effect_run ) {
@@ -3879,7 +3874,6 @@ void monster::process_one_effect( effect &it, bool is_new )
     }
 
     if( is_new && it.has_flag( flag_EFFECT_LUA_ON_ADDED ) ) {
-        std::unique_lock lock( cata::lua_lock );
         cata::run_hooks( "on_mon_effect_added", [ &, this ]( auto & params ) {
             params["mon"] = this;
             params["effect"] = &it;
@@ -3887,7 +3881,6 @@ void monster::process_one_effect( effect &it, bool is_new )
     }
 
     if( it.has_flag( flag_EFFECT_LUA_ON_TICK ) ) {
-        std::unique_lock lock( cata::lua_lock );
         cata::run_hooks( "on_mon_effect", [ &, this ]( auto & params ) {
             params["mon"] = this;
             params["effect"] = &it;
@@ -4040,7 +4033,6 @@ void monster::make_pet( Character &actor )
         _lua_callbacks->call_on_tame( actor, *this );
     }
 
-    std::unique_lock lock( cata::lua_lock );
     cata::run_hooks( "on_monster_tame", [&](
     auto & params ) { params["avatar"] = &actor; params["monster"] = *this; }
                    );
@@ -4480,7 +4472,6 @@ void monster::on_load()
 
     last_updated = calendar::turn;
 
-    std::unique_lock lock( cata::lua_lock );
     cata::run_hooks( "on_creature_loaded", [this]( sol::table & params ) {
         params["creature"] = this;
     } );

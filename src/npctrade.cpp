@@ -1,17 +1,11 @@
 #include "npctrade.h"
 
-#include <algorithm>
-#include <memory>
-#include <ranges>
-#include <string>
-#include <vector>
-
 #include "avatar.h"
 #include "faction.h"
 #include "game.h"
 #include "item.h"
 #include "item_category.h"
-#include "map_selector.h"
+#include "map/map_selector.h"
 #include "npc.h"
 #include "player.h"
 #include "skill.h"
@@ -20,8 +14,14 @@
 #include "trade_pocket_ui.h"
 #include "trade_win.h"
 #include "type_id.h"
-#include "vehicle_selector.h"
+#include "vehicle/vehicle_selector.h"
 #include "visitable.h"
+
+#include <algorithm>
+#include <memory>
+#include <ranges>
+#include <string>
+#include <vector>
 
 static const skill_id skill_barter( "barter" );
 static const flag_id json_flag_NO_UNWIELD( "NO_UNWIELD" );

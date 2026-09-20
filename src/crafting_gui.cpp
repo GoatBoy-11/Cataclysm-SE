@@ -1,25 +1,12 @@
 #include "crafting_gui.h"
 
-#include <algorithm>
-#include <array>
-#include <cstring>
-#include <iterator>
-#include <map>
-#include <regex>
-#include <set>
-#include <string>
-#include <unordered_set>
-#include <utility>
-#include <vector>
-
 #include "avatar.h"
 #include "cached_options.h"
 #include "calendar.h"
-#include "catalua.h"
-#include "catalua_hooks.h"
-#include "catalua_sol.h"
 #include "cata_utility.h"
 #include "catacharset.h"
+#include "catalua_hooks.h"
+#include "catalua_sol.h"
 #include "character.h"
 #include "character_functions.h"
 #include "color.h"
@@ -35,14 +22,14 @@
 #include "itype.h"
 #include "json.h"
 #include "line.h"
-#include "map.h"
+#include "map/map.h"
 #include "messages.h"
+#include "mod_manager.h"
 #include "npc.h"
 #include "options.h"
-#include "player_activity.h"
-#include "mod_manager.h"
 #include "output.h"
 #include "player.h"
+#include "player_activity.h"
 #include "point.h"
 #include "proficiency.h"
 #include "recipe.h"
@@ -58,6 +45,18 @@
 #include "ui_manager.h"
 #include "ui_mouse.h"
 #include "uistate.h"
+
+#include <algorithm>
+#include <array>
+#include <cstring>
+#include <iterator>
+#include <map>
+#include <regex>
+#include <set>
+#include <string>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 static const std::string flag_BLIND_NO_EFFECT( "BLIND_NO_EFFECT" );
 static const std::string flag_BLIND_EASY( "BLIND_EASY" );
@@ -324,7 +323,6 @@ auto apply_craft_result_hooks( const craft_result_hook_options &opts ) -> void
 {
     auto &food_contained = ( opts.result.is_container() && !opts.result.contents.empty() ) ?
                            opts.result.contents.back() : opts.result;
-    std::unique_lock lock( cata::lua_lock );
     cata::run_hooks( "on_craft_result", [&]( auto & params ) {
         params["crafter"] = &opts.crafter;
         params["item"] = &food_contained;

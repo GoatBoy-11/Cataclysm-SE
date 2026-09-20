@@ -1,15 +1,15 @@
+#include "../src/map/map.h"
+#include "../src/vehicle/vehicle_part.h"
 #include "catch/catch.hpp"
 #include "character.h"
 #include "debug.h"
 #include "item.h"
-#include "map.h"
 #include "point.h"
 #include "state_helpers.h"
 #include "type_id.h"
-#include "veh_type.h"
-#include "vehicle.h"
-#include "vehicle_part.h"
-#include "vpart_range.h"
+#include "vehicle/veh_type.h"
+#include "vehicle/vehicle.h"
+#include "vehicle/vpart_range.h"
 
 #include <algorithm>
 #include <memory>

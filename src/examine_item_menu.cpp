@@ -1,28 +1,28 @@
 #include "examine_item_menu.h"
 
-#include <vector>
-#include <string>
-
 #include "auto_pickup.h"
-#include "avatar_action.h"
 #include "avatar.h"
+#include "avatar_action.h"
 #include "avatar_functions.h"
 #include "crafting.h"
 #include "game_inventory.h"
-#include "map.h"
 #include "input.h"
 #include "item.h"
 #include "item_contents.h"
 #include "item_functions.h"
 #include "item_pocket.h"
 #include "itype.h"
+#include "map/map.h"
 #include "messages.h"
 #include "output.h"
 #include "pocket_destination_menu.h"
-#include "salvage.h"
 #include "recipe_dictionary.h"
 #include "rot.h"
+#include "salvage.h"
 #include "ui_manager.h"
+
+#include <string>
+#include <vector>
 //#include "handle_action.cpp"
 #include "utils/url.h"
 #include "options.h"

@@ -1,24 +1,5 @@
 #include "sounds.h"
 
-#include <algorithm>
-#include <array>
-#include <atomic>
-#include <bitset>
-#include <chrono>
-#include <cmath>
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <memory>
-#include <optional>
-#include <ostream>
-#include <set>
-#include <system_error>
-#include <unordered_map>
-#include <utility>
-#include <vector>
-#include <queue>
-
 #include "active_tile_data.h"
 #include "avatar.h"
 #include "calendar.h"
@@ -34,19 +15,23 @@
 #include "item.h"
 #include "itype.h"
 #include "line.h"
-#include "map.h"
-#include "mapbuffer.h"
+#include "map/map.h"
+#include "map/mapbuffer.h"
+#include "map/mapdata.h"
+#include "map/submap.h"
 #include "map_iterator.h"
-#include "mapdata.h"
 #include "messages.h"
 #include "monfaction.h"
 #include "monster.h"
+#include "mtype.h"
 #include "npc.h"
+#include "omdata.h"
 #include "overmapbuffer.h"
 #include "overmapbuffer_registry.h"
 #include "player.h"
 #include "player_activity.h"
 #include "point.h"
+#include "profile.h"
 #include "rng.h"
 #include "safemode_ui.h"
 #include "string_formatter.h"
@@ -56,15 +41,30 @@
 #include "type_id.h"
 #include "units.h"
 #include "units_angle.h"
-#include "veh_type.h"
-#include "vehicle.h"
-#include "vehicle_part.h"
-#include "vpart_position.h"
-#include "weather.h"
-#include "profile.h"
-#include "omdata.h"
-#include "submap.h"
-#include "mtype.h"
+#include "vehicle/veh_type.h"
+#include "vehicle/vehicle.h"
+#include "vehicle/vehicle_part.h"
+#include "vehicle/vpart_position.h"
+#include "weather/weather.h"
+
+#include <algorithm>
+#include <array>
+#include <atomic>
+#include <bitset>
+#include <chrono>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <optional>
+#include <ostream>
+#include <queue>
+#include <set>
+#include <system_error>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 #if defined(SDL_SOUND)
 #   include <thread>
@@ -953,7 +953,7 @@ void map::batch_flood_fill_sounds()
             if( flooded_sound.origin.z() != z ) {
                 // We still floodfill these sounds out later, just when we get to the right z-level.
                 continue;
-            } else if( flooded_sound.volume < 7 ) {
+            } else if( flooded_sound.volume < 7 || !inbounds( flooded_sound.origin ) ) {
                 num_invalidated_sounds++;
                 continue;
             } else {
@@ -2687,7 +2687,7 @@ void sounds::process_sound_markers( Character *who )
         }
         loudest_vol = std::max( loudest_vol, tile_vol );
 
-        if( tile_vol >= MAXIMUM_VOLUME_ATMOSPHERE || tile_vol > dBspl_to_mdBspl( element.sound.volume ) ) {
+        if( tile_vol > MAXIMUM_VOLUME_ATMOSPHERE || tile_vol > dBspl_to_mdBspl( element.sound.volume ) ) {
             // Dont count impossibly loud sounds.
             debugmsg( "Player given impossibly loud sound! Sound with description [ %1s ] from %i:%i:%i with an origin volume of %i dB, tile volume of %i mdB, distance %i at %i:%i:%i is louder than possible.",
                       element.sound.description, element.sound.origin.x(), element.sound.origin.y(),

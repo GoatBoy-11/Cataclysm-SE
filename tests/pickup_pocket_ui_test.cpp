@@ -4,7 +4,7 @@
 #include "character_id.h"
 #include "game.h"
 #include "item.h"
-#include "map.h"
+#include "../src/map/map.h"
 #include "options_helpers.h"
 #include "item_pocket.h"
 #include "pickup_pocket_ui.h"

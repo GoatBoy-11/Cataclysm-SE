@@ -1,21 +1,5 @@
 #include "crafting.h"
 
-#include <algorithm>
-#include <cassert>
-#include <climits>
-#include <cmath>
-#include <cstdlib>
-#include <functional>
-#include <limits>
-#include <map>
-#include <memory>
-#include <optional>
-#include <ranges>
-#include <set>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "action_time_scale.h"
 #include "activity_actor_definitions.h"
 #include "activity_handlers.h"
@@ -23,10 +7,9 @@
 #include "avatar_functions.h"
 #include "bionics.h"
 #include "calendar.h"
-#include "catalua.h"
+#include "cata_utility.h"
 #include "catalua_hooks.h"
 #include "catalua_sol.h"
-#include "cata_utility.h"
 #include "character.h"
 #include "character_functions.h"
 #include "color.h"
@@ -50,9 +33,9 @@
 #include "itype.h"
 #include "iuse.h"
 #include "line.h"
-#include "map.h"
-#include "map_selector.h"
-#include "mapdata.h"
+#include "map/map.h"
+#include "map/map_selector.h"
+#include "map/mapdata.h"
 #include "messages.h"
 #include "mutation.h"
 #include "npc.h"
@@ -79,11 +62,27 @@
 #include "ui.h"
 #include "units.h"
 #include "value_ptr.h"
-#include "veh_type.h"
-#include "vehicle.h"
-#include "vehicle_part.h"
-#include "vehicle_selector.h"
-#include "vpart_position.h"
+#include "vehicle/veh_type.h"
+#include "vehicle/vehicle.h"
+#include "vehicle/vehicle_part.h"
+#include "vehicle/vehicle_selector.h"
+#include "vehicle/vpart_position.h"
+
+#include <algorithm>
+#include <cassert>
+#include <climits>
+#include <cmath>
+#include <cstdlib>
+#include <functional>
+#include <limits>
+#include <map>
+#include <memory>
+#include <optional>
+#include <ranges>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
 
 static const activity_id ACT_CRAFT( "ACT_CRAFT" );
 
@@ -1355,19 +1354,16 @@ void complete_craft( Character &who, item &craft )
         if( food_contained.is_comestible() ) {
             food_contained.set_kcal_mult( cooking_kcal_mult );
         }
-        {
-            std::unique_lock lock( cata::lua_lock );
-            cata::run_hooks( "on_craft_result", [&]( auto & params ) {
-                params["crafter"] = &who;
-                params["craft"] = &craft;
-                params["item"] = &food_contained;
-                params["recipe"] = &making;
-                params["batch_size"] = batch_size;
-                params["hot_result"] = should_heat;
-                params["dehydrated_result"] = is_dehydrated;
-                params["crafting_menu"] = false;
-            } );
-        }
+        cata::run_hooks( "on_craft_result", [&]( auto & params ) {
+            params["crafter"] = &who;
+            params["craft"] = &craft;
+            params["item"] = &food_contained;
+            params["recipe"] = &making;
+            params["batch_size"] = batch_size;
+            params["hot_result"] = should_heat;
+            params["dehydrated_result"] = is_dehydrated;
+            params["crafting_menu"] = false;
+        } );
         // Don't store components for things that ignores components (e.g wow 'conjured bread')
         if( ignore_component ) {
             food_contained.set_flag( flag_NUTRIENT_OVERRIDE );

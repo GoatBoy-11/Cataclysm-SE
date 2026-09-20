@@ -10,7 +10,7 @@
 #include "item_contents.h"
 #include "item_pocket.h"
 #include "activity_handlers.h"
-#include "map.h"
+#include "map/map.h"
 #include "output.h"
 #include "ret_val.h"
 #include "string_formatter.h"

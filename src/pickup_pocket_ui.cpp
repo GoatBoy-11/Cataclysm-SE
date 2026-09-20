@@ -7,7 +7,7 @@
 #include "item.h"
 #include "item_contents.h"
 #include "item_pocket.h"
-#include "map.h"
+#include "map/map.h"
 
 namespace pickup_pocket_ui
 {
