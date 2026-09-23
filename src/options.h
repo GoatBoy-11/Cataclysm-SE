@@ -188,6 +188,7 @@ class options_manager
         void add_options_general();
         void add_options_interface();
         void add_options_graphics();
+        void add_options_fx();
         void add_options_performance();
         void add_options_debug();
         void add_options_world_default();

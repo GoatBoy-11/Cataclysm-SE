@@ -1,0 +1,16 @@
+[
+  {
+    "type": "fx_emitter",
+    "id": "test_fx_burst",
+    "trigger": "hit",
+    "lifetime_ms": [ 100, 100 ],
+    "speed": [ 2, 2 ],
+    "heading_deg": 90,
+    "spread_deg": 0,
+    "gravity": [ 0, 10 ],
+    "size_px": [ 4, 4 ],
+    "burst": 3,
+    "blend": "additive",
+    "color": [ 255, 0, 0, 255 ]
+  }
+]

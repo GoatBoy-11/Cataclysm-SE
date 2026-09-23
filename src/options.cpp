@@ -159,6 +159,7 @@ options_manager &get_options()
 constexpr auto general = "general";
 constexpr auto interface = "interface";
 constexpr auto graphics = "graphics";
+constexpr auto fx = "fx";
 constexpr auto performance = "performance";
 constexpr auto world_default = "world_default";
 constexpr auto debug = "debug";
@@ -171,6 +172,7 @@ options_manager::options_manager()
     pages_.emplace_back( general, to_translation( "General" ) );
     pages_.emplace_back( interface, to_translation( "Interface" ) );
     pages_.emplace_back( graphics, to_translation( "Graphics" ) );
+    pages_.emplace_back( fx, to_translation( "FX" ) );
     pages_.emplace_back( performance, to_translation( "Performance" ) );
     // when sharing maps only admin is allowed to change these.
     if( !MAP_SHARING::isCompetitive() || MAP_SHARING::isAdmin() ) {
@@ -1242,6 +1244,7 @@ void options_manager::init()
     add_options_general();
     add_options_interface();
     add_options_graphics();
+    add_options_fx();
     add_options_performance();
     add_options_debug();
     add_options_world_default();
@@ -2416,6 +2419,63 @@ void options_manager::add_options_graphics()
     "auto" );
 #endif
 
+}
+
+void options_manager::add_options_fx()
+{
+    const auto add_empty_line = [&]() {
+        this->add_empty_line( fx );
+    };
+
+    add( "GRAPHIC_FX", fx, translate_marker( "Graphic effects" ),
+         translate_marker( "Master switch for particles, glows, heat shimmer, and screen tints.  Each effect below can be turned off on its own." ),
+         true, COPT_CURSES_HIDE
+       );
+    get_option( "GRAPHIC_FX" ).setPrerequisite( "ANIMATIONS" );
+
+    add_empty_line();
+
+    add( "FX_WEATHER", fx, translate_marker( "Weather particles" ),
+         translate_marker( "Rain, snow, and acid rain streaks." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_COMBAT", fx, translate_marker( "Combat particles" ),
+         translate_marker( "Blood, impact sparks, muzzle sparks, and explosion bursts." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_FIRE", fx, translate_marker( "Fire and smoke" ),
+         translate_marker( "Embers, fire smoke, and incendiary sparks." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_FIELDS", fx, translate_marker( "Field haze" ),
+         translate_marker( "Toxic gas, tear gas, cigarette smoke, fungal spores, acid fizz, plasma, and hot air." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_BREATH", fx, translate_marker( "Cold breath" ),
+         translate_marker( "Visible breath in freezing air." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_RIPPLES", fx, translate_marker( "Liquid ripples" ),
+         translate_marker( "Ripples when you, NPCs, or monsters wade through shallow liquid." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_LIGHTNING", fx, translate_marker( "Lightning" ),
+         translate_marker( "Lightning sparkles and the brief screen flash." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_SCREEN_TINT", fx, translate_marker( "Weather screen tint" ),
+         translate_marker( "A light color grade during acid rain." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_GLOW", fx, translate_marker( "Creature glow" ),
+         translate_marker( "A soft halo on creatures that give off light." ),
+         true, COPT_CURSES_HIDE );
+    add( "FX_HEAT", fx, translate_marker( "Heat shimmer" ),
+         translate_marker( "A slight wobble on fire tiles." ),
+         true, COPT_CURSES_HIDE );
+
+    get_option( "FX_WEATHER" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_COMBAT" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_FIRE" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_FIELDS" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_BREATH" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_RIPPLES" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_LIGHTNING" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_SCREEN_TINT" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_GLOW" ).setPrerequisite( "GRAPHIC_FX" );
+    get_option( "FX_HEAT" ).setPrerequisite( "GRAPHIC_FX" );
 }
 
 void options_manager::add_options_performance()

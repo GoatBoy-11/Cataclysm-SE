@@ -2,6 +2,7 @@
 #include "enchantments/enchantment_flag.h"
 #include "enchantments/enchantment_value.h"
 #include "fault.h"
+#include "fx/emitter.h"
 #include "map/emit.h"
 #include "martialarts.h"
 #include "mod_manager.h"
@@ -16,6 +17,7 @@ auto cata::detail::reg_game_ids_misc( sol::state &lua ) -> void
     reg_id<MonsterGroup, false>( lua );
     reg_id<weapon_category, false>( lua );
     reg_id<emit, false>( lua );
+    reg_id<fx_emitter, false>( lua );
     reg_id<fault, false>( lua );
     reg_id<quality, false>( lua );
     reg_id<vitamin, false>( lua );

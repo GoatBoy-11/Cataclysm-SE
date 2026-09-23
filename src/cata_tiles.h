@@ -1086,6 +1086,19 @@ class cata_tiles
         int get_tile_width() const {
             return tile_width;
         }
+        /// Screen tile size divided by the tileset size at zoom scale 16. 1 at the default zoom.
+        auto screen_tile_zoom() const -> float {
+            if( tileset_ptr == nullptr || tile_width <= 0 ) {
+                return 1.0f;
+            }
+            const auto pixelscale = tileset_ptr->get_tile_pixelscale();
+            const auto native = static_cast<float>( tileset_ptr->get_tile_width() ) *
+                                ( pixelscale > 0.001f ? pixelscale : 0.001f );
+            if( native <= 0.0f ) {
+                return 1.0f;
+            }
+            return static_cast<float>( tile_width ) / native;
+        }
         float get_tile_ratiox() const {
             return tile_ratiox;
         }

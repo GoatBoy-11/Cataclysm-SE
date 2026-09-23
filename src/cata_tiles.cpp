@@ -20,6 +20,8 @@
 #    include "filesystem.h"
 #    include "flag.h"
 #    include "fstream_utils.h"
+#    include "fx/render.h"
+#    include "fx/system.h"
 #    include "game.h"
 #    include "game_constants.h"
 #    include "init.h"
@@ -3311,13 +3313,11 @@ void cata_tiles::draw( point dest, const tripoint_bub_ms &center, int width, int
 
     idle_animations.set_enabled( get_option<bool>( "ANIMATIONS" ) );
     idle_animations.prepare_for_redraw();
+    static const auto sway_clock_start = std::chrono::steady_clock::now();
+    plant_sway_elapsed_ms = static_cast<int>( std::chrono::duration_cast<std::chrono::milliseconds>(
+                              std::chrono::steady_clock::now() - sway_clock_start ).count() );
     plant_sway_enabled = idle_animations.enabled() &&
                          plant_sway_frame_budget_ms( get_option<std::string>( "TREE_SWAY" ) ).has_value();
-    if( plant_sway_enabled ) {
-        static const auto sway_clock_start = std::chrono::steady_clock::now();
-        plant_sway_elapsed_ms = static_cast<int>( std::chrono::duration_cast<std::chrono::milliseconds>(
-                                  std::chrono::steady_clock::now() - sway_clock_start ).count() );
-    }
 
     //set up a default tile for the edges outside the render area
     visibility_type offscreen_type = VIS_DARK;
@@ -4225,6 +4225,15 @@ void cata_tiles::draw( point dest, const tripoint_bub_ms &center, int width, int
         }
     }
 
+    cata_fx::tick_realtime( fx_view{
+        .min_x = static_cast<float>( o.x() ),
+        .min_y = static_cast<float>( o.y() ),
+        .max_x = static_cast<float>( o.x() + screentile_width ),
+        .max_y = static_cast<float>( o.y() + screentile_height ),
+        .z = static_cast<float>( center.z() )
+    } );
+    cata_fx::draw_world( renderer, *this );
+
     const bool draw_submap_grid = g->debug_submap_grid_overlay ||
                                   ( g->is_zones_manager_open() && g->is_zone_submap_grid_overlay_enabled() );
 
@@ -4946,15 +4955,15 @@ bool cata_tiles::draw_sprite_at( const tile_type &tile, point_bub_ms p,
 
     auto render_copy_or_sway = [&]( const texture * tex, const int rotation,
     const SDL_FlipMode flip ) {
-        const auto use_sway = is_fg &&
-                              active_sprite_fx.kind == sprite_fx_kind::sway &&
+        const auto use_mesh = is_fg &&
+                              active_sprite_fx.kind != sprite_fx_kind::none &&
                               rotation == 0 &&
                               flip == SDL_FLIP_NONE;
-        if( !use_sway ) {
+        if( !use_mesh ) {
             return tex->render_copy_ex( renderer, &destination, rotation, nullptr, flip );
         }
         idle_animations.mark_present();
-        const auto mesh = build_sway_mesh( sprite_fx_rect{
+        const auto mesh = build_sprite_fx_mesh( sprite_fx_rect{
             .x = static_cast<float>( destination.x ),
             .y = static_cast<float>( destination.y ),
             .w = static_cast<float>( destination.w ),
@@ -5678,9 +5687,18 @@ bool cata_tiles::draw_field_or_item( const tripoint_bub_ms &p, const lit_level l
         const auto [bgCol, fgCol] = get_field_color( here.field_at( p ), here, p );
 
         const tile_search_params tile { fld.id().str(), C_FIELD, empty_string, subtile, rotation };
+        if( cata_fx::enabled() && cata_fx::category_enabled( "FX_HEAT" ) &&
+            ( fld == fd_fire || fld == fd_flame_burst ) ) {
+            active_sprite_fx = make_distortion_fx( {
+                .elapsed_ms = plant_sway_elapsed_ms,
+                .x = p.x(),
+                .y = p.y(),
+            } );
+        }
         ret_draw_field = draw_from_id_string(
                              tile, p, bgCol, fgCol,
                              lit, nv, z_drop, false );
+        active_sprite_fx = {};
     }
     if( fld.obj().display_items ) {
         const auto it_override = item_override.find( p );
@@ -6022,9 +6040,13 @@ bool cata_tiles::draw_critter_at( const tripoint_bub_ms &p, lit_level ll, int &h
         const std::string &ent_subcategory = id.obj().species.empty() ?
                                              empty_string : id.obj().species.begin()->str();
         const tile_search_params tile = { chosen_id, C_MONSTER, ent_subcategory, corner, 0 };
+        if( cata_fx::enabled() && cata_fx::category_enabled( "FX_GLOW" ) ) {
+            active_sprite_fx = make_glow_fx( glow_amplitude_from_luminance( id.obj().luminance ) );
+        }
         result = draw_from_id_string(
                      tile, p, std::nullopt, std::nullopt,
                      lit_level::LIT, false, z_drop, false, height_3d );
+        active_sprite_fx = {};
     } else {
         const Creature *pcritter = g->critter_at( p, true );
         if( pcritter == nullptr ) {
@@ -6091,9 +6113,13 @@ bool cata_tiles::draw_critter_at( const tripoint_bub_ms &p, lit_level ll, int &h
                     const auto [bgCol, fgCol] = get_monster_color( *m, get_map(), p );
 
                     const tile_search_params tile { chosen_id, ent_category, ent_subcategory, subtile, rot_facing };
+                    if( cata_fx::enabled() && cata_fx::category_enabled( "FX_GLOW" ) ) {
+                        active_sprite_fx = make_glow_fx( glow_amplitude_from_luminance( m->type->luminance ) );
+                    }
                     result = draw_from_id_string(
                                  tile, p, bgCol, fgCol,
                                  ll, false, z_drop, false, height_3d );
+                    active_sprite_fx = {};
                     sees_player = m->sees( g->u );
                     attitude = m->attitude_to( g-> u );
                 }

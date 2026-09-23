@@ -16,6 +16,7 @@
 #    include "dynamic_atlas.h"
 #    include "filesystem.h"
 #    include "font_loader.h"
+#    include "fx/render.h"
 #    include "game.h"
 #    include "game_ui.h"
 #    include "get_version.h"
@@ -208,6 +209,28 @@ static bool SetupRenderTarget()
     return true;
 }
 
+/// GPU renderer needs these flags so SDL_GPURenderState can load SPIR-V/DXIL/MSL.
+/// The lighting compute device is created later and stays separate.
+static auto create_window_renderer( SDL_Window *const window, const char *const driver,
+                                    const bool vsync ) -> SDL_Renderer *
+{
+    const auto props = SDL_CreateProperties();
+    if( props == 0 ) {
+        return nullptr;
+    }
+    SDL_SetPointerProperty( props, SDL_PROP_RENDERER_CREATE_WINDOW_POINTER, window );
+    if( driver != nullptr && driver[0] != '\0' ) {
+        SDL_SetStringProperty( props, SDL_PROP_RENDERER_CREATE_NAME_STRING, driver );
+    }
+    SDL_SetNumberProperty( props, SDL_PROP_RENDERER_CREATE_PRESENT_VSYNC_NUMBER, vsync ? 1 : 0 );
+    SDL_SetBooleanProperty( props, SDL_PROP_RENDERER_CREATE_GPU_SHADERS_SPIRV_BOOLEAN, true );
+    SDL_SetBooleanProperty( props, SDL_PROP_RENDERER_CREATE_GPU_SHADERS_DXIL_BOOLEAN, true );
+    SDL_SetBooleanProperty( props, SDL_PROP_RENDERER_CREATE_GPU_SHADERS_MSL_BOOLEAN, true );
+    auto *const result = SDL_CreateRendererWithProperties( props );
+    SDL_DestroyProperties( props );
+    return result;
+}
+
 //Registers, creates, and shows the Window!!
 static void WinCreate()
 {
@@ -322,7 +345,8 @@ static void WinCreate()
         dbg( DL::Info ) << "Attempting to initialize accelerated SDL renderer.";
 
         const char *renderer_driver = renderer_id >= 0 ? SDL_GetRenderDriver( renderer_id ) : nullptr;
-        renderer.reset( SDL_CreateRenderer( ::window.get(), renderer_driver ) );
+        renderer.reset( create_window_renderer( ::window.get(), renderer_driver,
+                                                get_option<bool>( "VSYNC" ) ) );
         if( printErrorIf( !renderer,
                           "Failed to initialize accelerated renderer, falling back to software rendering" ) ) {
             software_renderer = true;
@@ -342,7 +366,7 @@ static void WinCreate()
     }
 
     if( software_renderer ) {
-        renderer.reset( SDL_CreateRenderer( ::window.get(), "software" ) );
+        renderer.reset( create_window_renderer( ::window.get(), "software", false ) );
         throwErrorIf( !renderer, "Failed to initialize software renderer" );
         throwErrorIf( !SetupRenderTarget(),
                       "Failed to initialize display buffer under software rendering, unable to continue." );
@@ -420,6 +444,7 @@ static void WinDestroy()
     geometry.reset();
     format = SDL_PIXELFORMAT_UNKNOWN;
     display_buffer.reset();
+    cata_fx::shutdown_present();
     renderer.reset();
     ::window.reset();
 }
@@ -516,6 +541,7 @@ void refresh_display()
     // there, present it, select the buffer as target again.
     SetRenderTarget( renderer, nullptr );
     ClearScreen();
+    const auto shader_on = cata_fx::bind_present_shader( renderer.get() );
 #if defined(__ANDROID__)
     SDL_FRect dstrect = get_android_render_rect( TERMINAL_WIDTH * fontwidth,
                         TERMINAL_HEIGHT * fontheight );
@@ -528,6 +554,9 @@ void refresh_display()
     draw_quick_shortcuts();
     draw_virtual_joystick();
 #endif
+    if( shader_on ) {
+        cata_fx::unbind_present_shader( renderer.get() );
+    }
     SDL_RenderPresent( renderer.get() );
     SetRenderTarget( renderer, display_buffer );
 }

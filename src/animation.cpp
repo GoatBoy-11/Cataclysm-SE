@@ -28,6 +28,8 @@
 #include <memory>
 
 #include "cata_tiles.h" // all animation functions will be pushed out to a cata_tiles function in some manner
+#include "creature.h"
+#include "fx/system.h"
 #include "sdltiles.h"
 #endif
 
@@ -316,6 +318,13 @@ void explosion_handler::draw_explosion( const tripoint_bub_ms &p, const int r, c
         return;
     }
 
+    cata_fx::spawn( fx_spawn{
+        .id = fx_emitter_id( "explosion_flash" ),
+        .x = static_cast<float>( p.x() ),
+        .y = static_cast<float>( p.y() ),
+        .z = static_cast<float>( p.z() )
+    } );
+
     explosion_animation anim;
 
     int i = 1;
@@ -555,6 +564,13 @@ void game::draw_bullet( const tripoint_bub_ms &t, const int i,
         return;
     }
 
+    cata_fx::spawn( fx_spawn{
+        .id = fx_emitter_id( "muzzle_sparks" ),
+        .x = static_cast<float>( t.x() ),
+        .y = static_cast<float>( t.y() ),
+        .z = static_cast<float>( t.z() )
+    } );
+
     const auto sprite = get_bullet_sprite( bullet, custom_sprite );
 
     const auto rotation = get_bullet_rotation( get_bullet_dir( trajectory, static_cast<size_t>( i ) ) );
@@ -765,6 +781,20 @@ void draw_hit_mon_curses( const tripoint_bub_ms &center, const monster &m, const
 } // namespace
 
 #if defined(TILES)
+namespace
+{
+auto hit_fx_id( const Creature &c ) -> fx_emitter_id
+{
+    static const auto hflesh = material_id( "hflesh" );
+    if( c.made_of_any( Creature::cmat_flesh ) || c.made_of( hflesh ) ) {
+        return fx_emitter_id( "hit_blood" );
+    }
+    return fx_emitter_id( "hit_sparks" );
+}
+} // namespace
+#endif
+
+#if defined(TILES)
 void game::draw_hit_mon( const tripoint_bub_ms &p, const monster &m, const bool dead )
 {
     if( test_mode ) {
@@ -776,6 +806,13 @@ void game::draw_hit_mon( const tripoint_bub_ms &p, const monster &m, const bool 
         draw_hit_mon_curses( p, m, u, dead );
         return;
     }
+
+    cata_fx::spawn( fx_spawn{
+        .id = hit_fx_id( m ),
+        .x = static_cast<float>( p.x() ),
+        .y = static_cast<float>( p.y() ),
+        .z = static_cast<float>( p.z() )
+    } );
 
     shared_ptr_fast<draw_callback_t> hit_cb = make_shared_fast<draw_callback_t>( [&]() {
         tilecontext->init_draw_hit( p, m.type->id.str() );
@@ -821,6 +858,13 @@ void game::draw_hit_player( const Character &p, const int dam )
 
     const std::string &type = p.is_player() ? ( p.male ? player_male : player_female )
                               : p.male ? npc_male : npc_female;
+
+    cata_fx::spawn( fx_spawn{
+        .id = hit_fx_id( p ),
+        .x = static_cast<float>( p.bub_pos().x() ),
+        .y = static_cast<float>( p.bub_pos().y() ),
+        .z = static_cast<float>( p.bub_pos().z() )
+    } );
 
     shared_ptr_fast<draw_callback_t> hit_cb = make_shared_fast<draw_callback_t>( [&]() {
         tilecontext->init_draw_hit( p.bub_pos(), type );

@@ -10,6 +10,7 @@
 #include "catalua_luna_doc.h"
 #include "creature_tracker.h"
 #include "distribution_grid.h"
+#include "fx/system.h"
 #include "game.h"
 #include "iexamine.h"
 #include "image_viewer.h"
@@ -387,6 +388,15 @@ void cata::detail::reg_game_api( sol::state &lua )
     DOC( "Resolve an image filename to a full path under gfx/images or a loaded mod's images/ folder. Returns nil if not found." );
     luna::set_fx( lib, "resolve_image_path", []( const std::string & image ) -> std::optional<std::string> {
         return resolve_image_path( image );
+    } );
+    DOC( "Spawn a graphic-fx burst at a local map position. No-ops if GRAPHIC_FX is off or the id is unknown." );
+    luna::set_fx( lib, "spawn_fx", []( const fx_emitter_id & id, const tripoint_bub_ms & p ) -> void {
+        cata_fx::spawn( fx_spawn{
+            .id = id,
+            .x = static_cast<float>( p.x() ),
+            .y = static_cast<float>( p.y() ),
+            .z = static_cast<float>( p.z() )
+        } );
     } );
 
     reg_game_api_creature_queries( lib );

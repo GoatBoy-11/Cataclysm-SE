@@ -75,6 +75,10 @@ TEST_CASE( "sway mesh shears the canopy and plants the base", "[sprite_fx]" )
     CHECK( mesh.vertices[0].x == Approx( mesh.vertices[1].x - dest.w ).margin( 0.001f ) );
     CHECK( mesh.vertices[0].y == Approx( dest.y ).margin( 0.001f ) );
     CHECK( mesh.vertices[mesh.vertices.size() - 2].y == Approx( dest.y + dest.h ).margin( 0.001f ) );
+
+    const auto mid_row = last_row / 2;
+    CHECK( row_dx( mesh, mid_row, dest ) == Approx( 1.25f ).margin( 0.05f ) );
+    CHECK( mesh.vertices.size() > 18 );
 }
 
 TEST_CASE( "sway mesh top offset depends on phase", "[sprite_fx]" )
@@ -101,4 +105,30 @@ TEST_CASE( "plant sway time advances continuously with milliseconds", "[sprite_f
     CHECK( plant_sway_time( 0 ) == Approx( 0.0f ) );
     CHECK( plant_sway_time( 1000 ) == Approx( 4.2f ).margin( 0.001f ) );
     CHECK( plant_sway_time( 500 ) == Approx( 2.1f ).margin( 0.001f ) );
+}
+
+TEST_CASE( "glow amplitude is none at zero luminance and clamps when bright", "[sprite_fx]" )
+{
+    CHECK( glow_amplitude_from_luminance( 0.0f ) == Approx( 0.0f ) );
+    CHECK( glow_amplitude_from_luminance( -4.0f ) == Approx( 0.0f ) );
+    CHECK( glow_amplitude_from_luminance( 1.0f ) == Approx( 2.0f ) );
+    CHECK( glow_amplitude_from_luminance( 8.0f ) == Approx( 3.65f ).margin( 0.01f ) );
+    CHECK( glow_amplitude_from_luminance( 1000.0f ) == Approx( 6.0f ) );
+}
+
+TEST_CASE( "make_glow_fx is none without amplitude", "[sprite_fx]" )
+{
+    CHECK( make_glow_fx( 0.0f ).kind == sprite_fx_kind::none );
+    const auto fx = make_glow_fx( 3.0f );
+    CHECK( fx.kind == sprite_fx_kind::glow );
+    CHECK( fx.amplitude_px == Approx( 3.0f ) );
+}
+
+TEST_CASE( "make_distortion_fx is none without amplitude", "[sprite_fx]" )
+{
+    CHECK( make_distortion_fx( { .amplitude_px = 0.0f } ).kind == sprite_fx_kind::none );
+    const auto fx = make_distortion_fx( { .elapsed_ms = 0, .x = 1, .y = 2, .amplitude_px = 1.6f } );
+    CHECK( fx.kind == sprite_fx_kind::distortion );
+    CHECK( fx.amplitude_px == Approx( 1.6f ) );
+    CHECK( fx.phase == Approx( plant_sway_phase( 1, 2 ) ) );
 }

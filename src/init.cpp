@@ -39,6 +39,8 @@
 #include "flag.h"
 #include "flag_trait.h"
 #include "fstream_utils.h"
+#include "fx/emitter.h"
+#include "fx/system.h"
 #include "gates.h"
 #include "harvest.h"
 #include "item_action.h"
@@ -489,6 +491,7 @@ void DynamicDataLoader::initialize()
     add( "proficiency", &proficiency::load_proficiencies );
     add( "proficiency_category", &proficiency_category::load_proficiency_categories );
     add( "climbing_aid", &climbing_aid::load_climbing_aid );
+    add( "fx_emitter", &fx_emitter::load_fx_emitter );
 #if defined(TILES)
     add( "mod_tileset", &load_mod_tileset );
 #else
@@ -624,6 +627,8 @@ void DynamicDataLoader::unload_data()
     faction_template::reset();
     fault::reset();
     field_types::reset();
+    fx_emitter::reset();
+    cata_fx::reset();
     gates::reset();
     harvest_list::reset();
     item_action_generator::generator().reset();
@@ -726,6 +731,7 @@ void DynamicDataLoader::finalize_loaded_data( loading_ui &ui )
             { _( "Weather types" ), &weather_types::finalize_all },
             { _( "World types" ), &world_types::finalize_all },
             { _( "Field types" ), &field_types::finalize_all },
+            { _( "Graphic FX emitters" ), &fx_emitter::finalize_all },
             { _( "Ammo effects" ), &ammo_effects::finalize_all },
             { _( "Emissions" ), &emit::finalize },
             {
@@ -814,6 +820,7 @@ void DynamicDataLoader::check_consistency( loading_ui &ui )
             { _( "Weather types" ), &weather_types::check_consistency },
             { _( "World types" ), &world_types::check_consistency },
             { _( "Field types" ), &field_types::check_consistency },
+            { _( "Graphic FX emitters" ), &fx_emitter::check_consistency },
             { _( "Ammo effects" ), &ammo_effects::check_consistency },
             { _( "Emissions" ), &emit::check_consistency },
             { _( "Activities" ), &activity_type::check_consistency },

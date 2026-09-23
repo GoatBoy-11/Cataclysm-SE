@@ -8,6 +8,8 @@
 enum class sprite_fx_kind : int {
     none,
     sway,
+    glow,
+    distortion,
 };
 
 struct sprite_fx {
@@ -72,6 +74,32 @@ auto plant_sway_frame_budget_ms( std::string_view quality ) -> std::optional<int
 
 auto make_plant_sway_fx( const plant_sway_params &params ) -> sprite_fx;
 
-/// Horizontal strip mesh. Top vertices shift by amplitude * sin(time + phase);
-/// the base stays planted. Empty when fx.kind is none.
+struct sprite_distortion_params {
+    int elapsed_ms = 0;
+    int x = 0;
+    int y = 0;
+    float amplitude_px = 1.6f;
+};
+
+/// Halo size from monster luminance. Zero luminance is no glow; bright sources clamp.
+auto glow_amplitude_from_luminance( float luminance ) -> float;
+
+/// Expanded-quad glow. Empty kind when amplitude is not positive.
+auto make_glow_fx( float amplitude_px ) -> sprite_fx;
+
+/// Heat-shimmer wobble. Phase is per-tile so a fire line does not lockstep.
+auto make_distortion_fx( const sprite_distortion_params &params ) -> sprite_fx;
+
+/// Fine horizontal strips. The crown leads and the base stays planted, with a
+/// smooth cantilever bend so the trunk does not slice into rigid bands.
+/// Empty when fx.kind is none.
 auto build_sway_mesh( const sprite_fx_rect &dest, const sprite_fx &fx ) -> sprite_fx_mesh;
+
+/// Expanded quad used as a cheap halo. Empty when fx.kind is not glow.
+auto build_glow_mesh( const sprite_fx_rect &dest, const sprite_fx &fx ) -> sprite_fx_mesh;
+
+/// Wobbling quad. Empty when fx.kind is not distortion.
+auto build_distortion_mesh( const sprite_fx_rect &dest, const sprite_fx &fx ) -> sprite_fx_mesh;
+
+/// Dispatch to the mesh builder for fx.kind.
+auto build_sprite_fx_mesh( const sprite_fx_rect &dest, const sprite_fx &fx ) -> sprite_fx_mesh;

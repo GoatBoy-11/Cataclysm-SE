@@ -51,6 +51,9 @@ using dimension_id = string_id<dimension>;
 class emit;
 using emit_id = string_id<emit>;
 
+struct fx_emitter;
+using fx_emitter_id = string_id<fx_emitter>;
+
 class enchantment;
 using enchantment_id = string_id<enchantment>;
 
