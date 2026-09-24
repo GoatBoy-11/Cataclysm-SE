@@ -1828,8 +1828,6 @@ auto mapbuffer::valid_move(
     const auto& up_ter = up_tile->get_ter_t();
     if (up_ter.id.is_null()) { return false; }
     const auto& up_furn = up_tile->get_furn_t();
-    const auto up_trap_id = up_tile->get_trap();
-    const auto up_is_ledge = up_ter.trap == tr_ledge || up_trap_id == tr_ledge;
 
     if (up_ter.movecost == 0) { return false; }
 
@@ -1838,9 +1836,9 @@ auto mapbuffer::valid_move(
     const auto& down_ter = down_tile->get_ter_t();
     if (down_ter.id.is_null()) { return false; }
 
-    if (!up_is_ledge && down_ter.movecost == 0) { return false; }
+    if (down_ter.movecost == 0) { return false; }
 
-    if (!up_ter.has_flag(TFLAG_NO_FLOOR) && !up_ter.has_flag(TFLAG_GOES_DOWN) && !up_is_ledge
+    if (!up_ter.has_flag(TFLAG_NO_FLOOR) && !up_ter.has_flag(TFLAG_GOES_DOWN)
         && !options.via_ramp) {
         if (std::abs(from.x() - to.x()) == 1 || std::abs(from.y() - to.y()) == 1) {
             const auto midpoint = tripoint_abs_ms(down_p.xy(), up_p.z());
@@ -1850,7 +1848,7 @@ auto mapbuffer::valid_move(
     }
 
     if (!options.flying && !down_ter.has_flag(TFLAG_GOES_UP) && !down_ter.has_flag(TFLAG_RAMP)
-        && !up_is_ledge && !options.via_ramp) {
+        && !down_ter.has_flag(TFLAG_CLIMBABLE) && !options.via_ramp) {
         return false;
     }
 
@@ -3514,7 +3512,7 @@ auto mapbuffer::actualize_submap(const tripoint_abs_sm& pos) -> void {
 
     for (const auto p : submap_tiles()) {
         const auto abs_pos = project_combine(pos, p);
-        const auto options = actualize_tile_options{
+        auto options = actualize_tile_options{
             .buffer = *this,
             .sm = *tmpsub,
             .local = p,
@@ -3524,6 +3522,9 @@ auto mapbuffer::actualize_submap(const tripoint_abs_sm& pos) -> void {
             .elapsed = elapsed,
             .lookup = lookup_options,
         };
+        // Elapsed has two modes depending on when it is done
+        // It starts with anything that occurs while actively simulated
+
         auto& items = tmpsub->get_items(p);
         if (!items.empty()) {
             const auto& furn = tmpsub->get_furn(p).obj();
@@ -3531,15 +3532,18 @@ auto mapbuffer::actualize_submap(const tripoint_abs_sm& pos) -> void {
         }
 
         if (do_funnels) { fill_funnels(options); }
+        decay_cosmetic_fields(options);
 
+        // These dont happen while simulated
+        options.elapsed = calendar::turn - tmpsub->last_actualized;
         grow_plant(options);
         restock_fruits(options);
         produce_sap(options);
         rad_scorch(options);
-        decay_cosmetic_fields(options);
     }
 
     tmpsub->last_touched = calendar::turn;
+    tmpsub->last_actualized = calendar::turn;
 }
 
 auto mapbuffer::drain_pending_submap_destroy() -> void {

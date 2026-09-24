@@ -45,6 +45,8 @@
 #include "point.h"
 #include "proficiency.h"
 #include "ranged.h"
+#include "reload/reload.h"
+#include "reload/reload_ui.h"
 #include "recipe.h"
 #include "recipe_dictionary.h"
 #include "rng.h"
@@ -378,8 +380,8 @@ bool aim_activity_actor::load_RAS_weapon()
         }
         return true;
     };
-    item_reload_option opt = ammo_location_is_valid() ? item_reload_option( &you, weapon,
-                             weapon, *you.ammo_location ) : character_funcs::select_ammo( you, *gun );
+    auto opt = ammo_location_is_valid() ? item_reload_option( &you, weapon, weapon,
+               *you.ammo_location ) : reload_ui::select_ammo( you, *gun );
     if( !opt ) {
         // Menu canceled
         return false;
