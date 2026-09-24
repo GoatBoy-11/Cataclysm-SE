@@ -1055,10 +1055,6 @@
     "symbol": ",",
     "color": "light_cyan",
     "material": [ "paper" ],
-    "use_action": {
-      "type": "show_image",
-      "image": "test_photo.png",
-      "caption": "TEST caption"
-    }
+    "use_action": { "type": "show_image", "image": "test_photo.png", "caption": "TEST caption" }
   }
 ]

@@ -1454,7 +1454,16 @@
     "color": "white",
     "move_cost_mod": 1,
     "required_str": -1,
-    "flags": [ "CLIMBABLE", "LADDER", "TRANSPARENT", "SEEN_FROM_ABOVE", "REMOVE_FROM_ABOVE", "ALLOW_ON_OPEN_AIR", "DIFFICULT_Z", "NOCOLLIDE" ],
+    "flags": [
+      "CLIMBABLE",
+      "LADDER",
+      "TRANSPARENT",
+      "SEEN_FROM_ABOVE",
+      "REMOVE_FROM_ABOVE",
+      "ALLOW_ON_OPEN_AIR",
+      "DIFFICULT_Z",
+      "NOCOLLIDE"
+    ],
     "examine_action": "deployed_furniture",
     "deployed_item": "grapnel",
     "bash": {
