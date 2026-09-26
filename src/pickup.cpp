@@ -32,7 +32,7 @@
 #include "messages.h"
 #include "options.h"
 #include "output.h"
-#include "overmapbuffer.h"
+#include "overmap/overmapbuffer.h"
 #include "panels.h"
 #include "pickup_pocket_ui.h"
 #include "pickup_token.h"

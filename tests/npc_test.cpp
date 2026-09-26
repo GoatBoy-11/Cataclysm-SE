@@ -1,4 +1,5 @@
 #include "../src/map/map.h"
+#include "../src/overmap/overmapbuffer.h"
 #include "../src/vehicle/vehicle_part.h"
 #include "../src/vehicle/vpart_position.h"
 #include "avatar.h"
@@ -18,7 +19,6 @@
 #include "npc.h"
 #include "npc_class.h"
 #include "numeric_interval.h"
-#include "overmapbuffer.h"
 #include "pimpl.h"
 #include "player_helpers.h"
 #include "state_helpers.h"
